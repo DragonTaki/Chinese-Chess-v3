@@ -1,5 +1,14 @@
+/* ----- ----- ----- ----- */
+// Piece.cs
+// Do not distribute or modify
+// Author: DragonTaki (https://github.com/DragonTaki)
+// Create Date: 2025/05/06
+// Update Date: 2025/05/06
+// Version: v1.0
+/* ----- ----- ----- ----- */
+
 using System.Collections.Generic;
-using Chinese_Chess_v3.Constants;
+using Chinese_Chess_v3.Configs;
 
 namespace Chinese_Chess_v3.Core
 {
@@ -18,13 +27,9 @@ namespace Chinese_Chess_v3.Core
             Y = y;
         }
 
-
         // If specific piece can land here
-        public virtual bool IsInLegalZone(int targetX, int targetY)
-        {
-            // Defult true for all
-            return true;
-        }
+        public virtual bool IsInLegalZone(int x, int y) => true;  // Default true for all
+
         public abstract bool IsValidMove(int targetX, int targetY, Board board);
 
         // Main entrance
@@ -33,5 +38,11 @@ namespace Chinese_Chess_v3.Core
             return IsValidMove(targetX, targetY, board);
         }
         public abstract List<(int x, int y)> GetLegalMoves(int x, int y, Board board);
+
+        protected bool IsDestinationLegal(int targetX, int targetY, Board board)
+        {
+            Piece targetPiece = board.Grid[targetX, targetY];
+            return targetPiece == null || targetPiece.Side != this.Side;
+        }
     }
 }   

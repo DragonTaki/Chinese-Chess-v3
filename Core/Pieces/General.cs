@@ -1,7 +1,16 @@
+/* ----- ----- ----- ----- */
+// General.cs
+// Do not distribute or modify
+// Author: DragonTaki (https://github.com/DragonTaki)
+// Create Date: 2025/05/06
+// Update Date: 2025/05/06
+// Version: v1.0
+/* ----- ----- ----- ----- */
+
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Constants;
+using Chinese_Chess_v3.Configs;
 
 namespace Chinese_Chess_v3.Core
 {
@@ -14,15 +23,16 @@ namespace Chinese_Chess_v3.Core
         }
 
         // Check if moved to valid area
-        private bool IsInLegalZone(int targetX, int targetY)
+        public override bool IsInLegalZone(int targetX, int targetY)
         {
-            if (targetX < BoardSettings.PalaceXRange.MinX || targetX > BoardSettings.PalaceXRange.MaxX)
+            // Only can stay in palace (九宮格)
+            if (targetX < BoardConstants.PalaceXRange.MinX || targetX > BoardConstants.PalaceXRange.MaxX)
                 return false;
 
             if (Side == PlayerSide.Red)
-                return targetY >= BoardSettings.RedPalaceYRange.MinY && targetY <= BoardSettings.RedPalaceYRange.MaxY;
+                return targetY >= BoardConstants.RedPalaceYRange.MinY && targetY <= BoardConstants.RedPalaceYRange.MaxY;
             else
-                return targetY >= BoardSettings.BlackPalaceYRange.MinY && targetY <= BoardSettings.BlackPalaceYRange.MaxY;
+                return targetY >= BoardConstants.BlackPalaceYRange.MinY && targetY <= BoardConstants.BlackPalaceYRange.MaxY;
         }
 
         // Check if is a valid move
@@ -41,8 +51,7 @@ namespace Chinese_Chess_v3.Core
                 return false;
             
             // Check if destination has ally
-            Piece targetPiece = board.Grid[targetX, targetY];
-            if (targetPiece != null && targetPiece.Side == this.Side)
+            if (!IsDestinationLegal(targetX, targetY, board))
                 return false;
 
             return true;
@@ -53,22 +62,30 @@ namespace Chinese_Chess_v3.Core
         {
             List<(int x, int y)> legalMoves = new List<(int x, int y)>();
 
-            // Try all possible horizontal and vertical moves
-            // Top-right
-            if (IsInLegalZone(x + 1, y + 2))
-                legalMoves.Add((x + 1, y + 2));
+            // Define every move directions
+            (int dx, int dy)[] directions = new (int, int)[]
+            {
+                (1, 0),  // Right
+                (-1, 0), // Left
+                (0, 1),  // Up
+                (0, -1)  // Down
+            };
 
-            // Top-left
-            if (IsInLegalZone(x - 2, y + 2))
-                legalMoves.Add((x - 2, y + 2));
+            // Try all possible horizontal or vertical moves
+            foreach (var (dx, dy) in directions)
+            {
+                int newX = x + dx;
+                int newY = y + dy;
 
-            // Bottom-right
-            if (IsInLegalZone(x + 2, y - 2))
-                legalMoves.Add((x + 2, y - 2));
+                if (!IsInLegalZone(newX, newY))
+                    continue;
 
-            // Bottom-left
-            if (IsInLegalZone(x - 2, y - 2))
-                legalMoves.Add((x - 2, y - 2));
+                // Check if destination has ally
+                if (!IsDestinationLegal(newX, newY, board))
+                    continue;
+
+                legalMoves.Add((newX, newY));
+            }
 
             return legalMoves;
         }

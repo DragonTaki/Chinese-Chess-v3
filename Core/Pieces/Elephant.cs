@@ -1,7 +1,16 @@
+/* ----- ----- ----- ----- */
+// Elephant.cs
+// Do not distribute or modify
+// Author: DragonTaki (https://github.com/DragonTaki)
+// Create Date: 2025/05/06
+// Update Date: 2025/05/06
+// Version: v1.0
+/* ----- ----- ----- ----- */
+
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Constants;
+using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core;
 
 namespace Chinese_Chess_v3.Core.Pieces
@@ -15,13 +24,13 @@ namespace Chinese_Chess_v3.Core.Pieces
         }
 
         // Check if moved to valid area
-        private bool IsInLegalZone(int targetX, int targetY)
+        public override bool IsInLegalZone(int targetX, int targetY)
         {
-            // Elephants cannot move beyond the river
+            // Elephants cannot across the river (不可過河)
             if (Side == PlayerSide.Red)
-                return targetY >= BoardSettings.RedYSideLimit && targetY <= 9;
+                return targetY >= BoardConstants.RedYSideRiverLine && targetY <= 9;
             else
-                return targetY <= BoardSettings.BlackYSideLimit && targetY >= 0;
+                return targetY <= BoardConstants.BlackYSideRiverLine && targetY >= 0;
         }
 
         // Check if is a valid move
@@ -30,7 +39,7 @@ namespace Chinese_Chess_v3.Core.Pieces
             int dx = Math.Abs(targetX - X);
             int dy = Math.Abs(targetY - Y);
 
-            // Must move 2 squares diagonally
+            // Must move 2 squares diagonally (象走田)
             if (dx != 2 || dy != 2)
                 return false;
 
@@ -38,15 +47,14 @@ namespace Chinese_Chess_v3.Core.Pieces
             if (!IsInLegalZone(targetX, targetY))
                 return false;
 
-            // Check if "elephant eye" is blocked
+            // Check if "elephant's eye" is blocked (卡象眼)
             int midX = X + dx / 2;
             int midY = Y + dy / 2;
             if (board.Grid[midX, midY] != null)
                 return false;
 
             // Check if destination has ally
-            Piece targetPiece = board.Grid[targetX, targetY];
-            if (targetPiece != null && targetPiece.Side == this.Side)
+            if (!IsDestinationLegal(targetX, targetY, board))
                 return false;
 
             return true;
@@ -83,8 +91,7 @@ namespace Chinese_Chess_v3.Core.Pieces
                     continue;
 
                 // Check if destination has ally
-                Piece targetPiece = board.Grid[newX, newY];
-                if (targetPiece != null && targetPiece.Side == this.Side)
+                if (!IsDestinationLegal(newX, newY, board))
                     continue;
 
                 legalMoves.Add((newX, newY));

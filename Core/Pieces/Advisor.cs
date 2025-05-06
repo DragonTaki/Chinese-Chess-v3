@@ -1,7 +1,16 @@
+/* ----- ----- ----- ----- */
+// Advisor.cs
+// Do not distribute or modify
+// Author: DragonTaki (https://github.com/DragonTaki)
+// Create Date: 2025/05/06
+// Update Date: 2025/05/06
+// Version: v1.0
+/* ----- ----- ----- ----- */
+
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Constants;
+using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core;
 
 namespace Chinese_Chess_v3.Core.Pieces
@@ -15,15 +24,16 @@ namespace Chinese_Chess_v3.Core.Pieces
         }
 
         // Check if moved to valid area
-        private bool IsInLegalZone(int targetX, int targetY)
+        public override bool IsInLegalZone(int targetX, int targetY)
         {
-            if (targetX < BoardSettings.PalaceXRange.MinX || targetX > BoardSettings.PalaceXRange.MaxX)
+            // Only can stay in palace (九宮格)
+            if (targetX < BoardConstants.PalaceXRange.MinX || targetX > BoardConstants.PalaceXRange.MaxX)
                 return false;
 
             if (Side == PlayerSide.Red)
-                return targetY >= BoardSettings.RedPalaceYRange.MinY && targetY <= BoardSettings.RedPalaceYRange.MaxY;
+                return targetY >= BoardConstants.RedPalaceYRange.MinY && targetY <= BoardConstants.RedPalaceYRange.MaxY;
             else
-                return targetY >= BoardSettings.BlackPalaceYRange.MinY && targetY <= BoardSettings.BlackPalaceYRange.MaxY;
+                return targetY >= BoardConstants.BlackPalaceYRange.MinY && targetY <= BoardConstants.BlackPalaceYRange.MaxY;
         }
 
         // Check if is a valid move
@@ -41,8 +51,7 @@ namespace Chinese_Chess_v3.Core.Pieces
                 return false;
             
             // Check if destination has ally
-            Piece targetPiece = board.Grid[targetX, targetY];
-            if (targetPiece != null && targetPiece.Side == this.Side)
+            if (!IsDestinationLegal(targetX, targetY, board))
                 return false;
 
             return true;
@@ -72,8 +81,7 @@ namespace Chinese_Chess_v3.Core.Pieces
                     continue;
 
                 // Check if destination has ally
-                Piece targetPiece = board.Grid[newX, newY];
-                if (targetPiece != null && targetPiece.Side == this.Side)
+                if (!IsDestinationLegal(newX, newY, board))
                     continue;
 
                 legalMoves.Add((newX, newY));
