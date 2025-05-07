@@ -9,13 +9,15 @@
 
 using System.Drawing;
 
+using Chinese_Chess_v3.Utils;
+
 namespace Chinese_Chess_v3.Configs
 {
     public static class LoggerSettings
     {
-        public static readonly Font Font = new Font("Consolas", 10);
-        public static readonly Color BackgroundColor = Color.DarkGray;
-        public static readonly Color TextColor = Color.White;
+        public static readonly Font Font = StyleHelper.GetFont("Consolas", 12);
+        public static readonly Color BackgroundColor = StyleHelper.GetColor("#1C1C1C");  // #1C1C1C
+        public static readonly Color TextColor = StyleHelper.GetColor(Color.White);
         
     }
 }

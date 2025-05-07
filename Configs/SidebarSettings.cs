@@ -7,27 +7,35 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System.Drawing;
-
 namespace Chinese_Chess_v3.Configs
 {
     public static class SidebarSettings
     {
-        // Sidebar size
-        public const int Width = 360;
+        // Sidebar origin point
+        public const int SidebarStartX = BoardConstants.BoardTotalWidth;
+        public const int SidebarStartY = BoardSettings.BoardFrameStartY;
 
-        public const int Height = BoardConstants.TotalHeight;
+        // Sidebar size
+        public const int SidebarWidth = 360;
+        public const int SidebarHeight = BoardConstants.BoardTotalHeight;
 
         // Space between the edge of the form and the sidebar object
         public const int Margin = 20;
 
+        // Info board origin point
+        public const int InfoboardStartX = SidebarStartX + Margin;
+        public const int InfoboardStartY = SidebarStartY + Margin;
+
+        // Info board size
+        public const int InfoboardWidth = SidebarWidth - Margin * 2;
+        public const int InfoboardHeight = 400;
+
+        // Logger origin point
+        public const int LoggerStartX = SidebarStartX + Margin;
+        public const int LoggerStartY = InfoboardStartY + InfoboardHeight + Margin * 2;
+
         // Logger size
-        public const int LoggerWidth = Width - Margin * 2;
+        public const int LoggerWidth = SidebarWidth - Margin * 2;
         public const int LoggerHeight = 200;
-
-
-        // Origin point for the board
-        public const int StartX = BoardConstants.TotalWidth;
-        public const int StartY = 0;        
     }
 }

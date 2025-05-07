@@ -30,9 +30,11 @@ namespace Chinese_Chess_v3.Interface
             GraphicsHelper.ApplyHighQualitySettings(g);
 
             // Step 1: Draw the background
-            int fullWidth = (BoardConstants.Columns - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
-            int fullHeight = (BoardConstants.Rows - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
-            Rectangle fullArea = new Rectangle(0, 0, fullWidth, fullHeight);
+            int startX = BoardSettings.BoardFrameStartX;
+            int startY = BoardSettings.BoardFrameStartY;
+            int fullWidth = BoardConstants.BoardTotalWidth;
+            int fullHeight = BoardConstants.BoardTotalHeight;
+            Rectangle fullArea = new Rectangle(startX, startY, fullWidth, fullHeight);
 
             using (Brush backgroundBrush = BoardStyles.CreateBoardBackgroundBrush(fullArea))
             {
@@ -43,22 +45,22 @@ namespace Chinese_Chess_v3.Interface
             // Step 2: Draw vertical lines for the grid
             for (int i = 1; i < BoardConstants.Columns - 1; i++)
             {
-                int x = BoardSettings.StartX + i * BoardSettings.GridSize;
+                int x = BoardSettings.BoardStartX + i * BoardSettings.GridSize;
                 // Black side vertical lines
                 g.DrawLine(
                     boardPen,
                     x,
-                    BoardSettings.StartY,
+                    BoardSettings.BoardStartY,
                     x,
-                    BoardSettings.StartY + BoardConstants.BlackYSideRiverLine * BoardSettings.GridSize
+                    BoardSettings.BoardStartY + BoardConstants.BlackYSideRiverLine * BoardSettings.GridSize
                 );
                 // Red side vertical lines
                 g.DrawLine(
                     boardPen,
                     x,
-                    BoardSettings.StartY + BoardConstants.RedYSideRiverLine * BoardSettings.GridSize,
+                    BoardSettings.BoardStartY + BoardConstants.RedYSideRiverLine * BoardSettings.GridSize,
                     x,
-                    BoardSettings.StartY + (BoardConstants.Rows - 1) * BoardSettings.GridSize
+                    BoardSettings.BoardStartY + (BoardConstants.Rows - 1) * BoardSettings.GridSize
                 );
             }
 
@@ -68,13 +70,13 @@ namespace Chinese_Chess_v3.Interface
             // Step 4: Draw horizontal lines for the grid
             for (int i = 1; i < BoardConstants.Rows - 1; i++)
             {
-                int y = BoardSettings.StartY + i * BoardSettings.GridSize;
+                int y = BoardSettings.BoardStartY + i * BoardSettings.GridSize;
                 // Horizontal lines
                 g.DrawLine(
                     boardPen,
-                    BoardSettings.StartX,
+                    BoardSettings.BoardStartX,
                     y,
-                    BoardSettings.StartX + (BoardConstants.Columns - 1) * BoardSettings.GridSize,
+                    BoardSettings.BoardStartX + (BoardConstants.Columns - 1) * BoardSettings.GridSize,
                     y
                 );
             }
@@ -94,19 +96,19 @@ namespace Chinese_Chess_v3.Interface
         {
             // Calculated from the origin point
             // Black side palace (top)
-            int x1 = BoardSettings.StartX + BoardConstants.PalaceXRange.MinX * BoardSettings.GridSize;
-            int y1 = BoardSettings.StartY + BoardConstants.BlackPalaceYRange.MinY * BoardSettings.GridSize;
-            int x2 = BoardSettings.StartX + BoardConstants.PalaceXRange.MaxX * BoardSettings.GridSize;
-            int y2 = BoardSettings.StartY + BoardConstants.BlackPalaceYRange.MaxY * BoardSettings.GridSize;
+            int x1 = BoardSettings.BoardStartX + BoardConstants.PalaceXRange.MinX * BoardSettings.GridSize;
+            int y1 = BoardSettings.BoardStartY + BoardConstants.BlackPalaceYRange.MinY * BoardSettings.GridSize;
+            int x2 = BoardSettings.BoardStartX + BoardConstants.PalaceXRange.MaxX * BoardSettings.GridSize;
+            int y2 = BoardSettings.BoardStartY + BoardConstants.BlackPalaceYRange.MaxY * BoardSettings.GridSize;
 
             g.DrawLine(pen, x1, y1, x2, y2);  // Left-top to right-bottom
             g.DrawLine(pen, x2, y1, x1, y2);  // Right-top to left-bottom
 
             // Red side palace (bottom)
-            int x3 = BoardSettings.StartX + BoardConstants.PalaceXRange.MinX * BoardSettings.GridSize;
-            int y3 = BoardSettings.StartY + BoardConstants.RedPalaceYRange.MinY * BoardSettings.GridSize;
-            int x4 = BoardSettings.StartX + BoardConstants.PalaceXRange.MaxX * BoardSettings.GridSize;
-            int y4 = BoardSettings.StartY + BoardConstants.RedPalaceYRange.MaxY * BoardSettings.GridSize;
+            int x3 = BoardSettings.BoardStartX + BoardConstants.PalaceXRange.MinX * BoardSettings.GridSize;
+            int y3 = BoardSettings.BoardStartY + BoardConstants.RedPalaceYRange.MinY * BoardSettings.GridSize;
+            int x4 = BoardSettings.BoardStartX + BoardConstants.PalaceXRange.MaxX * BoardSettings.GridSize;
+            int y4 = BoardSettings.BoardStartY + BoardConstants.RedPalaceYRange.MaxY * BoardSettings.GridSize;
 
             g.DrawLine(pen, x3, y3, x4, y4);  // Left-bottom to right-top
             g.DrawLine(pen, x4, y3, x3, y4);  // Right-bottom to left-top
@@ -136,8 +138,8 @@ namespace Chinese_Chess_v3.Interface
         void DrawCorner(Graphics g, int x, int y, Pen pen)
         {
             // Calculated from the origin point
-            int cx = BoardSettings.StartX + x * BoardSettings.GridSize;
-            int cy = BoardSettings.StartY + y * BoardSettings.GridSize;
+            int cx = BoardSettings.BoardStartX + x * BoardSettings.GridSize;
+            int cy = BoardSettings.BoardStartY + y * BoardSettings.GridSize;
 
             int cornerLength = 6;
             int gap = 4;
@@ -185,15 +187,15 @@ namespace Chinese_Chess_v3.Interface
 
             // Padding is calculated from the origin point, subtracting gap to move outward
             Rectangle outerRect1 = new Rectangle(
-                BoardSettings.StartX - gap1 - BoardSettings.LineWidth / 2,
-                BoardSettings.StartY - gap1 - BoardSettings.LineWidth / 2,
+                BoardSettings.BoardStartX - gap1 - BoardSettings.LineWidth / 2,
+                BoardSettings.BoardStartY - gap1 - BoardSettings.LineWidth / 2,
                 boardWidthPx + 2 * gap1 + BoardSettings.LineWidth,
                 boardHeightPx + 2 * gap1 + BoardSettings.LineWidth
             );
 
             Rectangle outerRect2 = new Rectangle(
-                BoardSettings.StartX - gap2 - BoardSettings.LineWidth / 2,
-                BoardSettings.StartY - gap2 - BoardSettings.LineWidth / 2,
+                BoardSettings.BoardStartX - gap2 - BoardSettings.LineWidth / 2,
+                BoardSettings.BoardStartY - gap2 - BoardSettings.LineWidth / 2,
                 boardWidthPx + 2 * gap2 + BoardSettings.LineWidth,
                 boardHeightPx + 2 * gap2 + BoardSettings.LineWidth
             );

@@ -18,8 +18,8 @@ namespace Chinese_Chess_v3.Core.Pieces
     public class Advisor : Piece
     {
         // Constructor
-        public Advisor(PlayerSide side, int x, int y)
-            : base(PieceType.Advisor, side, x, y)
+        public Advisor(int x, int y, PlayerSide side)
+            : base(PieceType.Advisor, x, y, side)
         {
         }
 

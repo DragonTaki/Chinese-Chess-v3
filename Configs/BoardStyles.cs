@@ -10,14 +10,16 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
+using Chinese_Chess_v3.Utils;
+
 public static class BoardStyles
 {
     public static Brush CreateBoardBackgroundBrush(Rectangle bounds)
     {
         LinearGradientBrush brush = new LinearGradientBrush(
             bounds,
-            Color.FromArgb(7, 81, 138),   // #07518A
-            Color.FromArgb(8, 136, 217),  // #0888D9
+            StyleHelper.GetColor("#07518A"),  // #07518A
+            StyleHelper.GetColor("#0888D9"),  // #0888D9
             LinearGradientMode.Horizontal
         );
 
@@ -25,9 +27,9 @@ public static class BoardStyles
         blend.Positions = new[] { 0.0f, 0.5f, 1.0f };
         blend.Colors = new[]
         {
-            Color.FromArgb(7, 81, 138),
-            Color.FromArgb(8, 136, 217),
-            Color.FromArgb(7, 81, 138)
+            StyleHelper.GetColor("(7, 81, 138)"),
+            StyleHelper.GetColor("(8, 136, 217)"),
+            StyleHelper.GetColor("(7, 81, 138)")
         };
         brush.InterpolationColors = blend;
 

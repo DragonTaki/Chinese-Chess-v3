@@ -11,15 +11,18 @@ namespace Chinese_Chess_v3.Configs
 {
     public static class BoardSettings
     {
+        // Board frame origin point
+        public const int BoardFrameStartX = 0;
+        public const int BoardFrameStartY = 0;
+        // Board origin point
+        public const int BoardStartX = BoardFrameStartX + Margin;
+        public const int BoardStartY = BoardFrameStartY + Margin;
+
         // Distance between pieces
         public const int GridSize = 80;
 
         // Space between the edge of the form and the board
         public const int Margin = 60;
-
-        // Origin point for the board
-        public const int StartX = Margin;
-        public const int StartY = Margin;
         
         // Board line width
         public const int LineWidth = 2;

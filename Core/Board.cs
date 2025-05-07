@@ -7,14 +7,18 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
+
+using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Core.Pieces;
 
 namespace Chinese_Chess_v3.Core
 {
     public class Board
     {
         public Piece[,] Grid { get; }
-
+        private List<Piece> pieces = new List<Piece>();
         public Board()
         {
             Grid = new Piece[9, 10];
@@ -47,7 +51,46 @@ namespace Chinese_Chess_v3.Core
             // Red area (y-axis): 0~4; Black area (y-axis): 5~9
         }
 
-        public Piece GetPiece(int x, int y) => Grid[x, y];
+        public void Initialize()
+        {
+            pieces.Clear();
+
+            // Load preset in PieceConstants
+            foreach (var info in PieceConstants.InitialPieces)
+            {
+                var piece = CreatePieceFromInfo(info);
+                Grid[info.X, info.Y] = piece;
+                pieces.Add(piece);
+            }
+        }
+        
+        private Piece CreatePieceFromInfo(PieceInfo info)
+        {
+            PlayerSide side = info.IsRed ? PlayerSide.Red : PlayerSide.Black;
+            return info.Type switch
+            {
+                PieceType.General   => new General(info.X, info.Y, side),
+                PieceType.Advisor   => new Advisor(info.X, info.Y, side),
+                PieceType.Elephant  => new Elephant(info.X, info.Y, side),
+                PieceType.Horse     => new Horse(info.X, info.Y, side),
+                PieceType.Chariot   => new Chariot(info.X, info.Y, side),
+                PieceType.Cannon    => new Cannon(info.X, info.Y, side),
+                PieceType.Soldier   => new Soldier(info.X, info.Y, side),
+                _ => throw new Exception("Unknown piece type"),
+            };
+        }
+        public List<Piece> GetAllPieces()
+        {
+            return pieces;
+        }
+        public Piece GetPiece(int x, int y)
+        {
+            if (x >= 0 && x < BoardConstants.Columns && y >= 0 && y < BoardConstants.Rows)
+            {
+                return Grid[x, y];
+            }
+            return null;
+        }
 
         public void PlacePiece(Piece piece)
         {
@@ -59,8 +102,21 @@ namespace Chinese_Chess_v3.Core
             var piece = Grid[fromX, fromY];
             Grid[toX, toY] = piece;
             Grid[fromX, fromY] = null;
-            piece.X = toX;
-            piece.Y = toY;
+            if (piece != null)
+            {
+                piece.X = toX;
+                piece.Y = toY;
+            }
+        }
+
+        public void RemovePiece(int x, int y)
+        {
+            var piece = Grid[x, y];
+            if (piece != null)
+            {
+                pieces.Remove(piece);
+            }
+            Grid[x, y] = null;
         }
     }
 }

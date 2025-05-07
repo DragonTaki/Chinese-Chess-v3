@@ -18,8 +18,8 @@ namespace Chinese_Chess_v3.Core.Pieces
     public class Chariot : Piece
     {
         // Constructor
-        public Chariot(PlayerSide side, int x, int y)
-            : base(PieceType.Chariot, side, x, y)
+        public Chariot(int x, int y, PlayerSide side)
+            : base(PieceType.Chariot, x, y, side)
         {
         }
 

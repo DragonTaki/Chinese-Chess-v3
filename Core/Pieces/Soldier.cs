@@ -18,8 +18,8 @@ namespace Chinese_Chess_v3.Core.Pieces
     public class Soldier : Piece
     {
         // Constructor
-        public Soldier(PlayerSide side, int x, int y)
-            : base(PieceType.Soldier, side, x, y)
+        public Soldier(int x, int y, PlayerSide side)
+            : base(PieceType.Soldier, x, y, side)
         {
         }
 

@@ -3,11 +3,16 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/06
-// Version: v1.0
+// Update Date: 2025/05/07
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
+using System.Collections.Generic;
+
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Core.Logging;
+using Chinese_Chess_v3.Core.Pieces;
+using Chinese_Chess_v3.Interface;
 
 namespace Chinese_Chess_v3.Core
 {
@@ -15,14 +20,23 @@ namespace Chinese_Chess_v3.Core
     {
         public Board Board { get; private set; }
         public PlayerSide CurrentTurn { get; private set; }
+        private Piece? selectedPiece;
+        public Piece? SelectedPiece => selectedPiece;
+
+        private int selectedX, selectedY;
 
         public GameManager()
         {
+            // Initialize the board
             Board = new Board();
+            Board.Initialize();
             CurrentTurn = PlayerSide.Red;
-            // 初始化棋子待補充
+            selectedPiece = null;
         }
-
+        public List<Piece> GetCurrentPieces()
+        {
+            return Board.GetAllPieces();
+        }
         public bool TryMove(int fromX, int fromY, int toX, int toY)
         {
             var piece = Board.GetPiece(fromX, fromY);
@@ -37,6 +51,71 @@ namespace Chinese_Chess_v3.Core
             }
 
             return false;
+        }
+
+        public void HandleClick(int x, int y)
+        {
+            var clickedPiece = Board.GetPiece(x, y);
+            AppLogger.Log(
+                $"Current turn: {CurrentTurn}, holding: {(selectedPiece == null ? "null" : selectedPiece.Type.ToString())},\n" +
+                $"clicked at ({x},{y}), on: {(clickedPiece == null ? "null" : clickedPiece.GetType().Name)}", LogLevel.DEBUG);
+
+            // No selected piece, try to select one
+            if (selectedPiece == null)
+            {
+                if (clickedPiece != null && clickedPiece.Side == CurrentTurn)
+                {
+                    selectedPiece = clickedPiece;
+                    AppLogger.Log($"(Action) Selected {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                }
+                return;
+            }
+
+            // Has selected piece, but 2nd selection is own side
+            if (clickedPiece != null && clickedPiece.Side == selectedPiece.Side)
+            {
+                if (clickedPiece == selectedPiece)
+                {
+                    AppLogger.Log($"(Action) Un-selected {selectedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                    selectedPiece = null;
+                }
+                else
+                {
+                    selectedPiece = clickedPiece;
+                    AppLogger.Log($"(Action) Switched to {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                }
+                return;
+            }
+
+            // Has selected piece, try to move to 2nd selection
+            if (selectedPiece.CanMoveTo(x, y, Board))
+            {
+                // If 2nd selection point has enemy piece
+                if (clickedPiece != null && clickedPiece.Side != selectedPiece.Side)
+                {
+                    Board.RemovePiece(x, y);
+                    AppLogger.Log($"(Action) Captured {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                }
+
+                Board.MovePiece(selectedPiece.Position.X, selectedPiece.Position.Y, x, y);
+                AppLogger.Log($"(Action) Moved {selectedPiece.Type} to ({x},{y})", LogLevel.DEBUG);
+                selectedPiece = null;
+                SwitchTurn();
+            }
+            else
+            {
+                // If 2nd selection point is empty
+                if (clickedPiece == null)
+                {
+                    AppLogger.Log($"(Action) Un-selected {selectedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                }
+                else
+                {
+                    AppLogger.Log($"(Action) Invalid move to ({x},{y})", LogLevel.DEBUG);
+                }
+                // 如果要點空格取消選擇，這裡可以加判斷
+                selectedPiece = null;
+            }
         }
 
         private void SwitchTurn()

@@ -20,7 +20,7 @@ namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
-        private GameManager game;
+        private GameManager gameManager;
         private BoardRenderer boardRenderer;
         private PieceRenderer pieceRenderer;
         private SidebarRenderer sidebarRenderer;
@@ -29,18 +29,19 @@ namespace Chinese_Chess_v3.Interface
         public MainForm()
         {
             this.Text = "Chinese Chess v3 - created by @DragonTaki";
-            this.ClientSize = new Size(BoardConstants.TotalWidth + SidebarSettings.Width,
-                                       BoardConstants.TotalHeight);
+            this.ClientSize = new Size(BoardConstants.BoardTotalWidth + SidebarSettings.SidebarWidth,
+                                       BoardConstants.BoardTotalHeight);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.DoubleBuffered = true;
 
-            game = new GameManager();
+            gameManager = new GameManager();
             FontManager.LoadFonts();
             boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer
             pieceRenderer = new PieceRenderer(); // Initialize the PieceRenderer
             sidebarRenderer = new SidebarRenderer(); // Initialize the PieceRenderer
 
             this.Paint += Unified_Paint;
+            this.MouseClick += OnMouseClick;
 
             loggerBox = new LoggerBox();
             this.Controls.Add(loggerBox);
@@ -56,8 +57,29 @@ namespace Chinese_Chess_v3.Interface
             Graphics g = e.Graphics;
 
             boardRenderer.DrawBoard(g);
-            pieceRenderer.DrawInitialPieces(g);
+            var selectedPiece = gameManager.SelectedPiece;
+            pieceRenderer.DrawPieces(g, gameManager.GetCurrentPieces(), selectedPiece);
             sidebarRenderer.DrawSidebar(g);
+        }
+
+        // Clicking method
+        private void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            // If click outside the board, no action
+            if (e.X > BoardConstants.BoardTotalWidth || e.Y > BoardConstants.BoardTotalHeight)
+                return;
+
+            // Calculating which grid it is: the chess piece is placed on the intersection of the lines
+            int x = (int)Math.Round((e.X - BoardSettings.BoardStartX) / (float)BoardSettings.GridSize);
+            int y = (int)Math.Round((e.Y - BoardSettings.BoardStartY) / (float)BoardSettings.GridSize);
+
+            if (x < 0 || x >= 9 || y < 0 || y >= 10)
+                return;
+
+            // Pass to GameManager for processing logic
+            gameManager.HandleClick(x, y);
+
+            this.Invalidate(); // Repaint on every click
         }
     }
 }

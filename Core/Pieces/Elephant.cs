@@ -18,8 +18,8 @@ namespace Chinese_Chess_v3.Core.Pieces
     public class Elephant : Piece
     {
         // Constructor
-        public Elephant(PlayerSide side, int x, int y)
-            : base(PieceType.Elephant, side, x, y)
+        public Elephant(int x, int y, PlayerSide side)
+            : base(PieceType.Elephant, x, y, side)
         {
         }
 

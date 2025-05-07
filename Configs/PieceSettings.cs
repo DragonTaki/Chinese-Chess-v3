@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/06
-// Version: v1.0
+// Update Date: 2025/05/07
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -17,18 +17,23 @@ namespace Chinese_Chess_v3.Configs
     {
         // Size
         public const int Radius = 35;
+        public const int RedOutlineWidth = 3;
+        public const int BlackOutlineWidth = 2;
         public const int OuterMargin = 6;
+        public const int GlowMargin = 6;
 
         // Font
-        public static readonly Font Font = FontManager.GetFont("NotoSerif", 30, FontStyle.Bold);
+        public static readonly Font Font = StyleHelper.GetFont("NotoSerif", 30, FontStyle.Bold);
 
         // Red piece color
-        public static readonly Brush RedTextBrush = Brushes.Red;
-        public static readonly Brush RedBackgroundBrush = Brushes.White;
-        public static readonly Color RedOutlineColor = Color.Red;
+        public static readonly Brush RedTextBrush = StyleHelper.GetBrush(Color.Red);
+        public static readonly Brush RedBackgroundBrush = StyleHelper.GetBrush("#FCFAF2");  // #FCFAF2
+        public static readonly Color RedOutlineColor = StyleHelper.GetColor(Color.Red);
         // Black piece color
-        public static readonly Brush BlackTextBrush = Brushes.White;
-        public static readonly Brush BlackBackgroundBrush = Brushes.Black;
-        public static readonly Color BlackOutlineColor = Color.White;
+        public static readonly Brush BlackTextBrush = StyleHelper.GetBrush("#FCFAF2");  // #FCFAF2
+        public static readonly Brush BlackBackgroundBrush = StyleHelper.GetBrush("#1C1C1C");  // #1C1C1C
+        public static readonly Color BlackOutlineColor = StyleHelper.GetColor("#FCFAF2");  // #FCFAF2
+        // Glow color
+        public static readonly Color GlowColor = StyleHelper.GetColor("#FFB11B", 0.75f);  // #FFB11B
     }
 }

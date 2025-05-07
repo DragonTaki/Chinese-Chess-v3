@@ -12,8 +12,8 @@ namespace Chinese_Chess_v3.Configs
     public static class SidebarConstants
     {
         /* ----- Sidebar total size ----- */
-        public const int TotalWidth = SidebarSettings.Width;
-        public const int TotalHeight = SidebarSettings.Height;
+        public const int SidebarTotalWidth = SidebarSettings.SidebarWidth;
+        public const int SidebarTotalHeight = SidebarSettings.SidebarHeight;
 
     }
 }

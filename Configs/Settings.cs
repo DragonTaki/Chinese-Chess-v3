@@ -12,6 +12,6 @@ namespace Chinese_Chess_v3.Configs
     public static class Settings
     {
         public static bool EnableDebugMode { get; set; } = true;
-        public static string CurrentUser { get; set; } = "Player1";
+        public static string CurrentUser { get; set; } = "Player";
     }
 }

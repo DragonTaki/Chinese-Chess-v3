@@ -38,7 +38,7 @@ namespace Chinese_Chess_v3.Configs
         public const int BlackYSideRiverLine = 4;  // Black side (Y <= 4)
 
         /* ----- Board total size ----- */
-        public const int TotalWidth = (Columns - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
-        public const int TotalHeight = (Rows - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
+        public const int BoardTotalWidth = (Columns - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
+        public const int BoardTotalHeight = (Rows - 1) * BoardSettings.GridSize + BoardSettings.Margin * 2;
     }
 }

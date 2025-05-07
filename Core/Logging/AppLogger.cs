@@ -50,7 +50,7 @@ namespace Chinese_Chess_v3.Core.Logging
         {
             Message = message;
             Level = level;
-            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            Timestamp = DateTime.Now.ToString("HH:mm:ss");
         }
 
         public string ToText()
@@ -119,46 +119,45 @@ namespace Chinese_Chess_v3.Core.Logging
                 ? "Hello!"
                 : $"Hello, {currentUser}!";
 
-            string welcome = "Welcome to use Griffin Empire Attendance Bot!";
+            string welcome = "Chinese Chess v3.0";
             string author = "Author: DragonTaki";
+
+            var greetingJson = JsonSerializer.Serialize(new[]
+            {
+                new {
+                    text = greeting,
+                    color = "lightgreen",
+                    bold = true,
+                    tag = "greeting_tag"
+                }
+            });
+            var welcomeList = new List<object>();
+            for (int i = 0; i < welcome.Length; i++)
+            {
+                welcomeList.Add(new
+                {
+                    text = welcome[i].ToString(),
+                    color = rainbowColors[i % rainbowColors.Length],
+                    bold = true,
+                    tag = $"rainbow_{i}"
+                });
+            }
+            var welcomeJson = JsonSerializer.Serialize(welcomeList);
+            var authorJson = JsonSerializer.Serialize(new[]
+            {
+                new {
+                    text = author,
+                    color = "cyan",
+                    italic = true,
+                    tag = "author_tag"
+                }
+            });
 
             try
             {
-                // Greeting
-                externalLogger(JsonSerializer.Serialize(new[]
-                {
-                    new {
-                        text = greeting + "\n",
-                        color = "lightgreen",
-                        bold = true,
-                        tag = "greeting_tag"
-                    }
-                }));
-
-                // Rainbow welcome
-                var rainbowLine = new List<object>();
-                for (int i = 0; i < welcome.Length; i++)
-                {
-                    rainbowLine.Add(new
-                    {
-                        text = welcome[i].ToString(),
-                        color = rainbowColors[i % rainbowColors.Length],
-                        bold = true,
-                        tag = $"rainbow_{i}"
-                    });
-                }
-                externalLogger(JsonSerializer.Serialize(rainbowLine));
-
-                // Author
-                externalLogger(JsonSerializer.Serialize(new[]
-                {
-                    new {
-                        text = "\n" + author + "\n",
-                        color = "cyan",
-                        italic = true,
-                        tag = "author_tag"
-                    }
-                }));
+                externalLogger(greetingJson);
+                externalLogger(welcomeJson);
+                externalLogger(authorJson);
             }
             catch (Exception ex)
             {

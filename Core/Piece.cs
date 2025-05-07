@@ -3,11 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/06
-// Version: v1.0
+// Update Date: 2025/05/07
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
+using System.Drawing;
+
 using Chinese_Chess_v3.Configs;
 
 namespace Chinese_Chess_v3.Core
@@ -18,8 +20,9 @@ namespace Chinese_Chess_v3.Core
         public PlayerSide Side { get; }
         public int X { get; set; }
         public int Y { get; set; }
+        public Point Position => new Point(X, Y);
 
-        protected Piece(PieceType type, PlayerSide side, int x, int y)
+        protected Piece(PieceType type, int x, int y, PlayerSide side)
         {
             Type = type;
             Side = side;

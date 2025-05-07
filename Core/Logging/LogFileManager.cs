@@ -18,7 +18,7 @@ namespace Chinese_Chess_v3.Core.Logging
 
         public static void SaveLog(string message)
         {
-            File.AppendAllText(LogPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} > {message}\n");
+            File.AppendAllText(LogPath, $"{DateTime.Now:yyyy/MM/dd HH:mm:ss} > {message}\n");
         }
     }
 }

@@ -29,10 +29,10 @@ namespace Chinese_Chess_v3.Interface
             {
                 g.FillRectangle(
                     woodBrush,
-                    SidebarSettings.StartX,
-                    SidebarSettings.StartY,
-                    SidebarSettings.Width,
-                    SidebarSettings.Height
+                    SidebarSettings.SidebarStartX,
+                    SidebarSettings.SidebarStartY,
+                    SidebarSettings.SidebarWidth,
+                    SidebarSettings.SidebarHeight
                 );
             }
 

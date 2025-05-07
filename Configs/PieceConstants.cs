@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chinese_Chess_v3.Configs
 {
@@ -58,45 +59,49 @@ namespace Chinese_Chess_v3.Configs
                 case PieceType.Horse:    return isRed ? "傌" : "馬";
                 case PieceType.Cannon:   return isRed ? "炮" : "包";
                 case PieceType.Soldier:  return isRed ? "兵" : "卒";
-                default: return "";
+                default:                 return "";
             }
         }
 
-        public static List<PieceInfo> InitialPieces = new List<PieceInfo>
+        // Piece initial locations
+        private static (PieceType type, int x, int y, bool isRed)[] pieceData = new[]
         {
-            new PieceInfo(PieceType.General, 4, 0, false),
-            new PieceInfo(PieceType.Advisor, 3, 0, false),
-            new PieceInfo(PieceType.Advisor, 5, 0, false),
-            new PieceInfo(PieceType.Elephant, 2, 0, false),
-            new PieceInfo(PieceType.Elephant, 6, 0, false),
-            new PieceInfo(PieceType.Horse, 1, 0, false),
-            new PieceInfo(PieceType.Horse, 7, 0, false),
-            new PieceInfo(PieceType.Chariot, 0, 0, false),
-            new PieceInfo(PieceType.Chariot, 8, 0, false),
-            new PieceInfo(PieceType.Cannon, 1, 2, false),
-            new PieceInfo(PieceType.Cannon, 7, 2, false),
-            new PieceInfo(PieceType.Soldier, 0, 3, false),
-            new PieceInfo(PieceType.Soldier, 2, 3, false),
-            new PieceInfo(PieceType.Soldier, 4, 3, false),
-            new PieceInfo(PieceType.Soldier, 6, 3, false),
-            new PieceInfo(PieceType.Soldier, 8, 3, false),
+            (PieceType.General,  4, 0, false),
+            (PieceType.Advisor,  3, 0, false),
+            (PieceType.Advisor,  5, 0, false),
+            (PieceType.Elephant, 2, 0, false),
+            (PieceType.Elephant, 6, 0, false),
+            (PieceType.Horse,    1, 0, false),
+            (PieceType.Horse,    7, 0, false),
+            (PieceType.Chariot,  0, 0, false),
+            (PieceType.Chariot,  8, 0, false),
+            (PieceType.Cannon,   1, 2, false),
+            (PieceType.Cannon,   7, 2, false),
+            (PieceType.Soldier,  0, 3, false),
+            (PieceType.Soldier,  2, 3, false),
+            (PieceType.Soldier,  4, 3, false),
+            (PieceType.Soldier,  6, 3, false),
+            (PieceType.Soldier,  8, 3, false),
 
-            new PieceInfo(PieceType.General, 4, 9, true),
-            new PieceInfo(PieceType.Advisor, 3, 9, true),
-            new PieceInfo(PieceType.Advisor, 5, 9, true),
-            new PieceInfo(PieceType.Elephant, 2, 9, true),
-            new PieceInfo(PieceType.Elephant, 6, 9, true),
-            new PieceInfo(PieceType.Horse, 1, 9, true),
-            new PieceInfo(PieceType.Horse, 7, 9, true),
-            new PieceInfo(PieceType.Chariot, 0, 9, true),
-            new PieceInfo(PieceType.Chariot, 8, 9, true),
-            new PieceInfo(PieceType.Cannon, 1, 7, true),
-            new PieceInfo(PieceType.Cannon, 7, 7, true),
-            new PieceInfo(PieceType.Soldier, 0, 6, true),
-            new PieceInfo(PieceType.Soldier, 2, 6, true),
-            new PieceInfo(PieceType.Soldier, 4, 6, true),
-            new PieceInfo(PieceType.Soldier, 6, 6, true),
-            new PieceInfo(PieceType.Soldier, 8, 6, true),
+            (PieceType.General,  4, 9, true),
+            (PieceType.Advisor,  3, 9, true),
+            (PieceType.Advisor,  5, 9, true),
+            (PieceType.Elephant, 2, 9, true),
+            (PieceType.Elephant, 6, 9, true),
+            (PieceType.Horse,    1, 9, true),
+            (PieceType.Horse,    7, 9, true),
+            (PieceType.Chariot,  0, 9, true),
+            (PieceType.Chariot,  8, 9, true),
+            (PieceType.Cannon,   1, 7, true),
+            (PieceType.Cannon,   7, 7, true),
+            (PieceType.Soldier,  0, 6, true),
+            (PieceType.Soldier,  2, 6, true),
+            (PieceType.Soldier,  4, 6, true),
+            (PieceType.Soldier,  6, 6, true),
+            (PieceType.Soldier,  8, 6, true),
         };
+        public static List<PieceInfo> InitialPieces = pieceData
+            .Select(p => new PieceInfo(p.type, p.x, p.y, p.isRed))
+            .ToList();
     }
 }
