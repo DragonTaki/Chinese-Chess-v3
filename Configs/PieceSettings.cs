@@ -26,9 +26,9 @@ namespace Chinese_Chess_v3.Configs
         public static readonly Font Font = StyleHelper.GetFont("NotoSerif", 30, FontStyle.Bold);
 
         // Red piece color
-        public static readonly Brush RedTextBrush = StyleHelper.GetBrush(Color.Red);
+        public static readonly Brush RedTextBrush = StyleHelper.GetBrush("#E83015");  // #E83015
         public static readonly Brush RedBackgroundBrush = StyleHelper.GetBrush("#FCFAF2");  // #FCFAF2
-        public static readonly Color RedOutlineColor = StyleHelper.GetColor(Color.Red);
+        public static readonly Color RedOutlineColor = StyleHelper.GetColor("#E83015");  // #E83015
         // Black piece color
         public static readonly Brush BlackTextBrush = StyleHelper.GetBrush("#FCFAF2");  // #FCFAF2
         public static readonly Brush BlackBackgroundBrush = StyleHelper.GetBrush("#1C1C1C");  // #1C1C1C

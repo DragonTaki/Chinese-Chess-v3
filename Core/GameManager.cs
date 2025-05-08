@@ -7,23 +7,36 @@
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core.Logging;
-using Chinese_Chess_v3.Core.Pieces;
-using Chinese_Chess_v3.Interface;
 
 namespace Chinese_Chess_v3.Core
 {
     public class GameManager
     {
         public Board Board { get; private set; }
-        public PlayerSide CurrentTurn { get; private set; }
+        // Turn event
+        public event Action<PlayerSide> TurnChanged;
+        private PlayerSide currentTurn = PlayerSide.Red;
+        public PlayerSide CurrentTurn
+        {
+            get => currentTurn;
+            private set
+            {
+                if (currentTurn != value)
+                {
+                    currentTurn = value;
+                    TurnChanged?.Invoke(currentTurn);
+                }
+            }
+        }
         private Piece? selectedPiece;
         public Piece? SelectedPiece => selectedPiece;
-
-        private int selectedX, selectedY;
+        private static GameManager? instance;
+        public static GameManager Instance => instance ??= new GameManager();
 
         public GameManager()
         {
@@ -104,16 +117,16 @@ namespace Chinese_Chess_v3.Core
             }
             else
             {
-                // If 2nd selection point is empty
+                // If 2nd selection point is empty, unselected
                 if (clickedPiece == null)
                 {
                     AppLogger.Log($"(Action) Un-selected {selectedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
                 }
+                // Invalid catch
                 else
                 {
                     AppLogger.Log($"(Action) Invalid move to ({x},{y})", LogLevel.DEBUG);
                 }
-                // 如果要點空格取消選擇，這裡可以加判斷
                 selectedPiece = null;
             }
         }

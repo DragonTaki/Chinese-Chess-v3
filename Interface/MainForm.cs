@@ -14,6 +14,9 @@ using System.Windows.Forms;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Core.Logging;
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Interface.GameBoard;
+using Chinese_Chess_v3.Interface.Panels;
+using Chinese_Chess_v3.Interface.Sidebar;
 using Chinese_Chess_v3.Utils;
 
 namespace Chinese_Chess_v3.Interface
@@ -34,7 +37,7 @@ namespace Chinese_Chess_v3.Interface
             this.StartPosition = FormStartPosition.CenterScreen;
             this.DoubleBuffered = true;
 
-            gameManager = new GameManager();
+            gameManager = GameManager.Instance;
             FontManager.LoadFonts();
             boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer
             pieceRenderer = new PieceRenderer(); // Initialize the PieceRenderer
@@ -49,6 +52,9 @@ namespace Chinese_Chess_v3.Interface
             AppLogger.Log("System initialized", LogLevel.INIT);
             AppLogger.Log("This is debug info", LogLevel.DEBUG);
             AppLogger.LogWelcomeMessage();
+
+            InfoBoard infoBoard = new InfoBoard();
+            this.Controls.Add(infoBoard);
         }
 
         // Unified painting method

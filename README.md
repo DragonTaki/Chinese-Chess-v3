@@ -12,7 +12,7 @@
 /* ----- */
 
 > This repository **does not provide any license or redistribution rights** for its own code.  
-> It is intended for **private use only** within the Malicious Crew guild in Albion Online.
+> It is intended for **private use only**.
 
 ---
 

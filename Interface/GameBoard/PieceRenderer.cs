@@ -13,9 +13,9 @@ using System.Drawing;
 
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core;
-using Chinese_Chess_v3.Utils;
+using Chinese_Chess_v3.Utils.GraphicsUtils;
 
-namespace Chinese_Chess_v3.Interface
+namespace Chinese_Chess_v3.Interface.GameBoard
 {
     public class PieceRenderer
     {

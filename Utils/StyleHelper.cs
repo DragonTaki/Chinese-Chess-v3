@@ -96,7 +96,7 @@ namespace Chinese_Chess_v3.Utils
         {
             try
             {
-                Color colorWithAlpha = Color.FromArgb((int)(alpha * 255), color);
+                Color colorWithAlpha = Color.FromArgb(ClampAlpha(alpha), color);
                 return new SolidBrush(colorWithAlpha);
             }
             catch
@@ -117,7 +117,7 @@ namespace Chinese_Chess_v3.Utils
                 {
                     // HEX format
                     Color hexColor = ColorTranslator.FromHtml(colorValue);
-                    return Color.FromArgb((int)(alpha * 255), hexColor);
+                    return Color.FromArgb(ClampAlpha(alpha), hexColor);
                 }
                 else if (colorValue.Contains(','))
                 {
@@ -130,7 +130,7 @@ namespace Chinese_Chess_v3.Utils
                         int.TryParse(parts[1], out int g) &&
                         int.TryParse(parts[2], out int b))
                     {
-                        return Color.FromArgb((int)(alpha * 255), r, g, b);
+                        return Color.FromArgb(ClampAlpha(alpha), r, g, b);
                     }
                 }
                 else
@@ -138,7 +138,7 @@ namespace Chinese_Chess_v3.Utils
                     // Name format, example: Black, White, Blue
                     Color namedColor = Color.FromName(colorValue.Trim());
                     if (namedColor.IsKnownColor)
-                        return Color.FromArgb((int)(alpha * 255), namedColor);
+                        return Color.FromArgb(ClampAlpha(alpha), namedColor);
                 }
             }
             catch
@@ -152,12 +152,16 @@ namespace Chinese_Chess_v3.Utils
         {
             try
             {
-                return Color.FromArgb((int)(alpha * 255), color);
+                return Color.FromArgb(ClampAlpha(alpha), color);
             }
             catch
             {
                 return DefaultColor;  // Return default if error
             }
+        }
+        private static int ClampAlpha(float alpha)
+        {
+            return Math.Max(0, Math.Min(255, (int)(alpha * 255)));
         }
     }
 }

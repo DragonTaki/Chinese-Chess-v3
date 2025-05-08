@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
 
-namespace Chinese_Chess_v3.Interface
+namespace Chinese_Chess_v3.Interface.Sidebar
 {
     public class LoggerBox : RichTextBox
     {

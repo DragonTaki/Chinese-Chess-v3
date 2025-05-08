@@ -7,6 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System.Drawing;
+using Chinese_Chess_v3.Utils;
+
 namespace Chinese_Chess_v3.Configs
 {
     public static class SidebarSettings
@@ -28,7 +31,7 @@ namespace Chinese_Chess_v3.Configs
 
         // Info board size
         public const int InfoboardWidth = SidebarWidth - Margin * 2;
-        public const int InfoboardHeight = 400;
+        public const int InfoboardHeight = 160;
 
         // Logger origin point
         public const int LoggerStartX = SidebarStartX + Margin;
@@ -37,5 +40,8 @@ namespace Chinese_Chess_v3.Configs
         // Logger size
         public const int LoggerWidth = SidebarWidth - Margin * 2;
         public const int LoggerHeight = 200;
+
+        // Color
+        public static readonly Color BackgroundColor = StyleHelper.GetColor("#0A0A0A");  // #0A0A0A
     }
 }

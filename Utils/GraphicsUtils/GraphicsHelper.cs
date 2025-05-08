@@ -11,7 +11,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 
-namespace Chinese_Chess_v3.Utils
+namespace Chinese_Chess_v3.Utils.GraphicsUtils
 {
     public static class GraphicsHelper
     {
