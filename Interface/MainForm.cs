@@ -20,19 +20,26 @@ using Chinese_Chess_v3.Utils;
 using Chinese_Chess_v3.Interface.Renderers;
 using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Configs.Sidebar;
+using System.Collections.Generic;
+using System.Linq;
+using StarAnimation.Renderers;
 
 namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
-        private StarfieldRenderer starfield;
+        private StarRenderer starAnimation;
         private MainMenuPanel mainMenuPanel;
         private GameManager gameManager;
         private BoardRenderer boardRenderer;
         private PieceRenderer pieceRenderer;
         private SidebarRenderer sidebarRenderer;
         private LoggerBox loggerBox;
+        // Class-level field to track the time each frame is drawn
+        private Dictionary<RectangleF, DateTime> frameDrawTimes = new Dictionary<RectangleF, DateTime>();
 
+        // Maximum time before frame disappears (3 seconds)
+        private TimeSpan frameLifetime = TimeSpan.FromSeconds(3);
         public MainForm()
         {
             this.Text = "Chinese Chess v3 - created by @DragonTaki";
@@ -42,11 +49,11 @@ namespace Chinese_Chess_v3.Interface
             this.DoubleBuffered = true;
             FontManager.LoadFonts();
 
-            starfield = new StarfieldRenderer(this.Width, this.Height);
+            starAnimation = new StarRenderer(this.Width, this.Height);
             TimerManager timerManager = new TimerManager();
             timerManager.OnAnimationFrame += () =>
             {
-                starfield.Update();
+                starAnimation.Update();
                 this.Invalidate(); // 重新繪製畫面
             };
             timerManager.StartTimers();
@@ -70,13 +77,15 @@ namespace Chinese_Chess_v3.Interface
 
             //InfoBoard infoBoard = new InfoBoard();
             //this.Controls.Add(infoBoard);
+            this.Resize += (s, e) => starAnimation.Resize(this.Width, this.Height);
         }
 
         // Unified painting method
         private void Unified_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            starfield.Draw(e.Graphics);
+            starAnimation.Draw(g);
+
             //boardRenderer.DrawBoard(g);
             //var selectedPiece = gameManager.SelectedPiece;
             //pieceRenderer.DrawPieces(g, gameManager.GetCurrentPieces(), selectedPiece);
