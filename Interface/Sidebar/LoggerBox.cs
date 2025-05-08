@@ -14,7 +14,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Sidebar;
 
 namespace Chinese_Chess_v3.Interface.Sidebar
 {

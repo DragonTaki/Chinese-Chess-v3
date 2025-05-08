@@ -12,8 +12,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs.Sidebar;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 

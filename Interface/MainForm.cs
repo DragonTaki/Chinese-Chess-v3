@@ -14,15 +14,18 @@ using System.Windows.Forms;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Core.Logging;
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Interface.Board;
 using Chinese_Chess_v3.Interface.Panels;
 using Chinese_Chess_v3.Interface.Sidebar;
 using Chinese_Chess_v3.Utils;
+using Chinese_Chess_v3.Interface.Renderers;
+using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs.Sidebar;
 
 namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
+        private StarfieldRenderer starfield;
         private MainMenuPanel mainMenuPanel;
         private GameManager gameManager;
         private BoardRenderer boardRenderer;
@@ -39,8 +42,17 @@ namespace Chinese_Chess_v3.Interface
             this.DoubleBuffered = true;
             FontManager.LoadFonts();
 
-            mainMenuPanel = new MainMenuPanel();
-            this.Controls.Add(mainMenuPanel);
+            starfield = new StarfieldRenderer(this.Width, this.Height);
+            TimerManager timerManager = new TimerManager();
+            timerManager.OnAnimationFrame += () =>
+            {
+                starfield.Update();
+                this.Invalidate(); // 重新繪製畫面
+            };
+            timerManager.StartTimers();
+
+            //mainMenuPanel = new MainMenuPanel();
+            //this.Controls.Add(mainMenuPanel);
             //gameManager = GameManager.Instance;
             //boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer
             //pieceRenderer = new PieceRenderer(); // Initialize the PieceRenderer
@@ -64,9 +76,9 @@ namespace Chinese_Chess_v3.Interface
         private void Unified_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-
+            starfield.Draw(e.Graphics);
             //boardRenderer.DrawBoard(g);
-            var selectedPiece = gameManager.SelectedPiece;
+            //var selectedPiece = gameManager.SelectedPiece;
             //pieceRenderer.DrawPieces(g, gameManager.GetCurrentPieces(), selectedPiece);
             //sidebarRenderer.DrawSidebar(g);
         }

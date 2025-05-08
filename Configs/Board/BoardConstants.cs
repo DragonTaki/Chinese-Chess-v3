@@ -7,7 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-namespace Chinese_Chess_v3.Configs
+namespace Chinese_Chess_v3.Configs.Board
 {
     public static class BoardConstants
     {

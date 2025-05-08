@@ -11,7 +11,7 @@ using System.Drawing;
 
 using Chinese_Chess_v3.Utils;
 
-namespace Chinese_Chess_v3.Configs
+namespace Chinese_Chess_v3.Configs.Board
 {
     public static class PieceSettings
     {

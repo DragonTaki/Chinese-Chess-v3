@@ -11,11 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
-namespace Chinese_Chess_v3.Interface.Board
+namespace Chinese_Chess_v3.Interface.Renderers
 {
     public class PieceRenderer
     {

@@ -8,9 +8,10 @@
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
+using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Utils;
 
-namespace Chinese_Chess_v3.Configs
+namespace Chinese_Chess_v3.Configs.Sidebar
 {
     public static class SidebarSettings
     {

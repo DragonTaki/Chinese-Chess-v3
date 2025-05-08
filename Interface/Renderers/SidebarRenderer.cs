@@ -13,9 +13,10 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Sidebar;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
-namespace Chinese_Chess_v3.Interface.Sidebar
+namespace Chinese_Chess_v3.Interface.Renderers
 {
     public class SidebarRenderer
     {
@@ -28,7 +29,7 @@ namespace Chinese_Chess_v3.Interface.Sidebar
             for (int i = 0; i < maxStars; i++)
                 stars.Add(new Star(rand));
 
-            animationTimer = new Timer { Interval = TimerSettings.SidebarAnimationInterval };
+            animationTimer = new Timer { Interval = TimerSettings.GameAnimationInterval };
             animationTimer.Tick += (s, e) => UpdateStars();
             animationTimer.Start();
         }

@@ -11,6 +11,7 @@ using System;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Core;
 
 namespace Chinese_Chess_v3.Utils
@@ -22,6 +23,8 @@ namespace Chinese_Chess_v3.Utils
         private TimeSpan blackTime;
         private TimeSpan redTime;
 
+        private Timer animationTimer;
+        public event Action OnAnimationFrame;
         public event Action<TimeSpan, TimeSpan> OnTimersUpdated;  // Update GUI when timer updates
 
         public TimerManager()
@@ -34,18 +37,22 @@ namespace Chinese_Chess_v3.Utils
 
             redPlayerTimer.Tick += RedPlayerTimer_Tick;
             blackPlayerTimer.Tick += BlackPlayerTimer_Tick;
+            animationTimer = new Timer { Interval = TimerSettings.GameAnimationInterval };
+            animationTimer.Tick += (s, e) => OnAnimationFrame?.Invoke();
         }
 
         public void StartTimers()
         {
             blackPlayerTimer.Start();
             redPlayerTimer.Start();
+            animationTimer.Start();
         }
 
         public void StopTimers()
         {
             blackPlayerTimer.Stop();
             redPlayerTimer.Stop();
+            animationTimer.Stop();
         }
 
         public void SwitchTurn()

@@ -10,12 +10,14 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Board;
 
 namespace Chinese_Chess_v3.Core
 {
     public class General : Piece
     {
+        private PlayerSide side;
+
         // Constructor
         public General(int x, int y, PlayerSide side)
             : base(PieceType.General, x, y, side)

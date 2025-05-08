@@ -11,8 +11,8 @@ namespace Chinese_Chess_v3.Configs
 {
     public static class TimerSettings
     {
-        private const int SidebarAnimationFPS = 30;
-        public const int SidebarAnimationInterval = 1000 / SidebarAnimationFPS;
+        private const int GameAnimationFPS = 60;
+        public const int GameAnimationInterval = 1000 / GameAnimationFPS;
         public const int RedPlayerTimerInterval = 1000;
         public const int BlackPlayerTimerInterval = 1000;
         

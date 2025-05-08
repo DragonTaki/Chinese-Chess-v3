@@ -10,7 +10,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Board;
 
 namespace Chinese_Chess_v3.Core
 {

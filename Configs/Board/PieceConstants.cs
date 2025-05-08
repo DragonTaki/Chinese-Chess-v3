@@ -10,7 +10,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Chinese_Chess_v3.Configs
+namespace Chinese_Chess_v3.Configs.Board
 {
     public enum PieceType
     {
