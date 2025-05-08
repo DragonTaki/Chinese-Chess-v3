@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Core.Logging;
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Interface.GameBoard;
+using Chinese_Chess_v3.Interface.Board;
 using Chinese_Chess_v3.Interface.Panels;
 using Chinese_Chess_v3.Interface.Sidebar;
 using Chinese_Chess_v3.Utils;
@@ -23,6 +23,7 @@ namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
+        private MainMenuPanel mainMenuPanel;
         private GameManager gameManager;
         private BoardRenderer boardRenderer;
         private PieceRenderer pieceRenderer;
@@ -36,25 +37,27 @@ namespace Chinese_Chess_v3.Interface
                                        BoardConstants.BoardTotalHeight);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.DoubleBuffered = true;
-
-            gameManager = GameManager.Instance;
             FontManager.LoadFonts();
-            boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer
-            pieceRenderer = new PieceRenderer(); // Initialize the PieceRenderer
-            sidebarRenderer = new SidebarRenderer(); // Initialize the PieceRenderer
+
+            mainMenuPanel = new MainMenuPanel();
+            this.Controls.Add(mainMenuPanel);
+            //gameManager = GameManager.Instance;
+            //boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer
+            //pieceRenderer = new PieceRenderer(); // Initialize the PieceRenderer
+            //sidebarRenderer = new SidebarRenderer(); // Initialize the PieceRenderer
 
             this.Paint += Unified_Paint;
-            this.MouseClick += OnMouseClick;
+            //this.MouseClick += OnMouseClick;
 
-            loggerBox = new LoggerBox();
-            this.Controls.Add(loggerBox);
-            AppLogger.SetExternalLogger(loggerBox.AppendLog);
-            AppLogger.Log("System initialized", LogLevel.INIT);
-            AppLogger.Log("This is debug info", LogLevel.DEBUG);
-            AppLogger.LogWelcomeMessage();
+            //loggerBox = new LoggerBox();
+            //this.Controls.Add(loggerBox);
+            //AppLogger.SetExternalLogger(loggerBox.AppendLog);
+            //AppLogger.Log("System initialized", LogLevel.INIT);
+            //AppLogger.Log("This is debug info", LogLevel.DEBUG);
+            //AppLogger.LogWelcomeMessage();
 
-            InfoBoard infoBoard = new InfoBoard();
-            this.Controls.Add(infoBoard);
+            //InfoBoard infoBoard = new InfoBoard();
+            //this.Controls.Add(infoBoard);
         }
 
         // Unified painting method
@@ -62,10 +65,10 @@ namespace Chinese_Chess_v3.Interface
         {
             Graphics g = e.Graphics;
 
-            boardRenderer.DrawBoard(g);
+            //boardRenderer.DrawBoard(g);
             var selectedPiece = gameManager.SelectedPiece;
-            pieceRenderer.DrawPieces(g, gameManager.GetCurrentPieces(), selectedPiece);
-            sidebarRenderer.DrawSidebar(g);
+            //pieceRenderer.DrawPieces(g, gameManager.GetCurrentPieces(), selectedPiece);
+            //sidebarRenderer.DrawSidebar(g);
         }
 
         // Clicking method
@@ -86,6 +89,12 @@ namespace Chinese_Chess_v3.Interface
             gameManager.HandleClick(x, y);
 
             this.Invalidate(); // Repaint on every click
+        }
+        public void SwitchToGameUI()
+        {
+            this.Controls.Clear();
+
+            // 再重新載入 gameManager、boardRenderer、sidebarPanel 等
         }
     }
 }

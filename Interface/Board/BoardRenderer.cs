@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// GameBoardPanel.cs
+// BoardRenderer.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
@@ -13,7 +13,7 @@ using System.Drawing;
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
-namespace Chinese_Chess_v3.Interface.Panels
+namespace Chinese_Chess_v3.Interface.Board
 {
     public class BoardRenderer
     {
