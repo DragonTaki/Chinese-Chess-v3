@@ -20,6 +20,11 @@ namespace StarAnimation.Core
     {
         public float X { get; set; }
         public float Y { get; set; }
+        /// <summary>
+        /// Convenient access to star's position as a PointF.
+        /// </summary>
+        public PointF Position => new PointF(X, Y);
+        
         public float DirectionX { get; set; }
         public float DirectionY { get; set; }
         public float TargetDirectionX;
@@ -28,13 +33,23 @@ namespace StarAnimation.Core
         public float Speed { get; set; }
         public float TargetSpeed;
         public float Size { get; set; }
+        public Color BaseColor { get; set; } = Color.White;
+        public Color CurrentColor { get; set; }
         public Color Color { get; set; }
+        public Color TargetColor { get; set; }
+        public float ColorLerpProgress { get; set; }
+        /// <summary>
+        /// Directional bias for color shift (+1 = red-dominant, -1 = blue-dominant)
+        /// </summary>
+        public float ColorShiftBiasDirection { get; set; } = 1f;
         public float Opacity { get; set; }
+        public int ShiningTimes { get; set; }
         public Random Rand { get; set; }
         public bool HasColorShiftPhase { get; set; } = false;
+        public float ColorShiftStartTime { get; set; } = 0f;
         public float ColorShiftPhase { get; set; }
         public bool HasPulsePhase { get; set; } = false;
-        public float PulsePhase { get; set; }
+        public float PulseDelay { get; set; }
 
         /// <summary>
         /// Initializes a new star at a random position within the given width and height.
@@ -59,7 +74,10 @@ namespace StarAnimation.Core
             DirectionX = TargetDirectionX;
             DirectionY = TargetDirectionY;
 
-            Color = Color.White;
+            CurrentColor = Color.White;
+            TargetColor = CurrentColor;
+            Color = CurrentColor;
+
             Opacity = 1.0f;
         }
 

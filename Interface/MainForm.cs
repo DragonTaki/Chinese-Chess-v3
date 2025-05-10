@@ -21,14 +21,15 @@ using Chinese_Chess_v3.Interface.Renderers;
 using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Configs.Sidebar;
 using System.Collections.Generic;
-using System.Linq;
 using StarAnimation.Renderers;
+using StarAnimation.Controllers;
+using System.Diagnostics;
 
 namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
-        private StarRenderer starAnimation;
+        private MainRenderController starAnimation;
         private MainMenuPanel mainMenuPanel;
         private GameManager gameManager;
         private BoardRenderer boardRenderer;
@@ -49,11 +50,20 @@ namespace Chinese_Chess_v3.Interface
             this.DoubleBuffered = true;
             FontManager.LoadFonts();
 
-            starAnimation = new StarRenderer(this.Width, this.Height);
+            starAnimation = new MainRenderController(this.Width, this.Height);
             TimerManager timerManager = new TimerManager();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            long lastTimestamp = stopwatch.ElapsedMilliseconds;
+
             timerManager.OnAnimationFrame += () =>
             {
-                starAnimation.Update();
+                long current = stopwatch.ElapsedMilliseconds;
+                float deltaTimeInMilliseconds = current - lastTimestamp;
+                lastTimestamp = current;
+                float deltaTimeInSeconds = deltaTimeInMilliseconds / 1000f;
+                starAnimation.Update(deltaTimeInSeconds);
                 this.Invalidate(); // 重新繪製畫面
             };
             timerManager.StartTimers();

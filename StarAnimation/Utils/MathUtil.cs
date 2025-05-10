@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Drawing;
 
 namespace StarAnimation.Utils
 {
@@ -91,6 +92,38 @@ namespace StarAnimation.Utils
         public static float Lerp(float from, float to, float t)
         {
             return from + (to - from) * t;
+        }
+        
+        /// <summary>
+        /// Generates a random float between <paramref name="min"/> and <paramref name="max"/> using the given random generator.
+        /// </summary>
+        /// <param name="min">Minimum float value (inclusive).</param>
+        /// <param name="max">Maximum float value (exclusive).</param>
+        /// <param name="rand">Random instance used for generation.</param>
+        /// <returns>A random float between min and max.</returns>
+        /// <exception cref="ArgumentException">Thrown when min or max is invalid (e.g., min >= max).</exception>
+        public static float GetRandomFloat(float min, float max, Random rand)
+        {
+            //Console.WriteLine($"{min}, {max}");
+            if (rand == null)
+                throw new ArgumentNullException(nameof(rand), "Random generator cannot be null.");
+
+            if (min == max)
+                return min;
+
+            if (min > max)
+                throw new ArgumentException("Minimum must be less than maximum.");
+
+            // Adjust to ensure we handle the case where min is zero and max > 0
+            return (float)(rand.NextDouble() * (max - min) + min);
+        }
+
+        public static Color LerpColor(Color from, Color to, float t)
+        {
+            int r = ClampToByte(from.R + (int)((to.R - from.R) * t));
+            int g = ClampToByte(from.G + (int)((to.G - from.G) * t));
+            int b = ClampToByte(from.B + (int)((to.B - from.B) * t));
+            return Color.FromArgb(r, g, b);
         }
     }
 }

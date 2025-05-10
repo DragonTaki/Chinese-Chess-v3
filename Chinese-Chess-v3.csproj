@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>Chinese_Chess_v3</RootNamespace>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Chinese_Chess_v3</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\External\StarAnimation\StarAnimation.csproj" />
+    <!--ProjectReference Include="StarAnimation\StarAnimation.csproj" /-->
     <Content Include="Assets\Font\MoeLI.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

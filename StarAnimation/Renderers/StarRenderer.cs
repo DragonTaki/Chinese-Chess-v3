@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using StarAnimation.Configs;
+using StarAnimation.Controllers;
 using StarAnimation.Core;
 using StarAnimation.Core.Effect;
 
@@ -37,21 +38,13 @@ namespace StarAnimation.Renderers
         // Countdown timers for effects
         private int directionChangeCountdown;
         private int speedChangeCountdown;
-        private int twistEffectCountdown;
-        private int pulseEffectCountdown;
-        private int colorShiftEffectCountdown;
 
-        // Optional: external effect instances
-        private Twist twistEffect = new Twist();
-        private Pulse pulseEffect = new Pulse();
-        private ColorShift colorShiftEffect = new ColorShift();
-
-        public StarRenderer(int width, int height, int starCount = 150, Random rand = null)
+        public StarRenderer(int width, int height, Random rand, int starCount = 150)
         {
             this.width = width;
             this.height = height;
+            this.rand = rand;
             this.starCount = starCount;
-            this.rand = rand ?? new Random();
 
             minVisibleCount = starCount - Settings.StarCountRange;
             maxVisibleCount = starCount + Settings.StarCountRange;
@@ -64,7 +57,7 @@ namespace StarAnimation.Renderers
             stars.Clear();
             waitingPool.Clear();
 
-            for (int i = 0; i < maxVisibleCount; i++)
+            for (int i = 0; i < starCount; i++)
             {
                 stars.Add(new Star(width, height, rand));
             }
@@ -76,9 +69,6 @@ namespace StarAnimation.Renderers
         {
             directionChangeCountdown = rand.Next(300, 800);
             speedChangeCountdown = rand.Next(100, 300);
-            twistEffectCountdown = rand.Next(50, 100);
-            pulseEffectCountdown = rand.Next(50, 100);
-            colorShiftEffectCountdown = rand.Next(50, 100);
         }
 
         /// <summary>
@@ -86,7 +76,7 @@ namespace StarAnimation.Renderers
         /// </summary>
         public void Update()
         {
-            UpdateStarPositions();
+            //UpdateStarPositions();
             ReleaseStars();
             CleanUpAfterResize();
             UpdateEffects();
@@ -97,11 +87,9 @@ namespace StarAnimation.Renderers
         /// </summary>
         public void Draw(Graphics g)
         {
-            g.FillRectangle(Brushes.Black, 0, 0, width, height);
-
             foreach (var star in stars)
             {
-                using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color)))
+                using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.CurrentColor)))
                 {
                     g.FillEllipse(brush, star.X, star.Y, star.Size, star.Size);
                 }
@@ -182,29 +170,11 @@ namespace StarAnimation.Renderers
                 directionChangeCountdown = rand.Next(300, 800);
             }
 
-            if (--speedChangeCountdown <= 0)
+            if (false && --speedChangeCountdown <= 0)
             {
                 foreach (var star in stars)
                     star.RandomizeSpeed(rand);
                 speedChangeCountdown = rand.Next(100, 300);
-            }
-
-            if (--twistEffectCountdown <= 0 && false)
-            {
-                twistEffect.Apply(stars, rand);
-                twistEffectCountdown = rand.Next(50, 100);
-            }
-
-            if (--pulseEffectCountdown <= 0 && false)
-            {
-                pulseEffect.Apply(stars, rand);
-                pulseEffectCountdown = rand.Next(50, 100);
-            }
-
-            if (--colorShiftEffectCountdown <= 0 && false)
-            {
-                colorShiftEffect.Apply(stars, rand);
-                colorShiftEffectCountdown = rand.Next(50, 100);
             }
         }
 
