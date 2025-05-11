@@ -10,9 +10,8 @@
 using System;
 using System.Drawing;
 
-using StarAnimation.Utils;
-
 using SharedLib.RandomTable;
+using SharedLib.MathUtils;
 
 namespace StarAnimation.Core
 {
@@ -21,23 +20,25 @@ namespace StarAnimation.Core
     /// </summary>
     public class Star
     {
-        public Vector2F Position { get; set; } = new Vector2F();
-        public Vector2F Direction { get; set; } = new Vector2F();
-        public Vector2F TargetDirection { get; set; } = new Vector2F();
+        // Basic physical data of the object
+        public Position Position { get; set; } = new Position();
+        public Velocity Velocity { get; set; } = new Velocity();
+        public Acceleration Acceleration { get; set; } = new Acceleration();
 
-        public StarSpeed Speed { get; set; } = new StarSpeed();
+        // Star data
         public StarColor Color { get; set; } = new StarColor();
 
         public float Size { get; set; }
         public float Opacity { get; set; } = 1.0f;
         public ColorShiftEffect ColorShift { get; set; } = new ColorShiftEffect();
         public PulseEffect Pulse { get; set; } = new PulseEffect();
+        public TwistEffect Twist { get; set; } = new TwistEffect();
         private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
         /// <summary>
         /// Convenient access to PointF from Position.
         /// </summary>
-        public PointF Point => new PointF(Position.X, Position.Y);
+        public PointF Point => new PointF(Position.Current.X, Position.Current.Y);
 
         /// <summary>
         /// Initializes a new star at a random position within the given width and height.
@@ -48,24 +49,25 @@ namespace StarAnimation.Core
         /// <param name="height">The height of the starfield area in which the star will be placed.</param>
         public Star(int width, int height)
         {
-            Position = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
+            Position.Current = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
 
             // Star size is a random value between 1 and 3
             Size = Rand.NextInt(1, 3);
             
-            // Random base speed between 0.5 and 2.0
-            float speed = 0.5f + Rand.NextFloat() * 1.5f;
-            Speed = new StarSpeed(speed);
+            // Random base physical value
+            Position.Target = Position.Current;
+            //RandomizeTargetPosition(width, height);
+            //RandomizeSpeed();
         }
 
         /// <summary>
-        /// Randomizes the star's movement direction by selecting a random angle.
+        /// Randomizes the star's movement by setting a new target position in a random direction.
         /// </summary>
-        public void RandomizeDirection()
+        /// <param name="distance">The distance from the current position to set the new target.</param>
+        public void RandomizeTargetPosition(int width, int height)
         {
-            double angle = Rand.NextFloat() * 2 * Math.PI;  // Random angle between 0 and 2π.
-            TargetDirection.X = (float)Math.Cos(angle);  // X direction is calculated using cosine of the angle.
-            TargetDirection.Y = (float)Math.Sin(angle);  // Y direction is calculated using sine of the angle.
+            Position.Target.X = Rand.NextFloat(width);
+            Position.Target.Y = Rand.NextFloat(height);
         }
 
         /// <summary>
@@ -73,7 +75,9 @@ namespace StarAnimation.Core
         /// </summary>
         public void RandomizeSpeed()
         {
-            Speed.Target = Speed.Base * (0.5f + (float)Rand.NextDouble());  // Randomize speed within a factor of the base speed.
+            // Randomize speed within a factor of the base speed.
+            Velocity.Target.X = Velocity.Base.X * (0.5f + (float)Rand.NextFloat());
+            Velocity.Target.Y = Velocity.Base.Y * (0.5f + (float)Rand.NextFloat());
         }
 
         /// <summary>
@@ -88,99 +92,114 @@ namespace StarAnimation.Core
         }
 
         /// <summary>
-        /// Moves the star based on its current direction and speed.
+        /// Directly moves the star based on its current direction and speed.
         /// </summary>
         public void Move()
         {
-            Position = new Vector2F(
-                Position.X += Direction.X * Speed.Current,
-                Position.Y += Direction.Y * Speed.Current
-            );
+            Position.Current += Velocity.Current;
         }
 
+        /// <summary>
+        /// Smoothly updates the star's position and velocity toward the target.
+        /// </summary>
         public void SmoothMoveUpdate()
         {
-            const float directionLerpFactor = 0.05f;  // The smaller the smoother
+            const float directionLerpFactor = 0.05f; // Smaller is smoother
             const float speedLerpFactor = 0.02f;
 
-            Direction.X = MathUtil.Lerp(Direction.X, TargetDirection.X, directionLerpFactor);
-            Direction.Y = MathUtil.Lerp(Direction.Y, TargetDirection.Y, directionLerpFactor);
-            Speed.Current = MathUtil.Lerp(Speed.Current, Speed.Target, speedLerpFactor);
+            // Calculate the direction vector from the current position to the target position
+            Vector2F delta = Position.Target - Position.Current;
 
-            // Normalize to prevent direction magnitude drift
-            float mag = (float)Math.Sqrt(Direction.X * Direction.X + Direction.Y * Direction.Y);
-            if (mag > 0.001f)
-            {
-                Direction.X /= mag;
-                Direction.Y /= mag;
-            }
+            // Calculate length and normalize direction
+            float distance = delta.Length();
+            if (distance < 0.001f)
+                return;  // No move if already too close
 
-            Position.X += Direction.X * Speed.Current;
-            Position.Y += Direction.Y * Speed.Current;
+            // Unit direction vector
+            Vector2F direction = delta.Normalize();
+
+            float targetSpeed = (Velocity.Target.X + Velocity.Target.Y) * 0.5f;
+            Vector2F targetVelocity = direction * targetSpeed;
+
+            // Slowly approaching the target speed
+            Velocity.Current = Vector2F.Lerp(Velocity.Current, targetVelocity, directionLerpFactor);
+
+            // Update Location
+            Position.Current += Velocity.Current;
         }
-    }
-    
-    /// <summary>
-    /// Represents a 2D vector with X and Y coordinates.
-    /// </summary>
-    public class Vector2F
-    {
-        public float X { get; set; }
-        public float Y { get; set; }
-
-        /// <summary>
-        /// Sets the X and Y using default values `(0f, 0f)`.
-        /// </summary>
-        public Vector2F()
-        {
-            X = 0f;
-            Y = 0f;
-        }
-
-        /// <summary>
-        /// Sets the X and Y using given values.
-        /// </summary>
-        public Vector2F(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public static Vector2F Zero => new Vector2F(0, 0);
-
-        public float Length => (float)Math.Sqrt(X * X + Y * Y);
-        public PointF ToPointF => new PointF(X, Y);
     }
 
     /// <summary>
-    /// Encapsulates speed-related values for a star.
+    /// Encapsulates the position-related values for a star.
     /// </summary>
-    public class StarSpeed
+    public class Position
     {
-        public float Base { get; set; }
-        public float Current { get; set; }
-        public float Target { get; set; }
+        /// <summary>
+        /// The current position of the star (X and Y components).
+        /// </summary>
+        public Vector2F Current { get; set; } = new Vector2F();
 
         /// <summary>
-        /// Sets the base, current, and target speeds using default values (all `0f`).
+        /// The target position of the star (X and Y components).
         /// </summary>
-        public StarSpeed()
+        public Vector2F Target { get; set; } = new Vector2F();
+    }
+
+    /// <summary>
+    /// Encapsulates the velocity-related values for a star.
+    /// </summary>
+    public class Velocity
+    {
+        /// <summary>
+        /// The base velocity of the star (X and Y components).
+        /// </summary>
+        public Vector2F Base { get; set; }
+
+        /// <summary>
+        /// The current velocity of the star (X and Y components).
+        /// </summary>
+        public Vector2F Current { get; set; }
+
+        /// <summary>
+        /// The target velocity of the star (X and Y components).
+        /// </summary>
+        public Vector2F Target { get; set; }
+
+        /// <summary>
+        /// Default constructor with all velocities set to (0, 0).
+        /// </summary>
+        public Velocity()
         {
-            Base = 0f;
-            Current = 0f;
-            Target = 0f;
+            Base = new Vector2F(0f, 0f);
+            Current = new Vector2F(0f, 0f);
+            Target = new Vector2F(0f, 0f);
         }
 
         /// <summary>
-        /// Sets the base, current, and target speeds using given values.
+        /// Constructor with a given initial velocity value.
         /// </summary>
-        public StarSpeed(float initialSpeed)
+        public Velocity(float initialSpeedX, float initialSpeedY)
         {
-            Base = initialSpeed;
-            Current = initialSpeed;
-            Target = initialSpeed;
+            Base = new Vector2F(initialSpeedX, initialSpeedY);
+            Current = new Vector2F(initialSpeedX, initialSpeedY);
+            Target = new Vector2F(initialSpeedX, initialSpeedY);
         }
+    }
 
+    /// <summary>
+    /// Encapsulates the acceleration-related values for a star.
+    /// </summary>
+    public class Acceleration
+    {
+        /// <summary>
+        /// The current acceleration of the star (X and Y components).
+        /// </summary>
+        public Vector2F Current { get; set; } = new Vector2F();
+
+        /// <summary>
+        /// The target acceleration of the star (X and Y components).
+        /// </summary>
+        public Vector2F Target { get; set; } = new Vector2F();
     }
 
     /// <summary>
@@ -191,7 +210,7 @@ namespace StarAnimation.Core
         public Color Base { get; set; } = Color.White;
         public Color Current { get; set; } = Color.White;
         public Color Target { get; set; } = Color.White;
-        public float LerpProgress { get; set; } = 0f;
+        public float LerpProgress { get; set; } = 0.0f;
 
         /// <summary>
         /// Sets the base, current, and target colors using RGB values.
@@ -209,23 +228,31 @@ namespace StarAnimation.Core
     }
     
     /// <summary>
-    /// Encapsulates colorshift effect related values for a star.
+    /// Encapsulates ColorShift effect related values for a star.
     /// </summary>
     public class ColorShiftEffect
     {
         public bool HasPhase { get; set; } = false;
-        public float StartTime { get; set; } = 0f;
-        public float Phase { get; set; } = 0f;
-        public float BiasDirection { get; set; } = 1f;
+        public float StartTime { get; set; } = 0.0f;
+        public float Phase { get; set; } = 0.0f;
+        public float BiasDirection { get; set; } = 1.0f;
     }
     
     /// <summary>
-    /// Encapsulates pulse effect related values for a star.
+    /// Encapsulates Pulse effect related values for a star.
     /// </summary>
     public class PulseEffect
     {
         public bool HasPhase { get; set; } = false;
-        public float Delay { get; set; } = 0f;
+        public float Delay { get; set; } = 0.0f;
         public int ShiningTimes { get; set; } = 0;
+    }
+    
+    /// <summary>
+    /// Encapsulates Twist effect related values for a star.
+    /// </summary>
+    public class TwistEffect
+    {
+        public float InitialAngle { get; set; } = 0.0f;
     }
 }

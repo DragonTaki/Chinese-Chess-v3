@@ -10,12 +10,15 @@
 using System;
 using System.Drawing;
 
+using SharedLib.RandomTable;
+
 namespace StarAnimation.Utils.Area
 {
     public class CircleAreaSelector : IAreaSelector
     {
         private readonly float minRadius;
         private float maxRadius;
+        private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
         public CircleAreaSelector(float minRadius, float maxRadius)
         {
@@ -47,9 +50,9 @@ namespace StarAnimation.Utils.Area
                 float effectiveRadius = Math.Min(minRadius, limitedRadius);
                 radius = (limitedRadius == effectiveRadius)
                     ? limitedRadius
-                    : MathUtil.GetRandomFloat(effectiveRadius, limitedRadius);
-                cx = MathUtil.GetRandomFloat(radius, canvasRadius - radius);
-                cy = MathUtil.GetRandomFloat(radius, canvasRadius - radius);
+                    : Rand.NextFloat(effectiveRadius, limitedRadius);
+                cx = Rand.NextFloat(radius, canvasRadius - radius);
+                cy = Rand.NextFloat(radius, canvasRadius - radius);
             }
 
             return new CircleAreaShape(new PointF(cx, cy), radius);

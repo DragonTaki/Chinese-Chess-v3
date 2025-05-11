@@ -12,7 +12,7 @@ using System.Drawing;
 
 using SharedLib.RandomTable;
 
-namespace StarAnimation.Utils
+namespace SharedLib.MathUtils
 {
     public static class MathUtil
     {
@@ -95,25 +95,11 @@ namespace StarAnimation.Utils
         {
             return from + (to - from) * t;
         }
-        
-        /// <summary>
-        /// Generates a random float between <paramref name="min"/> and <paramref name="max"/> using the given random generator.
-        /// </summary>
-        /// <param name="min">Minimum float value (inclusive).</param>
-        /// <param name="max">Maximum float value (exclusive).</param>
-        /// <param name="rand">Random instance used for generation.</param>
-        /// <returns>A random float between min and max.</returns>
-        /// <exception cref="ArgumentException">Thrown when min or max is invalid (e.g., min >= max).</exception>
-        public static float GetRandomFloat(float min, float max)
+        public static Vector2F Lerp(Vector2F from, Vector2F to, float t)
         {
-            if (min == max)
-                return min;
-
-            if (min > max)
-                throw new ArgumentException("Minimum must be less than maximum.");
-
-            // Adjust to ensure we handle the case where min is zero and max > 0
-            return (float)(GlobalRandom.Instance.NextFloat() * (max - min) + min);
+            float x = from.X + (to.X - from.X) * t;
+            float y = from.Y + (to.Y - from.Y) * t;
+            return new Vector2F(x, y);
         }
 
         public static Color LerpColor(Color from, Color to, float t)

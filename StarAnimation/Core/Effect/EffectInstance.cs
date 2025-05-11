@@ -14,6 +14,7 @@ using StarAnimation.Utils.Area;
 
 using SharedLib.RandomTable;
 using SharedLib.Timing;
+using SharedLib.MathUtils;
 
 namespace StarAnimation.Core.Effect
 {
@@ -46,7 +47,7 @@ namespace StarAnimation.Core.Effect
            CreateNewAffectedStars.Clear();
             foreach (var star in stars)
             {
-                if (Area.Contains(star.Position))
+                if (Area.Contains(star.Position.Current))
                     CreateNewAffectedStars.Add(star);
             }
             OnApplyTo(CreateNewAffectedStars);

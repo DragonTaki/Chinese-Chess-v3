@@ -11,8 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
+
+using SharedLib.MathUtils;
+using SharedLib.RandomTable;
 
 namespace StarAnimation.Core.Effect
 {
@@ -45,8 +47,8 @@ namespace StarAnimation.Core.Effect
 
             do
             {
-                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right);
-                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom);
+                float x = GlobalRandom.Instance.NextFloat(bounds.Left, bounds.Right);
+                float y = GlobalRandom.Instance.NextFloat(bounds.Top, bounds.Bottom);
                 center = new Vector2F(x, y);
             } while (!area.Contains(center) && --maxTries > 0);
 
@@ -68,7 +70,7 @@ namespace StarAnimation.Core.Effect
 
             foreach (var star in stars)
             {
-                bool inArea = Area.Contains(star.Position);
+                bool inArea = Area.Contains(star.Position.Current);
 
                 if (!inArea)
                 {

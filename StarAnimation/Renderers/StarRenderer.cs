@@ -75,7 +75,7 @@ namespace StarAnimation.Renderers
         /// </summary>
         public void Update()
         {
-            //UpdateStarPositions();
+            UpdateStarPositions();
             ReleaseStars();
             CleanUpAfterResize();
             UpdateEffects();
@@ -90,7 +90,7 @@ namespace StarAnimation.Renderers
             {
                 using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color.Current)))
                 {
-                    g.FillEllipse(brush, star.Position.X, star.Position.Y, star.Size, star.Size);
+                    g.FillEllipse(brush, star.Position.Current.X, star.Position.Current.Y, star.Size, star.Size);
                 }
             }
         }
@@ -103,13 +103,15 @@ namespace StarAnimation.Renderers
             foreach (var star in stars.ToArray())
             {
                 star.SmoothMoveUpdate();
-                if (star.Position.X < 0 || star.Position.Y < 0 || star.Position.X > width || star.Position.Y > height)
+                if (star.Position.Current.X < 0 || star.Position.Current.Y < 0 ||
+                    star.Position.Current.X > width || star.Position.Current.Y > height)
                 {
                     waitingPool.Enqueue(star);
                     stars.Remove(star);
-                    star.Position.X = -100;
-                    star.Position.Y = -100;
-                    star.Speed.Current = 0;
+                    star.Position.Current.X = -100.0f;
+                    star.Position.Current.Y = -100.0f;
+                    star.Velocity.Current.X = 0.0f;
+                    star.Velocity.Current.Y = 0.0f;
                 }
             }
         }
@@ -126,9 +128,10 @@ namespace StarAnimation.Renderers
                 if (waitingPool.Count > 0)
                 {
                     Star star = waitingPool.Dequeue();
-                    star.Position.X = Rand.NextInt(width);
-                    star.Position.Y = Rand.NextInt(height);
-                    star.Speed.Current = star.Speed.Base * (0.5f + Rand.NextFloat());
+                    star.Position.Current.X = Rand.NextInt(width);
+                    star.Position.Current.Y = Rand.NextInt(height);
+                    star.Velocity.Current.X = star.Velocity.Base.X * (0.5f + Rand.NextFloat());
+                    star.Velocity.Current.Y = star.Velocity.Base.Y * (0.5f + Rand.NextFloat());
                     stars.Add(star);
                 }
             }
@@ -152,7 +155,7 @@ namespace StarAnimation.Renderers
         {
             if (pendingShrinkCleanup && (DateTime.Now - lastResizeTime).TotalSeconds > ResizeCleanupDelaySeconds)
             {
-                stars.RemoveAll(star => star.Position.X > width || star.Position.Y > height);
+                stars.RemoveAll(star => star.Position.Current.X > width || star.Position.Current.Y > height);
                 pendingShrinkCleanup = false;
             }
         }
@@ -162,13 +165,6 @@ namespace StarAnimation.Renderers
         /// </summary>
         private void UpdateEffects()
         {
-            if (--directionChangeCountdown <= 0)
-            {
-                foreach (var star in stars)
-                    star.RandomizeDirection();
-                directionChangeCountdown = Rand.NextInt(300, 800);
-            }
-
             if (false && --speedChangeCountdown <= 0)
             {
                 foreach (var star in stars)

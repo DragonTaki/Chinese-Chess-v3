@@ -10,9 +10,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SharedLib.RandomTable;
-using StarAnimation.Utils;
+
 using StarAnimation.Utils.Area;
+
+using SharedLib.MathUtils;
+using SharedLib.RandomTable;
 
 namespace StarAnimation.Core.Effect
 {
@@ -54,8 +56,8 @@ namespace StarAnimation.Core.Effect
 
             do
             {
-                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right);
-                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom);
+                float x = GlobalRandom.Instance.NextFloat(bounds.Left, bounds.Right);
+                float y = GlobalRandom.Instance.NextFloat(bounds.Top, bounds.Bottom);
                 center = new Vector2F(x, y);
             } while (!area.Contains(center) && --maxTries > 0);
 
@@ -72,8 +74,8 @@ namespace StarAnimation.Core.Effect
         }
         private void InitializeStarInfo(Star star)
         {
-            float dx = star.Position.X - Center.X;
-            float dy = star.Position.Y - Center.Y;
+            float dx = star.Position.Current.X - Center.X;
+            float dy = star.Position.Current.Y - Center.Y;
 
             starInfos.Add(new StarInfo
             {
@@ -89,7 +91,7 @@ namespace StarAnimation.Core.Effect
             
             foreach (var star in stars)
             {
-                if (Area.Contains(star.Position))
+                if (Area.Contains(star.Position.Current))
                 {
                     if (Rand.NextDouble() < EffectAppliedChance)
                     {
@@ -109,10 +111,10 @@ namespace StarAnimation.Core.Effect
 
                 foreach (var star in stars)
                 {
-                    if (Area.Contains(star.Position))
+                    if (Area.Contains(star.Position.Current))
                     {
-                        float dx = star.Position.X - Center.X;
-                        float dy = star.Position.Y - Center.Y;
+                        float dx = star.Position.Current.X - Center.X;
+                        float dy = star.Position.Current.Y - Center.Y;
                         float distSq = dx * dx + dy * dy;
 
                         if (distSq < closestDistSq)
@@ -141,18 +143,19 @@ namespace StarAnimation.Core.Effect
         protected override void OnUpdate(float normalizedTime)
         {
             float elapsedTime = normalizedTime * Duration;
-            Console.WriteLine($"elapsedTime: {elapsedTime}, normalizedTime: {normalizedTime}, Duration: {Duration}");
-            // Calculate the twisting angle offset based on normalizedTime (0~1),
-            // where the offset smoothly follows a sine wave pattern.
-            // Use a smooth sine wave curve and limit the maximum twist angle
-            float angleOffset = Direction * (float)Math.Sin(normalizedTime * Math.PI) * MaxAngle;
 
-            foreach (var info in starInfos)
+            float speedFactor = 1.0f - Math.Abs(2 * normalizedTime - 1); // Speed ramps down as we reach the middle and back
+
+            foreach (var star in affectedStars)
             {
-                float newAngle = info.InitialAngle + angleOffset;
+                // Update position based on velocity, considering current angle (info.InitialAngle)
+                float angle = star.Twist.InitialAngle + Direction * (float)Math.Sin(normalizedTime * Math.PI) * MaxAngle;
 
-                info.Star.Position.X = Center.X + info.Distance * (float)Math.Cos(newAngle);
-                info.Star.Position.Y = Center.Y + info.Distance * (float)Math.Sin(newAngle);
+                star.Velocity.Target = star.Velocity.Base * speedFactor;
+                star.Velocity.Current = MathUtil.Lerp(star.Velocity.Current, star.Velocity.Target, 0.1f);
+
+                star.Position.Current.X += star.Velocity.Current.X * (float)Math.Cos(angle);
+                star.Position.Current.Y += star.Velocity.Current.Y * (float)Math.Sin(angle);
             }
         }
         

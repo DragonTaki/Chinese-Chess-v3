@@ -9,8 +9,9 @@
 
 using System.Collections.Generic;
 
-using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
+
+using SharedLib.MathUtils;
 
 namespace StarAnimation.Core.Effect
 {
@@ -28,8 +29,8 @@ namespace StarAnimation.Core.Effect
         {
             foreach (var star in affectedStars)
             {
-                star.Position.X = MathUtil.Lerp(star.Position.X, Center.X, t);
-                star.Position.Y = MathUtil.Lerp(star.Position.Y, Center.Y, t);
+                star.Position.Current.X = MathUtil.Lerp(star.Position.Current.X, Center.X, t);
+                star.Position.Current.Y = MathUtil.Lerp(star.Position.Current.Y, Center.Y, t);
             }
         }
         protected override void Reset()

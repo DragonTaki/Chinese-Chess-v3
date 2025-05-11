@@ -78,7 +78,7 @@ namespace StarAnimation.Controllers
                     {
                         EffectType.ColorShift => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
                         EffectType.Pulse => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
-                        EffectType.Twist => new CircleAreaSelector(1920f, 1920f),
+                        EffectType.Twist => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f), //CircleAreaSelector(1920f, 1920f),
                         _ => throw new NotSupportedException($"No area selector for effect type: {type}")
                     },
                     
@@ -112,8 +112,9 @@ namespace StarAnimation.Controllers
                     TwistParameter twist => (twist.TriggerChance, Rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
                     _ => (1.0f, 10.0f)  // Default values for unknown effect types
                 };
+                Console.WriteLine($"entry: {entry.Name}, triggerChance: {triggerChance}");
 
-                if (Rand.NextDouble() < triggerChance)
+                if (Rand.NextFloat() < triggerChance)
                 {
                     var area = entry.AreaSelector.GetArea(canvasWidth, canvasHeight);
                     var instance = entry.CreateInstance(area, config);

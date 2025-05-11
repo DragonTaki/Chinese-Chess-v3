@@ -7,8 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
+
+using SharedLib.MathUtils;
 
 namespace StarAnimation.Core.Effect
 {

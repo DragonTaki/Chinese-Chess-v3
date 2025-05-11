@@ -8,7 +8,8 @@
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
-using StarAnimation.Core;
+
+using SharedLib.MathUtils;
 
 namespace StarAnimation.Utils.Area
 {

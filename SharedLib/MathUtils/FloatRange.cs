@@ -7,9 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using static StarAnimation.Utils.MathUtil;
+using SharedLib.RandomTable;
 
-namespace StarAnimation.Utils
+namespace SharedLib.MathUtils
 {
     /// <summary>
     /// Represents a float range with inclusive minimum and maximum values.
@@ -30,7 +30,7 @@ namespace StarAnimation.Utils
         /// </summary>
         public float GetRandom()
         {
-            return GetRandomFloat(Min, Max);
+            return GlobalRandom.Instance.NextFloat(Min, Max);
         }
     }
 }

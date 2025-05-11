@@ -7,9 +7,10 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using SharedLib.RandomTable;
-using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
+
+using SharedLib.MathUtils;
+using SharedLib.RandomTable;
 
 namespace StarAnimation.Core.Effect
 {

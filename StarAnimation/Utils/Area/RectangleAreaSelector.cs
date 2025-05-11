@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+
 using SharedLib.RandomTable;
 
 namespace StarAnimation.Utils.Area
@@ -49,8 +50,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinWidth = Math.Min(minWidth, limitedMaxWidth);
                 width = (limitedMaxWidth == effectiveMinWidth)
                     ? limitedMaxWidth
-                    : MathUtil.GetRandomFloat(effectiveMinWidth, limitedMaxWidth);
-                x = MathUtil.GetRandomFloat(0, canvasWidth - width);
+                    : Rand.NextFloat(effectiveMinWidth, limitedMaxWidth);
+                x = Rand.NextFloat(0, canvasWidth - width);
             }
 
             // Handle height
@@ -65,8 +66,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinHeight = Math.Min(minHeight, limitedMaxHeight);
                 height = (limitedMaxHeight == effectiveMinHeight)
                     ? limitedMaxHeight
-                    : MathUtil.GetRandomFloat(effectiveMinHeight, limitedMaxHeight);
-                y = MathUtil.GetRandomFloat(0, canvasHeight - height);
+                    : Rand.NextFloat(effectiveMinHeight, limitedMaxHeight);
+                y = Rand.NextFloat(0, canvasHeight - height);
             }
 
             return new RectangleAreaShape(new RectangleF(x, y, width, height));
