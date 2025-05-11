@@ -7,7 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 

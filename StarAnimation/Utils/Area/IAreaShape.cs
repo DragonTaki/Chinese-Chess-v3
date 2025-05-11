@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
+using StarAnimation.Core;
 
 namespace StarAnimation.Utils.Area
 {
@@ -21,6 +22,6 @@ namespace StarAnimation.Utils.Area
         /// <summary>
         /// Checks whether a given point is inside the area.
         /// </summary>
-        bool Contains(PointF p);
+        bool Contains(Vector2F p);
     }
 }

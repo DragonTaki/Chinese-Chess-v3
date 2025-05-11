@@ -10,6 +10,8 @@
 using System;
 using System.Drawing;
 
+using SharedLib.RandomTable;
+
 namespace StarAnimation.Utils
 {
     public static class MathUtil
@@ -102,12 +104,8 @@ namespace StarAnimation.Utils
         /// <param name="rand">Random instance used for generation.</param>
         /// <returns>A random float between min and max.</returns>
         /// <exception cref="ArgumentException">Thrown when min or max is invalid (e.g., min >= max).</exception>
-        public static float GetRandomFloat(float min, float max, Random rand)
+        public static float GetRandomFloat(float min, float max)
         {
-            //Console.WriteLine($"{min}, {max}");
-            if (rand == null)
-                throw new ArgumentNullException(nameof(rand), "Random generator cannot be null.");
-
             if (min == max)
                 return min;
 
@@ -115,7 +113,7 @@ namespace StarAnimation.Utils
                 throw new ArgumentException("Minimum must be less than maximum.");
 
             // Adjust to ensure we handle the case where min is zero and max > 0
-            return (float)(rand.NextDouble() * (max - min) + min);
+            return (float)(GlobalRandom.Instance.NextFloat() * (max - min) + min);
         }
 
         public static Color LerpColor(Color from, Color to, float t)

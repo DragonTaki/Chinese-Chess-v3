@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-
+using SharedLib.RandomTable;
 using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
 
@@ -21,64 +21,79 @@ namespace StarAnimation.Core.Effect
     /// </summary>
     public class TwistInstance : EffectInstance
     {
-        public PointF Center { get; private set; }
-        public IAreaShape Area { get; private set; }
-        public float Duration { get; private set; }
-        private Random rand;
+        private class StarInfo
+        {
+            public Star Star;
+            public float InitialAngle;
+            public float Distance;
+        }
+        private readonly List<StarInfo> starInfos = new();
         public float Strength { get; private set; }
         public float Radius { get; private set; }
         public float Direction { get; private set; }
-        public float EffectAppliedChance { get; private set; }
         private List<Star> affectedStars = new();
+        private const float MaxAngle = 2f * (float)Math.PI;
 
-        public TwistInstance(PointF center, IAreaShape area, float duration, Random rand, float strength, float radius, float direction, float effectAppliedChance)
-            : base(center, area, duration, rand)
+        public TwistInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance, float strength, float radius, float direction)
+            : base(center, area, duration, effectAppliedChance)
         {
             Center = center;
             Area = area;
             Duration = duration;
-            this.rand = rand;
+            EffectAppliedChance = effectAppliedChance;
             Strength = strength;
             Radius = radius;
             Direction = direction;
-            EffectAppliedChance = effectAppliedChance;
         }
 
-        public static TwistInstance CreateRandom(IAreaShape area, TwistParameterRange config, Random rand)
+        public static TwistInstance CreateRandom(IAreaShape area, TwistParameter config)
         {
             RectangleF bounds = area.BoundingBox;
-            PointF center;
+            Vector2F center;
             int maxTries = 100;
 
             do
             {
-                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right, rand);
-                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom, rand);
-                center = new PointF(x, y);
+                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right);
+                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom);
+                center = new Vector2F(x, y);
             } while (!area.Contains(center) && --maxTries > 0);
 
             // Set effect center to area center if tries all failed
             if (maxTries <= 0)
-                center = new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+                center = new Vector2F(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 
-            float duration = config.DurationRange.GetRandom(rand);
-            float radius = config.RadiusRange.GetRandom(rand);
-            float strength = config.StrengthRange.GetRandom(rand);
-            float direction = rand.NextDouble() < config.ClockwiseChance ? 1f : -1f;
+            float duration = config.DurationRange.GetRandom();
+            float radius = config.RadiusRange.GetRandom();
+            float strength = config.StrengthRange.GetRandom();
+            float direction = GlobalRandom.Instance.NextFloat() < config.ClockwiseChance ? 1f : -1f;
 
-            return new TwistInstance(center, area, duration, rand, strength, radius, direction, config.EffectAppliedChance);
+            return new TwistInstance(center, area, duration, config.EffectAppliedChance, strength, radius, direction);
         }
+        private void InitializeStarInfo(Star star)
+        {
+            float dx = star.Position.X - Center.X;
+            float dy = star.Position.Y - Center.Y;
 
+            starInfos.Add(new StarInfo
+            {
+                Star = star,
+                InitialAngle = (float)Math.Atan2(dy, dx),
+                Distance = (float)Math.Sqrt(dx * dx + dy * dy)
+            });
+        }
         protected override void OnApplyTo(List<Star> stars)
         {
             affectedStars.Clear();
+            starInfos.Clear();
             
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position))
                 {
-                    if (rand.NextDouble() < EffectAppliedChance)
+                    if (Rand.NextDouble() < EffectAppliedChance)
                     {
+                        InitializeStarInfo(star);
                         affectedStars.Add(star);
                     }
                 }
@@ -96,8 +111,8 @@ namespace StarAnimation.Core.Effect
                 {
                     if (Area.Contains(star.Position))
                     {
-                        float dx = star.X - Center.X;
-                        float dy = star.Y - Center.Y;
+                        float dx = star.Position.X - Center.X;
+                        float dy = star.Position.Y - Center.Y;
                         float distSq = dx * dx + dy * dy;
 
                         if (distSq < closestDistSq)
@@ -110,29 +125,34 @@ namespace StarAnimation.Core.Effect
 
                 if (closest != null)
                 {
+                    InitializeStarInfo(closest);
                     affectedStars.Add(closest);
                 }
             }
         }
 
-        protected override void OnUpdate(float deltaTimeInSeconds)
+        /// <summary>
+        /// Updates the positions of affected stars based on a twisting effect using normalized time.
+        /// Should be called every frame.
+        /// </summary>
+        /// <param name="normalizedTime">
+        /// A float value between 0 and 1 representing the progression of the effect's lifecycle.
+        /// </param>
+        protected override void OnUpdate(float normalizedTime)
         {
-            float angleOffset = Direction * (float)Math.Sin(deltaTimeInSeconds * Math.PI) * Strength * 2f * (float)Math.PI;
+            float elapsedTime = normalizedTime * Duration;
+            Console.WriteLine($"elapsedTime: {elapsedTime}, normalizedTime: {normalizedTime}, Duration: {Duration}");
+            // Calculate the twisting angle offset based on normalizedTime (0~1),
+            // where the offset smoothly follows a sine wave pattern.
+            // Use a smooth sine wave curve and limit the maximum twist angle
+            float angleOffset = Direction * (float)Math.Sin(normalizedTime * Math.PI) * MaxAngle;
 
-            foreach (var star in affectedStars)
+            foreach (var info in starInfos)
             {
-                float dx = star.X - Center.X;
-                float dy = star.Y - Center.Y;
-                float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+                float newAngle = info.InitialAngle + angleOffset;
 
-                if (distance < Radius)
-                {
-                    float angle = (float)Math.Atan2(dy, dx);
-                    float newAngle = angle + angleOffset;
-
-                    star.X = Center.X + distance * (float)Math.Cos(newAngle);
-                    star.Y = Center.Y + distance * (float)Math.Sin(newAngle);
-                }
+                info.Star.Position.X = Center.X + info.Distance * (float)Math.Cos(newAngle);
+                info.Star.Position.Y = Center.Y + info.Distance * (float)Math.Sin(newAngle);
             }
         }
         

@@ -7,7 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-namespace Chinese_Chess_v3.Configs
+namespace SharedLib.Timing
 {
     public static class TimerSettings
     {

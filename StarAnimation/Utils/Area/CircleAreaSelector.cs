@@ -23,7 +23,7 @@ namespace StarAnimation.Utils.Area
             this.maxRadius = maxRadius;
         }
 
-        public IAreaShape GetArea(float canvasWidth, float canvasHeight, Random rand)
+        public IAreaShape GetArea(float canvasWidth, float canvasHeight)
         {
             if (canvasWidth <= 0 || canvasHeight <= 0)
                 throw new ArgumentException("Canvas size must be positive.");
@@ -47,9 +47,9 @@ namespace StarAnimation.Utils.Area
                 float effectiveRadius = Math.Min(minRadius, limitedRadius);
                 radius = (limitedRadius == effectiveRadius)
                     ? limitedRadius
-                    : MathUtil.GetRandomFloat(effectiveRadius, limitedRadius, rand);
-                cx = MathUtil.GetRandomFloat(radius, canvasRadius - radius, rand);
-                cy = MathUtil.GetRandomFloat(radius, canvasRadius - radius, rand);
+                    : MathUtil.GetRandomFloat(effectiveRadius, limitedRadius);
+                cx = MathUtil.GetRandomFloat(radius, canvasRadius - radius);
+                cy = MathUtil.GetRandomFloat(radius, canvasRadius - radius);
             }
 
             return new CircleAreaShape(new PointF(cx, cy), radius);

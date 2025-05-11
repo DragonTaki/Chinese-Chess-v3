@@ -7,59 +7,62 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+
 using StarAnimation.Utils.Area;
+
+using SharedLib.RandomTable;
+using SharedLib.Timing;
 
 namespace StarAnimation.Core.Effect
 {
     public abstract class EffectInstance : IEffectInstance
     {
-        public PointF Center { get; protected set; }
+        public Vector2F Center { get; protected set; }
         public IAreaShape Area { get; protected set; }
         public float Duration { get; protected set; }
-        protected Random rand;
+        public float EffectAppliedChance { get; protected set; }
         public float TimeProgress { get; protected set; }
+        protected IRandomProvider Rand = GlobalRandom.Instance;
 
-        protected List<Star> affectedStars = new();
-        protected IReadOnlyList<Star> CreateNewAffectedStars => affectedStars;
+        protected List<Star> CreateNewAffectedStars = new();
         private float MaxEndTime => CreateNewAffectedStars.Count == 0
             ? Duration
-            : CreateNewAffectedStars.Max(s => s.PulseDelay + Duration);
+            : CreateNewAffectedStars.Max(star => star.Pulse.Delay + Duration);
         public bool IsActive => TimeProgress < MaxEndTime;
 
-        public EffectInstance(PointF center, IAreaShape area, float duration, Random rand)
+        public EffectInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance)
         {
             Center = center;
             Area = area;
             Duration = duration;
-            this.rand = rand;
+            EffectAppliedChance = effectAppliedChance;
             TimeProgress = 0f;
         }
 
         public virtual void ApplyTo(List<Star> stars)
         {
-           affectedStars.Clear();
+           CreateNewAffectedStars.Clear();
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position))
-                    affectedStars.Add(star);
+                    CreateNewAffectedStars.Add(star);
             }
-            OnApplyTo(affectedStars);
+            OnApplyTo(CreateNewAffectedStars);
         }
         protected abstract void OnApplyTo(List<Star> stars);
 
-        public void Update(float deltaTimeInSeconds)
+        public void Update()
         {
             if (!IsActive) return;
-            TimeProgress += deltaTimeInSeconds;
+            TimeProgress += GlobalTime.Timer.DeltaTimeInSeconds;
             OnUpdate(TimeProgress / Duration);  // normalized time (0~1)
-            
+
+            // If over animation time, reset affectedStars
             if (TimeProgress >= MaxEndTime)
             {
-                Reset(); // Reset affectedStars
+                Reset();
             }
         }
 

@@ -25,47 +25,45 @@ namespace StarAnimation.Core.Effect
     {
         public float Amplitude { get; private set; } = 0.5f;
         public float MidOpacity { get; private set; } = 0.5f;
-        public float EffectAppliedChance { get; private set; }
         private List<Star> affectedStars;
 
         /// <summary>
         /// Constructs the Pulse effect with optional configuration parameters.
         /// </summary>
-        public PulseInstance(PointF center, IAreaShape area, float duration, Random rand, float amplitude, float midOpacity, float effectAppliedChance)
-            : base(center, area, duration, rand)
+        public PulseInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance, float amplitude, float midOpacity)
+            : base(center, area, duration, effectAppliedChance)
         {
             Center = center;
             Area = area;
             Duration = duration;
-            this.rand = rand;
+            EffectAppliedChance = effectAppliedChance;
             Amplitude = amplitude;
             MidOpacity = midOpacity;
-            EffectAppliedChance = effectAppliedChance;
             affectedStars = new List<Star>();
         }
 
-        public static PulseInstance CreateRandom(IAreaShape area, PulseParameterRange config, Random rand)
+        public static PulseInstance CreateRandom(IAreaShape area, PulseParameter config)
         {
             RectangleF bounds = area.BoundingBox;
-            PointF center;
+            Vector2F center;
             int maxTries = 100;
 
             do
             {
-                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right, rand);
-                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom, rand);
-                center = new PointF(x, y);
+                float x = MathUtil.GetRandomFloat(bounds.Left, bounds.Right);
+                float y = MathUtil.GetRandomFloat(bounds.Top, bounds.Bottom);
+                center = new Vector2F(x, y);
             } while (!area.Contains(center) && --maxTries > 0);
 
             // Set effect center to area center if tries all failed
             if (maxTries <= 0)
-                center = new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+                center = new Vector2F(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 
-            float duration = config.DurationRange.GetRandom(rand);
-            float amplitude = config.AmplitudeRange.GetRandom(rand);
-            float midOpacity = config.MidOpacityRange.GetRandom(rand);
+            float duration = config.DurationRange.GetRandom();
+            float amplitude = config.AmplitudeRange.GetRandom();
+            float midOpacity = config.MidOpacityRange.GetRandom();
 
-            return new PulseInstance(center, area, duration, rand, amplitude, midOpacity, config.EffectAppliedChance);
+            return new PulseInstance(center, area, duration, config.EffectAppliedChance, amplitude, midOpacity);
         }
 
         /// <summary>
@@ -77,13 +75,13 @@ namespace StarAnimation.Core.Effect
 
             foreach (var star in stars)
             {
-                if (Area.Contains(star.Position) && !star.HasPulsePhase)
+                if (Area.Contains(star.Position) && !star.Pulse.HasPhase)
                 {
-                    if (rand.NextDouble() < EffectAppliedChance)
+                    if (Rand.NextFloat() < EffectAppliedChance)
                     {
-                        star.PulseDelay = (float)(rand.NextDouble() * 2.0);
-                        star.HasPulsePhase = true;
-                        star.ShiningTimes = rand.Next(1, 4);
+                        star.Pulse.Delay = (float)(Rand.NextDouble() * 2.0);
+                        star.Pulse.HasPhase = true;
+                        star.Pulse.ShiningTimes = Rand.NextInt(1, 4);
                         affectedStars.Add(star);
                     }
                 }
@@ -93,6 +91,8 @@ namespace StarAnimation.Core.Effect
         /// <summary>
         /// Updates the opacity of stars based on sinusoidal wave with start delay.
         /// Should be called every frame.
+        /// <param name="normalizedTime">
+        /// A float value between 0 and 1 representing the progression of the effect's lifecycle.
         /// </summary>
         protected override void OnUpdate(float normalizedTime)
         {
@@ -107,19 +107,19 @@ namespace StarAnimation.Core.Effect
             {
                 var star = affectedStars[i];
 
-                if (!star.HasPulsePhase) continue;
-                if (elapsedTime - star.PulseDelay > Duration)
+                if (!star.Pulse.HasPhase) continue;
+                if (elapsedTime - star.Pulse.Delay > Duration)
                 {
-                    star.HasPulsePhase = false;
+                    star.Pulse.HasPhase = false;
                     star.Opacity = 1f;
                     affectedStars.RemoveAt(i);
                     continue;
                 }
 
-                float timeSinceStart = elapsedTime - star.PulseDelay;
+                float timeSinceStart = elapsedTime - star.Pulse.Delay;
                 if (timeSinceStart < 0f) continue;
 
-                float wave = (float)Math.Sin(2 * Math.PI * star.ShiningTimes * timeSinceStart / Duration);
+                float wave = (float)Math.Sin(2 * Math.PI * star.Pulse.ShiningTimes * timeSinceStart / Duration);
                 float opacity = MidOpacity + Amplitude * wave;
                 star.Opacity = Math.Clamp(opacity, 0f, 1f);
             }
@@ -128,7 +128,7 @@ namespace StarAnimation.Core.Effect
         {
             foreach (var star in affectedStars)
             {
-                star.HasPulsePhase = false;
+                star.Pulse.HasPhase = false;
                 star.Opacity = 1f;
             }
 

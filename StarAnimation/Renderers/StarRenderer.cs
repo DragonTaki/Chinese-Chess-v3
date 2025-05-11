@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using StarAnimation.Configs;
-using StarAnimation.Controllers;
 using StarAnimation.Core;
-using StarAnimation.Core.Effect;
+
+using SharedLib.RandomTable;
 
 namespace StarAnimation.Renderers
 {
@@ -23,7 +23,7 @@ namespace StarAnimation.Renderers
         private int width;
         private int height;
         private int starCount;
-        private Random rand;
+        IRandomProvider Rand = GlobalRandom.Instance;
 
         private List<Star> stars = new List<Star>();
         private Queue<Star> waitingPool = new Queue<Star>();
@@ -39,11 +39,10 @@ namespace StarAnimation.Renderers
         private int directionChangeCountdown;
         private int speedChangeCountdown;
 
-        public StarRenderer(int width, int height, Random rand, int starCount = 150)
+        public StarRenderer(int width, int height, int starCount = 150)
         {
             this.width = width;
             this.height = height;
-            this.rand = rand;
             this.starCount = starCount;
 
             minVisibleCount = starCount - Settings.StarCountRange;
@@ -59,7 +58,7 @@ namespace StarAnimation.Renderers
 
             for (int i = 0; i < starCount; i++)
             {
-                stars.Add(new Star(width, height, rand));
+                stars.Add(new Star(width, height));
             }
 
             InitializeCounters();
@@ -67,8 +66,8 @@ namespace StarAnimation.Renderers
 
         private void InitializeCounters()
         {
-            directionChangeCountdown = rand.Next(300, 800);
-            speedChangeCountdown = rand.Next(100, 300);
+            directionChangeCountdown = Rand.NextInt(300, 800);
+            speedChangeCountdown = Rand.NextInt(100, 300);
         }
 
         /// <summary>
@@ -89,9 +88,9 @@ namespace StarAnimation.Renderers
         {
             foreach (var star in stars)
             {
-                using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.CurrentColor)))
+                using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color.Current)))
                 {
-                    g.FillEllipse(brush, star.X, star.Y, star.Size, star.Size);
+                    g.FillEllipse(brush, star.Position.X, star.Position.Y, star.Size, star.Size);
                 }
             }
         }
@@ -101,16 +100,16 @@ namespace StarAnimation.Renderers
         /// </summary>
         private void UpdateStarPositions()
         {
-            foreach (var s in stars.ToArray())
+            foreach (var star in stars.ToArray())
             {
-                s.SmoothMoveUpdate();
-                if (s.X < 0 || s.Y < 0 || s.X > width || s.Y > height)
+                star.SmoothMoveUpdate();
+                if (star.Position.X < 0 || star.Position.Y < 0 || star.Position.X > width || star.Position.Y > height)
                 {
-                    waitingPool.Enqueue(s);
-                    stars.Remove(s);
-                    s.X = -100;
-                    s.Y = -100;
-                    s.Speed = 0;
+                    waitingPool.Enqueue(star);
+                    stars.Remove(star);
+                    star.Position.X = -100;
+                    star.Position.Y = -100;
+                    star.Speed.Current = 0;
                 }
             }
         }
@@ -126,11 +125,11 @@ namespace StarAnimation.Renderers
             {
                 if (waitingPool.Count > 0)
                 {
-                    Star s = waitingPool.Dequeue();
-                    s.X = rand.Next(width);
-                    s.Y = rand.Next(height);
-                    s.Speed = s.BaseSpeed * (0.5f + (float)rand.NextDouble());
-                    stars.Add(s);
+                    Star star = waitingPool.Dequeue();
+                    star.Position.X = Rand.NextInt(width);
+                    star.Position.Y = Rand.NextInt(height);
+                    star.Speed.Current = star.Speed.Base * (0.5f + Rand.NextFloat());
+                    stars.Add(star);
                 }
             }
         }
@@ -153,28 +152,28 @@ namespace StarAnimation.Renderers
         {
             if (pendingShrinkCleanup && (DateTime.Now - lastResizeTime).TotalSeconds > ResizeCleanupDelaySeconds)
             {
-                stars.RemoveAll(s => s.X > width || s.Y > height);
+                stars.RemoveAll(star => star.Position.X > width || star.Position.Y > height);
                 pendingShrinkCleanup = false;
             }
         }
 
         /// <summary>
-        /// Handles all active effects (twist, pulse, color shift).
+        /// Handles normal effects (direction and speed).
         /// </summary>
         private void UpdateEffects()
         {
             if (--directionChangeCountdown <= 0)
             {
                 foreach (var star in stars)
-                    star.RandomizeDirection(rand);
-                directionChangeCountdown = rand.Next(300, 800);
+                    star.RandomizeDirection();
+                directionChangeCountdown = Rand.NextInt(300, 800);
             }
 
             if (false && --speedChangeCountdown <= 0)
             {
                 foreach (var star in stars)
-                    star.RandomizeSpeed(rand);
-                speedChangeCountdown = rand.Next(100, 300);
+                    star.RandomizeSpeed();
+                speedChangeCountdown = Rand.NextInt(100, 300);
             }
         }
 
@@ -191,7 +190,7 @@ namespace StarAnimation.Renderers
             {
                 int added = (int)((newWidth * newHeight - width * height) / (1920f * 1080f) * starCount);
                 for (int i = 0; i < added; i++)
-                    stars.Add(new Star(newWidth, newHeight, rand));
+                    stars.Add(new Star(newWidth, newHeight));
             }
             else
             {
@@ -214,13 +213,13 @@ namespace StarAnimation.Renderers
         /// [DEPRECATED] Replaced by Gaussian-based dynamic control using ReleaseStars()
         private void AdjustStarCount()
         {
-            if (stars.Count < maxVisibleCount && rand.NextDouble() < 0.2)
+            if (stars.Count < maxVisibleCount && Rand.NextDouble() < 0.2)
             {
-                stars.Add(new Star(width, height, rand));
+                stars.Add(new Star(width, height));
             }
-            else if (stars.Count > minVisibleCount && rand.NextDouble() < 0.1)
+            else if (stars.Count > minVisibleCount && Rand.NextDouble() < 0.1)
             {
-                stars.RemoveAt(rand.Next(stars.Count));
+                stars.RemoveAt(Rand.NextInt(stars.Count));
             }
         }
     }

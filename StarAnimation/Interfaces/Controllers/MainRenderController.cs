@@ -7,11 +7,12 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
-using System.Collections.Generic;
 
 using StarAnimation.Renderers;
+
+using SharedLib.RandomTable;
+using SharedLib.Timing;
 
 namespace StarAnimation.Controllers
 {
@@ -36,9 +37,14 @@ namespace StarAnimation.Controllers
         private readonly BackgroundRenderer backgroundRenderer;
 
         /// <summary>
+        /// Star animation timer.
+        /// </summary>
+        private readonly ITimerProvider timer;
+
+        /// <summary>
         /// Shared random instance for consistent visual randomness.
         /// </summary>
-        private readonly Random rand;
+        private readonly RandomTable rand;
 
         /// <summary>
         /// Initializes the main render controller and its internal components.
@@ -46,23 +52,27 @@ namespace StarAnimation.Controllers
         /// <param name="rand">Random number generator used for effects and randomness.</param>
         /// <param name="width">Width of the rendering canvas.</param>
         /// <param name="height">Height of the rendering canvas.</param>
-        public MainRenderController(int width, int height, Random rand = null)
+        public MainRenderController(int width, int height, ITimerProvider timerProvider, RandomTable GlobalRandomTable)
         {
-            this.rand = rand ?? new Random();
+            this.rand = GlobalRandomTable;
 
             // Initialize all renderers and controllers
-            starRenderer = new StarRenderer(width, height, this.rand);
-            effectController = new StarEffectController(width, height, this.rand);
+            starRenderer = new StarRenderer(width, height);
+            effectController = new StarEffectController(width, height);
             backgroundRenderer = new BackgroundRenderer(width, height);
+
+            // Initialize timer
+            timer = timerProvider;
+            timer.OnAnimationFrame += Update;
         }
 
         /// <summary>
         /// Updates the state of all rendering components.
         /// </summary>
-        public void Update(float deltaTimeInSeconds)
+        public void Update()
         {
             starRenderer.Update();
-            effectController.Update(starRenderer.GetStars(), null, deltaTimeInSeconds); // Optional: pass Graphics if needed for region logic
+            effectController.Update(starRenderer.GetStars(), null); // Optional: pass Graphics if needed for region logic
         }
 
         /// <summary>

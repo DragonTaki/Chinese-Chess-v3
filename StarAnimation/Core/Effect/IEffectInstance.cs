@@ -14,7 +14,7 @@ namespace StarAnimation.Core.Effect
     public interface IEffectInstance
     {
         bool IsActive { get; }
-        void Update(float deltaTimeInSeconds);
+        void Update();
         void ApplyTo(List<Star> stars);
     }
 }

@@ -8,27 +8,30 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Core;
-using Chinese_Chess_v3.Core.Logging;
-using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Interface.Panels;
 using Chinese_Chess_v3.Interface.Sidebar;
 using Chinese_Chess_v3.Utils;
 using Chinese_Chess_v3.Interface.Renderers;
 using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Configs.Sidebar;
-using System.Collections.Generic;
-using StarAnimation.Renderers;
+
 using StarAnimation.Controllers;
-using System.Diagnostics;
+
+using SharedLib.RandomTable;
+using SharedLib.Timing;
 
 namespace Chinese_Chess_v3.Interface
 {
     public class MainForm : Form
     {
+        private readonly TimerManager timerManager = new TimerManager();
+        public static RandomTable GlobalRandomTable;
         private MainRenderController starAnimation;
         private MainMenuPanel mainMenuPanel;
         private GameManager gameManager;
@@ -39,8 +42,6 @@ namespace Chinese_Chess_v3.Interface
         // Class-level field to track the time each frame is drawn
         private Dictionary<RectangleF, DateTime> frameDrawTimes = new Dictionary<RectangleF, DateTime>();
 
-        // Maximum time before frame disappears (3 seconds)
-        private TimeSpan frameLifetime = TimeSpan.FromSeconds(3);
         public MainForm()
         {
             this.Text = "Chinese Chess v3 - created by @DragonTaki";
@@ -50,23 +51,16 @@ namespace Chinese_Chess_v3.Interface
             this.DoubleBuffered = true;
             FontManager.LoadFonts();
 
-            starAnimation = new MainRenderController(this.Width, this.Height);
-            TimerManager timerManager = new TimerManager();
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            GlobalRandomTable = new RandomTable(size: 10000, seed: 12345);
 
-            long lastTimestamp = stopwatch.ElapsedMilliseconds;
-
+            GlobalTime.Timer = timerManager;
+            timerManager.StartTimers();
+            starAnimation = new MainRenderController(this.Width, this.Height, timerManager, GlobalRandomTable);
             timerManager.OnAnimationFrame += () =>
             {
-                long current = stopwatch.ElapsedMilliseconds;
-                float deltaTimeInMilliseconds = current - lastTimestamp;
-                lastTimestamp = current;
-                float deltaTimeInSeconds = deltaTimeInMilliseconds / 1000f;
-                starAnimation.Update(deltaTimeInSeconds);
-                this.Invalidate(); // 重新繪製畫面
+                starAnimation.Update();
+                this.Invalidate();
             };
-            timerManager.StartTimers();
 
             //mainMenuPanel = new MainMenuPanel();
             //this.Controls.Add(mainMenuPanel);

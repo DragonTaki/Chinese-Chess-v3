@@ -7,8 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
+
+using StarAnimation.Core;
 
 namespace StarAnimation.Utils.Area
 {
@@ -51,7 +52,7 @@ namespace StarAnimation.Utils.Area
         /// </summary>
         /// <param name="p">The point to check.</param>
         /// <returns>True if point is within the circle, false otherwise.</returns>
-        public bool Contains(PointF p)
+        public bool Contains(Vector2F p)
         {
             float dx = p.X - Center.X;
             float dy = p.Y - Center.Y;

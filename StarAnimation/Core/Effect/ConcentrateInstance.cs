@@ -7,9 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
@@ -19,8 +17,8 @@ namespace StarAnimation.Core.Effect
     public class ConcentrateInstance : EffectInstance
     {
         private List<Star> affectedStars = new();
-        public ConcentrateInstance(PointF center, IAreaShape area, float duration, Random rand)
-            : base(center, area, duration, rand) { }
+        public ConcentrateInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance)
+            : base(center, area, duration, effectAppliedChance) { }
 
         protected override void OnApplyTo(List<Star> stars)
         {
@@ -30,8 +28,8 @@ namespace StarAnimation.Core.Effect
         {
             foreach (var star in affectedStars)
             {
-                star.X = MathUtil.Lerp(star.X, Center.X, t);
-                star.Y = MathUtil.Lerp(star.Y, Center.Y, t);
+                star.Position.X = MathUtil.Lerp(star.Position.X, Center.X, t);
+                star.Position.Y = MathUtil.Lerp(star.Position.Y, Center.Y, t);
             }
         }
         protected override void Reset()

@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+using SharedLib.RandomTable;
 
 namespace StarAnimation.Utils.Area
 {
@@ -16,6 +17,7 @@ namespace StarAnimation.Utils.Area
     {
         private readonly float minWidth, minHeight;
         private float maxWidth, maxHeight;
+        private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
         public RectangleAreaSelector(float minWidth, float minHeight, float maxWidth, float maxHeight)
         {
@@ -25,7 +27,7 @@ namespace StarAnimation.Utils.Area
             this.maxHeight = maxHeight;
         }
 
-        public IAreaShape GetArea(float canvasWidth, float canvasHeight, Random rand)
+        public IAreaShape GetArea(float canvasWidth, float canvasHeight)
         {
             if (canvasWidth <= 0 || canvasHeight <= 0)
                 throw new ArgumentException("Canvas size must be positive.");
@@ -47,8 +49,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinWidth = Math.Min(minWidth, limitedMaxWidth);
                 width = (limitedMaxWidth == effectiveMinWidth)
                     ? limitedMaxWidth
-                    : MathUtil.GetRandomFloat(effectiveMinWidth, limitedMaxWidth, rand);
-                x = MathUtil.GetRandomFloat(0, canvasWidth - width, rand);
+                    : MathUtil.GetRandomFloat(effectiveMinWidth, limitedMaxWidth);
+                x = MathUtil.GetRandomFloat(0, canvasWidth - width);
             }
 
             // Handle height
@@ -63,8 +65,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinHeight = Math.Min(minHeight, limitedMaxHeight);
                 height = (limitedMaxHeight == effectiveMinHeight)
                     ? limitedMaxHeight
-                    : MathUtil.GetRandomFloat(effectiveMinHeight, limitedMaxHeight, rand);
-                y = MathUtil.GetRandomFloat(0, canvasHeight - height, rand);
+                    : MathUtil.GetRandomFloat(effectiveMinHeight, limitedMaxHeight);
+                y = MathUtil.GetRandomFloat(0, canvasHeight - height);
             }
 
             return new RectangleAreaShape(new RectangleF(x, y, width, height));

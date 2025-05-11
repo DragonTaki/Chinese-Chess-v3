@@ -10,11 +10,15 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using StarAnimation.Core;
 using StarAnimation.Core.Effect;
 using StarAnimation.Renderers;
 using StarAnimation.Utils;
 using StarAnimation.Utils.Area;
+
+using SharedLib.RandomTable;
+using SharedLib.Timing;
 
 namespace StarAnimation.Controllers
 {
@@ -25,91 +29,66 @@ namespace StarAnimation.Controllers
     public class StarEffectController
     {
         private readonly int canvasWidth, canvasHeight;
-        private readonly Random rand;
         private readonly FrameRenderer frameRenderer;
 
         private readonly List<IEffectInstance> activeEffects = new();
-        private readonly Dictionary<string, object> effectConfigs = new();
+        private readonly Dictionary<EffectType, object> effectConfigs = new(EffectConfigRegistry.Configs);
         private readonly List<EffectEntry> effectEntries = new();
+        private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
-        public bool EnableDebugFrame { get; set; } = true;
+        private bool EnableDebugFrame { get; set; } = true;
+
+        /// <summary>
+        /// Control which effects will be enabled.
+        /// </summary>
+        private readonly Dictionary<EffectType, bool> enableEffect = new()
+        {
+            [EffectType.ColorShift] = false,
+            [EffectType.Pulse] = false,
+            [EffectType.Twist] = true
+        };
 
         /// <summary>
         /// Internal structure to manage each effect's creation, countdown, and metadata.
         /// </summary>
         private class EffectEntry
         {
-            public string Name;
+            public EffectType Name;
             public IAreaSelector AreaSelector;
-            public int Countdown;
-            public Func<IAreaShape, object, Random, IEffectInstance> CreateInstance;
+            public float Countdown;
+            public Func<IAreaShape, object, IEffectInstance> CreateInstance;
             public Color DebugColor;
         }
 
-        public StarEffectController(int width, int height, Random rand)
+        public StarEffectController(int width, int height)
         {
             canvasWidth = width;
             canvasHeight = height;
-            this.rand = rand;
             frameRenderer = new FrameRenderer();
 
-            // Register configurable effect parameters
-            effectConfigs["Twist"] = new TwistParameterRange
-            {
-                TriggerChance = 0.9f,
-                EffectAppliedChance = 0.9f,
-                DurationRange = new FloatRange(3f, 5f),
-                RadiusRange = new FloatRange(20f, 60f),
-                StrengthRange = new FloatRange(0.6f, 1.2f),
-                ClockwiseChance = 0.7f
-            };
-
-            effectConfigs["Pulse"] = new PulseParameterRange
-            {
-                TriggerChance = 0.9f,
-                EffectAppliedChance = 0.7f,
-                DurationRange = new FloatRange(3f, 5f),
-                AmplitudeRange = new FloatRange(0.0f, 1.0f),
-                MidOpacityRange = new FloatRange(0.0f, 1.0f)
-            };
-/*
-            effectConfigs["ColorShift"] = new ColorShiftParameterRange
-            {
-                TriggerChance = 0.9f,
-                EffectAppliedChance = 0.5f,
-                HueShiftRange = new FloatRange(0f, 180f),
-                DurationRange = new FloatRange(300f, 800f)
-            };
-*/
             // Register effect entries
-            effectEntries.Add(new EffectEntry
+            foreach (EffectType type in Enum.GetValues(typeof(EffectType)))
             {
-                Name = "Twist",
-                AreaSelector = new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
-                Countdown = rand.Next(100, 200),
-                DebugColor = Color.Blue,
-                CreateInstance = (area, config, r) => TwistInstance.CreateRandom(area, (TwistParameterRange)config, r)
-            });
-
-            effectEntries.Add(new EffectEntry
-            {
-                Name = "Pulse",
-                AreaSelector = new CircleAreaSelector(1920f, 1920f),
-                Countdown = rand.Next(100, 200),
-                DebugColor = Color.Magenta,
-                CreateInstance = (area, config, r) => PulseInstance.CreateRandom(area, (PulseParameterRange)config, r)
-            });
-/*
-            effectEntries.Add(new EffectEntry
-            {
-                Name = "ColorShift",
-                AreaSelector = new RectangleAreaSelector(300, 300, 600, 600),
-                Countdown = rand.Next(100, 200),
-                DebugColor = Color.Orange,
-                CreateInstance = (area, config, r) => ColorShiftInstance.CreateRandom(area, (ColorShiftParameterRange)config, r)
-            });*/
+                if (!enableEffect.TryGetValue(type, out var enabled) || !enabled)
+                    continue;
+                effectEntries.Add(new EffectEntry
+                {
+                    Name = type,
+                    AreaSelector = type switch
+                    {
+                        EffectType.ColorShift => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
+                        EffectType.Pulse => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
+                        EffectType.Twist => new CircleAreaSelector(1920f, 1920f),
+                        _ => throw new NotSupportedException($"No area selector for effect type: {type}")
+                    },
+                    
+                    Countdown = 0.0f,
+                    DebugColor = EffectConfigRegistry.DebugColors[type],
+                    CreateInstance = EffectConfigRegistry.Factories[type]
+                });
+            }
         }
-        // For outside add effect
+        // For outside manual add effect
         public void AddEffect(EffectInstance effect, List<Star> stars)
         {
             effect.ApplyTo(stars);
@@ -120,22 +99,24 @@ namespace StarAnimation.Controllers
             // Attempt to trigger new effects
             foreach (var entry in effectEntries)
             {
-                entry.Countdown--;
+                if (!effectConfigs.TryGetValue(entry.Name, out var config))
+                    continue;
+
+                entry.Countdown -= GlobalTime.Timer.DeltaTimeInSeconds;
                 if (entry.Countdown > 0) continue;
 
-                var config = effectConfigs[entry.Name];
-                float triggerChance = config switch
+                (float triggerChance, float countdown) = config switch
                 {
-                    TwistParameterRange twist => twist.TriggerChance,
-                    PulseParameterRange pulse => pulse.TriggerChance,
-                    //ColorShiftParameterRange shift => shift.TriggerChance,
-                    _ => 1f
+                    ColorShiftParameter shift => (shift.TriggerChance, Rand.NextFloat(shift.CountdownRange.Min, shift.CountdownRange.Max)),
+                    PulseParameter pulse => (pulse.TriggerChance, Rand.NextFloat(pulse.CountdownRange.Min, pulse.CountdownRange.Max)),
+                    TwistParameter twist => (twist.TriggerChance, Rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
+                    _ => (1.0f, 10.0f)  // Default values for unknown effect types
                 };
 
-                if (rand.NextDouble() < triggerChance)
+                if (Rand.NextDouble() < triggerChance)
                 {
-                    var area = entry.AreaSelector.GetArea(canvasWidth, canvasHeight, rand);
-                    var instance = entry.CreateInstance(area, config, rand);
+                    var area = entry.AreaSelector.GetArea(canvasWidth, canvasHeight);
+                    var instance = entry.CreateInstance(area, config);
 
                     instance.ApplyTo(stars);
                     activeEffects.Add(instance);
@@ -144,16 +125,16 @@ namespace StarAnimation.Controllers
                         frameRenderer.ShowFrame(area, entry.DebugColor, 4);
                 }
 
-                entry.Countdown = rand.Next(100, 200);
+                entry.Countdown = countdown;
             }
         }
-        public void Update(List<Star> stars, Graphics g, float deltaTimeInSeconds)
+        public void Update(List<Star> stars, Graphics g)
         {
             // Update all active effects
             for (int i = activeEffects.Count - 1; i >= 0; i--)
             {
                 var effect = activeEffects[i];
-                effect.Update(deltaTimeInSeconds);
+                effect.Update();
 
                 if (!effect.IsActive)
                     activeEffects.RemoveAt(i);

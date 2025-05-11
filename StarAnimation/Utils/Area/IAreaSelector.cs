@@ -16,6 +16,6 @@ namespace StarAnimation.Utils.Area
     /// </summary>
     public interface IAreaSelector
     {
-        IAreaShape GetArea(float canvasWidth, float canvasHeight, Random rand);
+        IAreaShape GetArea(float canvasWidth, float canvasHeight);
     }
 }

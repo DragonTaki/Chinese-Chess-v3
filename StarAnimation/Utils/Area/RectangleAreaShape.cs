@@ -9,6 +9,8 @@
 
 using System.Drawing;
 
+using StarAnimation.Core;
+
 namespace StarAnimation.Utils.Area
 {
     public class RectangleAreaShape : IAreaShape
@@ -20,9 +22,9 @@ namespace StarAnimation.Utils.Area
             BoundingBox = rect;
         }
 
-        public bool Contains(PointF p)
+        public bool Contains(Vector2F p)
         {
-            return BoundingBox.Contains(p);
+            return BoundingBox.Contains(p.ToPointF);
         }
     }
 }

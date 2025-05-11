@@ -7,7 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using static StarAnimation.Utils.MathUtil;
 
 namespace StarAnimation.Utils
@@ -29,9 +28,9 @@ namespace StarAnimation.Utils
         /// <summary>
         /// Returns a random float within the range [Min, Max], using the provided Random.
         /// </summary>
-        public float GetRandom(Random rand)
+        public float GetRandom()
         {
-            return GetRandomFloat(Min, Max, rand);
+            return GetRandomFloat(Min, Max);
         }
     }
 }

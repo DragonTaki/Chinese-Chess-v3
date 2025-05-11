@@ -18,8 +18,9 @@ namespace Chinese_Chess_v3.Core
     public class GameManager
     {
         public Board Board { get; private set; }
-        // Turn event
         public event Action<PlayerSide> TurnChanged;
+        public Player Red { get; private set; }
+        public Player Black { get; private set; }
         private PlayerSide currentTurn = PlayerSide.Red;
         public PlayerSide CurrentTurn
         {
@@ -45,6 +46,8 @@ namespace Chinese_Chess_v3.Core
             Board.Initialize();
             CurrentTurn = PlayerSide.Red;
             selectedPiece = null;
+            Red = new Player(PlayerSide.Red, TimeSpan.FromMinutes(5));
+            Black = new Player(PlayerSide.Black, TimeSpan.FromMinutes(5));
         }
         public List<Piece> GetCurrentPieces()
         {
@@ -133,7 +136,18 @@ namespace Chinese_Chess_v3.Core
 
         private void SwitchTurn()
         {
-            CurrentTurn = CurrentTurn == PlayerSide.Red ? PlayerSide.Black : PlayerSide.Red;
+            if (CurrentTurn == PlayerSide.Red)
+            {
+                Red.Timer.Stop();
+                Black.Timer.Start();
+                CurrentTurn = PlayerSide.Black;
+            }
+            else
+            {
+                Black.Timer.Stop();
+                Red.Timer.Start();
+                CurrentTurn = PlayerSide.Red;
+            }
         }
     }
 }
