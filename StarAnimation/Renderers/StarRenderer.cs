@@ -102,7 +102,7 @@ namespace StarAnimation.Renderers
         {
             foreach (var star in stars.ToArray())
             {
-                star.SmoothMoveUpdate();
+                star.UpdatePhysics();
                 if (star.Position.Current.X < 0 || star.Position.Current.Y < 0 ||
                     star.Position.Current.X > width || star.Position.Current.Y > height)
                 {
@@ -168,7 +168,7 @@ namespace StarAnimation.Renderers
             if (false && --speedChangeCountdown <= 0)
             {
                 foreach (var star in stars)
-                    star.RandomizeSpeed();
+                    star.RandomizeAcceleration();
                 speedChangeCountdown = Rand.NextInt(100, 300);
             }
         }

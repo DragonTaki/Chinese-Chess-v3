@@ -45,7 +45,7 @@ namespace StarAnimation.Controllers
         {
             [EffectType.ColorShift] = false,
             [EffectType.Pulse] = false,
-            [EffectType.Twist] = true
+            [EffectType.Twist] = false
         };
 
         /// <summary>

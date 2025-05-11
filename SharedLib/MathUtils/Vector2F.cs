@@ -42,6 +42,11 @@ namespace SharedLib.MathUtils
 
         public PointF ToPointF => new PointF(X, Y);
 
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
+        
         /// <summary>
         /// Returns the magnitude (length) of the vector.
         /// </summary>

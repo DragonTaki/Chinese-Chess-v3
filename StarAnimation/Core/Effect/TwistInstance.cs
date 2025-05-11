@@ -156,6 +156,7 @@ namespace StarAnimation.Core.Effect
 
                 star.Position.Current.X += star.Velocity.Current.X * (float)Math.Cos(angle);
                 star.Position.Current.Y += star.Velocity.Current.Y * (float)Math.Sin(angle);
+                Console.WriteLine($"star.Position.Current: {star.Position.Current}, star.Velocity.Current: {star.Velocity.Current}, star.Velocity.Target: {star.Velocity.Target}");
             }
         }
         
