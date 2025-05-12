@@ -43,7 +43,7 @@ namespace StarAnimation.Controllers
         /// </summary>
         private readonly Dictionary<EffectType, bool> enableEffect = new()
         {
-            [EffectType.ColorShift] = false,
+            [EffectType.ColorShift] = true,
             [EffectType.Pulse] = false,
             [EffectType.Twist] = false
         };
@@ -112,7 +112,6 @@ namespace StarAnimation.Controllers
                     TwistParameter twist => (twist.TriggerChance, Rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
                     _ => (1.0f, 10.0f)  // Default values for unknown effect types
                 };
-                Console.WriteLine($"entry: {entry.Name}, triggerChance: {triggerChance}");
 
                 if (Rand.NextFloat() < triggerChance)
                 {

@@ -21,7 +21,7 @@ namespace StarAnimation.Core.Effect
     /// <summary>
     /// Represents a twist effect applied to stars.
     /// </summary>
-    public class TwistInstance : EffectInstance
+    public class GravityInstance : EffectInstance
     {
         private class StarInfo
         {
@@ -36,7 +36,6 @@ namespace StarAnimation.Core.Effect
         private List<Star> affectedStars = new();
         private const float MaxAngle = 2f * (float)Math.PI;
         private const float MaxSpeedBoost = 1.5f;
-        private const float SpeedCorrectionFactor = 0.2f;
 
         public TwistInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance, float strength, float radius, float direction)
             : base(center, area, duration, effectAppliedChance)
@@ -144,37 +143,60 @@ namespace StarAnimation.Core.Effect
         /// </param>
         protected override void OnUpdate(float normalizedTime)
         {
+            // Speed ramps down toward the middle of the effect duration and then ramps up again
+            float speedBoost = 1.0f + MaxSpeedBoost * (1.0f - Math.Abs(2 * normalizedTime - 1));
+
             foreach (var star in affectedStars)
             {
-                // Twist around the center `toCenter`
+                // === 扭曲重點：以 center 為旋轉中心 ===
                 Vector2F toCenter = star.Position.Current - Center;
                 float radius = toCenter.Length();
 
-                // Don't rotate if too closed to center
                 if (radius < 0.01f)
-                    continue;
+                    continue; // 太靠近中心不旋轉
 
-                Vector2F radialDir = toCenter / radius;
-                Vector2F tangentDir = (Direction > 0)
-                    ? new Vector2F(-radialDir.Y, radialDir.X)   // Clockwise
-                    : new Vector2F(radialDir.Y, -radialDir.X);  // Counter-clockwise
+        Vector2F radialDir = toCenter.Normalize();
 
-                // Force the velocity direction to approach the tangent
-                float targetSpeed = 100.0f / (radius + 10.0f);
-                Vector2F desiredVelocity = tangentDir * targetSpeed;
+        // === 切線方向（正交方向）===
+        Vector2F tangentDir = new Vector2F(-radialDir.Y, radialDir.X); // 順時針方向
+        if (Direction < 0)
+            tangentDir = new Vector2F(radialDir.Y, -radialDir.X); // 逆時針方向
 
-                // Correction speed: Make the current speed approach the target tangent
-                Vector2F velocityError = desiredVelocity - star.Physics.Velocity.Current;
-                Vector2F velocityCorrection = velocityError * SpeedCorrectionFactor;
+        // === 扭曲角度影響 ===
+        float twistAngle = Direction * MaxAngle * normalizedTime;
+        Vector2F twistedTangent = tangentDir.Rotate(twistAngle);
 
-                // Centripetal acceleration: maintains rotation and prevents stars from flying out
-                float centripetalAccelMag = (float)Math.Pow(targetSpeed, 2) / radius;
-                Vector2F centripetalAccel = -radialDir * centripetalAccelMag;
+        // === 計算半徑衰減因子 ===
+        float falloff = 1.0f / (1.0f + radius);
 
-                // Resultant acceleration
-                Vector2F finalAccel = centripetalAccel + velocityCorrection;
+        // === 引力加速度（徑向）===
+        float gravityConstant = 50f;
+        float safeRadius = Math.Max(radius, 0.01f); // 防止除以零
+        Vector2F gravityAccel = (-1f) * radialDir * (gravityConstant / (safeRadius * safeRadius));
 
-                star.Physics.AccelerationContributions[InstanceId] = finalAccel;
+        // === 切向力動態調整（方案 A）===
+        Vector2F velocity = star.Physics.Velocity.Current;
+        if (Math.Sqrt(velocity.Length()) > 0.0001f)
+        {
+            Vector2F velocityDir = velocity.Normalize();
+            // 改成使用工具方法計算內積
+            float alignment = Vector2F.DotProduct(velocityDir, (-1f) * radialDir);
+
+            float twistFactor = 0.5f + 0.5f * MathF.Max(0, alignment); // alignment 越小 twist 越弱
+
+            // === 扭曲角加速度（角動量來源） ===
+            float twistStrength = 0.15f * falloff * speedBoost * twistFactor;
+            Vector2F twistAccel = twistedTangent * twistStrength;
+
+            // === 總合加速度 ===
+            Vector2F finalAccel = gravityAccel + twistAccel;
+            star.Physics.AccelerationContributions[InstanceId] = finalAccel;
+        }
+        else
+        {
+            // 沒有速度方向時，只使用徑向引力
+            star.Physics.AccelerationContributions[InstanceId] = gravityAccel;
+        }
                 star.Physics.SmoothUpdate();
             }
         }

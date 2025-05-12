@@ -7,10 +7,11 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using SharedLib.PhysicsUtils;
-
-public interface IPhysical2D
+namespace SharedLib.PhysicsUtils
 {
-    Physics2D Physics { get; }
-    void UpdatePhysics();
+    public interface IPhysical2D
+    {
+        Physics2D Physics { get; }
+        void UpdatePhysics();
+    }
 }

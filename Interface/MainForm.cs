@@ -55,7 +55,7 @@ namespace Chinese_Chess_v3.Interface
 
             GlobalTime.Timer = timerManager;
             timerManager.StartTimers();
-            starAnimation = new MainRenderController(this.Width, this.Height, timerManager, GlobalRandomTable);
+            starAnimation = new MainRenderController(this.Width, this.Height, timerManager);
             timerManager.OnAnimationFrame += () =>
             {
                 starAnimation.Update();

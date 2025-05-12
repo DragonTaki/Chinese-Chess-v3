@@ -131,7 +131,7 @@ namespace StarAnimation.Core.Effect
                 star.Color.Current = targetColor;
             }
         }
-        protected override void Reset()
+        protected override void OnReset()
         {
             affectedStars.Clear();
         }

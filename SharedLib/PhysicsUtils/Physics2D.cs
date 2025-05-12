@@ -7,6 +7,12 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using StarAnimation.Core.Effect;
+
 using SharedLib.MathUtils;
 
 namespace SharedLib.PhysicsUtils
@@ -20,29 +26,79 @@ namespace SharedLib.PhysicsUtils
         public Position Position { get; set; } = new Position();
         public Velocity Velocity { get; set; } = new Velocity();
         public Acceleration Acceleration { get; set; } = new Acceleration();
-        private const float directionLerpFactor = 0.05f; // Smaller is smoother
-        private const float speedLerpFactor = 0.02f;
-        private const float accelerationLerpFactor = 0.02f;
+        public Dictionary<Guid, Vector2F> AccelerationContributions = new();
+        private const float DirectionLerpFactor = 0.05f; // Smaller is smoother
+        private const float SpeedLerpFactor = 0.02f;
+        private const float AccelerationLerpFactor = 0.05f;
+        private const float CalculateThreshold = 0.00001f;
+
+        public Physics2D()
+        {
+            PhysicsRegistry.Register(this);
+        }
+
+        ~Physics2D()
+        {
+            PhysicsRegistry.Unregister(this);
+        }
+
+        // Implement in Star.cs
+        //public Physics2D Physics => this;
+
+        //public void UpdatePhysics()
+        //{
+        //    SmoothUpdate();
+        //}
 
         /// <summary>
         /// Smoothly updates the star's position and velocity toward the target.
         /// </summary>
         public void SmoothUpdate()
         {
+            // Integrate all sources of acceleration
+            Acceleration.Target = Vector2F.Zero;
+            foreach (var accel in AccelerationContributions.Values)
+            {
+                Acceleration.Target += accel;
+            }
 
-            // Calculate the direction vector from the current position to the target position
-            Vector2F delta = Position.Target - Position.Current;
+            // If position target was set, move towards
+            if (Position.HasTarget)
+            {
+                    
+                // Calculate the direction vector from the current position to the target position
+                Vector2F delta = Position.Target - Position.Current;
 
-            // Calculate length and normalize direction
-            float distance = delta.Length();
-            if (distance < 0.001f)
-                return;  // No move if already too close
-            
-            Vector2F direction = delta.Normalize();
-            Velocity.Target = 
-            Acceleration.Target = direction * Velocity.Target;
+                // Calculate length and normalize direction
+                float distance = delta.Length();
+                if (distance >= CalculateThreshold)
+                {
+                    Vector2F direction = delta.Normalize();
 
-            Acceleration.Current = Vector2F.Lerp(Acceleration.Current, Acceleration.Target, accelerationLerpFactor);
+                    // Adjust only if when the speed direction deviates from the target direction
+                    float angleDifference = Vector2F.AngleBetween(Velocity.Current, direction);
+                    
+                    if (angleDifference > CalculateThreshold)
+                    {
+                        Acceleration.Target = direction * Velocity.Target.Length();
+                    }
+                    else
+                    {
+                        // Direction aligned and stop acceleration
+                        Acceleration.Current = Vector2F.Zero;
+                    }
+                }
+                else
+                {
+                    Acceleration.Target = Vector2F.Zero;
+                }
+            }
+
+            Acceleration.Current = Vector2F.Lerp(
+                Acceleration.Current,
+                Acceleration.Target,
+                AccelerationLerpFactor
+            );
 
             // Update velocity
             Velocity.Current += Acceleration.Current;
@@ -50,7 +106,24 @@ namespace SharedLib.PhysicsUtils
             // Update Location
             Position.Current += Velocity.Current;
         }
+        public static void CleanupAllPhysicsEffects()
+        {
+            foreach (var physics in PhysicsRegistry.GetAll())
+                physics.CleanupInvalidEffectReferences();
+        }
+
+        private void CleanupInvalidEffectReferences()
+        {
+            var validIds = EffectInstance.GetAllActiveEffectIds();
+            var keysToRemove = AccelerationContributions.Keys
+                .Where(id => !validIds.Contains(id))
+                .ToList();
+
+            foreach (var id in keysToRemove)
+                AccelerationContributions.Remove(id);
+        }
     }
+
     /// <summary>
     /// Encapsulates the position-related values for a star.
     /// </summary>
@@ -65,6 +138,11 @@ namespace SharedLib.PhysicsUtils
         /// The target position of the star (X and Y components).
         /// </summary>
         public Vector2F Target { get; set; } = new Vector2F();
+
+        /// <summary>
+        /// Determines whether Target-based movement is enabled.
+        /// </summary>
+        public bool HasTarget { get; set; } = false;
     }
 
     /// <summary>

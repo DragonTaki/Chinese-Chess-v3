@@ -46,27 +46,11 @@ namespace SharedLib.MathUtils
         {
             return $"({X}, {Y})";
         }
-        
-        /// <summary>
-        /// Returns the magnitude (length) of the vector.
-        /// </summary>
-        public float Length()
-        {
-            return MathF.Sqrt(X * X + Y * Y);
-        }
 
-        /// <summary>
-        /// Returns a normalized version of this vector.
-        /// </summary>
-        public Vector2F Normalize()
+        // Subtraction (Vector2F - Vector2F)
+        public static Vector2F operator -(Vector2F v)
         {
-            float length = Length();
-            return length > 0.001f ? new Vector2F(X / length, Y / length) : new Vector2F(0, 0);
-        }
-        
-        public static Vector2F Lerp(Vector2F a, Vector2F b, float t)
-        {
-            return new Vector2F(MathUtil.Lerp(a.X, b.X, t), MathUtil.Lerp(a.Y, b.Y, t));
+            return new Vector2F(-v.X, -v.Y);
         }
 
         // Addition (Vector2F + Vector2F)
@@ -141,5 +125,69 @@ namespace SharedLib.MathUtils
             return new Vector2F(v.X / scalar, v.Y / scalar);
         }
 
+        // DotProduct (Vector2F * Vector2F)
+        public static float DotProduct(Vector2F a, Vector2F b)
+        {
+            return a.X * b.X + a.Y * b.Y;
+        }
+
+        /// <summary>
+        /// Returns the magnitude (length) of the vector.
+        /// </summary>
+        public float Length()
+        {
+            return MathF.Sqrt(X * X + Y * Y);
+        }
+
+        /// <summary>
+        /// Returns a normalized version of this vector.
+        /// </summary>
+        public Vector2F Normalize()
+        {
+            float length = Length();
+            return length > 0.001f ?
+                new Vector2F(X / length, Y / length) :
+                new Vector2F(0, 0);
+        }
+        
+        /// <summary>
+        /// Returns a lerp of this vector.
+        /// </summary>
+        public static Vector2F Lerp(Vector2F a, Vector2F b, float t)
+        {
+            return new Vector2F(
+                MathUtil.Lerp(a.X, b.X, t),
+                MathUtil.Lerp(a.Y, b.Y, t)
+            );
+        }
+
+        /// <summary>
+        /// Returns a angle between two vectors (unit: radians). 
+        /// </summary>
+        public static float AngleBetween(Vector2F a, Vector2F b)
+        {
+            float dot = a.X * b.X + a.Y * b.Y;
+            float magProduct = a.Length() * b.Length();
+            if (magProduct == 0f) return 0f;
+
+            float cosTheta = MathUtil.ClampF(dot / magProduct, -1f, 1f);
+            return MathF.Acos(cosTheta);  // Unit: radians
+        }
+
+        /// <summary>
+        /// Returns a new Vector2F that is this vector rotated by the given angle (in radians).
+        /// </summary>
+        /// <param name="angleRadians">The angle to rotate by, in radians.</param>
+        /// <returns>The rotated vector.</returns>
+        public Vector2F Rotate(float angleRadians)
+        {
+            float cos = MathF.Cos(angleRadians);
+            float sin = MathF.Sin(angleRadians);
+
+            return new Vector2F(
+                X * cos - Y * sin,
+                X * sin + Y * cos
+            );
+        }
     }
 }

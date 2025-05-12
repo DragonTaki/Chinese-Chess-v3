@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,11 +16,14 @@ using StarAnimation.Utils.Area;
 using SharedLib.RandomTable;
 using SharedLib.Timing;
 using SharedLib.MathUtils;
+using System.Collections.Concurrent;
+using SharedLib.PhysicsUtils;
 
 namespace StarAnimation.Core.Effect
 {
     public abstract class EffectInstance : IEffectInstance
     {
+        public Guid InstanceId { get; } = Guid.NewGuid();
         public Vector2F Center { get; protected set; }
         public IAreaShape Area { get; protected set; }
         public float Duration { get; protected set; }
@@ -27,6 +31,13 @@ namespace StarAnimation.Core.Effect
         public float TimeProgress { get; protected set; }
         protected IRandomProvider Rand = GlobalRandom.Instance;
 
+
+        private static readonly ConcurrentDictionary<Guid, byte> _activeIds = new();
+        public static void Register(Guid id) => _activeIds.TryAdd(id, 0);
+        public static void Unregister(Guid id) => _activeIds.TryRemove(id, out _);
+        public static HashSet<Guid> GetAllActiveEffectIds() => _activeIds.Keys.ToHashSet();
+        private readonly List<Physics2D> _affectedPhysics = new();
+        
         protected List<Star> CreateNewAffectedStars = new();
         private float MaxEndTime => CreateNewAffectedStars.Count == 0
             ? Duration
@@ -44,11 +55,14 @@ namespace StarAnimation.Core.Effect
 
         public virtual void ApplyTo(List<Star> stars)
         {
-           CreateNewAffectedStars.Clear();
+            Register(InstanceId);
+            CreateNewAffectedStars.Clear();
+            _affectedPhysics.Clear();
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position.Current))
                     CreateNewAffectedStars.Add(star);
+                    _affectedPhysics.Add(star.Physics);
             }
             OnApplyTo(CreateNewAffectedStars);
         }
@@ -68,6 +82,16 @@ namespace StarAnimation.Core.Effect
         }
 
         protected abstract void OnUpdate(float normalizedTime);
-        protected abstract void Reset();
+        public void Reset()
+        {
+            Unregister(InstanceId);
+            foreach (var physics in _affectedPhysics)
+            {
+                physics.AccelerationContributions.Remove(InstanceId);
+            }
+            _affectedPhysics.Clear();
+            OnReset();
+        }
+        protected abstract void OnReset();
     }
 }

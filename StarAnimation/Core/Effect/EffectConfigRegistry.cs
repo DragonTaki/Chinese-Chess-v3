@@ -39,10 +39,10 @@ namespace StarAnimation.Core
             },
             [EffectType.Twist] = new TwistParameter
             {
-                CountdownRange = new FloatRange(5.0f, 7.0f),
+                CountdownRange = new FloatRange(15.0f, 15.0f),
                 TriggerChance = 0.9f,
                 EffectAppliedChance = 0.6f,
-                DurationRange = new FloatRange(4.0f, 8.0f),
+                DurationRange = new FloatRange(10.0f, 10.0f),
                 RadiusRange = new FloatRange(200.0f, 400.0f),
                 StrengthRange = new FloatRange(0.5f, 1.5f),
                 ClockwiseChance = 0.45f

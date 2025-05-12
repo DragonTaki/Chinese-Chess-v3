@@ -33,7 +33,7 @@ namespace StarAnimation.Core.Effect
                 star.Position.Current.Y = MathUtil.Lerp(star.Position.Current.Y, Center.Y, t);
             }
         }
-        protected override void Reset()
+        protected override void OnReset()
         {
             affectedStars.Clear();
         }

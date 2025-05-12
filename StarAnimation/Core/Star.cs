@@ -56,7 +56,7 @@ namespace StarAnimation.Core
             // Random base physical value
             //RandomizeTargetPosition(width, height);
             RandomizeBaseSpeed();
-            //RandomizeAcceleration();
+            RandomizeAcceleration();
         }
 
         /// <summary>

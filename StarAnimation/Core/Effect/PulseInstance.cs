@@ -126,7 +126,7 @@ namespace StarAnimation.Core.Effect
                 star.Opacity = Math.Clamp(opacity, 0f, 1f);
             }
         }
-        protected override void Reset()
+        protected override void OnReset()
         {
             foreach (var star in affectedStars)
             {

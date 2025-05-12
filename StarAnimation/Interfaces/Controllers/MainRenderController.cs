@@ -41,10 +41,6 @@ namespace StarAnimation.Controllers
         /// </summary>
         private readonly ITimerProvider timer;
 
-        /// <summary>
-        /// Shared random instance for consistent visual randomness.
-        /// </summary>
-        private readonly RandomTable rand;
 
         /// <summary>
         /// Initializes the main render controller and its internal components.
@@ -52,10 +48,8 @@ namespace StarAnimation.Controllers
         /// <param name="rand">Random number generator used for effects and randomness.</param>
         /// <param name="width">Width of the rendering canvas.</param>
         /// <param name="height">Height of the rendering canvas.</param>
-        public MainRenderController(int width, int height, ITimerProvider timerProvider, RandomTable GlobalRandomTable)
+        public MainRenderController(int width, int height, ITimerProvider timerProvider)
         {
-            this.rand = GlobalRandomTable;
-
             // Initialize all renderers and controllers
             starRenderer = new StarRenderer(width, height);
             effectController = new StarEffectController(width, height);

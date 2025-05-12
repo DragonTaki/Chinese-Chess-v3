@@ -40,6 +40,13 @@ namespace SharedLib.MathUtils
             return Math.Max(min, value);
         }
 
+        public static float ClampF(float value, float min, float max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
         public static float LinearMap(float inputValue, float minInput, float maxInput, float minOutput, float maxOutput)
         {
             if ((maxInput - minInput) == 0) return float.NaN;

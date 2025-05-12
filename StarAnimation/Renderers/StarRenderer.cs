@@ -14,6 +14,8 @@ using System.Drawing;
 using StarAnimation.Configs;
 using StarAnimation.Core;
 
+using SharedLib.PhysicsUtils;
+using SharedLib.MathUtils;
 using SharedLib.RandomTable;
 
 namespace StarAnimation.Renderers
@@ -39,7 +41,7 @@ namespace StarAnimation.Renderers
         private int directionChangeCountdown;
         private int speedChangeCountdown;
 
-        public StarRenderer(int width, int height, int starCount = 150)
+        public StarRenderer(int width, int height, int starCount = 250)
         {
             this.width = width;
             this.height = height;
@@ -60,7 +62,7 @@ namespace StarAnimation.Renderers
             {
                 stars.Add(new Star(width, height));
             }
-
+            
             InitializeCounters();
         }
 
@@ -75,6 +77,7 @@ namespace StarAnimation.Renderers
         /// </summary>
         public void Update()
         {
+            Physics2D.CleanupAllPhysicsEffects();
             UpdateStarPositions();
             ReleaseStars();
             CleanUpAfterResize();
@@ -107,11 +110,15 @@ namespace StarAnimation.Renderers
                     star.Position.Current.X > width || star.Position.Current.Y > height)
                 {
                     waitingPool.Enqueue(star);
+                    star.Position.Current = new Vector2F(-100.0f, -100.0f);
+                    star.Position.Target = Vector2F.Zero;
+                    star.Position.HasTarget = false;
+                    star.Velocity.Base = Vector2F.Zero;
+                    star.Velocity.Current = Vector2F.Zero;
+                    star.Velocity.Target = Vector2F.Zero;
+                    star.Acceleration.Current = Vector2F.Zero;
+                    star.Acceleration.Target = Vector2F.Zero;
                     stars.Remove(star);
-                    star.Position.Current.X = -100.0f;
-                    star.Position.Current.Y = -100.0f;
-                    star.Velocity.Current.X = 0.0f;
-                    star.Velocity.Current.Y = 0.0f;
                 }
             }
         }
@@ -130,8 +137,6 @@ namespace StarAnimation.Renderers
                     Star star = waitingPool.Dequeue();
                     star.Position.Current.X = Rand.NextInt(width);
                     star.Position.Current.Y = Rand.NextInt(height);
-                    star.Velocity.Current.X = star.Velocity.Base.X * (0.5f + Rand.NextFloat());
-                    star.Velocity.Current.Y = star.Velocity.Base.Y * (0.5f + Rand.NextFloat());
                     stars.Add(star);
                 }
             }
