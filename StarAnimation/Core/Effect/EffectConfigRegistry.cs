@@ -28,6 +28,14 @@ namespace StarAnimation.Core
         /// </summary>
         public static readonly Dictionary<EffectType, object> Configs = new()
         {
+            [EffectType.ColorShift] = new ColorShiftParameter
+            {
+                CountdownRange = new FloatRange(3.0f, 5.0f),
+                TriggerChance = 0.9f,
+                EffectAppliedChance = 0.1f,
+                DurationRange = new FloatRange(3f, 6f),
+                //HueShiftRange = new FloatRange(-45f, 45f)
+            },
             [EffectType.Pulse] = new PulseParameter
             {
                 CountdownRange = new FloatRange(3.0f, 5.0f),
@@ -46,14 +54,6 @@ namespace StarAnimation.Core
                 RadiusRange = new FloatRange(200.0f, 400.0f),
                 StrengthRange = new FloatRange(0.5f, 1.5f),
                 ClockwiseChance = 0.45f
-            },
-            [EffectType.ColorShift] = new ColorShiftParameter
-            {
-                CountdownRange = new FloatRange(3.0f, 5.0f),
-                TriggerChance = 0.9f,
-                EffectAppliedChance = 0.5f,
-                DurationRange = new FloatRange(3f, 6f),
-                //HueShiftRange = new FloatRange(-45f, 45f)
             }
         };
 

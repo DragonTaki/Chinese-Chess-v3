@@ -35,7 +35,8 @@ namespace StarAnimation.Renderers
 
         private DateTime lastResizeTime;
         private bool pendingShrinkCleanup = false;
-        private const double ResizeCleanupDelaySeconds = 1.0;
+        private const float ResizeCleanupDelaySeconds = 1.0f;
+        private const float OutsideCanvasMargin = 40.0f;
 
         // Countdown timers for effects
         private int directionChangeCountdown;
@@ -106,8 +107,10 @@ namespace StarAnimation.Renderers
             foreach (var star in stars.ToArray())
             {
                 star.UpdatePhysics();
-                if (star.Position.Current.X < 0 || star.Position.Current.Y < 0 ||
-                    star.Position.Current.X > width || star.Position.Current.Y > height)
+
+                // If outside canvas, clear all status and put to waiting area
+                if (star.Position.Current.X < -OutsideCanvasMargin || star.Position.Current.Y < -OutsideCanvasMargin ||
+                    star.Position.Current.X > width + OutsideCanvasMargin || star.Position.Current.Y > height + OutsideCanvasMargin)
                 {
                     waitingPool.Enqueue(star);
                     star.Position.Current = new Vector2F(-100.0f, -100.0f);
@@ -137,6 +140,8 @@ namespace StarAnimation.Renderers
                     Star star = waitingPool.Dequeue();
                     star.Position.Current.X = Rand.NextInt(width);
                     star.Position.Current.Y = Rand.NextInt(height);
+                    star.RandomizeBaseSpeed();
+                    star.RandomizeAcceleration();
                     stars.Add(star);
                 }
             }

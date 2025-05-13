@@ -36,7 +36,7 @@ namespace StarAnimation.Controllers
         private readonly List<EffectEntry> effectEntries = new();
         private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
-        private bool EnableDebugFrame { get; set; } = true;
+        private bool EnableDebugFrame { get; set; } = false;
 
         /// <summary>
         /// Control which effects will be enabled.
@@ -44,8 +44,8 @@ namespace StarAnimation.Controllers
         private readonly Dictionary<EffectType, bool> enableEffect = new()
         {
             [EffectType.ColorShift] = true,
-            [EffectType.Pulse] = false,
-            [EffectType.Twist] = false
+            [EffectType.Pulse] = true,
+            [EffectType.Twist] = true
         };
 
         /// <summary>

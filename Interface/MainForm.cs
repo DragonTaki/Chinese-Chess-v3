@@ -62,7 +62,7 @@ namespace Chinese_Chess_v3.Interface
                 this.Invalidate();
             };
 
-            //mainMenuPanel = new MainMenuPanel();
+            mainMenuPanel = new MainMenuPanel();
             //this.Controls.Add(mainMenuPanel);
             //gameManager = GameManager.Instance;
             //boardRenderer = new BoardRenderer(); // Initialize the BoardRenderer

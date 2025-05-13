@@ -55,7 +55,7 @@ namespace StarAnimation.Core.Effect
             RectangleF bounds = area.BoundingBox;
             Vector2F center;
             int maxTries = 100;
-/*
+
             do
             {
                 float x = GlobalRandom.Instance.NextFloat(bounds.Left, bounds.Right);
@@ -64,7 +64,7 @@ namespace StarAnimation.Core.Effect
             } while (!area.Contains(center) && --maxTries > 0);
 
             // Set effect center to area center if tries all failed
-            if (maxTries <= 0)*/
+            if (maxTries <= 0)
                 center = new Vector2F(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 
             float duration = config.DurationRange.GetRandom();

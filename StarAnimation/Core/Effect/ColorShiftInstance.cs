@@ -14,7 +14,6 @@ using System.Drawing;
 using StarAnimation.Utils.Area;
 
 using SharedLib.MathUtils;
-using SharedLib.RandomTable;
 
 namespace StarAnimation.Core.Effect
 {
@@ -42,19 +41,7 @@ namespace StarAnimation.Core.Effect
         public static ColorShiftInstance CreateRandom(IAreaShape area, ColorShiftParameter config)
         {
             RectangleF bounds = area.BoundingBox;
-            Vector2F center;
-            int maxTries = 100;
-
-            do
-            {
-                float x = GlobalRandom.Instance.NextFloat(bounds.Left, bounds.Right);
-                float y = GlobalRandom.Instance.NextFloat(bounds.Top, bounds.Bottom);
-                center = new Vector2F(x, y);
-            } while (!area.Contains(center) && --maxTries > 0);
-
-            // Set effect center to area center if tries all failed
-            if (maxTries <= 0)
-                center = new Vector2F(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+            Vector2F center = new Vector2F(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 
             float duration = config.DurationRange.GetRandom();
 
@@ -85,16 +72,12 @@ namespace StarAnimation.Core.Effect
                     if (Rand.NextFloat() < EffectAppliedChance)
                     {
                         star.ColorShift.HasPhase = true;
-                        star.ColorShift.StartTime = currentTime;
+                        star.ColorShift.Delay = (float)(Rand.NextDouble() * 2.0);
                         star.ColorShift.BiasDirection = Rand.NextFloat() < 0.5 ? -1f : 1f;
                         star.Color.Base = star.ColorShift.BiasDirection < 0
                             ? Color.FromArgb(255, 0, 0) // Red
                             : Color.FromArgb(0, 0, 255); // Blue
-                    }
-                    else
-                    {
-                        star.Color.Current = Color.White;
-                        continue;
+                        affectedStars.Add(star);
                     }
                 }
             }
@@ -109,30 +92,42 @@ namespace StarAnimation.Core.Effect
         /// </summary>
         protected override void OnUpdate(float normalizedTime)
         {
-            float currentTime = Environment.TickCount;
-            float transitionMs = Duration * 1000f;
+            float elapsedTime = normalizedTime * Duration;
 
-            foreach (var star in affectedStars)
+            if (affectedStars.Count == 0)
             {
-                if (!star.ColorShift.HasPhase) continue;
+                return;
+            }
 
-                float elapsed = currentTime - star.ColorShift.StartTime;
-                if (elapsed >= transitionMs)
+            for (int i = affectedStars.Count - 1; i >= 0; i--)
+            {
+                var star = affectedStars[i];
+
+                if (!star.ColorShift.HasPhase) continue;
+                if (elapsedTime - star.ColorShift.Delay > Duration)
                 {
                     star.ColorShift.HasPhase = false;
                     star.Color.Current = Color.White;
+                    affectedStars.RemoveAt(i);
                     continue;
                 }
 
-                float normalized = elapsed / transitionMs;
-                float wave = (float)Math.Sin(normalized * Math.PI);  // smooth wave: 0 → 1 → 0
+                float timeSinceStart = elapsedTime - star.ColorShift.Delay;
+                if (timeSinceStart < 0f) continue;
 
+                float wave = (float)Math.Sin(2 * Math.PI * timeSinceStart / Duration);
                 Color targetColor = MathUtil.LerpColor(Color.White, star.Color.Base, wave);
                 star.Color.Current = targetColor;
             }
         }
         protected override void OnReset()
         {
+            foreach (var star in affectedStars)
+            {
+                star.ColorShift.HasPhase = false;
+                star.Opacity = 1f;
+            }
+
             affectedStars.Clear();
         }
     }
