@@ -10,7 +10,8 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core
 {
@@ -28,13 +29,13 @@ namespace Chinese_Chess_v3.Core
         public override bool IsInLegalZone(int targetX, int targetY)
         {
             // Only can stay in palace (九宮格)
-            if (targetX < BoardConstants.PalaceXRange.MinX || targetX > BoardConstants.PalaceXRange.MaxX)
+            if (targetX < Constants.Board.PalaceXRange.MinX || targetX > Constants.Board.PalaceXRange.MaxX)
                 return false;
 
             if (Side == PlayerSide.Red)
-                return targetY >= BoardConstants.RedPalaceYRange.MinY && targetY <= BoardConstants.RedPalaceYRange.MaxY;
+                return targetY >= Constants.Board.RedPalaceYRange.MinY && targetY <= Constants.Board.RedPalaceYRange.MaxY;
             else
-                return targetY >= BoardConstants.BlackPalaceYRange.MinY && targetY <= BoardConstants.BlackPalaceYRange.MaxY;
+                return targetY >= Constants.Board.BlackPalaceYRange.MinY && targetY <= Constants.Board.BlackPalaceYRange.MaxY;
         }
 
         // Check if is a valid move

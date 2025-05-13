@@ -10,7 +10,8 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core.Pieces
 {
@@ -26,7 +27,7 @@ namespace Chinese_Chess_v3.Core.Pieces
         public override bool IsInLegalZone(int targetX, int targetY)
         {
             // No specific zone limit for chariot, but method reserved for consistency
-            return BoardConstants.IsInBounds(targetX, targetY);
+            return Constants.Board.IsInBounds(targetX, targetY);
         }
 
         // Check if move is valid
@@ -80,7 +81,7 @@ namespace Chinese_Chess_v3.Core.Pieces
                 int newX = x + dx;
                 int newY = y + dy;
 
-                if (!BoardConstants.IsInBounds(newX, newY))
+                if (!Constants.Board.IsInBounds(newX, newY))
                     continue;
 
                 // Check if destination has ally
@@ -97,8 +98,8 @@ namespace Chinese_Chess_v3.Core.Pieces
         private bool HasCrossedRiver(int y)
         {
             return Side == PlayerSide.Red
-                ? y <= BoardConstants.RedYSideRiverLine
-                : y >= BoardConstants.BlackYSideRiverLine;
+                ? y <= Constants.Board.RedYSideRiverLine
+                : y >= Constants.Board.BlackYSideRiverLine;
         }
     }
 }

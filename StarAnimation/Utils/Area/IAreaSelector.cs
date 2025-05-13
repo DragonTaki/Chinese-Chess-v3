@@ -7,8 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
-
 namespace StarAnimation.Utils.Area
 {
     /// <summary>

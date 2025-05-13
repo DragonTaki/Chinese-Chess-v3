@@ -9,12 +9,14 @@
 
 using System.Collections.Generic;
 
+using StarAnimation.Models;
+
 namespace StarAnimation.Core.Effect
 {
     public interface IEffectInstance
     {
         bool IsActive { get; }
         void Update();
-        void ApplyTo(List<Star> stars);
+        void ApplyTo(IReadOnlyList<Star> stars);
     }
 }

@@ -10,7 +10,8 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core.Pieces
 {
@@ -27,9 +28,9 @@ namespace Chinese_Chess_v3.Core.Pieces
         {
             // Elephants cannot across the river (不可過河)
             if (Side == PlayerSide.Red)
-                return targetY >= BoardConstants.RedYSideRiverLine && targetY <= 9;
+                return targetY >= Constants.Board.RedYSideRiverLine && targetY <= 9;
             else
-                return targetY <= BoardConstants.BlackYSideRiverLine && targetY >= 0;
+                return targetY <= Constants.Board.BlackYSideRiverLine && targetY >= 0;
         }
 
         // Check if is a valid move

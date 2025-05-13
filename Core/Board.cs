@@ -10,8 +10,9 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core.Pieces;
+using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core
 {
@@ -85,7 +86,7 @@ namespace Chinese_Chess_v3.Core
         }
         public Piece GetPiece(int x, int y)
         {
-            if (x >= 0 && x < BoardConstants.Columns && y >= 0 && y < BoardConstants.Rows)
+            if (x >= 0 && x < Constants.Board.Columns && y >= 0 && y < Constants.Board.Rows)
             {
                 return Grid[x, y];
             }

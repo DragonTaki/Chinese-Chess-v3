@@ -40,8 +40,53 @@ namespace SharedLib.MathUtils
 
         public static Vector2F Zero => new Vector2F(0, 0);
 
-        public PointF ToPointF => new PointF(X, Y);
+        /// <summary>
+        /// Convert to Size type
+        /// </summary>
+        public Size ToSize()
+        {
+            return new Size((int)X, (int)Y);
+        }
+        public static Size ToSize(Vector2F vector)
+        {
+            return new Size((int)vector.X, (int)vector.Y);
+        }
 
+        /// <summary>
+        /// Convert to Point type
+        /// </summary>
+        public Point ToPoint()
+        {
+            return new Point((int)X, (int)Y);
+        }
+        public static Point ToPoint(Vector2F vector)
+        {
+            return new Point((int)vector.X, (int)vector.Y);
+        }
+
+        /// <summary>
+        /// Convert to PointF type
+        /// </summary>
+        public PointF ToPointF()
+        {
+            return new PointF(X, Y);
+        }
+        public static PointF ToPointF(Vector2F vector)
+        {
+            return new PointF(vector.X, vector.Y);
+        }
+
+        /// <summary>
+        /// Convert position and size to RectangleF type
+        /// </summary>
+        public static RectangleF ToRectangleF(Vector2F position, Vector2F size)
+        {
+            return new RectangleF(position.X, position.Y, size.X, size.Y);
+        }
+
+        /// <summary>
+        /// Convert position and size to RectangleF type
+        /// </summary>
         public override string ToString()
         {
             return $"({X}, {Y})";

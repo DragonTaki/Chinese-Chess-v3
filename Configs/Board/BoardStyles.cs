@@ -14,7 +14,7 @@ using Chinese_Chess_v3.Utils;
 
 public static class BoardStyles
 {
-    public static Brush CreateBoardBackgroundBrush(Rectangle bounds)
+    public static Brush CreateBoardBackgroundBrush(RectangleF bounds)
     {
         LinearGradientBrush brush = new LinearGradientBrush(
             bounds,

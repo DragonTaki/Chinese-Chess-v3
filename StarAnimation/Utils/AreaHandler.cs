@@ -7,7 +7,6 @@
 // Version: v2.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -23,15 +22,15 @@ namespace StarAnimation.Utils
         /// The list of excluded screen-space rectangular areas.
         /// Stars within these areas will be skipped or hidden.
         /// </summary>
-        private List<Rectangle> excludedAreas = new();
+        private List<RectangleF> excludedAreas = new();
 
         /// <summary>
         /// Gets or sets the list of excluded rectangular areas.
         /// </summary>
-        public List<Rectangle> ExcludedAreas
+        public List<RectangleF> ExcludedAreas
         {
             get => excludedAreas;
-            set => excludedAreas = value ?? new List<Rectangle>();
+            set => excludedAreas = value ?? new List<RectangleF>();
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
 
+using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Configs.Sidebar;
 
 namespace Chinese_Chess_v3.Interface.Sidebar
@@ -22,13 +23,13 @@ namespace Chinese_Chess_v3.Interface.Sidebar
     {
         public LoggerBox()
         {
+            this.Location = Settings.Sidebar.Logger.Position.ToPoint();
+            this.Size = Settings.Sidebar.Logger.Size.ToSize();
             this.ReadOnly = true;
             this.BorderStyle = BorderStyle.FixedSingle;
             this.Font = LoggerSettings.Font;
             this.BackColor = LoggerSettings.BackgroundColor;
             this.ForeColor = LoggerSettings.TextColor;
-            this.Location = new Point(SidebarSettings.LoggerStartX, SidebarSettings.LoggerStartY);
-            this.Size = new Size(SidebarSettings.LoggerWidth, SidebarSettings.LoggerHeight);
             this.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             //this.ContextMenuStrip = new ContextMenuStrip();
             //this.MouseClick += LoggerBox_MouseClick;

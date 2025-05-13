@@ -10,7 +10,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using StarAnimation.Utils.Area;
+
+using StarAnimation.Models;
 
 namespace StarAnimation.Renderers
 {
@@ -21,82 +22,42 @@ namespace StarAnimation.Renderers
     public class FrameRenderer
     {
         /// <summary>
-        /// Represents a single debug frame with bounds, color, thickness, and expiration time.
+        /// Width of the drawing canvas.
         /// </summary>
-        private class Frame
+        private int width;
+        public int Width
         {
-            public RectangleF Rect { get; set; }
-            public Color Color { get; set; }
-            public int Thickness { get; set; }
-            public DateTime ExpirationTime { get; set; }
-        }
-
-        private readonly List<Frame> activeFrames = new();
-
-        #region Settings (Adjustable Parameters)
-
-        /// <summary>
-        /// Duration in seconds before a frame disappears.
-        /// </summary>
-        public double LifetimeSeconds { get; set; } = 3.0;
-
-        /// <summary>
-        /// Default frame border thickness.
-        /// </summary>
-        public int DefaultThickness { get; set; } = 4;
-
-        /// <summary>
-        /// Default frame color.
-        /// </summary>
-        public Color DefaultColor { get; set; } = Color.Red;
-
-        #endregion
-
-        /// <summary>
-        /// Adds a new debug frame to be drawn using a bounding rectangle.
-        /// </summary>
-        /// <param name="rect">The rectangle to highlight with a frame.</param>
-        /// <param name="color">Optional color override (default: DefaultColor).</param>
-        /// <param name="thickness">Optional border thickness (default: DefaultThickness).</param>
-        public void AddFrame(RectangleF rect, Color? color = null, int? thickness = null)
-        {
-            activeFrames.Add(new Frame
+            get => width;
+            set
             {
-                Rect = rect,
-                Color = color ?? DefaultColor,
-                Thickness = thickness ?? DefaultThickness,
-                ExpirationTime = DateTime.Now.AddSeconds(LifetimeSeconds)
-            });
+                width = Math.Max(value, 1);
+            }
         }
 
         /// <summary>
-        /// Adds a debug frame based on a shape's bounding box.
+        /// Height of the drawing canvas.
         /// </summary>
-        /// <param name="area">The area shape to visualize.</param>
-        /// <param name="color">Color of the frame border.</param>
-        /// <param name="thickness">Thickness of the frame border.</param>
-        public void ShowFrame(IAreaShape area, Color color, int thickness)
+        private int height;
+        public int Height
         {
-            if (area == null) return;
-
-            RectangleF bounds = area.BoundingBox;
-            AddFrame(bounds, color, thickness);
+            get => height;
+            set
+            {
+                height = Math.Max(value, 1);
+            }
         }
 
-        /// <summary>
-        /// Removes expired frames from the active frame list.
-        /// </summary>
-        public void Update()
+        public FrameRenderer(int width, int height)
         {
-            DateTime now = DateTime.Now;
-            activeFrames.RemoveAll(f => f.ExpirationTime < now);
+            Width = width;
+            Height = height;
         }
 
         /// <summary>
         /// Draws all currently active debug frames.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
-        public void Draw(Graphics g)
+        public void Draw(Graphics g, List<Frame> activeFrames)
         {
             foreach (var frame in activeFrames)
             {

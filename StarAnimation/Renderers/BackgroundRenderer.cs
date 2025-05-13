@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Drawing;
 
 namespace StarAnimation.Renderers
@@ -19,17 +20,37 @@ namespace StarAnimation.Renderers
         /// <summary>
         /// Width of the drawing canvas.
         /// </summary>
-        public int Width { get; set; }
+        private int width;
+        public int Width
+        {
+            get => width;
+            set
+            {
+                width = Math.Max(value, 1);
+            }
+        }
 
         /// <summary>
         /// Height of the drawing canvas.
         /// </summary>
-        public int Height { get; set; }
+        private int height;
+        public int Height
+        {
+            get => height;
+            set
+            {
+                height = Math.Max(value, 1);
+            }
+        }
+
+        #region Settings (Adjustable Parameters)
 
         /// <summary>
         /// Background brush used for rendering. Default is solid black.
         /// </summary>
         public Brush BackgroundBrush { get; set; } = Brushes.Black;
+
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BackgroundRenderer"/> class.
@@ -37,6 +58,17 @@ namespace StarAnimation.Renderers
         /// <param name="width">Initial width of the canvas.</param>
         /// <param name="height">Initial height of the canvas.</param>
         public BackgroundRenderer(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        /// <summary>
+        /// Updates the background size when the render area is resized.
+        /// </summary>
+        /// <param name="width">New width.</param>
+        /// <param name="height">New height.</param>
+        public void Resize(int width, int height)
         {
             Width = width;
             Height = height;
@@ -51,15 +83,9 @@ namespace StarAnimation.Renderers
             g.FillRectangle(BackgroundBrush, 0, 0, Width, Height);
         }
 
-        /// <summary>
-        /// Updates the background size when the render area is resized.
-        /// </summary>
-        /// <param name="width">New width.</param>
-        /// <param name="height">New height.</param>
-        public void Resize(int width, int height)
+        public void Update()
         {
-            Width = width;
-            Height = height;
+
         }
     }
 }

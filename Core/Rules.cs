@@ -7,3 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+namespace Chinese_Chess_v3.Core
+{
+
+}

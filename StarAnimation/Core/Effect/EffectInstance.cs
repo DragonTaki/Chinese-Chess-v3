@@ -8,16 +8,17 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
+using SharedLib.MathUtils;
+using SharedLib.PhysicsUtils;
 using SharedLib.RandomTable;
 using SharedLib.Timing;
-using SharedLib.MathUtils;
-using System.Collections.Concurrent;
-using SharedLib.PhysicsUtils;
 
 namespace StarAnimation.Core.Effect
 {
@@ -53,7 +54,7 @@ namespace StarAnimation.Core.Effect
             TimeProgress = 0f;
         }
 
-        public virtual void ApplyTo(List<Star> stars)
+        public virtual void ApplyTo(IReadOnlyList<Star> stars)
         {
             Register(InstanceId);
             CreateNewAffectedStars.Clear();
@@ -66,7 +67,7 @@ namespace StarAnimation.Core.Effect
             }
             OnApplyTo(CreateNewAffectedStars);
         }
-        protected abstract void OnApplyTo(List<Star> stars);
+        protected abstract void OnApplyTo(IReadOnlyList<Star> stars);
 
         public void Update()
         {

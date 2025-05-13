@@ -80,7 +80,7 @@ namespace Chinese_Chess_v3.Utils
         }
 
         // Brush methods
-        public static Brush GetBrush(string colorValue = "#000000", float alpha = 1f)
+        public static Brush GetBrush(string colorValue = "#000000", float alpha = 1.0f)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Chinese_Chess_v3.Utils
         }
 
         // Color methods
-        public static Color GetColor(string colorValue = "#000000", float alpha = 1f)
+        public static Color GetColor(string colorValue = "#000000", float alpha = 1.0f)
         {
             try
             {

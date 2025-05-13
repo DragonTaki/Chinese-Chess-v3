@@ -10,7 +10,8 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs.Board;
+using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core.Pieces
 {
@@ -26,7 +27,7 @@ namespace Chinese_Chess_v3.Core.Pieces
         public override bool IsInLegalZone(int targetX, int targetY)
         {
             // No specific zone limit for chariot, but method reserved for consistency
-            return BoardConstants.IsInBounds(targetX, targetY);
+            return Constants.Board.IsInBounds(targetX, targetY);
         }
 
         // Check if is a valid move
@@ -79,7 +80,7 @@ namespace Chinese_Chess_v3.Core.Pieces
                 int currX = x + dx;
                 int currY = y + dy;
 
-                while (BoardConstants.IsInBounds(currX, currY))
+                while (Constants.Board.IsInBounds(currX, currY))
                 {
                     Piece target = board.Grid[currX, currY];
 

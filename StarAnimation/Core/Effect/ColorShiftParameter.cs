@@ -9,9 +9,11 @@
 
 using StarAnimation.Utils.Area;
 
+using StarAnimation.Core.Effect.Instance;
+
 using SharedLib.MathUtils;
 
-namespace StarAnimation.Core.Effect
+namespace StarAnimation.Core.Effect.Parameter
 {
     /// <summary>
     /// Declare configurable parameter for ColorShift effect instance.

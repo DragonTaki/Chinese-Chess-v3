@@ -24,7 +24,7 @@ namespace StarAnimation.Utils.Area
 
         public bool Contains(Vector2F p)
         {
-            return BoundingBox.Contains(p.ToPointF);
+            return BoundingBox.Contains(Vector2F.ToPointF(p));
         }
     }
 }
