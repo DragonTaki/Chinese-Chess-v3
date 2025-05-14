@@ -11,73 +11,69 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Interface.Controls;
+using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
+
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.Interface.Renderers
+namespace Chinese_Chess_v3.Renderers
 {
     public class MainMenuRenderer
     {
-        private ScrollContainer scroll = new ScrollContainer();
-        private class MenuButton
+        /// <summary>
+        /// Width of the drawing canvas.
+        /// </summary>
+        private int width;
+        public int Width
         {
-            public string Text { get; set; }
-            public Vector2F Position { get; set; }
-        }
-/*
-        public void Init(List<ButtonData> buttonList)
-        {
-            this.buttons = buttonList;
-        }
-        public void Draw(Graphics g, Vector2F scrollOffset)
-        {
-            foreach (var button in buttons)
+            get => width;
+            set
             {
-                var pos = button.Position + scrollOffset;
-                DrawButton(g, button.Text, pos, Settings.MainMenu.Button.Size);
+                width = Math.Max(value, 1);
             }
         }
-        */
-        
-        public void Draw(Graphics g, RectangleF bounds)
+
+        /// <summary>
+        /// Height of the drawing canvas.
+        /// </summary>
+        private int height;
+        public int Height
+        {
+            get => height;
+            set
+            {
+                height = Math.Max(value, 1);
+            }
+        }
+
+        public MainMenuRenderer(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public void Draw(Graphics g, List<ButtonData> buttons, RectangleF clip)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
             // Debug 虛線外框
             using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
             {
+                float debugMargin = 1.0f;
                 debugPen.DashStyle = DashStyle.Dash;
-                g.DrawRectangle(debugPen, bounds);
+                g.DrawRectangle(debugPen,
+                Settings.MainMenu.Position.X + debugMargin,
+                Settings.MainMenu.Position.Y + debugMargin,
+                width - debugMargin * 2,
+                height - debugMargin * 2);
             }
 
-            //scroll.ViewportBounds = new RectangleF(0, 40, 360, 800); // 顯示區域（預留上下透明區域）
-            //sscroll.ContentHeight = 按鈕總高度;
-
-            var buttons = new List<MenuButton>
-            {
-                new MenuButton { Text = "開新一局" },
-                new MenuButton { Text = "遊戲設定" },
-                new MenuButton { Text = "規則設定" },
-                new MenuButton { Text = "教學／幫助" },
-                new MenuButton { Text = "讀取存檔" },
-                new MenuButton { Text = "離開遊戲" }
-            };
-
-            float margin = Settings.MainMenu.Margin;
-            Vector2F size = Settings.MainMenu.Button.Size;
-            Vector2F basePosition = Settings.MainMenu.Button.Position;
-
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                float y = basePosition.Y + i * (size.Y + margin);
-                buttons[i].Position = new Vector2F(basePosition.X, y);
-            }
-
+            g.SetClip(clip);
             foreach (var button in buttons)
             {
-                DrawButton(g, button.Text, button.Position, Settings.MainMenu.Button.Size);
+                DrawButton(g, button.Text, button.RenderPosition, Settings.MainMenu.Button.Size);
             }
         }
 
@@ -103,8 +99,14 @@ namespace Chinese_Chess_v3.Interface.Renderers
                 size.Y - innerGap
             );
             
-            using (GraphicsPath outerPath = GraphicsPaths.CreateRoundedRectPath(outerPathRect.Width, outerPathRect.Height, Styles.MainMenu.Button.Border.CornerRadius))
-            using (GraphicsPath innerPath = GraphicsPaths.CreateRoundedRectPath(innerPathRect.Width, innerPathRect.Height, Styles.MainMenu.Button.Border.CornerRadius - Styles.MainMenu.Button.Border.Margin))
+            using (GraphicsPath outerPath = GraphicsPaths.CreateRoundedRectPath(
+                outerPathRect.Width,
+                outerPathRect.Height,
+                Styles.MainMenu.Button.Border.CornerRadius))
+            using (GraphicsPath innerPath = GraphicsPaths.CreateRoundedRectPath(
+                innerPathRect.Width,
+                innerPathRect.Height,
+                Styles.MainMenu.Button.Border.CornerRadius - Styles.MainMenu.Button.Border.Margin))
             using (Matrix mOuter = new Matrix())
             using (Matrix mInner = new Matrix())
             {

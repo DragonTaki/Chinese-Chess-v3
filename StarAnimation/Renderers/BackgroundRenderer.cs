@@ -82,10 +82,5 @@ namespace StarAnimation.Renderers
         {
             g.FillRectangle(BackgroundBrush, 0, 0, Width, Height);
         }
-
-        public void Update()
-        {
-
-        }
     }
 }

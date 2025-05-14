@@ -7,55 +7,87 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Interface.Controls;
-using Chinese_Chess_v3.Interface.Renderers;
+using Chinese_Chess_v3.Controls;
+using Chinese_Chess_v3.Data;
+using Chinese_Chess_v3.Models;
+using Chinese_Chess_v3.Renderers;
+using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.Interface.Panels
+namespace Chinese_Chess_v3.Panels
 {
     public class MainMenuPanel : Panel
     {
-        private MainMenuRenderer renderer;
-        private ScrollContainer scrollContainer;
+        private readonly MainMenuRenderer renderer;
+        private readonly ScrollContainer scroll;
 
-        public MainMenuPanel()
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public List<ButtonData> Buttons { get; private set; } = MainMenuButtonList.CreateDefaultButtons();
+
+        public MainMenuPanel(MainMenuRenderer renderer, ScrollContainer scroll)
         {
             this.DoubleBuffered = true;
             this.Location = Settings.MainMenu.Position.ToPoint();
             this.Size = Settings.MainMenu.Size.ToSize();
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             this.BackColor = Color.Transparent;
-            
 
-            renderer = new MainMenuRenderer();
+            this.renderer = renderer;
+            this.scroll = scroll;
 
-            this.Paint += OnPaint;
+            //this.Paint += OnPaint;
             this.MouseClick += OnMouseClick;
         }
 
-        public void Init()
+        public new void InitLayout()
         {
-            renderer = new MainMenuRenderer();
-            scrollContainer = new ScrollContainer();
+            scroll.ViewportBounds = new RectangleF(
+                Settings.MainMenu.Button.Position.X,
+                Settings.MainMenu.Button.Position.Y - Settings.MainMenu.Margin,
+                Settings.MainMenu.Button.Size.X,
+                Settings.MainMenu.Size.Y - Settings.MainMenu.Margin * 2);
+            scroll.ContentHeight = Buttons.Count * (Settings.MainMenu.Button.Size.Y + Settings.MainMenu.Margin);
+
+            float margin = Settings.MainMenu.Margin;
+            Vector2F size = Settings.MainMenu.Button.Size;
+            Vector2F basePosition = Settings.MainMenu.Button.Position;
+
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                float y = basePosition.Y + i * (size.Y + margin);
+                Buttons[i].Position = new Vector2F(basePosition.X, y);
+            }
+            scroll.ScrollY = -Settings.MainMenu.Margin;
         }
 
-        public void Render(Graphics g)
+        public void UpdateScrollLayout()
         {
-            //scrollContainer.ApplyClip(g); // 裁切可視區域
-            //renderer.Draw(g, scrollContainer.ScrollOffset);
-            //scrollContainer.ClearClip(g);
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                Buttons[i].RenderPosition = new Vector2F(
+                    Buttons[i].Position.X,
+                    Buttons[i].Position.Y + scroll.GetContentOffsetY());
+            }
         }
 
-        private void OnPaint(object sender, PaintEventArgs e)
+        public List<ButtonData> GetVisibleButtons()
         {
-            //renderer.Draw(e.Graphics, this.ClientRectangle);
+            RectangleF view = scroll.GetClippingRect();
+            return Buttons.Where(b =>
+                b.RenderPosition.Y + Settings.MainMenu.Button.Size.Y > view.Top &&
+                b.RenderPosition.Y < view.Bottom
+            ).ToList();
         }
 
         // Event handling
-        public void OnMouseDown(MouseEventArgs e)
+        public void OnMouseDown(object sender, MouseEventArgs e)
         {
             //scrollContainer.OnMouseDown(e);
         }

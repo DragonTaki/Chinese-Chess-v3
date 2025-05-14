@@ -7,14 +7,14 @@
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
+
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
+
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.Interface.Renderers
+namespace Chinese_Chess_v3.Renderers
 {
     public class BoardRenderer
     {

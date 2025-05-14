@@ -12,12 +12,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Configs.Sidebar;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 using SharedLib.RandomTable;
 using SharedLib.Timing;
 
-namespace Chinese_Chess_v3.Interface.Renderers
+namespace Chinese_Chess_v3.Renderers
 {
     public class SidebarRenderer
     {

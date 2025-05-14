@@ -14,17 +14,16 @@ using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Core;
-using Chinese_Chess_v3.Interface.Panels;
 using Chinese_Chess_v3.Interface.Sidebar;
 using Chinese_Chess_v3.Utils;
-using Chinese_Chess_v3.Interface.Renderers;
+using Chinese_Chess_v3.Renderers;
 
 using SharedLib.RandomTable;
 using SharedLib.Timing;
 using SharedLib.Globals;
 
-using StarAnimation.Controllers;
 using StarAnimation;
+using Chinese_Chess_v3.Controllers;
 
 namespace Chinese_Chess_v3.Interface
 {
@@ -33,8 +32,7 @@ namespace Chinese_Chess_v3.Interface
         private TimerManager timerManager = new TimerManager();
         public static RandomTable GlobalRandomTable;
         private StarAnimationApp starAnimationApp;
-        private MainMenuPanel mainMenuPanel;
-        private MainMenuRenderer mainMenuRenderer;
+        private MainMenuController mainMenuController;
         private GameManager gameManager;
         private BoardRenderer boardRenderer;
         private PieceRenderer pieceRenderer;
@@ -47,8 +45,9 @@ namespace Chinese_Chess_v3.Interface
         {
             // Initialization logic
             InitComponents();             // 控制項設置（滑鼠事件、大小設定等）
-            InitPanels();                 // 初始化所有面板（BoardPanel, MainMenuPanel 等）
             InitTimer();                  // 建立更新用 Timer（或使用 Application.Idle 驅動）
+            InitController();
+            InitPanels();                 // 初始化所有面板（BoardPanel, MainMenuPanel 等）
             InitRenderers();              // 建立對應 renderer（MainMenuRenderer, PieceRenderer 等）
 
             //mainMenuPanel = new MainMenuPanel();
@@ -96,17 +95,6 @@ namespace Chinese_Chess_v3.Interface
             this.KeyDown += OnKeyDown;
         }
 
-        private void InitPanels()
-        {
-            mainMenuPanel = new MainMenuPanel();
-            //boardPanel = new BoardPanel();
-            //sidebarPanel = new SidebarPanel();
-            //infoBoard = new InfoBoard();
-
-            // 可以將 panel 放進 List<IUIPanel> panels 做統一更新處理
-            //panels = new List<IUIPanel> { mainMenuPanel, boardPanel, sidebarPanel, infoBoard };
-        }
-
         private void InitTimer()
         {
             timerManager = new TimerManager();
@@ -119,16 +107,32 @@ namespace Chinese_Chess_v3.Interface
             timerManager.StartTimers();
         }
 
+        private void InitController()
+        {
+            mainMenuController = new MainMenuController(Width, Height);
+            mainMenuController.Initialize();
+        }
+
+        private void InitPanels()
+        {
+            //mainMenuPanel = new MainMenuPanel();
+            //boardPanel = new BoardPanel();
+            //sidebarPanel = new SidebarPanel();
+            //infoBoard = new InfoBoard();
+
+            // 可以將 panel 放進 List<IUIPanel> panels 做統一更新處理
+            //panels = new List<IUIPanel> { mainMenuPanel, boardPanel, sidebarPanel, infoBoard };
+        }
+
         private void InitRenderers()
         {
             if (GlobalTime.Timer == null)
                 throw new InvalidOperationException("GlobalTime.Timer must be initialized before creating renderers.");
 
             starAnimationApp = new StarAnimationApp();
-            mainMenuRenderer = new MainMenuRenderer();
-            boardRenderer = new BoardRenderer();
-            pieceRenderer = new PieceRenderer();
-            sidebarRenderer = new SidebarRenderer();
+            //boardRenderer = new BoardRenderer();
+            //pieceRenderer = new PieceRenderer();
+            //sidebarRenderer = new SidebarRenderer();
 
             // 若你的面板有 renderer 欄位，可以在這裡賦值
             //mainMenuPanel.SetRenderer(mainMenuRenderer);
@@ -142,7 +146,7 @@ namespace Chinese_Chess_v3.Interface
             base.OnPaint(e);
             Graphics g = e.Graphics;
             starAnimationApp.Render(g);
-            mainMenuPanel.Render(g);
+            mainMenuController.Render(g);
 /*
             foreach (var panel in panels)
             {
@@ -178,7 +182,7 @@ namespace Chinese_Chess_v3.Interface
         // Event handling
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            mainMenuPanel.OnMouseDown(e);
+            //mainMenuController.OnMouseDown(e);
         }
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
