@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/11
-// Update Date: 2025/05/11
-// Version: v1.0
+// Update Date: 2025/05/15
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -14,60 +14,81 @@ using System.Linq;
 using StarAnimation.Core.Effect;
 
 using SharedLib.MathUtils;
+using System.Drawing;
 
 namespace SharedLib.PhysicsUtils
 {
     /// <summary>
-    /// Represents a float range with inclusive minimum and maximum values.
+    /// Handles 2D physics simulation for an object, including position, velocity, acceleration,
+    /// and optional boundary and spring/damping effects.
     /// </summary>
     public class Physics2D
     {
-        // Basic physical data of the object
+        /// <summary>
+        /// The base, current and target positions of the object.
+        /// </summary>
         public Position Position { get; set; } = new Position();
+
+        /// <summary>
+        /// The base, current and target velocities of the object.
+        /// </summary>
         public Velocity Velocity { get; set; } = new Velocity();
+
+        /// <summary>
+        /// The current and target accelerations of the object.
+        /// </summary>
         public Acceleration Acceleration { get; set; } = new Acceleration();
+
+        /// <summary>
+        /// A dictionary of externally contributed accelerations indexed by unique effect ID.
+        /// </summary>
         public Dictionary<Guid, Vector2F> AccelerationContributions = new();
 
 #nullable enable
+        /// <summary>
+        /// Optional bounding box within which the object must stay.
+        /// </summary>
         public Boundary? Boundary { get; set; } = new Boundary();
 #nullable disable
         
+        /// <summary>
+        /// Parameters controlling motion behavior such as spring and damping.
+        /// </summary>
         public Movement Movement { get; set; } = new Movement();
 
-        private const float DirectionLerpFactor = 0.05f; // Smaller is smoother
-        private const float SpeedLerpFactor = 0.02f;
+        #region Settings (Adjustable Parameters)
+
         private const float AccelerationLerpFactor = 0.05f;
         private const float CalculateThreshold = 0.001f;
-        public float DragFactor { get; set; } = 0.98f;
 
+        #endregion
+
+        /// <summary>
+        /// Initializes and registers a new instance of Physics2D.
+        /// </summary>
         public Physics2D()
         {
             PhysicsRegistry.Register(this);
         }
 
+        /// <summary>
+        /// Unregisters the Physics2D instance on destruction.
+        /// </summary>
         ~Physics2D()
         {
             PhysicsRegistry.Unregister(this);
         }
 
-        // Implement in Star.cs
-        //public Physics2D Physics => this;
-
-        //public void UpdatePhysics()
-        //{
-        //    SmoothUpdate();
-        //}
-
         /// <summary>
-        /// Smoothly updates the object's position and velocity toward the target.
+        /// Performs a smooth physics update, modifying position and velocity based on acceleration,
+        /// spring, damping, and current motion state.
         /// </summary>
         public void SmoothUpdate()
         {
             // Integrate all sources of acceleration
             Acceleration.Target = Vector2F.Zero;
 
-            if (AccelerationContributions == null)
-                AccelerationContributions = new Dictionary<Guid, Vector2F>();
+            AccelerationContributions ??= new Dictionary<Guid, Vector2F>();
 
             foreach (var accel in AccelerationContributions.Values)
             {
@@ -169,12 +190,18 @@ namespace SharedLib.PhysicsUtils
             Position.Current += Velocity.Current;
         }
 
+        /// <summary>
+        /// Cleans up invalid physics effects from all registered instances.
+        /// </summary>
         public static void CleanupAllPhysicsEffects()
         {
             foreach (var physics in PhysicsRegistry.GetAll())
                 physics.CleanupInvalidEffectReferences();
         }
 
+        /// <summary>
+        /// Removes acceleration contributions whose effect IDs are no longer active.
+        /// </summary>
         private void CleanupInvalidEffectReferences()
         {
             var validIds = EffectInstance.GetAllActiveEffectIds();
@@ -186,6 +213,9 @@ namespace SharedLib.PhysicsUtils
                 AccelerationContributions.Remove(id);
         }
 
+        /// <summary>
+        /// Constrains the object's current position within the specified boundary if one is set.
+        /// </summary>
         public void EnforceBoundaries()
         {
             if (Boundary.Min != null && Boundary.Max != null)
@@ -202,17 +232,17 @@ namespace SharedLib.PhysicsUtils
     public class Position
     {
         /// <summary>
-        /// The base position (X and Y components).
+        /// The base absolute position (X and Y components).
         /// </summary>
         public Vector2F Base { get; set; } = new Vector2F();
 
         /// <summary>
-        /// The current position (X and Y components).
+        /// The current absolute position (X and Y components).
         /// </summary>
         public Vector2F Current { get; set; } = new Vector2F();
 
         /// <summary>
-        /// The target position (X and Y components).
+        /// The target absolute position (X and Y components).
         /// </summary>
         public Vector2F Target { get; set; } = new Vector2F();
 
@@ -234,12 +264,19 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Constructor with a given initial position value.
         /// </summary>
+        /// <param name="positionX">Initial X position.</param>
+        /// <param name="positionY">Initial Y position.</param>
         public Position(float positionX, float positionY)
         {
             Base = new Vector2F(positionX, positionY);
             Current = new Vector2F(positionX, positionY);
             Target = new Vector2F(positionX, positionY);
         }
+
+        /// <summary>
+        /// Constructor with a given Vector2F position.
+        /// </summary>
+        /// <param name="position">The position vector.</param>
         public Position(Vector2F position)
         {
             Base = position;
@@ -247,10 +284,26 @@ namespace SharedLib.PhysicsUtils
             Target = position;
         }
 
-        public static implicit operator Position(Vector2F v)
-        {
-            return new Position(v);
-        }
+        /// <summary>
+        /// Implicitly converts a Vector2F to Position.
+        /// </summary>
+        /// <param name="v">The vector to convert.</param>
+        public static implicit operator Position(Vector2F v) =>
+            new Position(v);
+
+        /// <summary>
+        /// Implicitly converts a PointF to Position.
+        /// </summary>
+        /// <param name="point">The point to convert.</param>
+        public static implicit operator Position(PointF point) =>
+            new Position(new Vector2F(point));
+
+        /// <summary>
+        /// Implicitly converts a SizeF to Position.
+        /// </summary>
+        /// <param name="point">The size to convert.</param>
+        public static implicit operator Position(SizeF point) =>
+            new Position(new Vector2F(point));
 
         /// <summary>
         /// Reset all positions to (0, 0).
@@ -296,12 +349,19 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Constructor with a given initial velocity value.
         /// </summary>
+        /// <param name="speedX">Initial X speed.</param>
+        /// <param name="speedY">Initial Y speed.</param>
         public Velocity(float speedX, float speedY)
         {
             Base = new Vector2F(speedX, speedY);
             Current = new Vector2F(speedX, speedY);
             Target = new Vector2F(speedX, speedY);
         }
+
+        /// <summary>
+        /// Constructor with a given Vector2F speed.
+        /// </summary>
+        /// <param name="speed">The speed vector.</param>
         public Velocity(Vector2F speed)
         {
             Base = speed;
@@ -334,6 +394,36 @@ namespace SharedLib.PhysicsUtils
         /// The target acceleration (X and Y components).
         /// </summary>
         public Vector2F Target { get; set; } = new Vector2F();
+
+        /// <summary>
+        /// Default constructor with all accelerations set to (0, 0).
+        /// </summary>
+        public Acceleration()
+        {
+            Current = Vector2F.Zero;
+            Target = Vector2F.Zero;
+        }
+
+        /// <summary>
+        /// Constructor with a given initial acceleration value.
+        /// </summary>
+        /// <param name="speedX">Initial X acceleration.</param>
+        /// <param name="speedY">Initial Y acceleration.</param>
+        public Acceleration(float speedX, float speedY)
+        {
+            Current = new Vector2F(speedX, speedY);
+            Target = new Vector2F(speedX, speedY);
+        }
+
+        /// <summary>
+        /// Constructor with a given Vector2F acceleration.
+        /// </summary>
+        /// <param name="speed">The acceleration vector.</param>
+        public Acceleration(Vector2F speed)
+        {
+            Current = speed;
+            Target = speed;
+        }
 
         /// <summary>
         /// Reset all accelerations to (0, 0).

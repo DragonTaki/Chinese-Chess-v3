@@ -19,7 +19,7 @@ namespace Chinese_Chess_v3.Utils
         public static class FontDefaults
         {
             public static readonly FontFamily FontFamily = FontFamily.GenericSansSerif;
-            public const float FontSize = 10f;
+            public const float FontSize = 10.0f;
             public static readonly FontStyle FontStyle = FontStyle.Regular;
 
             public static readonly Font DefaultFont = new Font(FontFamily, FontSize, FontStyle);
@@ -32,7 +32,7 @@ namespace Chinese_Chess_v3.Utils
         public static readonly Color DefaultColor = Color.Black;
 
         // Font method
-        public static Font GetFont(string? fontKey = null, float? size = null, FontStyle? style = null)
+        public static Font GetFont(string fontKey = null, float? size = null, FontStyle? style = null)
         {
             try
             {

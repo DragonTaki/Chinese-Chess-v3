@@ -29,7 +29,7 @@ namespace Chinese_Chess_v3.Interface.UI.Core
             Base = basePosition;
             Current = basePosition;
         }
-        
+
         public static implicit operator UIPosition(Vector2F v)
         {
             return new UIPosition(v);
@@ -41,9 +41,9 @@ namespace Chinese_Chess_v3.Interface.UI.Core
         public Vector2F GetAbsolute(UIElement element)
         {
             Vector2F pos = Current;
-            #nullable enable
+#nullable enable
             UIElement? parent = element.Parent;
-            #nullable disable
+#nullable disable
             while (parent != null)
             {
                 pos += parent.LocalPosition.Base;

@@ -17,8 +17,8 @@ namespace Chinese_Chess_v3.Utils
 {
     public static class FontManager
     {
-        private static PrivateFontCollection _fontCollection = new PrivateFontCollection();
-        private static Dictionary<string, FontFamily> _loadedFonts = new Dictionary<string, FontFamily>();
+        private static readonly PrivateFontCollection _fontCollection = new PrivateFontCollection();
+        private static readonly Dictionary<string, FontFamily> _loadedFonts = new Dictionary<string, FontFamily>();
 
         // Load fonts by filename and assign a key (e.g., "MoeLI", "NotoSerif")
         public static void LoadFonts()
