@@ -96,10 +96,6 @@ namespace StarAnimation.Models
             int blue = Rand.NextInt(0, 256);   // Blue component (0-255)
             Color.SetColor(red, green, blue);  // Set the star's color
         }
-        public void UpdatePhysics()
-        {
-            Physics.SmoothUpdate();
-        }
     }
 
     /// <summary>

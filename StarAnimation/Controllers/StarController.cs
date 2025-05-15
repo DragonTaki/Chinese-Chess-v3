@@ -97,8 +97,6 @@ namespace StarAnimation.Controllers
         {
             foreach (var star in stars.ToArray())
             {
-                star.UpdatePhysics();
-
                 // If outside canvas, clear all status and put to waiting area
                 if (star.Position.Current.X < -OutsideCanvasMargin || star.Position.Current.Y < -OutsideCanvasMargin ||
                     star.Position.Current.X > width + OutsideCanvasMargin || star.Position.Current.Y > height + OutsideCanvasMargin)

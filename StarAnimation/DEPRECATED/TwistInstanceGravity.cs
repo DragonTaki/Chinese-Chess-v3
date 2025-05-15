@@ -155,49 +155,48 @@ namespace StarAnimation.Core.Effect
                 if (radius < 0.01f)
                     continue; // 太靠近中心不旋轉
 
-        Vector2F radialDir = toCenter.Normalize();
+                Vector2F radialDir = toCenter.Normalize();
 
-        // === 切線方向（正交方向）===
-        Vector2F tangentDir = new Vector2F(-radialDir.Y, radialDir.X); // 順時針方向
-        if (Direction < 0)
-            tangentDir = new Vector2F(radialDir.Y, -radialDir.X); // 逆時針方向
+                // === 切線方向（正交方向）===
+                Vector2F tangentDir = new Vector2F(-radialDir.Y, radialDir.X); // 順時針方向
+                if (Direction < 0)
+                    tangentDir = new Vector2F(radialDir.Y, -radialDir.X); // 逆時針方向
 
-        // === 扭曲角度影響 ===
-        float twistAngle = Direction * MaxAngle * normalizedTime;
-        Vector2F twistedTangent = tangentDir.Rotate(twistAngle);
+                // === 扭曲角度影響 ===
+                float twistAngle = Direction * MaxAngle * normalizedTime;
+                Vector2F twistedTangent = tangentDir.Rotate(twistAngle);
 
-        // === 計算半徑衰減因子 ===
-        float falloff = 1.0f / (1.0f + radius);
+                // === 計算半徑衰減因子 ===
+                float falloff = 1.0f / (1.0f + radius);
 
-        // === 引力加速度（徑向）===
-        float gravityConstant = 50f;
-        float safeRadius = Math.Max(radius, 0.01f); // 防止除以零
-        Vector2F gravityAccel = (-1f) * radialDir * (gravityConstant / (safeRadius * safeRadius));
+                // === 引力加速度（徑向）===
+                float gravityConstant = 50f;
+                float safeRadius = Math.Max(radius, 0.01f); // 防止除以零
+                Vector2F gravityAccel = (-1f) * radialDir * (gravityConstant / (safeRadius * safeRadius));
 
-        // === 切向力動態調整（方案 A）===
-        Vector2F velocity = star.Physics.Velocity.Current;
-        if (Math.Sqrt(velocity.Length()) > 0.0001f)
-        {
-            Vector2F velocityDir = velocity.Normalize();
-            // 改成使用工具方法計算內積
-            float alignment = Vector2F.DotProduct(velocityDir, (-1f) * radialDir);
+                // === 切向力動態調整（方案 A）===
+                Vector2F velocity = star.Physics.Velocity.Current;
+                if (Math.Sqrt(velocity.Length()) > 0.0001f)
+                {
+                    Vector2F velocityDir = velocity.Normalize();
+                    // 改成使用工具方法計算內積
+                    float alignment = Vector2F.DotProduct(velocityDir, (-1f) * radialDir);
 
-            float twistFactor = 0.5f + 0.5f * MathF.Max(0, alignment); // alignment 越小 twist 越弱
+                    float twistFactor = 0.5f + 0.5f * MathF.Max(0, alignment); // alignment 越小 twist 越弱
 
-            // === 扭曲角加速度（角動量來源） ===
-            float twistStrength = 0.15f * falloff * speedBoost * twistFactor;
-            Vector2F twistAccel = twistedTangent * twistStrength;
+                    // === 扭曲角加速度（角動量來源） ===
+                    float twistStrength = 0.15f * falloff * speedBoost * twistFactor;
+                    Vector2F twistAccel = twistedTangent * twistStrength;
 
-            // === 總合加速度 ===
-            Vector2F finalAccel = gravityAccel + twistAccel;
-            star.Physics.AccelerationContributions[InstanceId] = finalAccel;
-        }
-        else
-        {
-            // 沒有速度方向時，只使用徑向引力
-            star.Physics.AccelerationContributions[InstanceId] = gravityAccel;
-        }
-                star.Physics.SmoothUpdate();
+                    // === 總合加速度 ===
+                    Vector2F finalAccel = gravityAccel + twistAccel;
+                    star.Physics.AccelerationContributions[InstanceId] = finalAccel;
+                }
+                else
+                {
+                    // 沒有速度方向時，只使用徑向引力
+                    star.Physics.AccelerationContributions[InstanceId] = gravityAccel;
+                }
             }
         }
         

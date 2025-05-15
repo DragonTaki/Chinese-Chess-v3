@@ -14,8 +14,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Configs.Sidebar;
+using Chinese_Chess_v3.Interface.UI.Constants;
 
 namespace Chinese_Chess_v3.Interface.Sidebar
 {
@@ -23,8 +23,8 @@ namespace Chinese_Chess_v3.Interface.Sidebar
     {
         public LoggerBox()
         {
-            this.Location = Settings.Sidebar.Logger.Position.ToPoint();
-            this.Size = Settings.Sidebar.Logger.Size.ToSize();
+            this.Location = UILayoutConstants.Sidebar.Logger.Position.ToPoint();
+            this.Size = UILayoutConstants.Sidebar.Logger.Size.ToSize();
             this.ReadOnly = true;
             this.BorderStyle = BorderStyle.FixedSingle;
             this.Font = LoggerSettings.Font;

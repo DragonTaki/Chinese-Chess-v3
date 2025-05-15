@@ -10,6 +10,7 @@
 using System.Drawing;
 
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Interface.UI.Constants;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
 using SharedLib.MathUtils;
@@ -22,7 +23,7 @@ namespace Chinese_Chess_v3.Renderers
         public BoardRenderer()
         {
             // Customized pen
-            boardPen = new Pen(Color.Black, Settings.Board.Grid.LineWidth);
+            boardPen = new Pen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
         }
 
         // Draw whole board
@@ -31,7 +32,7 @@ namespace Chinese_Chess_v3.Renderers
             GraphicsHelper.ApplyHighQualitySettings(g);
 
             // Step 1: Draw the background
-            RectangleF fullArea = Vector2F.ToRectangleF(Settings.Board.Position, Settings.Board.Size);
+            RectangleF fullArea = Vector2F.ToRectangleF(UILayoutConstants.Board.Position, UILayoutConstants.Board.Size);
 
             using (Brush backgroundBrush = BoardStyles.CreateBoardBackgroundBrush(fullArea))
             {
@@ -42,22 +43,22 @@ namespace Chinese_Chess_v3.Renderers
             // Step 2: Draw vertical lines for the grid
             for (int i = 1; i < Constants.Board.Columns - 1; i++)
             {
-                float x = Settings.Board.Position.X + i * Settings.Board.Grid.Size;
+                float x = UILayoutConstants.Board.Position.X + i * UILayoutConstants.Board.Grid.Size;
                 // Black side vertical lines
                 g.DrawLine(
                     boardPen,
                     x,
-                    Settings.Board.Position.Y,
+                    UILayoutConstants.Board.Position.Y,
                     x,
-                    Settings.Board.Position.Y + Constants.Board.BlackYSideRiverLine * Settings.Board.Grid.Size
+                    UILayoutConstants.Board.Position.Y + Constants.Board.BlackYSideRiverLine * UILayoutConstants.Board.Grid.Size
                 );
                 // Red side vertical lines
                 g.DrawLine(
                     boardPen,
                     x,
-                    Settings.Board.Position.Y + Constants.Board.RedYSideRiverLine * Settings.Board.Grid.Size,
+                    UILayoutConstants.Board.Position.Y + Constants.Board.RedYSideRiverLine * UILayoutConstants.Board.Grid.Size,
                     x,
-                    Settings.Board.Position.Y + (Constants.Board.Rows - 1) * Settings.Board.Grid.Size
+                    UILayoutConstants.Board.Position.Y + (Constants.Board.Rows - 1) * UILayoutConstants.Board.Grid.Size
                 );
             }
 
@@ -67,13 +68,13 @@ namespace Chinese_Chess_v3.Renderers
             // Step 4: Draw horizontal lines for the grid
             for (int i = 1; i < Constants.Board.Rows - 1; i++)
             {
-                float y = Settings.Board.Position.Y + i * Settings.Board.Grid.Size;
+                float y = UILayoutConstants.Board.Position.Y + i * UILayoutConstants.Board.Grid.Size;
                 // Horizontal lines
                 g.DrawLine(
                     boardPen,
-                    Settings.Board.Position.X,
+                    UILayoutConstants.Board.Position.X,
                     y,
-                    Settings.Board.Position.X + (Constants.Board.Columns - 1) * Settings.Board.Grid.Size,
+                    UILayoutConstants.Board.Position.X + (Constants.Board.Columns - 1) * UILayoutConstants.Board.Grid.Size,
                     y
                 );
             }
@@ -93,19 +94,19 @@ namespace Chinese_Chess_v3.Renderers
         {
             // Calculated from the origin point
             // Black side palace (top)
-            float x1 = Settings.Board.Position.X + Constants.Board.PalaceXRange.MinX * Settings.Board.Grid.Size;
-            float y1 = Settings.Board.Position.Y + Constants.Board.BlackPalaceYRange.MinY * Settings.Board.Grid.Size;
-            float x2 = Settings.Board.Position.X + Constants.Board.PalaceXRange.MaxX * Settings.Board.Grid.Size;
-            float y2 = Settings.Board.Position.Y + Constants.Board.BlackPalaceYRange.MaxY * Settings.Board.Grid.Size;
+            float x1 = UILayoutConstants.Board.Position.X + Constants.Board.PalaceXRange.MinX * UILayoutConstants.Board.Grid.Size;
+            float y1 = UILayoutConstants.Board.Position.Y + Constants.Board.BlackPalaceYRange.MinY * UILayoutConstants.Board.Grid.Size;
+            float x2 = UILayoutConstants.Board.Position.X + Constants.Board.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.Size;
+            float y2 = UILayoutConstants.Board.Position.Y + Constants.Board.BlackPalaceYRange.MaxY * UILayoutConstants.Board.Grid.Size;
 
             g.DrawLine(pen, x1, y1, x2, y2);  // Left-top to right-bottom
             g.DrawLine(pen, x2, y1, x1, y2);  // Right-top to left-bottom
 
             // Red side palace (bottom)
-            float x3 = Settings.Board.Position.X + Constants.Board.PalaceXRange.MinX * Settings.Board.Grid.Size;
-            float y3 = Settings.Board.Position.Y + Constants.Board.RedPalaceYRange.MinY * Settings.Board.Grid.Size;
-            float x4 = Settings.Board.Position.X + Constants.Board.PalaceXRange.MaxX * Settings.Board.Grid.Size;
-            float y4 = Settings.Board.Position.Y + Constants.Board.RedPalaceYRange.MaxY * Settings.Board.Grid.Size;
+            float x3 = UILayoutConstants.Board.Position.X + Constants.Board.PalaceXRange.MinX * UILayoutConstants.Board.Grid.Size;
+            float y3 = UILayoutConstants.Board.Position.Y + Constants.Board.RedPalaceYRange.MinY * UILayoutConstants.Board.Grid.Size;
+            float x4 = UILayoutConstants.Board.Position.X + Constants.Board.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.Size;
+            float y4 = UILayoutConstants.Board.Position.Y + Constants.Board.RedPalaceYRange.MaxY * UILayoutConstants.Board.Grid.Size;
 
             g.DrawLine(pen, x3, y3, x4, y4);  // Left-bottom to right-top
             g.DrawLine(pen, x4, y3, x3, y4);  // Right-bottom to left-top
@@ -135,8 +136,8 @@ namespace Chinese_Chess_v3.Renderers
         void DrawCorner(Graphics g, int x, int y, Pen pen)
         {
             // Calculated from the origin point
-            float cx = Settings.Board.Position.X + x * Settings.Board.Grid.Size;
-            float cy = Settings.Board.Position.Y + y * Settings.Board.Grid.Size;
+            float cx = UILayoutConstants.Board.Position.X + x * UILayoutConstants.Board.Grid.Size;
+            float cy = UILayoutConstants.Board.Position.Y + y * UILayoutConstants.Board.Grid.Size;
 
             float cornerLength = 6.0f;
             float gap = 4.0f;
@@ -178,23 +179,23 @@ namespace Chinese_Chess_v3.Renderers
         {
             // Gap between grid line and frame line
             float gap1 = 0.0f;
-            float gap2 = Settings.Board.Grid.LineWidth * 2;
-            float boardWidthPx = (Constants.Board.Columns - 1) * Settings.Board.Grid.Size;
-            float boardHeightPx = (Constants.Board.Rows - 1) * Settings.Board.Grid.Size;
+            float gap2 = UILayoutConstants.Board.Grid.LineWidth * 2;
+            float boardWidthPx = (Constants.Board.Columns - 1) * UILayoutConstants.Board.Grid.Size;
+            float boardHeightPx = (Constants.Board.Rows - 1) * UILayoutConstants.Board.Grid.Size;
 
             // Padding is calculated from the origin point, subtracting gap to move outward
             RectangleF outerRect1 = new RectangleF(
-                Settings.Board.Position.X - gap1 - Settings.Board.Grid.LineWidth / 2,
-                Settings.Board.Position.Y - gap1 - Settings.Board.Grid.LineWidth / 2,
-                boardWidthPx + 2 * gap1 + Settings.Board.Grid.LineWidth,
-                boardHeightPx + 2 * gap1 + Settings.Board.Grid.LineWidth
+                UILayoutConstants.Board.Position.X - gap1 - UILayoutConstants.Board.Grid.LineWidth / 2,
+                UILayoutConstants.Board.Position.Y - gap1 - UILayoutConstants.Board.Grid.LineWidth / 2,
+                boardWidthPx + 2 * gap1 + UILayoutConstants.Board.Grid.LineWidth,
+                boardHeightPx + 2 * gap1 + UILayoutConstants.Board.Grid.LineWidth
             );
 
             RectangleF outerRect2 = new RectangleF(
-                Settings.Board.Position.X - gap2 - Settings.Board.Grid.LineWidth / 2,
-                Settings.Board.Position.Y - gap2 - Settings.Board.Grid.LineWidth / 2,
-                boardWidthPx + 2 * gap2 + Settings.Board.Grid.LineWidth,
-                boardHeightPx + 2 * gap2 + Settings.Board.Grid.LineWidth
+                UILayoutConstants.Board.Position.X - gap2 - UILayoutConstants.Board.Grid.LineWidth / 2,
+                UILayoutConstants.Board.Position.Y - gap2 - UILayoutConstants.Board.Grid.LineWidth / 2,
+                boardWidthPx + 2 * gap2 + UILayoutConstants.Board.Grid.LineWidth,
+                boardHeightPx + 2 * gap2 + UILayoutConstants.Board.Grid.LineWidth
             );
 
             g.DrawRectangle(pen, outerRect1);

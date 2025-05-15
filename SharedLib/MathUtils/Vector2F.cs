@@ -53,6 +53,18 @@ namespace SharedLib.MathUtils
         }
 
         /// <summary>
+        /// Convert to SizeF type
+        /// </summary>
+        public SizeF ToSizeF()
+        {
+            return new SizeF(X, Y);
+        }
+        public static SizeF ToSizeF(Vector2F vector)
+        {
+            return new SizeF(vector.X, vector.Y);
+        }
+
+        /// <summary>
         /// Convert to Point type
         /// </summary>
         public Point ToPoint()

@@ -13,7 +13,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Models;
+using Chinese_Chess_v3.Interface.UI.Constants;
+using Chinese_Chess_v3.Interface.UI.Elements;
+using Chinese_Chess_v3.Interface.UI.Layout;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
 using SharedLib.MathUtils;
@@ -47,16 +49,18 @@ namespace Chinese_Chess_v3.Renderers
                 height = Math.Max(value, 1);
             }
         }
+        private readonly MainMenu menu;
 
-        public MainMenuRenderer(int width, int height)
+        public MainMenuRenderer(MainMenu menu)
         {
-            Width = width;
-            Height = height;
+            this.menu = menu;
         }
 
-        public void Draw(Graphics g, List<ButtonData> buttons, RectangleF clip)
+        public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
+            var buttons = menu.Buttons;
+            var clip = menu.GetClipRect();
 
             // Debug 虛線外框
             using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
@@ -64,17 +68,19 @@ namespace Chinese_Chess_v3.Renderers
                 float debugMargin = 1.0f;
                 debugPen.DashStyle = DashStyle.Dash;
                 g.DrawRectangle(debugPen,
-                Settings.MainMenu.Position.X + debugMargin,
-                Settings.MainMenu.Position.Y + debugMargin,
-                width - debugMargin * 2,
-                height - debugMargin * 2);
+                UILayoutConstants.MainMenu.Position.X + debugMargin,
+                UILayoutConstants.MainMenu.Position.Y + debugMargin,
+                menu.Size.X - debugMargin * 2,
+                menu.Size.Y - debugMargin * 2);
             }
 
             g.SetClip(clip);
             foreach (var button in buttons)
             {
-                DrawButton(g, button.Text, button.RenderPosition, Settings.MainMenu.Button.Size);
+                Console.WriteLine($"button: {button.GetAbsolutePosition()}");
+                DrawButton(g, button.Text, button.GetAbsolutePosition(), button.Size);
             }
+            g.ResetClip();
         }
 
         private void DrawButton(Graphics g, string text, Vector2F position, Vector2F size)

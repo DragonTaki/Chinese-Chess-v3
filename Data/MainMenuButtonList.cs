@@ -8,22 +8,21 @@
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
-using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Data
 {
     public static class MainMenuButtonList
     {
-        public static List<ButtonData> CreateDefaultButtons()
+        public static List<string> CreateDefaultButtonLabels()
         {
-            return new List<ButtonData>
+            return new List<string>
             {
-                new ButtonData("開新一局"),
-                new ButtonData("遊戲設定"),
-                new ButtonData("規則設定"),
-                new ButtonData("教學／幫助"),
-                new ButtonData("讀取存檔"),
-                new ButtonData("離開遊戲")
+                "開新一局",
+                "遊戲設定",
+                "規則設定",
+                "教學／幫助",
+                "讀取存檔",
+                "離開遊戲"
             };
         }
     }

@@ -10,9 +10,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Core;
+using Chinese_Chess_v3.Interface.UI.Constants;
 using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
@@ -32,8 +32,8 @@ namespace Chinese_Chess_v3.Renderers
         }
         private void DrawPiece(Graphics g, Piece piece, bool isSelected)
         {
-            float centerX = Settings.Board.Position.X + piece.X * Settings.Board.Grid.Size;
-            float centerY = Settings.Board.Position.Y + piece.Y * Settings.Board.Grid.Size;
+            float centerX = UILayoutConstants.Board.Position.X + piece.X * UILayoutConstants.Board.Grid.Size;
+            float centerY = UILayoutConstants.Board.Position.Y + piece.Y * UILayoutConstants.Board.Grid.Size;
 
             float radius = PieceSettings.Radius;
             float outerRadius = radius - PieceSettings.OuterMargin;

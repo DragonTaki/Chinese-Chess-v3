@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Interface.UI.Constants;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 using SharedLib.RandomTable;
 using SharedLib.Timing;
@@ -38,10 +39,10 @@ namespace Chinese_Chess_v3.Renderers
         {
             GraphicsHelper.ApplyHighQualitySettings(g);
 
-            float x = Settings.Sidebar.Position.X;
-            float y = Settings.Sidebar.Position.Y;
-            float w = Settings.Sidebar.Size.X;
-            float h = Settings.Sidebar.Size.Y;
+            float x = UILayoutConstants.Sidebar.Position.X;
+            float y = UILayoutConstants.Sidebar.Position.Y;
+            float w = UILayoutConstants.Sidebar.Size.X;
+            float h = UILayoutConstants.Sidebar.Size.Y;
 
             // Fill black background
             g.FillRectangle(Brushes.Black, x, y, w, h);
@@ -63,9 +64,9 @@ namespace Chinese_Chess_v3.Renderers
             foreach (var star in stars)
             {
                 star.Y += star.Speed;
-                if (star.Y > Settings.Sidebar.Size.Y)
+                if (star.Y > UILayoutConstants.Sidebar.Size.Y)
                 {
-                    star.X = Rand.NextFloat(Settings.Sidebar.Size.X);
+                    star.X = Rand.NextFloat(UILayoutConstants.Sidebar.Size.X);
                     star.Y = 0;
                     star.Size = Rand.NextInt(1, 3);
                     star.Speed = (float)(0.5 + Rand.NextFloat() * 1.5);
@@ -82,8 +83,8 @@ namespace Chinese_Chess_v3.Renderers
 
             public Star(IRandomProvider rand)
             {
-                X = rand.NextFloat(Settings.Sidebar.Size.X);
-                Y = rand.NextFloat(Settings.Sidebar.Size.Y);
+                X = rand.NextFloat(UILayoutConstants.Sidebar.Size.X);
+                Y = rand.NextFloat(UILayoutConstants.Sidebar.Size.Y);
                 Size = rand.NextInt(1, 3);
                 Speed = 0.5f + rand.NextFloat() * 1.5f;
             }

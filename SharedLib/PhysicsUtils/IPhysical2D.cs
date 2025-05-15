@@ -12,6 +12,5 @@ namespace SharedLib.PhysicsUtils
     public interface IPhysical2D
     {
         Physics2D Physics { get; }
-        void UpdatePhysics();
     }
 }

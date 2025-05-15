@@ -14,10 +14,9 @@ using System.Linq;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Configs;
-using Chinese_Chess_v3.Controls;
 using Chinese_Chess_v3.Data;
-using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.Renderers;
+
 using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.Panels
@@ -41,16 +40,15 @@ namespace Chinese_Chess_v3.Panels
 
             this.renderer = renderer;
             this.scroll = scroll;
-
-            //this.Paint += OnPaint;
-            this.MouseClick += OnMouseClick;
         }
 
         public new void InitLayout()
         {
+            scroll.BaseScrollY = -Settings.MainMenu.Margin;
+            scroll.OverscrollLimit = Settings.MainMenu.Margin;
             scroll.ViewportBounds = new RectangleF(
                 Settings.MainMenu.Button.Position.X,
-                Settings.MainMenu.Button.Position.Y - Settings.MainMenu.Margin,
+                Settings.MainMenu.Button.Position.Y + scroll.BaseScrollY,
                 Settings.MainMenu.Button.Size.X,
                 Settings.MainMenu.Size.Y - Settings.MainMenu.Margin * 2);
             scroll.ContentHeight = Buttons.Count * (Settings.MainMenu.Button.Size.Y + Settings.MainMenu.Margin);
@@ -62,18 +60,19 @@ namespace Chinese_Chess_v3.Panels
             for (int i = 0; i < Buttons.Count; i++)
             {
                 float y = basePosition.Y + i * (size.Y + margin);
-                Buttons[i].Position = new Vector2F(basePosition.X, y);
+                Buttons[i].Position.Base = new Vector2F(basePosition.X, y);
+                Buttons[i].Position.Current = new Vector2F(basePosition.X, y);
             }
-            scroll.ScrollY = -Settings.MainMenu.Margin;
+            scroll.InitializeScrollPhysics();
         }
 
         public void UpdateScrollLayout()
         {
             for (int i = 0; i < Buttons.Count; i++)
             {
-                Buttons[i].RenderPosition = new Vector2F(
-                    Buttons[i].Position.X,
-                    Buttons[i].Position.Y + scroll.GetContentOffsetY());
+                Buttons[i].Position.Current = new Vector2F(
+                    Buttons[i].Position.Base.X,
+                    Buttons[i].Position.Base.Y + scroll.GetContentOffsetY());
             }
         }
 
@@ -81,17 +80,47 @@ namespace Chinese_Chess_v3.Panels
         {
             RectangleF view = scroll.GetClippingRect();
             return Buttons.Where(b =>
-                b.RenderPosition.Y + Settings.MainMenu.Button.Size.Y > view.Top &&
-                b.RenderPosition.Y < view.Bottom
+                b.Position.Current.Y + Settings.MainMenu.Button.Size.Y > view.Top &&
+                b.Position.Current.Y < view.Bottom
             ).ToList();
         }
 
-        // Event handling
-        public void OnMouseDown(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Mouse down event handler
+        /// </summary>
+        public new void OnMouseDown(MouseEventArgs e)
         {
-            //scrollContainer.OnMouseDown(e);
+            scroll.OnMouseDown(e);
         }
-        private void OnMouseClick(object sender, MouseEventArgs e)
+
+        /// <summary>
+        /// Mouse move event handler
+        /// </summary>
+        public new void OnMouseMove(MouseEventArgs e)
+        {
+            scroll.OnMouseMove(e);
+        }
+
+        /// <summary>
+        /// Mouse release event handler
+        /// </summary>
+        public new void OnMouseUp(MouseEventArgs e)
+        {
+            scroll.OnMouseUp(e);
+        }
+
+        /// <summary>
+        /// Mouse wheel event handler
+        /// </summary>
+        public new void OnMouseWheel(MouseEventArgs e)
+        {
+            scroll.OnMouseWheel(e);
+        }
+
+        /// <summary>
+        /// Mouse click event handler
+        /// </summary>
+        private new void OnMouseClick(MouseEventArgs e)
         {
             // TODO: 判斷是否點選到按鈕區域，進行處理
             // 可透過 renderer 傳回的按鈕位置來比對點擊

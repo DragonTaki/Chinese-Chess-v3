@@ -177,7 +177,6 @@ namespace StarAnimation.Core.Effect.Instance
                 Vector2F finalAccel = centripetalAccel + velocityCorrection;
 
                 star.Physics.AccelerationContributions[InstanceId] = finalAccel;
-                star.Physics.SmoothUpdate();
             }
         }
         

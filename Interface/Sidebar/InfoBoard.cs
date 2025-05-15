@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.Configs.Sidebar;
 using Chinese_Chess_v3.Core;
+using Chinese_Chess_v3.Interface.UI.Constants;
 using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
@@ -43,8 +44,8 @@ namespace Chinese_Chess_v3.Interface.Sidebar
                           ControlStyles.OptimizedDoubleBuffer |
                           ControlStyles.ResizeRedraw |
                           ControlStyles.UserPaint, true);
-            this.Location = Settings.Sidebar.Infoboard.Position.ToPoint();
-            this.Size = Settings.Sidebar.Infoboard.Size.ToSize();
+            this.Location = UILayoutConstants.Sidebar.Infoboard.Position.ToPoint();
+            this.Size = UILayoutConstants.Sidebar.Infoboard.Size.ToSize();
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             this.BackColor = Color.Transparent;
             GameManager.Instance.TurnChanged += OnTurnChanged;
@@ -123,7 +124,7 @@ namespace Chinese_Chess_v3.Interface.Sidebar
             int h = this.Height;
 
             using (GraphicsPath shieldPath = GraphicsPaths.CreateShieldPath(w, h))
-            using (SolidBrush bgBrush = new SolidBrush(Settings.Sidebar.BackgroundColor))
+            using (SolidBrush bgBrush = new SolidBrush(UILayoutConstants.Sidebar.BackgroundColor))
             {
                 g.FillPath(bgBrush, shieldPath); // 只填滿盾牌形狀，不畫整個矩形
             }
