@@ -19,27 +19,27 @@ namespace Chinese_Chess_v3.Interface.UI.Input
         /// <summary>
         /// Called when mouse button is pressed.
         /// </summary>
-        void OnMouseDown(MouseEventArgs e);
+        bool OnMouseDown(MouseEventArgs e);
 
         /// <summary>
         /// Called when mouse moves.
         /// </summary>
-        void OnMouseMove(MouseEventArgs e);
+        bool OnMouseMove(MouseEventArgs e);
 
         /// <summary>
         /// Called when mouse button is released.
         /// </summary>
-        void OnMouseUp(MouseEventArgs e);
+        bool OnMouseUp(MouseEventArgs e);
 
         /// <summary>
         /// Called when mouse wheel scrolls.
         /// </summary>
-        void OnMouseWheel(MouseEventArgs e);
+        bool OnMouseWheel(MouseEventArgs e);
 
         /// <summary>
         /// Called when mouse clicks.
         /// </summary>
-        void OnMouseClick(MouseEventArgs e);
+        bool OnMouseClick(MouseEventArgs e);
 
         /// <summary>
         /// Called at the end of each frame to finalize per-frame state (e.g., reset delta).

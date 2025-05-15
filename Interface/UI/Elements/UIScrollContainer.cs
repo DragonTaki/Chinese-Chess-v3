@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.Interface.UI.Core;
+using Chinese_Chess_v3.Interface.UI.Input;
 
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
@@ -23,23 +24,21 @@ namespace Chinese_Chess_v3.Interface.UI.Elements
     /// </summary>
     public class UIScrollContainer : UIElement
     {
-        public RectangleF ViewportBounds { get; set; }
-        public float ContentHeight { get; set; }
-        
         // Use Physics2D to calc container movement
         public Physics2D ScrollPhysics { get; set; } = new Physics2D();
+        private ScrollInputHandler inputHandler;
+        public RectangleF ViewportBounds
+        {
+            get
+            {
+                var position = ScrollPhysics?.Position.Base ?? Vector2F.Zero;
+                return new RectangleF(position.ToPointF(), Size.ToSizeF());
+            }
+        }
+        public float ContentHeight { get; set; }
+        
         private bool overContent => ContentHeight > ViewportBounds.Height;
         public float OverscrollLimit { get; set; } = 40.0f;
-        private float dragStartY;
-        private DateTime dragStartTime;
-        private const float DragThreshold = 5.0f; // px
-        private const int DragTimeThreshold = 100; // ms
-        private bool hasMovedEnoughToDrag = false;
-        private bool isDragging = false;
-        private float lastMouseY;
-
-        public bool EnableWheel = true;
-        public bool EnableDrag = true;
         public float BaseScrollY { get; set; } = 0.0f;
         public float ScrollY
         {
@@ -63,26 +62,34 @@ namespace Chinese_Chess_v3.Interface.UI.Elements
                 );
             }
         }
+        public override UIPosition LocalPosition
+        {
+            get => base.LocalPosition;
+            set
+            {
+                base.LocalPosition = value;
+                ScrollPhysics.Position = this.LocalPosition?.Current ?? Vector2F.Zero;
+            }
+        }
+        public override Vector2F Size
+        {
+            get => base.Size;
+            set
+            {
+                base.Size = value;
+            }
+        }
 
-        public void InitializeScrollPhysics()
+        public UIScrollContainer()
         {
             ScrollPhysics ??= new Physics2D();
+            inputHandler = new ScrollInputHandler();
+            inputHandler.Bind(ScrollPhysics, () => this.ViewportBounds);
 
-            ScrollPhysics.Position.Base.X = ViewportBounds.X;
-            ScrollPhysics.Position.Base.Y = ViewportBounds.Y - BaseScrollY;
-            ScrollPhysics.Position.Current.X = ScrollPhysics.Position.Base.X;
-            ScrollPhysics.Position.Current.Y = ScrollPhysics.Position.Base.Y;
             ScrollPhysics.Movement.CanSpring = true;
             ScrollPhysics.Movement.CanDamping = true;
 
             this.Physics = ScrollPhysics;
-            
-            ViewportBounds = new RectangleF(
-                ScrollPhysics.Position.Base.X,
-                ScrollPhysics.Position.Base.Y,
-                Size.X,
-                Size.Y
-            );
         }
 
         /// <summary>
@@ -158,79 +165,42 @@ namespace Chinese_Chess_v3.Interface.UI.Elements
         /// <summary>
         /// Mouse down event handler
         /// </summary>
-        public void OnMouseDown(MouseEventArgs e)
+        protected override bool HandleMouseDown(MouseEventArgs e)
         {
-            if (ViewportBounds.Contains(e.Location))
-            {
-                isDragging = true;
-                hasMovedEnoughToDrag = false;
-                lastMouseY = e.Y;
-                dragStartY = e.Y;
-                dragStartTime = DateTime.Now;
-            }
+            return inputHandler.OnMouseDown(e);
         }
 
         /// <summary>
         /// Mouse move event handler
         /// </summary>
-        public void OnMouseMove(MouseEventArgs e)
+        protected override bool HandleMouseMove(MouseEventArgs e)
         {
-            if (isDragging)
-            {
-                float totalDeltaY = e.Y - lastMouseY;
-                
-                // 尚未判斷為有效拖動
-                if (!hasMovedEnoughToDrag)
-                {
-                    if (Math.Abs(totalDeltaY) >= DragThreshold)
-                    {
-                        hasMovedEnoughToDrag = true;
-                    }
-                    else
-                    {
-                        return; // 尚未達到拖動門檻，不更新畫面
-                    }
-                }
-                
-                float deltaY = e.Y - lastMouseY;
-                ScrollPhysics.Position.Current -= new Vector2F(0, deltaY);
-                ScrollPhysics.Velocity.Current = new Vector2F(0, 0);  // Pause inertia while dragging
-                lastMouseY = e.Y;
-            }
+            return inputHandler.OnMouseMove(e);
         }
 
         /// <summary>
         /// Mouse release event handler
         /// </summary>
-        public void OnMouseUp(MouseEventArgs e)
+        protected override bool HandleMouseUp(MouseEventArgs e)
         {
-            isDragging = false;
-
-            float totalDeltaY = e.Y - dragStartY;
-            TimeSpan dragDuration = DateTime.Now - dragStartTime;
-
-            bool isClick = !hasMovedEnoughToDrag || 
-                           (Math.Abs(totalDeltaY) < DragThreshold && dragDuration.TotalMilliseconds < DragTimeThreshold);
-
-            if (isClick)
-            {
-                // Treat as click – do nothing, or trigger click handler if needed
-                ScrollPhysics.Velocity.Current = Vector2F.Zero;
-            }
-            else
-            {
-                // Apply inertia based on last delta
-                float deltaY = e.Y - lastMouseY;
-                ScrollPhysics.Velocity.Current = new Vector2F(0, -deltaY);  // ← inertia direction
-            }
+            return inputHandler.OnMouseUp(e);
         }
 
         /// <summary>
         /// Mouse wheel event handler
         /// </summary>
-        public void OnMouseWheel(MouseEventArgs e)
+        protected override bool HandleMouseWheel(MouseEventArgs e)
         {
             ScrollPhysics.Position.Current += new Vector2F(0, -e.Delta * 0.2f); // 方向需反轉
+            return true;
+        }
+        
+        /// <summary>
+        /// Mouse wheel event handler
+        /// </summary>
+        public override void EndFrame()
+        {
+            inputHandler.EndFrame();
         }
 
         /// <summary>
@@ -248,10 +218,5 @@ namespace Chinese_Chess_v3.Interface.UI.Elements
         {
             return -ScrollY;
         }
-
-        /// <summary>
-        /// If dragging
-        /// </summary>
-        public bool IsDragging => isDragging;
     }
 }

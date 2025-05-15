@@ -8,9 +8,11 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using SharedLib.MathUtils;
+using SharedLib.PhysicsUtils;
 
 namespace Chinese_Chess_v3.Interface.UI.Input
 {
@@ -20,115 +22,80 @@ namespace Chinese_Chess_v3.Interface.UI.Input
     /// </summary>
     public class ScrollInputHandler : IInputHandler
     {
-        /// <summary>Indicates whether the user is currently dragging.</summary>
-        public bool IsDragging { get; private set; } = false;
+#nullable enable
+        private Physics2D? physics;
+        private Func<RectangleF>? viewportGetter;
+#nullable disable
+        
+        private readonly DragHandler dragHandler;
+        public bool IsDragging => dragHandler.IsDragging;
 
-        /// <summary>Indicates whether movement passed drag threshold.</summary>
-        private bool hasMovedEnoughToDrag = false;
+        public ScrollInputHandler()
+        {
+            dragHandler = new DragHandler();
+            dragHandler.OnDrag += HandleDrag;
+            dragHandler.OnClick += _ => physics?.Velocity.Reset();
+        }
 
-        /// <summary>Drag distance threshold (in pixels) to begin scrolling.</summary>
-        public float DragThreshold { get; set; } = 5.0f;
-
-        /// <summary>Maximum time (ms) under which tiny movement is treated as click.</summary>
-        public float DragTimeThreshold { get; set; } = 160.0f;
-
-        /// <summary>Total scroll offset accumulated during drag.</summary>
-        public Vector2F ScrollDelta { get; private set; } = Vector2F.Zero;
-
-        /// <summary>Velocity determined on mouse release (for inertia).</summary>
-        public Vector2F ReleasedVelocity { get; private set; } = Vector2F.Zero;
-
-        private float dragStartY = 0.0f;
-        private float lastMouseY = 0.0f;
-        private DateTime dragStartTime;
-
+        public void Bind(Physics2D physics, Func<RectangleF> viewportGetter)
+        {
+            this.physics = physics;
+            this.viewportGetter = viewportGetter;
+        }
+        
         /// <summary>
         /// Call when mouse button is pressed to begin scroll detection.
         /// </summary>
-        public void OnMouseDown(MouseEventArgs e)
+        public bool OnMouseDown(MouseEventArgs e)
         {
-            IsDragging = true;
-            hasMovedEnoughToDrag = false;
-
-            dragStartY = e.Y;
-            lastMouseY = e.Y;
-            dragStartTime = DateTime.Now;
-
-            ScrollDelta = Vector2F.Zero;
-            ReleasedVelocity = Vector2F.Zero;
+            if (viewportGetter?.Invoke().Contains(e.Location) == true)
+            {
+                dragHandler.OnMouseDown(e);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// Call on mouse move. ScrollDelta is updated only after threshold exceeded.
         /// </summary>
-        public void OnMouseMove(MouseEventArgs e)
+        public bool OnMouseMove(MouseEventArgs e)
         {
-            if (!IsDragging)
-                return;
-
-            float totalDeltaY = e.Y - dragStartY;
-
-            // If move too small, don't give movement yet
-            if (!hasMovedEnoughToDrag)
-            {
-                if (Math.Abs(totalDeltaY) >= DragThreshold)
-                {
-                    hasMovedEnoughToDrag = true;
-                }
-                else
-                {
-                    return; // Do not start scrolling yet
-                }
-            }
-
-            float deltaY = e.Y - lastMouseY;
-
-            ScrollDelta -= new Vector2F(0, deltaY);  // Subtract: upward drag means upward scroll
-            lastMouseY = e.Y;
-
-            // No ReleasedVelocity yet during drag
-            ReleasedVelocity = Vector2F.Zero;
+            dragHandler.OnMouseMove(e);
+            return true;
         }
 
         /// <summary>
         /// Call on mouse release. Computes inertial velocity if drag was valid.
         /// </summary>
-        public void OnMouseUp(MouseEventArgs e)
+        public bool OnMouseUp(MouseEventArgs e)
         {
-            if (!IsDragging)
-                return;
+            dragHandler.OnMouseUp(e);
+            return true;
+        }
 
-            IsDragging = false;
+        private void HandleDrag(Vector2F delta)
+        {
+            if (physics == null) return;
 
-            float totalDeltaY = e.Y - dragStartY;
-            TimeSpan duration = DateTime.Now - dragStartTime;
-
-            if (!hasMovedEnoughToDrag ||
-                (Math.Abs(totalDeltaY) < DragThreshold && duration.TotalMilliseconds < DragTimeThreshold))
-            {
-                // Treat as click: no velocity
-                ReleasedVelocity = Vector2F.Zero;
-                ScrollDelta = Vector2F.Zero;
-            }
-            else
-            {
-                float deltaY = e.Y - lastMouseY;
-                ReleasedVelocity = new Vector2F(0, -deltaY); // Negative: same as scroll direction
-            }
+            physics.Position.Current += new Vector2F(0, delta.Y);
+            physics.Velocity.Current = Vector2F.Zero;
         }
 
         /// <summary>
         /// Call on mouse wheels.
         /// </summary>
-        public void OnMouseWheel(MouseEventArgs e)
+        public bool OnMouseWheel(MouseEventArgs e)
         {
+            return false;
         }
 
         /// <summary>
         /// Call on mouse clicks.
         /// </summary>
-        public void OnMouseClick(MouseEventArgs e)
+        public bool OnMouseClick(MouseEventArgs e)
         {
+            return false;
         }
 
         /// <summary>
@@ -136,8 +103,13 @@ namespace Chinese_Chess_v3.Interface.UI.Input
         /// </summary>
         public void ResetDelta()
         {
-            // Reset delta
-            ScrollDelta = Vector2F.Zero;
+            if (physics == null) return;
+
+            // Only reset delta if not dragging
+            if (!IsDragging)
+            {
+                physics.Velocity.Current = Vector2F.Zero;
+            }
         }
         public void EndFrame() => ResetDelta();
     }

@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -34,10 +35,10 @@ namespace Chinese_Chess_v3.Interface.UI.Input
         {
             this.Root = root;
             this.scrollHandler = scrollHandler;
-            this.handlers = new List<IInputHandler>
-            {
-                scrollHandler
-            };
+            
+            this.handlers = new List<IInputHandler>();
+            if (scrollHandler != null)
+                this.handlers.Add(scrollHandler);
         }
 
         public void AddHandler(IInputHandler handler) => handlers.Add(handler);
@@ -45,12 +46,25 @@ namespace Chinese_Chess_v3.Interface.UI.Input
         /// <summary>Handle MouseDown: trigger scroll + UI input.</summary>
         public void OnMouseDown(object sender, MouseEventArgs e)
         {
-            foreach (var h in handlers) h.OnMouseDown(e);
+            // Process UI mouse event first
+            if (Root.OnMouseDown(e))
+                return;
+                
+            // Than other mouse event handlers
+            foreach (var h in handlers)
+            {
+                h.OnMouseDown(e);
+            }
         }
 
         /// <summary>Handle MouseMove: update scroll and forward to UI.</summary>
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
+            // Process UI mouse event first
+            if (Root.OnMouseMove(e))
+                return;
+                
+            // Than other mouse event handlers
             foreach (var h in handlers)
             {
                 if (SuppressUIWhenDragging && scrollHandler?.IsDragging == true)
@@ -63,24 +77,42 @@ namespace Chinese_Chess_v3.Interface.UI.Input
         /// <summary>Handle MouseUp: release drag and forward to UI.</summary>
         public void OnMouseUp(object sender, MouseEventArgs e)
         {
+            // Process UI mouse event first
+            if (Root.OnMouseUp(e))
+                return;
+                
+            // Than other mouse event handlers
             foreach (var h in handlers) h.OnMouseUp(e);
         }
 
         /// <summary>Handle mouse wheel scrolling (optional).</summary>
         public void OnMouseWheel(object sender, MouseEventArgs e)
         {
+            // Process UI mouse event first
+            if (Root.OnMouseWheel(e))
+                return;
+                
+            // Than other mouse event handlers
             foreach (var h in handlers) h.OnMouseWheel(e);
         }
 
         public void OnMouseClick(object sender, MouseEventArgs e)
         {
+            // Process UI mouse event first
+            if (Root.OnMouseClick(e))
+                return;
+                
+            // Than other mouse event handlers
             foreach (var h in handlers) h.OnMouseClick(e);
         }
 
         /// <summary>Call every frame after processing input to reset scroll delta.</summary>
         public void EndFrame()
         {
-            foreach (var h in handlers) h.EndFrame();
+            // Process UI mouse event first
+            Root.EndFrame();
+                
+            foreach (var h in handlers) h?.EndFrame();
         }
     }
 }

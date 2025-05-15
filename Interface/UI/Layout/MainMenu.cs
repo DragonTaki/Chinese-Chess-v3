@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -35,9 +36,8 @@ namespace Chinese_Chess_v3.Interface.UI.Layout
             renderer = new MainMenuRenderer(this);
 
             scroll = new UIScrollContainer();
+            scroll.LocalPosition = UILayoutConstants.MainMenu.ScrollContainer.Position;
             scroll.Size = UILayoutConstants.MainMenu.ScrollContainer.Size;
-            scroll.InitializeScrollPhysics();
-            scroll.Physics.Position = UILayoutConstants.MainMenu.ScrollContainer.Position;
             scroll.BaseScrollY = -UILayoutConstants.MainMenu.Margin;
             scroll.OverscrollLimit = UILayoutConstants.MainMenu.Margin;
 
@@ -59,10 +59,11 @@ namespace Chinese_Chess_v3.Interface.UI.Layout
 
         public void UpdateScrollLayout()
         {
+            /*
             foreach (var button in buttons)
             {
                 button.LocalPosition.Current = button.LocalPosition.Base + new Vector2F(0.0f, scroll.GetContentOffsetY());
-            }
+            }*/
         }
 
         public List<UIButton> GetVisibleButtons()

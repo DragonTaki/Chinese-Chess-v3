@@ -37,7 +37,7 @@ namespace SharedLib.PhysicsUtils
         private const float DirectionLerpFactor = 0.05f; // Smaller is smoother
         private const float SpeedLerpFactor = 0.02f;
         private const float AccelerationLerpFactor = 0.05f;
-        private const float CalculateThreshold = 0.00001f;
+        private const float CalculateThreshold = 0.001f;
         public float DragFactor { get; set; } = 0.98f;
 
         public Physics2D()
@@ -251,6 +251,16 @@ namespace SharedLib.PhysicsUtils
         {
             return new Position(v);
         }
+
+        /// <summary>
+        /// Reset all positions to (0, 0).
+        /// </summary>
+        public void Reset()
+        {
+            Base = Vector2F.Zero;
+            Current = Vector2F.Zero;
+            Target = Vector2F.Zero;
+        }
     }
 
     /// <summary>
@@ -298,6 +308,16 @@ namespace SharedLib.PhysicsUtils
             Current = speed;
             Target = speed;
         }
+
+        /// <summary>
+        /// Reset all velocities to (0, 0).
+        /// </summary>
+        public void Reset()
+        {
+            Base = Vector2F.Zero;
+            Current = Vector2F.Zero;
+            Target = Vector2F.Zero;
+        }
     }
 
     /// <summary>
@@ -314,6 +334,15 @@ namespace SharedLib.PhysicsUtils
         /// The target acceleration (X and Y components).
         /// </summary>
         public Vector2F Target { get; set; } = new Vector2F();
+
+        /// <summary>
+        /// Reset all accelerations to (0, 0).
+        /// </summary>
+        public void Reset()
+        {
+            Current = Vector2F.Zero;
+            Target = Vector2F.Zero;
+        }
     }
 
     /// <summary>
@@ -340,7 +369,7 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Spring movement constant.
         /// </summary>
-        public float SpringK { get; set; } = 0.2f;
+        public float SpringK { get; set; } = 0.9f;
 
         /// <summary>
         /// Determines when close to target position, whether spring movement is enabled.
@@ -350,7 +379,7 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Damping constant.
         /// </summary>
-        public float Damping { get; set; } = 0.85f;
+        public float Damping { get; set; } = 0.2f;
 
         /// <summary>
         /// Determines when close to target position, whether damping movement is enabled.

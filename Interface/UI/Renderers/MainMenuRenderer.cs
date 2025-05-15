@@ -77,7 +77,6 @@ namespace Chinese_Chess_v3.Renderers
             g.SetClip(clip);
             foreach (var button in buttons)
             {
-                Console.WriteLine($"button: {button.GetAbsolutePosition()}");
                 DrawButton(g, button.Text, button.GetAbsolutePosition(), button.Size);
             }
             g.ResetClip();

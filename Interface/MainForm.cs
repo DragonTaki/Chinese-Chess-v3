@@ -34,7 +34,7 @@ namespace Chinese_Chess_v3.Interface
         public static RandomTable GlobalRandomTable;
         private StarAnimationApp starAnimationApp;
         private MouseInputRouter inputRouter;
-        private ScrollInputHandler scrollHandler;
+        private ScrollInputHandler scrollHandler = new ScrollInputHandler();
         private UIManager uiManager;
         private UIElement rootUI;
         // Class-level field to track the time each frame is drawn
@@ -103,8 +103,6 @@ namespace Chinese_Chess_v3.Interface
 
         private void InitInputSystem()
         {
-            scrollHandler = new ScrollInputHandler();
-
             inputRouter = new MouseInputRouter(rootUI, scrollHandler);
             /*
             var inputRouter = new MouseInputRouter(rootUI, new IInputHandler[]
