@@ -55,14 +55,14 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
             var buttons = menu.Buttons;
-            var clip = menu.GetClipRect();
+            var clip = menu.GetAbsClipRect();
 
             DrawOutline(g);
 
             g.SetClip(clip);
             foreach (var button in buttons)
             {
-                DrawButton(g, button.Text, button.GetAbsolutePosition(), button.Size);
+                DrawButton(g, button.Text, button.GetCurrentAbsolutePosition(), button.Size);
             }
             g.ResetClip();
         }
@@ -71,11 +71,11 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         {
             using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
             {
-                float margin = 1.0f;
+                float margin = 3.0f;
                 debugPen.DashStyle = DashStyle.Dash;
                 g.DrawRectangle(debugPen,
-                UILayoutConstants.SecondMenu.Position.X + margin,
-                UILayoutConstants.SecondMenu.Position.Y + margin,
+                UILayoutConstants.Submenu.Position.X + margin,
+                UILayoutConstants.Submenu.Position.Y + margin,
                 menu.Size.X - margin * 2,
                 menu.Size.Y - margin * 2);
             }

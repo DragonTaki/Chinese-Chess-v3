@@ -62,9 +62,9 @@ namespace Chinese_Chess_v3.UI.Constants
         }
 
         /// <summary>
-        /// Encapsulates SecondMenu related setting values.
+        /// Encapsulates Submenu related setting values.
         /// </summary>
-        public class SecondMenu
+        public class Submenu
         {
             public static Vector2F Position => layout.Position;
             public static Vector2F Size => layout.Size;
@@ -77,7 +77,7 @@ namespace Chinese_Chess_v3.UI.Constants
             public const float MarginY = 40.0f;
 
             /// <summary>
-            /// Encapsulates SecondMenu:ScrollContainer related setting values.
+            /// Encapsulates Submenu:ScrollContainer related setting values.
             /// </summary>
             public class ScrollContainer
             {
@@ -85,11 +85,11 @@ namespace Chinese_Chess_v3.UI.Constants
                 public static Vector2F Size => layout.Size;
                 private static readonly LayoutF layout = new LayoutF(
                     new Vector2F(MarginX, MarginY),
-                    new Vector2F(SecondMenu.Size.X - MarginX * 2, SecondMenu.Size.Y - MarginY * 2));
+                    new Vector2F(Submenu.Size.X - MarginX * 2, Submenu.Size.Y - MarginY * 2));
             }
 
             /// <summary>
-            /// Encapsulates SecondMenu:ScrollContainer:Button related setting values.
+            /// Encapsulates Submenu:ScrollContainer:Button related setting values.
             /// </summary>
             public class Button
             {

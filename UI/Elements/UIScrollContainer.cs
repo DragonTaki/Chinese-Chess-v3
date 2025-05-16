@@ -16,49 +16,67 @@ using Chinese_Chess_v3.UI.Input;
 
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
+using static Chinese_Chess_v3.UI.Input.ScrollInputHandler;
 
 namespace Chinese_Chess_v3.UI.Elements
 {
     /// <summary>
     /// Provides a reusable vertical scroll container that supports dragging, scrolling, inertia and border elasticity
     /// </summary>
-    public class UIScrollContainer : UIElement
+    public class UIScrollContainer : UIElement, IPhysical2D
     {
         // Use Physics2D to calc container movement
-        public Physics2D ScrollPhysics { get; set; } = new Physics2D();
+        private readonly Physics2D _physics = new Physics2D();
+
+        // Implement IPhysical2D.Physics
+        Physics2D IPhysical2D.Physics => _physics;
+
+        // Override UIElement.Physics getter safely
+#nullable enable
+        public override Physics2D? Physics => _physics;
+#nullable disable
+
+        public Position Position => _physics.Position;
+        public Velocity Velocity => _physics.Velocity;
+        public Acceleration Acceleration => _physics.Acceleration;
+
         private ScrollInputHandler inputHandler;
-        public RectangleF ViewportBounds
+
+        // In abs position
+        public RectangleF AbsViewportBounds
         {
             get
             {
-                var position = ScrollPhysics?.Position.Base ?? Vector2F.Zero;
+                var position = Physics?.Position.Base ?? Vector2F.Zero;
+
                 return new RectangleF(position.ToPointF(), Size.ToSizeF());
             }
         }
         public float ContentHeight { get; set; }
         
-        private bool overContent => ContentHeight > ViewportBounds.Height;
+        private bool overContent => ContentHeight > AbsViewportBounds.Height;
         public float OverscrollLimit { get; set; } = 40.0f;
+        public float BaseScrollX { get; set; } = 0.0f;
         public float BaseScrollY { get; set; } = 0.0f;
         public float ScrollY
         {
-            get => ScrollPhysics.Position.Current.Y - ScrollPhysics.Position.Base.Y;
+            get => Physics.Position.Current.Y - Physics.Position.Base.Y;
             set
             {
-                ScrollPhysics.Position.Current = new Vector2F(
-                    ScrollPhysics.Position.Current.X,  // X axis no changed
-                    ScrollPhysics.Position.Base.Y + value
+                Physics.Position.Current = new Vector2F(
+                    Physics.Position.Current.X,  // X axis no changed
+                    Physics.Position.Base.Y + value
                 );
             }
         }
         public float ScrollVelocity
         {
-            get => ScrollPhysics.Velocity.Current.Y - ScrollPhysics.Velocity.Base.Y;
+            get => Physics.Velocity.Current.Y - Physics.Velocity.Base.Y;
             set
             {
-                ScrollPhysics.Velocity.Current = new Vector2F(
-                    ScrollPhysics.Velocity.Current.X,  // X axis no changed
-                    ScrollPhysics.Velocity.Base.Y + value
+                Physics.Velocity.Current = new Vector2F(
+                    Physics.Velocity.Current.X,  // X axis no changed
+                    Physics.Velocity.Base.Y + value
                 );
             }
         }
@@ -68,7 +86,12 @@ namespace Chinese_Chess_v3.UI.Elements
             set
             {
                 base.LocalPosition = value;
-                ScrollPhysics.Position = this.LocalPosition?.Current ?? Vector2F.Zero;
+                var absPos = GetCurrentAbsolutePosition();
+
+                if (Physics != null)
+                {
+                    Physics.Position = absPos;
+                }
             }
         }
         public override Vector2F Size
@@ -82,14 +105,18 @@ namespace Chinese_Chess_v3.UI.Elements
 
         public UIScrollContainer()
         {
-            ScrollPhysics ??= new Physics2D();
-            inputHandler = new ScrollInputHandler();
-            inputHandler.Bind(ScrollPhysics, () => this.ViewportBounds);
+            inputHandler = ScrollInputHandler.Instance;
+            
+            // Register and bind
+            inputHandler.RegisterScrollTarget(this, Physics, () => this.AbsViewportBounds, new ScrollBehavior
+            {
+                AllowDragY = true,
+                AllowDragX = false,
+                AllowWheel = true
+            });
 
-            ScrollPhysics.Movement.CanSpring = true;
-            ScrollPhysics.Movement.CanDamping = true;
-
-            this.Physics = ScrollPhysics;
+            Physics.Movement.CanSpring = true;
+            Physics.Movement.CanDamping = true;
         }
 
         /// <summary>
@@ -103,13 +130,13 @@ namespace Chinese_Chess_v3.UI.Elements
                 // Moved
                 if (ScrollY != 0)
                 {
-                    ScrollPhysics.Position.Target = ScrollPhysics.Position.Base;
-                    ScrollPhysics.Position.HasTarget = true;
+                    Physics.Position.Target = Physics.Position.Base;
+                    Physics.Position.HasTarget = true;
                 }
                 // Already back to base position
                 else
                 {
-                    ScrollPhysics.Position.HasTarget = false;
+                    Physics.Position.HasTarget = false;
                 }
             }
             // Content is bigger than viewpoint
@@ -120,9 +147,9 @@ namespace Chinese_Chess_v3.UI.Elements
                 {
                     if (ScrollY <= OverscrollLimit)
                     {
-                        // 超過底部，回彈至 MaxScrollY
-                        ScrollPhysics.Position.Target = ScrollPhysics.Position.Base + OverscrollLimit;
-                        ScrollPhysics.Position.HasTarget = true;
+                        // Beyond the bottom, rebound to MaxScrollY
+                        Physics.Position.Target = Physics.Position.Base + OverscrollLimit;
+                        Physics.Position.HasTarget = true;
                     }
                     else
                     {
@@ -135,9 +162,9 @@ namespace Chinese_Chess_v3.UI.Elements
                 {
                     if (ScrollY >= 0)
                     {
-                        // 超過頂部，回彈至 0
-                        ScrollPhysics.Position.Target = ScrollPhysics.Position.Base;
-                        ScrollPhysics.Position.HasTarget = true;
+                        // Over the top, rebound to 0
+                        Physics.Position.Target = Physics.Position.Base;
+                        Physics.Position.HasTarget = true;
                     }
                     else
                     {
@@ -158,8 +185,8 @@ namespace Chinese_Chess_v3.UI.Elements
             float targetOffset = Math.Sign(velocity) * Math.Min(Math.Abs(velocity), 60); // You can adjust this multiplier (e.g., 60) for higher velocities.
 
             // Apply target offset depending on scroll direction
-            ScrollPhysics.Position.Target = ScrollPhysics.Position.Current + targetOffset;
-            ScrollPhysics.Position.HasTarget = true;
+            Physics.Position.Target = Physics.Position.Current + targetOffset;
+            Physics.Position.HasTarget = true;
         }
 
         /// <summary>
@@ -212,11 +239,11 @@ namespace Chinese_Chess_v3.UI.Elements
         }
 
         /// <summary>
-        /// Returns the visible drawing area (used for content clipping)
+        /// Returns the visible drawing area in absolute position (used for content clipping)
         /// </summary>
-        public RectangleF GetClippingRect()
+        public RectangleF GetAbsClippingRect()
         {
-            return ViewportBounds;
+            return AbsViewportBounds;
         }
 
         /// <summary>

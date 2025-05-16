@@ -30,39 +30,87 @@ namespace Chinese_Chess_v3.UI.Core
         public virtual UIPosition LocalPosition { get; set; } = new UIPosition(Vector2F.Zero);
         public virtual Vector2F Size { get; set; } = Vector2F.Zero;
 
+        /// <summary>
+        /// Is it logically visible (use for UI display and HitTest).
+        /// `IsVisible = false` means that the object is not drawn and cannot be clicked.
+        /// </summary>
         public bool IsVisible { get; set; } = true;
+
+        /// <summary>
+        /// Whether it can interact with the mouse (click, drag, etc.) or keybord.
+        /// </summary>
         public bool IsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Whether it can interact with the mouse (click, drag, etc.) or keybord.
+        /// </summary>
         public bool IsInteractable => IsVisible && IsEnabled;
+
+        /// <summary>
+        /// Is it still possible to HitTest even if `IsVisible == false` (e.g. transparent mask).
+        /// </summary>
+        public virtual bool AllowHitWhenInvisible => false;
+
+        /// <summary>
+        /// Only controls whether the element is rendered (can be overridden).
+        /// When `IsVisible = false`, it will not be drawn automatically, but some objects can be forced not to be drawn.
+        /// </summary>
+        public virtual bool DisableRender => !IsVisible;
 
         // Initialize when need animated calculation
 #nullable enable
-        public Physics2D? Physics { get; set; }
+        public virtual Physics2D? Physics { get; set; }
 #nullable disable
 
         /// <summary>
-        /// Get the local position that should actually be used for drawing and positioning.
-        /// If there is a Physics2D, its position is used first.
+        /// Calculate absolute coordinates: Base + offsets of all ancestors
         /// </summary>
-        public virtual Vector2F ComputedLocalPosition =>
-            Physics?.Position.Current ?? LocalPosition.Current;
-
+        public Vector2F GetBaseAbsolutePosition()
+        {
+            Vector2F pos = LocalPosition.Base;
+            while (Parent != null)
+            {
+                pos += Parent.LocalPosition.Base;
+                Parent = Parent.Parent;
+            }
+            return pos;
+        }
+        
         /// <summary>
         /// Get absolute position of this UI element.
         /// </summary>
         /// <returns>Absolute position of this UI element.</returns>
-        public Vector2F GetAbsolutePosition()
+        public Vector2F GetCurrentAbsolutePosition()
         {
-            if (Parent == null) return ComputedLocalPosition;
-            return Parent.GetAbsolutePosition() + ComputedLocalPosition;
-        }
+            Vector2F accumulated = LocalPosition.Current;
 
+#nullable enable
+            UIElement? current = this.Parent;
+#nullable disable
+            
+            while (current != null)
+            {
+                // Once a parent object with Physics2D is encountered, the position is the absolute anchor point and recursion stops
+                if (current.Physics != null)
+                {
+                    accumulated += current.Physics.Position.Current;
+                    break;
+                }
+
+                accumulated += current.LocalPosition.Current;
+                current = current.Parent;
+            }
+
+            return accumulated;
+        }
+        
         /// <summary>
         /// Get absolute bounds of this UI element.
         /// </summary>
         /// <returns>Absolute bounds of this UI element.</returns>
-        public RectangleF GetAbsoluteBounds()
+        public RectangleF GetCurrentAbsoluteBounds()
         {
-            return new RectangleF(GetAbsolutePosition().ToPointF(), Size.ToSizeF());
+            return new RectangleF(GetCurrentAbsolutePosition().ToPointF(), Size.ToSizeF());
         }
 
         /// <summary>
@@ -72,7 +120,7 @@ namespace Chinese_Chess_v3.UI.Core
         /// <returns>True if the point is inside this element's bounds.</returns>
         public virtual bool ContainsScreenPoint(Vector2F screenPoint)
         {
-            var absPos = this.GetAbsolutePosition();  // Full resolved screen-space position
+            var absPos = this.GetCurrentAbsolutePosition();  // Full resolved screen-space position
             return screenPoint.X >= absPos.X &&
                 screenPoint.X <= absPos.X + Size.X &&
                 screenPoint.Y >= absPos.Y &&
@@ -83,6 +131,14 @@ namespace Chinese_Chess_v3.UI.Core
         {
             child.Parent = this;
             Children.Add(child);
+            // Update child's phisics2D absolute position
+            child.OnAddedToParent();
+        }
+
+        protected virtual void OnAddedToParent()
+        {
+            if (Physics != null)
+                Physics.Position = GetCurrentAbsolutePosition();
         }
 
         public virtual void RemoveChild(UIElement child)
@@ -91,23 +147,75 @@ namespace Chinese_Chess_v3.UI.Core
             Children.Remove(child);
         }
 
+        /// <summary>
+        /// Determines whether the given point is within the visible area of ​​this UI element.
+        /// </summary>
+        public virtual bool HitTest(PointF point)
+        {
+            if (!IsEnabled)
+                return false;
+
+            // Skip if it is not visible and transparent hits are not allowed
+            if (!IsVisible && !AllowHitWhenInvisible)
+                return false;
+
+            return GetCurrentAbsoluteBounds().Contains(point);
+        }
+
+        /// <summary>
+        /// Starting from this element, search the sub-elements depth-first to find the top-level UIElement that hits the point
+        /// </summary>
+#nullable enable
+        public UIElement? HitTestDeep(PointF point)
+#nullable disable
+        {
+            // If no hit, return `null`
+
+            // Check self
+            if (!HitTest(point))
+                return null;
+
+            // Check ancestors
+            var current = this.Parent;
+            while (current != null)
+            {
+                if (!current.IsVisible && !current.AllowHitWhenInvisible)
+                    return null;
+                current = current.Parent;
+            }
+
+            // Search from the last child element forward (elements with higher ZIndex are at the back)
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                var child = Children[i];
+                if (!child.HitTest(point))
+                    continue;
+
+                var hit = child.HitTestDeep(point);
+                if (hit != null)
+                    return hit;
+            }
+
+            // If none of the child elements are hit, return self
+            return this;
+        }
+
         public virtual void Update()
         {
             Physics?.SmoothUpdate();
             OnUpdate();
 
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                Console.WriteLine($"{this}[{i}]: {this.Children[i]}");
-            }
             foreach (var child in Children)
-                    child.Update();
+                child.Update();
         }
 
         protected virtual void OnUpdate() { }
 
         public virtual void Draw(Graphics g)
         {
+            if (DisableRender)
+                return;
+
             OnDraw(g);
 
             foreach (var child in Children)
@@ -120,22 +228,7 @@ namespace Chinese_Chess_v3.UI.Core
         // Mouse event handling
         protected bool PropagateMouseEvent(MouseEventArgs e, UIEventType eventName)
         {
-            bool isInside = IsVisible && GetAbsoluteBounds().Contains(e.Location);
-
-            switch (eventName)
-            {
-                // These events must be within the area
-                case UIEventType.MouseDown:
-                case UIEventType.MouseWheel:
-                case UIEventType.MouseClick:
-                    if (!isInside) return false;
-                    break;
-
-                // No need to detect the area
-                case UIEventType.MouseMove:
-                case UIEventType.MouseUp:
-                    break;
-            }
+            bool isInside = IsInteractable && GetCurrentAbsoluteBounds().Contains(e.Location);
 
             // Propagate to child
             for (int i = Children.Count - 1; i >= 0; i--)
@@ -152,6 +245,21 @@ namespace Chinese_Chess_v3.UI.Core
 
                 if (handled)
                     return true;
+            }
+
+            switch (eventName)
+            {
+                // These events must be within the area
+                case UIEventType.MouseDown:
+                case UIEventType.MouseWheel:
+                case UIEventType.MouseClick:
+                    if (!isInside) return false;
+                    break;
+
+                // No need to detect the area
+                case UIEventType.MouseMove:
+                case UIEventType.MouseUp:
+                    break;
             }
 
             // Self handling

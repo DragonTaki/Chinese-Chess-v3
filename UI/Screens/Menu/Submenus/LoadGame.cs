@@ -22,17 +22,17 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class NewGameMenu : UIElement
+    public class LoadGameMenu : UIElement
     {
-        private readonly NewGameMenuRenderer renderer;
+        private readonly LoadGameMenuRenderer renderer;
         private UIScrollContainer scroll;
         private List<UIButton> buttons = new();
-        public NewGameMenu()
+        public LoadGameMenu()
         {
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
 
-            renderer = new NewGameMenuRenderer(this);
+            renderer = new LoadGameMenuRenderer(this);
 
             scroll = new UIScrollContainer();
             scroll.LocalPosition = UILayoutConstants.Submenu.ScrollContainer.Position;

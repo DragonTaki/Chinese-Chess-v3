@@ -1,25 +1,23 @@
 /* ----- ----- ----- ----- */
-// MainMenuRenderer.cs
+// NewGameMenuRenderer.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
-// Create Date: 2025/05/08
-// Update Date: 2025/05/08
+// Create Date: 2025/05/16
+// Update Date: 2025/05/16
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
 using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
-
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.UI.Screens.Menu
+namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class MainMenuRenderer
+    public class LoadGameMenuRenderer
     {
         /// <summary>
         /// Width of the drawing canvas.
@@ -46,9 +44,9 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
                 height = Math.Max(value, 1);
             }
         }
-        private readonly MainMenu menu;
+        private readonly LoadGameMenu menu;
 
-        public MainMenuRenderer(MainMenu menu)
+        public LoadGameMenuRenderer(LoadGameMenu menu)
         {
             this.menu = menu;
         }
@@ -56,7 +54,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = menu.GetVisibleButtons();
+            var buttons = menu.Buttons;
             var clip = menu.GetAbsClipRect();
 
             DrawOutline(g);
@@ -71,13 +69,13 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
 
         private void DrawOutline(Graphics g)
         {
-            using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
+            using (Pen debugPen = new Pen(Color.FromArgb(100, 0, 128, 128), 4))
             {
                 float margin = 3.0f;
                 debugPen.DashStyle = DashStyle.Dash;
                 g.DrawRectangle(debugPen,
-                UILayoutConstants.MainMenu.Position.X + margin,
-                UILayoutConstants.MainMenu.Position.Y + margin,
+                UILayoutConstants.Submenu.Position.X + margin,
+                UILayoutConstants.Submenu.Position.Y + margin,
                 menu.Size.X - margin * 2,
                 menu.Size.Y - margin * 2);
             }

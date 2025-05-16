@@ -33,23 +33,5 @@ namespace Chinese_Chess_v3.UI.Core
         {
             return new UIPosition(v);
         }
-
-        /// <summary>
-        /// Calculate absolute coordinates: Base + offsets of all ancestors
-        /// </summary>
-        public Vector2F GetAbsolute(UIElement element)
-        {
-            Vector2F pos = Current;
-#nullable enable
-            UIElement? parent = element.Parent;
-#nullable disable
-            while (parent != null)
-            {
-                pos += parent.LocalPosition.Base;
-                parent = parent.Parent;
-            }
-            return pos;
-        }
     }
-
 }

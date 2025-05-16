@@ -32,8 +32,7 @@ namespace Chinese_Chess_v3.UI
         private TimerManager timerManager = new TimerManager();
         public static RandomTable GlobalRandomTable;
         private StarAnimationApp starAnimationApp;
-        private MouseInputRouter inputRouter;
-        private ScrollInputHandler scrollHandler = new ScrollInputHandler();
+        private UIInputManager inputManager;
         private UIManager uiManager;
         private UIElement rootUI;
         // Class-level field to track the time each frame is drawn
@@ -66,7 +65,6 @@ namespace Chinese_Chess_v3.UI
             GlobalWindow.UpdateSize(Width, Height);
 
             this.Resize += OnResize;
-            this.KeyDown += OnKeyDown;
         }
 
         private void InitTimer()
@@ -102,7 +100,7 @@ namespace Chinese_Chess_v3.UI
 
         private void InitInputSystem()
         {
-            inputRouter = new MouseInputRouter(rootUI, scrollHandler);
+            inputManager = new UIInputManager(rootUI);
             /*
             var inputRouter = new MouseInputRouter(rootUI, new IInputHandler[]
             {
@@ -111,11 +109,11 @@ namespace Chinese_Chess_v3.UI
                 // 可在這裡擴充更多 handler
             });*/
 
-            this.MouseDown += inputRouter.OnMouseDown;
-            this.MouseMove += inputRouter.OnMouseMove;
-            this.MouseUp   += inputRouter.OnMouseUp;
-            this.MouseWheel += inputRouter.OnMouseWheel;
-            this.MouseClick += inputRouter.OnMouseClick;
+            this.MouseDown += inputManager.ProcessMouseDown;
+            this.MouseMove += inputManager.ProcessMouseMove;
+            this.MouseUp   += inputManager.ProcessMouseUp;
+            this.MouseWheel += inputManager.ProcessMouseWheel;
+            this.MouseClick += inputManager.ProcessMouseClick;
         }
 
         // Rendering Process
@@ -130,54 +128,10 @@ namespace Chinese_Chess_v3.UI
         // Update status (every frame/tick)
         private void UpdateGame()
         {
-/*
-            foreach (var panel in panels)
-            {
-                panel.Update(); // 面板內部更新滑動邏輯、動畫等
-            }
-*/
-            //scrollContainer.Update();    // 慣性滑動與回彈
-            //boardPanel.Update();
-            //sidebarPanel.Update();
             PhysicsRegistry.UpdateAll();
             uiManager?.Update();
-            inputRouter.EndFrame();
+            inputManager.EndFrame();
             Invalidate();                // 觸發重繪
-        }
-
-        /// <summary>
-        /// Mouse down event handler
-        /// </summary>
-        private void OnMouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Mouse move event handler
-        /// </summary>
-        private void OnMouseMove(object sender, MouseEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Mouse up event handler
-        /// </summary>
-        private void OnMouseUp(object sender, MouseEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Mouse wheel event handler
-        /// </summary>
-        private void OnMouseWheel(object sender, MouseEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Mouse click event handler
-        /// </summary>
-        private void OnMouseClick(object sender, MouseEventArgs e)
-        {
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -189,17 +143,6 @@ namespace Chinese_Chess_v3.UI
         public interface IResizable
         {
             void OnResize(int width, int height);
-        }
-
-        private void OnKeyDown(object sender, EventArgs e)
-        {
-        }
-
-        public void SwitchToGameUI()
-        {
-            this.Controls.Clear();
-
-            // 再重新載入 gameManager、boardRenderer、sidebarPanel 等
         }
     }
 }

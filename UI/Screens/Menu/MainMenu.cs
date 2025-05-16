@@ -43,13 +43,13 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             scroll.BaseScrollY = -UILayoutConstants.MainMenu.Margin;
             scroll.OverscrollLimit = UILayoutConstants.MainMenu.Margin;
 
-            AddChild(scroll);
+            this.AddChild(scroll);
 
-            submenus[MainMenuType.NewGame] = new NewGameMenu();
-            submenus[MainMenuType.LoadGame] = new NewGameMenu();
-            submenus[MainMenuType.RuleSettings] = new NewGameMenu();
-            submenus[MainMenuType.Help] = new NewGameMenu();
-            submenus[MainMenuType.Settings] = new NewGameMenu();
+            submenus[MainMenuType.NewGame] = CreateSubMenu<NewGameMenu>();
+            submenus[MainMenuType.LoadGame] = CreateSubMenu<NewGameMenu>();
+            submenus[MainMenuType.RuleSettings] = CreateSubMenu<NewGameMenu>();
+            submenus[MainMenuType.Help] = CreateSubMenu<NewGameMenu>();
+            submenus[MainMenuType.Settings] = CreateSubMenu<LoadGameMenu>();
 
             var menuEntries = MainMenuOptions.Create(SwitchSubmenu, ExitApplication);
 
@@ -68,14 +68,31 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             scroll.ContentHeight = buttons.Count * (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin);
         }
 
+        private UIElement CreateSubMenu<T>() where T : UIElement, new()
+        {
+            var menu = new T();
+            menu.IsVisible = false;
+            return menu;
+        }
+
         private void SwitchSubmenu(MainMenuType selectedMenu)
         {
+            Console.WriteLine($"[Switch] Showing submenu: {selectedMenu}, instance: {submenus[selectedMenu].GetHashCode()}");
             Console.WriteLine($"Mainmenu: {currentSubmenu}-> selected: {selectedMenu}");
+            foreach (var kvp in submenus)
+            {
+                Console.WriteLine($"{kvp.Key}: {kvp.Value.IsVisible}, {kvp.Value.GetHashCode()}");
+                for (int i=0;i< kvp.Value.Children.Count;i++)
+                {
+                    Console.WriteLine($"{kvp.Key} child [{i}], {kvp.Value.Children[i].GetHashCode()}");
+                }
+            }
 
             // Remove current submenu (if have)
             if (currentSubmenu.HasValue)
             {
                 var oldMenu = submenus[currentSubmenu.Value];
+                oldMenu.IsVisible = false;
                 this.RemoveChild(oldMenu);
             }
 
@@ -89,6 +106,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             {
                 // Clicked the new one, show it
                 currentSubmenu = selectedMenu;
+                submenus[currentSubmenu.Value].IsVisible = true;
                 this.AddChild(submenus[currentSubmenu.Value]);
             }
         }
@@ -111,10 +129,10 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         public List<UIButton> Buttons => buttons;
         public List<UIButton> GetVisibleButtons()
         {
-            UIElementUtils.UpdateVisibleState(buttons, GetClipRect());
+            UIElementUtils.UpdateVisibleState(buttons, GetAbsClipRect());
             return buttons.Where(b => b.IsEnabled).ToList();
         }
 
-        public RectangleF GetClipRect() => scroll.GetClippingRect();
+        public RectangleF GetAbsClipRect() => scroll.GetAbsClippingRect();
     }
 }
