@@ -20,10 +20,10 @@ namespace StarAnimation.Core.Effect.Parameter
     /// </summary>
     public class ColorShiftParameter
     {
-        public FloatRange CountdownRange { get; set; }
+        public RangeF CountdownRange { get; set; }
         public float TriggerChance { get; set; }
         public float EffectAppliedChance { get; set; }
-        public FloatRange DurationRange { get; set; }
+        public RangeF DurationRange { get; set; }
 
         public ColorShiftInstance CreateRandomInstance(Vector2F center, IAreaShape area)
         {

@@ -21,12 +21,12 @@ namespace StarAnimation.Core.Effect.Parameter
     /// </summary>
     public class TwistParameter
     {
-        public FloatRange CountdownRange { get; set; }
+        public RangeF CountdownRange { get; set; }
         public float TriggerChance { get; set; }
         public float EffectAppliedChance { get; set; }
-        public FloatRange DurationRange { get; set; }
-        public FloatRange RadiusRange { get; set; }
-        public FloatRange StrengthRange { get; set; }
+        public RangeF DurationRange { get; set; }
+        public RangeF RadiusRange { get; set; }
+        public RangeF StrengthRange { get; set; }
         public float ClockwiseChance { get; set; }
         private readonly IRandomProvider Rand = GlobalRandom.Instance;
 

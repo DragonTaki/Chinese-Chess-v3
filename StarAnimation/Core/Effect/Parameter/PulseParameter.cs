@@ -20,12 +20,12 @@ namespace StarAnimation.Core.Effect.Parameter
     /// </summary>
     public class PulseParameter
     {
-        public FloatRange CountdownRange { get; set; }
+        public RangeF CountdownRange { get; set; }
         public float TriggerChance { get; set; }
         public float EffectAppliedChance { get; set; }
-        public FloatRange DurationRange { get; set; }
-        public FloatRange AmplitudeRange { get; set; }
-        public FloatRange MidOpacityRange { get; set; }
+        public RangeF DurationRange { get; set; }
+        public RangeF AmplitudeRange { get; set; }
+        public RangeF MidOpacityRange { get; set; }
 
         public PulseInstance CreateRandomInstance(Vector2F center, IAreaShape area)
         {

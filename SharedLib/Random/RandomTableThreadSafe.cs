@@ -12,23 +12,24 @@ using System;
 namespace SharedLib.RandomTable
 {
     /// <summary>
-    /// High-performance reusable random number generator using pre-generated value tables
-    /// for predictable and efficient pseudo-random access.
+    /// Thread-safe version of RandomTable.
+    /// Uses locking to ensure concurrent safety when accessed by multiple threads.
     /// </summary>
-    public class RandomTable : IRandomProvider
+    public class RandomTableThreadSafe : IRandomProvider
     {
         private readonly int[] intTable;
         private readonly float[] floatTable;
         private readonly double[] doubleTable;
         private int index;
         private readonly int tableSize;
+        private readonly object lockObj = new object();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RandomTable"/> class.
+        /// Initializes a new instance of the RandomTableThreadSafe class.
         /// </summary>
-        /// <param name="size">The number of pre-generated values in each table.</param>
-        /// <param name="seed">The seed used to generate deterministic random sequences.</param>
-        public RandomTable(int size, int seed)
+        /// <param name="size">The number of pre-generated random entries.</param>
+        /// <param name="seed">The seed value to ensure deterministic results.</param>
+        public RandomTableThreadSafe(int size, int seed)
         {
             tableSize = size;
             intTable = new int[size];
@@ -52,9 +53,12 @@ namespace SharedLib.RandomTable
         /// <returns>An integer from the table.</returns>
         public int NextInt()
         {
-            int value = intTable[index];
-            Advance();
-            return value;
+            lock (lockObj)
+            {
+                int value = intTable[index];
+                Advance();
+                return value;
+            }
         }
 
         /// <summary>
@@ -64,7 +68,10 @@ namespace SharedLib.RandomTable
         /// <returns>An integer in [0, max).</returns>
         public int NextInt(int max)
         {
-            return NextInt() % max;
+            lock (lockObj)
+            {
+                return NextInt() % max;
+            }
         }
 
         /// <summary>
@@ -75,7 +82,10 @@ namespace SharedLib.RandomTable
         /// <returns>An integer in [min, max).</returns>
         public int NextInt(int min, int max)
         {
-            return min + NextInt(max - min);
+            lock (lockObj)
+            {
+                return min + NextInt(max - min);
+            }
         }
 
         /// <summary>
@@ -84,9 +94,12 @@ namespace SharedLib.RandomTable
         /// <returns>A float in [0.0, 1.0).</returns>
         public float NextFloat()
         {
-            float value = floatTable[index];
-            Advance();
-            return value;
+            lock (lockObj)
+            {
+                float value = floatTable[index];
+                Advance();
+                return value;
+            }
         }
 
         /// <summary>
@@ -116,9 +129,12 @@ namespace SharedLib.RandomTable
         /// <returns>A double in [0.0, 1.0).</returns>
         public double NextDouble()
         {
-            double value = doubleTable[index];
-            Advance();
-            return value;
+            lock (lockObj)
+            {
+                double value = doubleTable[index];
+                Advance();
+                return value;
+            }
         }
 
         /// <summary>
@@ -143,7 +159,7 @@ namespace SharedLib.RandomTable
         }
 
         /// <summary>
-        /// Advances the current index to the next element in the tables (circular buffer).
+        /// Thread-safe advancement of the current index.
         /// </summary>
         private void Advance()
         {
@@ -151,8 +167,14 @@ namespace SharedLib.RandomTable
         }
 
         /// <summary>
-        /// Resets the index to the beginning of the table.
+        /// Resets the index back to 0 in a thread-safe way.
         /// </summary>
-        public void Reset() => index = 0;
+        public void Reset()
+        {
+            lock (lockObj)
+            {
+                index = 0;
+            }
+        }
     }
 }

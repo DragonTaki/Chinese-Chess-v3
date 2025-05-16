@@ -10,8 +10,6 @@
 using System;
 using System.Drawing;
 
-using SharedLib.RandomTable;
-
 namespace SharedLib.MathUtils
 {
     public static class MathUtil
@@ -94,7 +92,7 @@ namespace SharedLib.MathUtils
             // Map the normal distribution value to the range [minOutput, maxOutput]
             return minOutput + gaussianValue * (maxOutput - minOutput);
         }
-        
+
         /// <summary>
         /// Performs linear interpolation between two float values.
         /// </summary>

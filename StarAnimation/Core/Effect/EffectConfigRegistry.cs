@@ -33,29 +33,29 @@ namespace StarAnimation.Core
         {
             [EffectType.ColorShift] = new ColorShiftParameter
             {
-                CountdownRange = new FloatRange(3.0f, 5.0f),
+                CountdownRange = new RangeF(3.0f, 5.0f),
                 TriggerChance = 0.9f,
                 EffectAppliedChance = 0.1f,
-                DurationRange = new FloatRange(3f, 6f),
-                //HueShiftRange = new FloatRange(-45f, 45f)
+                DurationRange = new RangeF(3f, 6f),
+                //HueShiftRange = new RangeF(-45f, 45f)
             },
             [EffectType.Pulse] = new PulseParameter
             {
-                CountdownRange = new FloatRange(3.0f, 5.0f),
+                CountdownRange = new RangeF(3.0f, 5.0f),
                 TriggerChance = 0.9f,
                 EffectAppliedChance = 0.3f,
-                DurationRange = new FloatRange(3.0f, 5.0f),
-                AmplitudeRange = new FloatRange(0.0f, 1.0f),
-                MidOpacityRange = new FloatRange(0.0f, 1.0f)
+                DurationRange = new RangeF(3.0f, 5.0f),
+                AmplitudeRange = new RangeF(0.0f, 1.0f),
+                MidOpacityRange = new RangeF(0.0f, 1.0f)
             },
             [EffectType.Twist] = new TwistParameter
             {
-                CountdownRange = new FloatRange(15.0f, 15.0f),
+                CountdownRange = new RangeF(15.0f, 15.0f),
                 TriggerChance = 0.9f,
                 EffectAppliedChance = 0.6f,
-                DurationRange = new FloatRange(10.0f, 10.0f),
-                RadiusRange = new FloatRange(200.0f, 400.0f),
-                StrengthRange = new FloatRange(0.5f, 1.5f),
+                DurationRange = new RangeF(10.0f, 10.0f),
+                RadiusRange = new RangeF(200.0f, 400.0f),
+                StrengthRange = new RangeF(0.5f, 1.5f),
                 ClockwiseChance = 0.45f
             }
         };

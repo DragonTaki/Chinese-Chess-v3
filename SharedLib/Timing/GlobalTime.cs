@@ -9,8 +9,14 @@
 
 namespace SharedLib.Timing
 {
+    /// <summary>
+    /// Provides a global timer provider instance.
+    /// </summary>
     public static class GlobalTime
     {
+        /// <summary>
+        /// Gets or sets the current timer provider used globally.
+        /// </summary>
         public static ITimerProvider Timer { get; set; }
     }
 }

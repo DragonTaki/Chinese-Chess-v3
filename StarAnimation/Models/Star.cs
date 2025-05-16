@@ -130,7 +130,6 @@ namespace StarAnimation.Models
     {
         public bool HasPhase { get; set; } = false;
         public float Delay { get; set; } = 0.0f;
-        public float Phase { get; set; } = 0.0f;
         public float BiasDirection { get; set; } = 1.0f;
     }
     

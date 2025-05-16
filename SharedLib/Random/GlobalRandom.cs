@@ -9,8 +9,15 @@
 
 namespace SharedLib.RandomTable
 {
+    /// <summary>
+    /// Provides a globally accessible random number provider.
+    /// </summary>
     public static class GlobalRandom
     {
+        /// <summary>
+        /// The current global random number provider instance.
+        /// Default is a <see cref="RandomTable"/> with size 10,000 and seed 12345.
+        /// </summary>
         public static IRandomProvider Instance { get; set; } = new RandomTable(size: 10000, seed: 12345);
     }
 }

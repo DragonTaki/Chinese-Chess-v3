@@ -50,7 +50,7 @@ namespace SharedLib.PhysicsUtils
         /// </summary>
         public Boundary? Boundary { get; set; } = new Boundary();
 #nullable disable
-        
+
         /// <summary>
         /// Parameters controlling motion behavior such as spring and damping.
         /// </summary>
@@ -98,7 +98,7 @@ namespace SharedLib.PhysicsUtils
             // If position target was set, move towards
             if (Position.HasTarget)
             {
-                    
+
                 // Calculate the direction vector from the current position to the target position
                 Vector2F delta = Position.Target - Position.Current;
 
@@ -250,28 +250,11 @@ namespace SharedLib.PhysicsUtils
         /// Determines whether Target-based movement is enabled.
         /// </summary>
         public bool HasTarget { get; set; } = false;
-        
+
         /// <summary>
         /// Default constructor with all positions set to (0, 0).
         /// </summary>
-        public Position()
-        {
-            Base = Vector2F.Zero;
-            Current = Vector2F.Zero;
-            Target = Vector2F.Zero;
-        }
-
-        /// <summary>
-        /// Constructor with a given initial position value.
-        /// </summary>
-        /// <param name="positionX">Initial X position.</param>
-        /// <param name="positionY">Initial Y position.</param>
-        public Position(float positionX, float positionY)
-        {
-            Base = new Vector2F(positionX, positionY);
-            Current = new Vector2F(positionX, positionY);
-            Target = new Vector2F(positionX, positionY);
-        }
+        public Position() : this(Vector2F.Zero) { }
 
         /// <summary>
         /// Constructor with a given Vector2F position.
@@ -283,6 +266,14 @@ namespace SharedLib.PhysicsUtils
             Current = position;
             Target = position;
         }
+
+        /// <summary>
+        /// Constructor with a given initial position value.
+        /// </summary>
+        /// <param name="positionX">Initial X position.</param>
+        /// <param name="positionY">Initial Y position.</param>
+        public Position(float positionX, float positionY)
+            : this(new Vector2F(positionX, positionY)) { }
 
         /// <summary>
         /// Implicitly converts a Vector2F to Position.
@@ -339,24 +330,7 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Default constructor with all velocities set to (0, 0).
         /// </summary>
-        public Velocity()
-        {
-            Base = Vector2F.Zero;
-            Current = Vector2F.Zero;
-            Target = Vector2F.Zero;
-        }
-
-        /// <summary>
-        /// Constructor with a given initial velocity value.
-        /// </summary>
-        /// <param name="speedX">Initial X speed.</param>
-        /// <param name="speedY">Initial Y speed.</param>
-        public Velocity(float speedX, float speedY)
-        {
-            Base = new Vector2F(speedX, speedY);
-            Current = new Vector2F(speedX, speedY);
-            Target = new Vector2F(speedX, speedY);
-        }
+        public Velocity() : this(Vector2F.Zero) { }
 
         /// <summary>
         /// Constructor with a given Vector2F speed.
@@ -368,6 +342,14 @@ namespace SharedLib.PhysicsUtils
             Current = speed;
             Target = speed;
         }
+
+        /// <summary>
+        /// Constructor with a given initial velocity value.
+        /// </summary>
+        /// <param name="speedX">Initial X speed.</param>
+        /// <param name="speedY">Initial Y speed.</param>
+        public Velocity(float speedX, float speedY)
+            : this(new Vector2F(speedX, speedY)) { }
 
         /// <summary>
         /// Reset all velocities to (0, 0).
@@ -398,10 +380,16 @@ namespace SharedLib.PhysicsUtils
         /// <summary>
         /// Default constructor with all accelerations set to (0, 0).
         /// </summary>
-        public Acceleration()
+        public Acceleration() : this(Vector2F.Zero) { }
+
+        /// <summary>
+        /// Constructor with a given Vector2F acceleration.
+        /// </summary>
+        /// <param name="accel">The acceleration vector.</param>
+        public Acceleration(Vector2F accel)
         {
-            Current = Vector2F.Zero;
-            Target = Vector2F.Zero;
+            Current = accel;
+            Target = accel;
         }
 
         /// <summary>
@@ -409,21 +397,8 @@ namespace SharedLib.PhysicsUtils
         /// </summary>
         /// <param name="speedX">Initial X acceleration.</param>
         /// <param name="speedY">Initial Y acceleration.</param>
-        public Acceleration(float speedX, float speedY)
-        {
-            Current = new Vector2F(speedX, speedY);
-            Target = new Vector2F(speedX, speedY);
-        }
-
-        /// <summary>
-        /// Constructor with a given Vector2F acceleration.
-        /// </summary>
-        /// <param name="speed">The acceleration vector.</param>
-        public Acceleration(Vector2F speed)
-        {
-            Current = speed;
-            Target = speed;
-        }
+        public Acceleration(float accelX, float accelY)
+            : this(new Vector2F(accelX, accelY)) { }
 
         /// <summary>
         /// Reset all accelerations to (0, 0).

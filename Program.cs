@@ -9,7 +9,8 @@
 
 using System;
 using System.Windows.Forms;
-using Chinese_Chess_v3.Interface;
+
+using Chinese_Chess_v3.UI;
 
 namespace Chinese_Chess_v3
 {

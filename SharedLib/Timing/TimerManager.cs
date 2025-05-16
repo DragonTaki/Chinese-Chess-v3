@@ -13,18 +13,35 @@ using System.Windows.Forms;
 
 namespace SharedLib.Timing
 {
+    /// <summary>
+    /// Timer manager that uses a Stopwatch and a Windows Forms Timer
+    /// to provide a fixed interval animation timer with delta time calculation.
+    /// </summary>
     public class TimerManager : ITimerProvider
     {
         private Stopwatch animationStopwatch;
         private long lastAnimationTimestamp;
-        public float DeltaTimeInSeconds { get; private set; }
-        public float ElapsedTimeInSeconds => animationStopwatch.ElapsedMilliseconds / 1000f;
-        private Timer animationTimer;
-        public event Action OnAnimationFrame;
-        
-        public void Start() => StartTimers();
-        public void Stop() => StopTimers();
 
+        /// <summary>
+        /// Gets the elapsed time in seconds since the last animation frame.
+        /// </summary>
+        public float DeltaTimeInSeconds { get; private set; }
+
+        /// <summary>
+        /// Gets the total elapsed time in seconds since the timer started.
+        /// </summary>
+        public float ElapsedTimeInSeconds => animationStopwatch.ElapsedMilliseconds / 1000f;
+
+        private Timer animationTimer;
+
+        /// <summary>
+        /// Event invoked on every animation frame tick.
+        /// </summary>
+        public event Action OnAnimationFrame;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimerManager"/> class.
+        /// </summary>
         public TimerManager()
         {
             animationStopwatch = new Stopwatch();
@@ -43,6 +60,19 @@ namespace SharedLib.Timing
             };
         }
 
+        /// <summary>
+        /// Starts the animation stopwatch and timer.
+        /// </summary>
+        public void Start() => StartTimers();
+
+        /// <summary>
+        /// Stops the animation timer.
+        /// </summary>
+        public void Stop() => StopTimers();
+
+        /// <summary>
+        /// Starts or restarts the stopwatch and timer, resetting elapsed time.
+        /// </summary>
         public void StartTimers()
         {
             animationStopwatch.Restart();
@@ -50,6 +80,9 @@ namespace SharedLib.Timing
             animationTimer.Start();
         }
 
+        /// <summary>
+        /// Stops the animation timer.
+        /// </summary>
         public void StopTimers()
         {
             animationTimer.Stop();

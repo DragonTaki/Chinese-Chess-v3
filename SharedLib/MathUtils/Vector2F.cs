@@ -49,11 +49,7 @@ namespace SharedLib.MathUtils
         /// <summary>
         /// Initializes a new instance of the <see cref="Vector2F"/> class with default values (0, 0).
         /// </summary>
-        public Vector2F()
-        {
-            X = 0f;
-            Y = 0f;
-        }
+        public Vector2F() : this(0f, 0f) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Vector2F"/> class with the specified X and Y values.
@@ -70,21 +66,13 @@ namespace SharedLib.MathUtils
         /// Initializes a new instance of the <see cref="Vector2F"/> class using a <see cref="PointF"/>.
         /// </summary>
         /// <param name="pt">The point providing X and Y values.</param>
-        public Vector2F(PointF pt)
-        {
-            X = pt.X;
-            Y = pt.Y;
-        }
+        public Vector2F(PointF pt) : this(pt.X, pt.Y) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Vector2F"/> class using a <see cref="SizeF"/>.
         /// </summary>
         /// <param name="sz">The size providing Width and Height as X and Y values.</param>
-        public Vector2F(SizeF sz)
-        {
-            X = sz.Width;
-            Y = sz.Height;
-        }
+        public Vector2F(SizeF sz) : this(sz.Width, sz.Height) { }
 
         /// <summary>
         /// Gets a new vector with zero values (0, 0).
@@ -109,7 +97,7 @@ namespace SharedLib.MathUtils
         {
             return new Point((int)vector.X, (int)vector.Y);
         }
-        
+
         /// <summary>
         /// Implicitly converts a <see cref="Vector2F"/> to a <see cref="Point"/>.
         /// </summary>
@@ -142,7 +130,7 @@ namespace SharedLib.MathUtils
         {
             return new PointF(vector.X, vector.Y);
         }
-        
+
         /// <summary>
         /// Implicitly converts a <see cref="Vector2F"/> to a <see cref="PointF"/>.
         /// </summary>
@@ -264,7 +252,7 @@ namespace SharedLib.MathUtils
         {
             return new Vector2F(a.X + b.X, a.Y + b.Y);
         }
-        
+
         /// <summary>
         /// Adds a scalar value to both components of the vector.
         /// </summary>
@@ -297,7 +285,7 @@ namespace SharedLib.MathUtils
         {
             return new Vector2F(a.X - b.X, a.Y - b.Y);
         }
-        
+
         /// <summary>
         /// Subtracts a scalar from both components of a vector.
         /// </summary>
@@ -417,7 +405,7 @@ namespace SharedLib.MathUtils
                 new Vector2F(X / length, Y / length) :
                 new Vector2F(0, 0);
         }
-        
+
         /// <summary>
         /// Linearly interpolates between two vectors by the factor t.
         /// </summary>

@@ -14,22 +14,22 @@ namespace SharedLib.Timing
     public interface ITimerProvider
     {
         /// <summary>
-        /// Triggered when each frame needs to be updated (e.g. called at a fixed FPS)
+        /// Triggered when each frame needs to be updated. (e.g. called at a fixed FPS)
         /// </summary>
         event Action OnAnimationFrame;
 
         /// <summary>
-        /// The interval between current frame and the previous frame (seconds)
+        /// The interval between current frame and the previous frame (seconds).
         /// </summary>
         float DeltaTimeInSeconds { get; }
 
         /// <summary>
-        /// Start animation time event
+        /// Start animation time event.
         /// </summary>
         void Start();
 
         /// <summary>
-        /// Stop animation time event
+        /// Stop animation time event.
         /// </summary>
         void Stop();
     }

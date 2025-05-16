@@ -20,7 +20,7 @@ namespace SharedLib.PhysicsUtils
     public static class PhysicsRegistry
     {
         private static readonly HashSet<Physics2D> _allPhysics = new();
-        
+
         /// <summary>
         /// Registers a Physics2D instance into the global registry.
         /// </summary>
@@ -46,7 +46,7 @@ namespace SharedLib.PhysicsUtils
         /// </summary>
         /// <returns>An IEnumerable of all active Physics2D instances.</returns>
         public static IEnumerable<Physics2D> GetAll() => _allPhysics;
-        
+
 
         /// <summary>
         /// Updates all registered Physics2D instances by invoking their SmoothUpdate method.
