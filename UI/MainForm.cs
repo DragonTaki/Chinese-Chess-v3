@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Input;
-using Chinese_Chess_v3.UI.Screens.MainMenu;
+using Chinese_Chess_v3.UI.Screens.Menu;
 using Chinese_Chess_v3.Utils;
 
 using SharedLib.RandomTable;

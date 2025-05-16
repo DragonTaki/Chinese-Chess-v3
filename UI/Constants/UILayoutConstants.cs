@@ -71,6 +71,34 @@ namespace Chinese_Chess_v3.UI.Constants
             private static readonly LayoutF layout = new LayoutF(
                 new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                 new Vector2F(840.0f, MainMenu.Size.Y));
+
+            // Space between the edge of the form and the MainMenu object
+            public const float MarginX = 80.0f;
+            public const float MarginY = 40.0f;
+
+            /// <summary>
+            /// Encapsulates SecondMenu:ScrollContainer related setting values.
+            /// </summary>
+            public class ScrollContainer
+            {
+                public static Vector2F Position => layout.Position;
+                public static Vector2F Size => layout.Size;
+                private static readonly LayoutF layout = new LayoutF(
+                    new Vector2F(MarginX, MarginY),
+                    new Vector2F(SecondMenu.Size.X - MarginX * 2, SecondMenu.Size.Y - MarginY * 2));
+            }
+
+            /// <summary>
+            /// Encapsulates SecondMenu:ScrollContainer:Button related setting values.
+            /// </summary>
+            public class Button
+            {
+                public static Vector2F Position => layout.Position;
+                public static Vector2F Size => layout.Size;
+                private static readonly LayoutF layout = new LayoutF(
+                    new Vector2F(0.0f, MarginY),
+                    new Vector2F(ScrollContainer.Size.X, 60.0f));
+            }
         }
 
         /// <summary>

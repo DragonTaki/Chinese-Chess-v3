@@ -19,7 +19,7 @@ using SharedLib.PhysicsUtils;
 
 namespace Chinese_Chess_v3.UI.Core
 {
-    public class UIElement : IInputHandler
+    public class UIElement : IUpdatable, IDrawable, IInputHandler
     {
         // If `Parent == null`, means the most top UI object
 #nullable enable
@@ -32,6 +32,7 @@ namespace Chinese_Chess_v3.UI.Core
 
         public bool IsVisible { get; set; } = true;
         public bool IsEnabled { get; set; } = true;
+        public bool IsInteractable => IsVisible && IsEnabled;
 
         // Initialize when need animated calculation
 #nullable enable
@@ -84,19 +85,37 @@ namespace Chinese_Chess_v3.UI.Core
             Children.Add(child);
         }
 
+        public virtual void RemoveChild(UIElement child)
+        {
+            child.Parent = null;
+            Children.Remove(child);
+        }
+
         public virtual void Update()
         {
             Physics?.SmoothUpdate();
+            OnUpdate();
+
+            for (int i = 0; i < this.Children.Count; i++)
+            {
+                Console.WriteLine($"{this}[{i}]: {this.Children[i]}");
+            }
             foreach (var child in Children)
-                child.Update();
+                    child.Update();
         }
+
+        protected virtual void OnUpdate() { }
 
         public virtual void Draw(Graphics g)
         {
+            OnDraw(g);
+
             foreach (var child in Children)
                 if (child.IsVisible)
                     child.Draw(g);
         }
+        
+        protected virtual void OnDraw(Graphics g) { }
 
         // Mouse event handling
         protected bool PropagateMouseEvent(MouseEventArgs e, UIEventType eventName)
@@ -124,9 +143,9 @@ namespace Chinese_Chess_v3.UI.Core
                 bool handled = eventName switch
                 {
                     UIEventType.MouseClick => Children[i].OnMouseClick(e),
-                    UIEventType.MouseDown  => Children[i].OnMouseDown(e),
-                    UIEventType.MouseMove  => Children[i].OnMouseMove(e),
-                    UIEventType.MouseUp    => Children[i].OnMouseUp(e),
+                    UIEventType.MouseDown => Children[i].OnMouseDown(e),
+                    UIEventType.MouseMove => Children[i].OnMouseMove(e),
+                    UIEventType.MouseUp => Children[i].OnMouseUp(e),
                     UIEventType.MouseWheel => Children[i].OnMouseWheel(e),
                     _ => false
                 };
@@ -139,9 +158,9 @@ namespace Chinese_Chess_v3.UI.Core
             return eventName switch
             {
                 UIEventType.MouseClick => HandleMouseClick(e),
-                UIEventType.MouseDown  => HandleMouseDown(e),
-                UIEventType.MouseMove  => HandleMouseMove(e),
-                UIEventType.MouseUp    => HandleMouseUp(e),
+                UIEventType.MouseDown => HandleMouseDown(e),
+                UIEventType.MouseMove => HandleMouseMove(e),
+                UIEventType.MouseUp => HandleMouseUp(e),
                 UIEventType.MouseWheel => HandleMouseWheel(e),
                 _ => false
             };

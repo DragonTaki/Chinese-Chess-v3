@@ -16,9 +16,11 @@ using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Elements;
 using Chinese_Chess_v3.UI.Menu;
+using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
+using Chinese_Chess_v3.UI.Utils;
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.UI.Screens.MainMenu
+namespace Chinese_Chess_v3.UI.Screens.Menu
 {
     public class MainMenu : UIElement
     {
@@ -26,6 +28,7 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
         private UIScrollContainer scroll;
         private List<UIButton> buttons = new();
         private MainMenuType? currentSubmenu = null;
+        private Dictionary<MainMenuType, UIElement> submenus = new();
 
         public MainMenu()
         {
@@ -42,10 +45,14 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
 
             AddChild(scroll);
 
-            var menuEntries = MainMenuOptions.Create(
-                selectedMenu => SwitchSubmenu(selectedMenu),
-                () => ExitApplication()
-            );
+            submenus[MainMenuType.NewGame] = new NewGameMenu();
+            submenus[MainMenuType.LoadGame] = new NewGameMenu();
+            submenus[MainMenuType.RuleSettings] = new NewGameMenu();
+            submenus[MainMenuType.Help] = new NewGameMenu();
+            submenus[MainMenuType.Settings] = new NewGameMenu();
+
+            var menuEntries = MainMenuOptions.Create(SwitchSubmenu, ExitApplication);
+
             for (int i = 0; i < menuEntries.Count; i++)
             {
                 var entry = menuEntries[i];
@@ -57,37 +64,32 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
                 scroll.AddChild(button);
                 buttons.Add(button);
             }
-            
+
             scroll.ContentHeight = buttons.Count * (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin);
-        }
-
-        public List<UIButton> GetVisibleButtons()
-        {
-            RectangleF view = scroll.GetClippingRect();
-            return buttons.Where(button =>
-            {
-                //if (button == null) return false;
-
-                float y = button.LocalPosition.Current.Y;
-                float h = button.Size.Y;
-                return y + h > view.Top && y < view.Bottom;
-            }).ToList();
         }
 
         private void SwitchSubmenu(MainMenuType selectedMenu)
         {
-            Console.WriteLine($"{currentSubmenu}-> selected: {selectedMenu}");
+            Console.WriteLine($"Mainmenu: {currentSubmenu}-> selected: {selectedMenu}");
+
+            // Remove current submenu (if have)
+            if (currentSubmenu.HasValue)
+            {
+                var oldMenu = submenus[currentSubmenu.Value];
+                this.RemoveChild(oldMenu);
+            }
+
+            // Shift submenu
             if (currentSubmenu == selectedMenu)
             {
-                // 點擊同一個submenu，關閉二級選單
+                // Clicked the same one, close it
                 currentSubmenu = null;
-                //HideSubmenu();
             }
             else
             {
-                // 顯示新submenu
+                // Clicked the new one, show it
                 currentSubmenu = selectedMenu;
-                //ShowSubmenu(submenu);
+                this.AddChild(submenus[currentSubmenu.Value]);
             }
         }
 
@@ -96,12 +98,23 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
             Application.Exit();
         }
 
-        public override void Draw(Graphics g)
+        protected override void OnUpdate()
         {
             scroll.Update();
+        }
+
+        protected override void OnDraw(Graphics g)
+        {
             renderer.Draw(g);
         }
-        public List<UIButton> Buttons => GetVisibleButtons();
+
+        public List<UIButton> Buttons => buttons;
+        public List<UIButton> GetVisibleButtons()
+        {
+            UIElementUtils.UpdateVisibleState(buttons, GetClipRect());
+            return buttons.Where(b => b.IsEnabled).ToList();
+        }
+
         public RectangleF GetClipRect() => scroll.GetClippingRect();
     }
 }

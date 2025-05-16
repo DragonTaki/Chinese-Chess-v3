@@ -17,7 +17,7 @@ using Chinese_Chess_v3.Utils.GraphicsUtils;
 
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.UI.Screens.MainMenu
+namespace Chinese_Chess_v3.UI.Screens.Menu
 {
     public class MainMenuRenderer
     {
@@ -56,20 +56,10 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = menu.Buttons;
+            var buttons = menu.GetVisibleButtons();
             var clip = menu.GetClipRect();
 
-            // Debug 虛線外框
-            using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
-            {
-                float debugMargin = 1.0f;
-                debugPen.DashStyle = DashStyle.Dash;
-                g.DrawRectangle(debugPen,
-                UILayoutConstants.MainMenu.Position.X + debugMargin,
-                UILayoutConstants.MainMenu.Position.Y + debugMargin,
-                menu.Size.X - debugMargin * 2,
-                menu.Size.Y - debugMargin * 2);
-            }
+            DrawOutline(g);
 
             g.SetClip(clip);
             foreach (var button in buttons)
@@ -77,6 +67,20 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
                 DrawButton(g, button.Text, button.GetAbsolutePosition(), button.Size);
             }
             g.ResetClip();
+        }
+
+        private void DrawOutline(Graphics g)
+        {
+            using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
+            {
+                float margin = 1.0f;
+                debugPen.DashStyle = DashStyle.Dash;
+                g.DrawRectangle(debugPen,
+                UILayoutConstants.MainMenu.Position.X + margin,
+                UILayoutConstants.MainMenu.Position.Y + margin,
+                menu.Size.X - margin * 2,
+                menu.Size.Y - margin * 2);
+            }
         }
 
         private void DrawButton(Graphics g, string text, Vector2F position, Vector2F size)
@@ -100,7 +104,7 @@ namespace Chinese_Chess_v3.UI.Screens.MainMenu
                 size.X - innerGap,
                 size.Y - innerGap
             );
-            
+
             using (GraphicsPath outerPath = GraphicsPaths.CreateRoundedRectPath(
                 outerPathRect.Width,
                 outerPathRect.Height,
