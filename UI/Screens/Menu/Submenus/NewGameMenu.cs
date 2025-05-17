@@ -42,11 +42,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
             this.AddChild(scroll);
 
-
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                Console.WriteLine($"{this}[{i}]: {this.Children[i]}");
-            }
             var menuEntries = NewGameMenuOptions.Create(StartNewGame);
 
             for (int i = 0; i < menuEntries.Count; i++)

@@ -40,6 +40,7 @@ namespace Chinese_Chess_v3.UI.Input
         private readonly DragHandler dragHandler;
 
         public bool IsDragging => dragHandler.IsDragging;
+        public int ZIndex = 0;
 
         private ScrollInputHandler()
         {
@@ -48,7 +49,8 @@ namespace Chinese_Chess_v3.UI.Input
             {
                 if (activeTarget?.Physics != null)
                     activeTarget.Physics.Velocity.Reset();
-            };
+            }
+            ;
         }
 
         public void RegisterScrollTarget(
@@ -58,7 +60,6 @@ namespace Chinese_Chess_v3.UI.Input
             ScrollBehavior behavior = null,
             int zIndex = 0)
         {
-            Console.WriteLine($"[Register] ScrollTarget: {element} ({element.GetHashCode()})");
             if (scrollTargets.Exists(t => t.Element == element)) return;
 
             scrollTargets.Add(new ScrollTarget
@@ -68,6 +69,7 @@ namespace Chinese_Chess_v3.UI.Input
                 ViewportGetter = viewportGetter,
                 Behavior = behavior ?? new ScrollBehavior()
             });
+            ZIndex = zIndex;
         }
 
         /// <summary>
@@ -94,7 +96,6 @@ namespace Chinese_Chess_v3.UI.Input
             {
                 var target = scrollTargets[i];
 
-                    Console.WriteLine($"[HitTest] target[{i}]: {target.Element}, {target.Element.IsVisible}, {target.Element.IsInteractable}");
                 // If not IsVisible or not IsEnabled
                 if (!target.Element.IsInteractable || target.Element.Parent == null)
                 {

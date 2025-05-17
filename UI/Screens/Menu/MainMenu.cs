@@ -46,7 +46,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             this.AddChild(scroll);
 
             submenus[MainMenuType.NewGame] = CreateSubMenu<NewGameMenu>();
-            submenus[MainMenuType.LoadGame] = CreateSubMenu<NewGameMenu>();
+            submenus[MainMenuType.LoadGame] = CreateSubMenu<LoadGameMenu>();
             submenus[MainMenuType.RuleSettings] = CreateSubMenu<NewGameMenu>();
             submenus[MainMenuType.Help] = CreateSubMenu<NewGameMenu>();
             submenus[MainMenuType.Settings] = CreateSubMenu<LoadGameMenu>();
@@ -77,17 +77,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
 
         private void SwitchSubmenu(MainMenuType selectedMenu)
         {
-            Console.WriteLine($"[Switch] Showing submenu: {selectedMenu}, instance: {submenus[selectedMenu].GetHashCode()}");
-            Console.WriteLine($"Mainmenu: {currentSubmenu}-> selected: {selectedMenu}");
-            foreach (var kvp in submenus)
-            {
-                Console.WriteLine($"{kvp.Key}: {kvp.Value.IsVisible}, {kvp.Value.GetHashCode()}");
-                for (int i=0;i< kvp.Value.Children.Count;i++)
-                {
-                    Console.WriteLine($"{kvp.Key} child [{i}], {kvp.Value.Children[i].GetHashCode()}");
-                }
-            }
-
             // Remove current submenu (if have)
             if (currentSubmenu.HasValue)
             {

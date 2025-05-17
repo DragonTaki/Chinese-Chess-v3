@@ -42,12 +42,18 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
             this.AddChild(scroll);
 
-
-            for (int i = 0; i < this.Children.Count; i++)
+            var menuEntries = new List<MenuEntry<NewGameMenuType>>
             {
-                Console.WriteLine($"{this}[{i}]: {this.Children[i]}");
-            }
-            var menuEntries = NewGameMenuOptions.Create(StartNewGame);
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 1", NewGameMenuType.Traditional, () => Console.WriteLine("假選項1被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 2", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項2被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 3", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項3被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 4", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項4被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 5", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項5被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 6", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項6被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 7", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項7被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 8", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項8被點擊")),
+                new MenuEntry<NewGameMenuType>("LoadGameMenu Option 9", NewGameMenuType.FlipChess, () => Console.WriteLine("假選項9被點擊")),
+            };
 
             for (int i = 0; i < menuEntries.Count; i++)
             {

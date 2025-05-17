@@ -59,7 +59,13 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             var buttons = menu.GetVisibleButtons();
             var clip = menu.GetAbsClipRect();
 
-            DrawOutline(g);
+            //DrawOutline(g);
+                float margin = 3.0f;
+            RectangleF rect = new RectangleF(UILayoutConstants.MainMenu.Position.X + margin,
+                UILayoutConstants.MainMenu.Position.Y + margin,
+                menu.Size.X - margin * 2,
+                menu.Size.Y - margin * 2);
+            DrawDashedOutlineWithCleanCorners(g, rect);
 
             g.SetClip(clip);
             foreach (var button in buttons)
@@ -68,7 +74,82 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             }
             g.ResetClip();
         }
+        
+private void DrawDashedOutlineWithCleanCorners(Graphics g, RectangleF rect,
+    float unitLength = 16f, float dashRatio = 0.5f,
+    float cornerLength = 10f, float cornerMargin = 4f)
+{
+    float dashLength = unitLength * dashRatio;
+    float gapLength = unitLength * (1 - dashRatio);
 
+    using (Pen pen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
+    {
+        // 四邊（起點、方向向量、長度）
+        var edges = new[]
+        {
+            (Start: new PointF(rect.Left + cornerMargin, rect.Top),
+             Dir: new PointF(1, 0), Length: rect.Width - 2 * cornerMargin),             // Top
+
+            (Start: new PointF(rect.Right, rect.Top + cornerMargin),
+             Dir: new PointF(0, 1), Length: rect.Height - 2 * cornerMargin),            // Right
+
+            (Start: new PointF(rect.Right - cornerMargin, rect.Bottom),
+             Dir: new PointF(-1, 0), Length: rect.Width - 2 * cornerMargin),            // Bottom
+
+            (Start: new PointF(rect.Left, rect.Bottom - cornerMargin),
+             Dir: new PointF(0, -1), Length: rect.Height - 2 * cornerMargin)            // Left
+        };
+                int unitCount = 0;
+        foreach (var (start, dir, length) in edges)
+        {
+            unitCount = (int)Math.Floor(length / unitLength);
+            if (unitCount <= 0) continue;
+
+            float actualUsed = unitCount * unitLength;
+            float offset = (length - actualUsed) / 2f;
+
+            // 置中起點
+            PointF cursor = new PointF(
+                start.X + dir.X * offset,
+                start.Y + dir.Y * offset
+            );
+
+            for (int i = 0; i < unitCount; i++)
+            {
+                PointF dashEnd = new PointF(
+                    cursor.X + dir.X * dashLength,
+                    cursor.Y + dir.Y * dashLength
+                );
+                g.DrawLine(pen, cursor, dashEnd);
+
+                cursor.X += dir.X * unitLength;
+                cursor.Y += dir.Y * unitLength;
+            }
+        }
+
+        // 畫四個拐角：一筆 L 型（cornerLength）
+        DrawCornerL(g, pen, new PointF(rect.Left, rect.Top+dashLength), new PointF(0, -1), new PointF(1, 0), cornerLength);        // Top-Left
+        DrawCornerL(g, pen, new PointF(rect.Right, rect.Top), new PointF(-1, 0), new PointF(0, 1), cornerLength);      // Top-Right
+        DrawCornerL(g, pen, new PointF(rect.Right, rect.Bottom), new PointF(-1, 0), new PointF(0, -1), cornerLength);  // Bottom-Right
+        DrawCornerL(g, pen, new PointF(rect.Left, rect.Bottom), new PointF(1, 0), new PointF(0, -1), cornerLength);    // Bottom-Left
+    }
+
+    // 🔁 畫一筆拐角折線
+    static void DrawCornerL(Graphics g, Pen pen, PointF corner, PointF dir1, PointF dir2, float length)
+    {
+        var path = new System.Drawing.Drawing2D.GraphicsPath();
+        path.StartFigure();
+        path.AddLines(new[]
+        {
+            corner,
+            new PointF(corner.X + dir1.X * length, corner.Y + dir1.Y * length),
+            new PointF(
+                corner.X + dir1.X * length + dir2.X * length,
+                corner.Y + dir1.Y * length + dir2.Y * length)
+        });
+        g.DrawPath(pen, path);
+    }
+}
         private void DrawOutline(Graphics g)
         {
             using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
