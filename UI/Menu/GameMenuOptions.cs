@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.UI.Menu
                 new MenuEntry<GameMenuType>("儲存遊戲",   GameMenuType.SaveGame,     () => onSelect(GameMenuType.LoadLayout)),
                 new MenuEntry<GameMenuType>("載入佈局",   GameMenuType.LoadLayout,   () => onSelect(GameMenuType.LoadLayout)),
                 new MenuEntry<GameMenuType>("放棄對局",   GameMenuType.Surrender,    () => onSelect(GameMenuType.Surrender)),
-                new MenuEntry<GameMenuType>("回到主選單", GameMenuType.ReturnToMain, () => onSelect(GameMenuType.ReturnToMain)),
+                new MenuEntry<GameMenuType>("回到主畫面", GameMenuType.ReturnToMain, () => onSelect(GameMenuType.ReturnToMain)),
             };
         }
     }

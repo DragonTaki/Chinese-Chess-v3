@@ -11,7 +11,6 @@ using System;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Core;
-using Chinese_Chess_v3.UI.Input;
 using Chinese_Chess_v3.UI.Menu;
 
 namespace Chinese_Chess_v3.UI.Elements

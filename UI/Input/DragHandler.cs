@@ -26,9 +26,13 @@ namespace Chinese_Chess_v3.UI.Input
 
         /// <summary>Indicates whether movement passed drag threshold.</summary>
         public bool HasMovedEnoughToDrag = false;
-        public Point DragStartPoint { get; private set; }
-        public Point LastMousePoint { get; private set; }
-        public DateTime DragStartTime { get; private set; }
+        private Point dragStartPoint;
+        private Point dragLastPoint;
+        public bool DragDistXOverThreshold => Math.Abs(dragLastPoint.X - dragStartPoint.X) > DragThreshold;
+        public bool DragDistYOverThreshold => Math.Abs(dragLastPoint.Y - dragStartPoint.Y) > DragThreshold;
+        private DateTime dragStartTime;
+        private DateTime dragLastTime;
+        public bool DragTimeOverThreshold => (dragLastTime - dragStartTime).TotalMilliseconds > DragTimeThreshold;
         private float totalDragDistance = 0.0f;
 
         /// <summary>Drag distance threshold (in pixels) to begin scrolling.</summary>
@@ -48,9 +52,10 @@ namespace Chinese_Chess_v3.UI.Input
             IsDragging = true;
             HasMovedEnoughToDrag = false;
 
-            DragStartPoint = e.Location;
-            LastMousePoint = e.Location;
-            DragStartTime = DateTime.Now;
+            dragStartPoint = e.Location;
+            dragLastPoint = e.Location;
+            dragStartTime = DateTime.Now;
+            dragLastTime = DateTime.Now;
             
             totalDragDistance = 0.0f;
 
@@ -65,10 +70,10 @@ namespace Chinese_Chess_v3.UI.Input
             if (!IsDragging)
                 return true;
 
-            float deltaX = e.X - LastMousePoint.X;
-            float deltaY = e.Y - LastMousePoint.Y;
+            float deltaX = e.X - dragLastPoint.X;
+            float deltaY = e.Y - dragLastPoint.Y;
             Vector2F delta = new Vector2F(deltaX, deltaY);
-            float deltaLength = MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            float deltaLength = MathF.Sqrt(MathF.Pow(deltaX, 2) + MathF.Pow(deltaY, 2));
             totalDragDistance += deltaLength;
 
             // If move too small, don't give movement yet
@@ -85,7 +90,7 @@ namespace Chinese_Chess_v3.UI.Input
             }
 
             OnDrag?.Invoke(delta);
-            LastMousePoint = e.Location;
+            dragLastPoint = e.Location;
 
             return true;
         }
@@ -99,15 +104,21 @@ namespace Chinese_Chess_v3.UI.Input
                 return true;
 
             IsDragging = false;
-            HasMovedEnoughToDrag = false;
+            
+            dragLastPoint = e.Location;
+            dragLastTime = DateTime.Now;
 
             bool isClick = !HasMovedEnoughToDrag ||
-                (Math.Abs(e.Y - DragStartPoint.Y) < DragThreshold && (DateTime.Now - DragStartTime).TotalMilliseconds < DragTimeThreshold);
+                (!DragDistYOverThreshold && !DragTimeOverThreshold);
+
+            HasMovedEnoughToDrag = false;
+
             if (isClick)
             {
                 // Treat as click: no velocity
                 OnClick?.Invoke(e.Location);
             }
+
             return true;
         }
 

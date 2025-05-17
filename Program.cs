@@ -10,7 +10,15 @@
 using System;
 using System.Windows.Forms;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Chinese_Chess_v3.UI;
+using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Input;
+using Chinese_Chess_v3.UI.Screens.Menu;
+using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
+
+using SharedLib.RandomTable;
 
 namespace Chinese_Chess_v3
 {
@@ -19,9 +27,26 @@ namespace Chinese_Chess_v3
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            // Setting DI services
+            var services = new ServiceCollection();
+            
+            // WinForms window
+            services.AddSingleton<IUiFactory, UiFactory>();
+            services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
+
+            services.AddSingleton<MainForm>();
+
+            services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
+
+            services.AddSingleton<MainMenu>();
+            services.AddTransient<NewGameMenu>();
+            services.AddTransient<LoadGameMenu>();
+
+            var sp = services.BuildServiceProvider();
+
+            // Run WinForms
+            ApplicationConfiguration.Initialize();
+            Application.Run(sp.GetRequiredService<MainForm>());
         }
     }
 }

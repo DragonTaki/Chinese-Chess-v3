@@ -8,17 +8,18 @@
 /* ----- ----- ----- ----- */
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Elements;
 using Chinese_Chess_v3.UI.Input;
 using Chinese_Chess_v3.UI.Screens.Menu;
 using Chinese_Chess_v3.Utils;
 
-using SharedLib.RandomTable;
+using Microsoft.Extensions.DependencyInjection;
+
 using SharedLib.PhysicsUtils;
 using SharedLib.Timing;
 using SharedLib.Globals;
@@ -29,30 +30,40 @@ namespace Chinese_Chess_v3.UI
 {
     public class MainForm : Form
     {
-        private TimerManager timerManager = new TimerManager();
-        public static RandomTable GlobalRandomTable;
-        private StarAnimationApp starAnimationApp;
-        private UIInputManager inputManager;
-        private UIManager uiManager;
-        private UIElement rootUI;
-        // Class-level field to track the time each frame is drawn
-        private Dictionary<RectangleF, DateTime> frameDrawTimes = new Dictionary<RectangleF, DateTime>();
+        private readonly TimerManager _timerMgr = new TimerManager();
+        private readonly IServiceProvider _sp;
+        private readonly UIInputManager _inputMgr;
+        private readonly UIRoot _rootCanvas;
 
-        public MainForm()
+        private StarAnimationApp _bgStar;
+
+
+        public MainForm(IServiceProvider sp)
         {
+            _sp = sp;
+
             // Initialization logic
-            InitComponents();
+            InitComponents();  // Create WinForms Designer
+            InitWindow();
+
+            _rootCanvas = BuildUIRoot();          // 建立 RootCanvas & 子選單
+            var uiFactory = _sp.GetRequiredService<IUiFactory>();
+            _rootCanvas.AddChild(uiFactory.CreateMainMenu());
+
+            var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
+            _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
+
+            WireWinFormsMouseEvents();
             InitTimer();
-            InitAppModules();
-            InitRenderers();
-            InitInputSystem();
         }
-        
+
         private void InitComponents()
         {
             FontManager.LoadFonts();
-            GlobalRandomTable = new RandomTable(size: 10000, seed: 12345);
+        }
 
+        private void InitWindow()
+        {
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.AllPaintingInWmPaint |
                         ControlStyles.UserPaint |
@@ -63,86 +74,46 @@ namespace Chinese_Chess_v3.UI
                                        (int)UILayoutConstants.MainMenu.Size.Y);
             this.StartPosition = FormStartPosition.CenterScreen;
             GlobalWindow.UpdateSize(Width, Height);
+            _bgStar = new StarAnimationApp();
+        }
 
-            this.Resize += OnResize;
+        private UIRoot BuildUIRoot()
+        {
+            var root = new UIRoot();
+
+            var mainMenu = _sp.GetRequiredService<MainMenu>();
+
+            return root;
+        }
+
+        private void WireWinFormsMouseEvents()
+        {
+            MouseDown += _inputMgr.ProcessMouseDown;
+            MouseMove += _inputMgr.ProcessMouseMove;
+            MouseUp += _inputMgr.ProcessMouseUp;
+            MouseWheel += _inputMgr.ProcessMouseWheel;
+            MouseClick += _inputMgr.ProcessMouseClick;
         }
 
         private void InitTimer()
         {
-            timerManager = new TimerManager();
-            GlobalTime.Timer = timerManager;
-            timerManager.StartTimers();
-            timerManager.OnAnimationFrame += () => {
-                starAnimationApp.Update();
-                UpdateGame();
+            GlobalTime.Timer = _timerMgr;
+            _timerMgr.OnAnimationFrame += () =>
+            {
+                _bgStar.Update();
+                _rootCanvas.Update();
+                PhysicsRegistry.UpdateAll();
+                _inputMgr.EndFrame();
                 this.Invalidate();
             };
-            timerManager.StartTimers();
+            _timerMgr.StartTimers();
         }
-        private void InitAppModules()
-        {
-            // 初始化動畫背景模組
-            starAnimationApp = new StarAnimationApp();
-
-            // 初始化 UI 根節點（例如主選單）
-            rootUI = new MainMenu();
-            uiManager = new UIManager(rootUI);
-        }
-
-        private void InitRenderers()
-        {
-            if (GlobalTime.Timer == null)
-                throw new InvalidOperationException("`GlobalTime.Timer` must be initialized before creating renderers.");
-            
-            // Please using UI to call its renderer, only init extra renderer here
-            // Main -> UIManager -> UIs -> Renderer
-        }
-
-        private void InitInputSystem()
-        {
-            inputManager = new UIInputManager(rootUI);
-            /*
-            var inputRouter = new MouseInputRouter(rootUI, new IInputHandler[]
-            {
-                new ScrollInputHandler(),
-                new ClickInputHandler()
-                // 可在這裡擴充更多 handler
-            });*/
-
-            this.MouseDown += inputManager.ProcessMouseDown;
-            this.MouseMove += inputManager.ProcessMouseMove;
-            this.MouseUp   += inputManager.ProcessMouseUp;
-            this.MouseWheel += inputManager.ProcessMouseWheel;
-            this.MouseClick += inputManager.ProcessMouseClick;
-        }
-
-        // Rendering Process
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Graphics g = e.Graphics;
-            starAnimationApp.Render(g);
-            uiManager?.Draw(g);
-        }
 
-        // Update status (every frame/tick)
-        private void UpdateGame()
-        {
-            PhysicsRegistry.UpdateAll();
-            uiManager?.Update();
-            inputManager.EndFrame();
-            Invalidate();                // 觸發重繪
-        }
-
-        private void OnResize(object sender, EventArgs e)
-        {
-            GlobalWindow.UpdateSize(this.ClientSize.Width, this.ClientSize.Height);
-            // 其他 Resize 處理邏輯放這裡
-        }
-
-        public interface IResizable
-        {
-            void OnResize(int width, int height);
+            _bgStar?.Render(e.Graphics);
+            _rootCanvas?.Draw(e.Graphics);
         }
     }
 }

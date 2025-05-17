@@ -23,13 +23,13 @@ namespace Chinese_Chess_v3.UI.Constants
         // ----- ----- ----- -----
         
         /// <summary>
-        /// Encapsulates menu related setting values.
+        /// Encapsulates MainMenu related setting values.
         /// </summary>
         public class MainMenu
         {
-            public static Vector2F Position => layout.Position;
-            public static Vector2F Size => layout.Size;
-            private static readonly LayoutF layout = new LayoutF(
+            public static Vector2F Position => Layout.Position;
+            public static Vector2F Size => Layout.Size;
+            public static readonly LayoutF Layout = new LayoutF(
                 new Vector2F(0.0f, 0.0f),
                 new Vector2F(360.0f, 840.0f));
 
@@ -41,9 +41,9 @@ namespace Chinese_Chess_v3.UI.Constants
             /// </summary>
             public class ScrollContainer
             {
-                public static Vector2F Position => layout.Position;
-                public static Vector2F Size => layout.Size;
-                private static readonly LayoutF layout = new LayoutF(
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(Margin, Margin),
                     new Vector2F(MainMenu.Size.X - Margin * 2, MainMenu.Size.Y - Margin * 2));
             }
@@ -53,9 +53,9 @@ namespace Chinese_Chess_v3.UI.Constants
             /// </summary>
             public class Button
             {
-                public static Vector2F Position => layout.Position;
-                public static Vector2F Size => layout.Size;
-                private static readonly LayoutF layout = new LayoutF(
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(0.0f, Margin),
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
             }
@@ -66,9 +66,9 @@ namespace Chinese_Chess_v3.UI.Constants
         /// </summary>
         public class Submenu
         {
-            public static Vector2F Position => layout.Position;
-            public static Vector2F Size => layout.Size;
-            private static readonly LayoutF layout = new LayoutF(
+            public static Vector2F Position => Layout.Position;
+            public static Vector2F Size => Layout.Size;
+            public static readonly LayoutF Layout = new LayoutF(
                 new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                 new Vector2F(840.0f, MainMenu.Size.Y));
 
@@ -81,9 +81,9 @@ namespace Chinese_Chess_v3.UI.Constants
             /// </summary>
             public class ScrollContainer
             {
-                public static Vector2F Position => layout.Position;
-                public static Vector2F Size => layout.Size;
-                private static readonly LayoutF layout = new LayoutF(
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(MarginX, MarginY),
                     new Vector2F(Submenu.Size.X - MarginX * 2, Submenu.Size.Y - MarginY * 2));
             }
@@ -93,22 +93,56 @@ namespace Chinese_Chess_v3.UI.Constants
             /// </summary>
             public class Button
             {
-                public static Vector2F Position => layout.Position;
-                public static Vector2F Size => layout.Size;
-                private static readonly LayoutF layout = new LayoutF(
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(0.0f, MarginY),
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
             }
         }
+        
+        /// <summary>
+        /// Encapsulates GameMenu related setting values.
+        /// </summary>
+        public class GameMenu
+        {
+            public static Vector2F Position => Layout.Position;
+            public static Vector2F Size => Layout.Size;
+            public static readonly LayoutF Layout = MainMenu.Layout;
+
+            // Space between the edge of the form and the GameMenu object
+            public const float Margin = MainMenu.Margin;
+
+            /// <summary>
+            /// Encapsulates GameMenu:ScrollContainer related setting values.
+            /// </summary>
+            public class ScrollContainer
+            {
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = MainMenu.ScrollContainer.Layout;
+            }
+
+            /// <summary>
+            /// Encapsulates GameMenu:ScrollContainer:Button related setting values.
+            /// </summary>
+            public class Button
+            {
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = MainMenu.Button.Layout;
+            }
+        }
+
 
         /// <summary>
             /// Encapsulates Board related setting values.
             /// </summary>
             public class Board
             {
-                public static Vector2F Position => layout.Position;
-                public static Vector2F Size => layout.Size;
-                private static readonly LayoutF layout = new LayoutF(
+                public static Vector2F Position => Layout.Position;
+                public static Vector2F Size => Layout.Size;
+                public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                     new Vector2F(840.0f, MainMenu.Size.Y));
 

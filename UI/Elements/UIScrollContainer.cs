@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Input;
-
+using Microsoft.Extensions.DependencyInjection;
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
 using static Chinese_Chess_v3.UI.Input.ScrollInputHandler;
@@ -40,7 +40,7 @@ namespace Chinese_Chess_v3.UI.Elements
         public Velocity Velocity => _physics.Velocity;
         public Acceleration Acceleration => _physics.Acceleration;
 
-        private ScrollInputHandler inputHandler;
+        private readonly IScrollInputHandler inputHandler;
 
         // In abs position
         public RectangleF AbsViewportBounds
@@ -102,13 +102,12 @@ namespace Chinese_Chess_v3.UI.Elements
                 base.Size = value;
             }
         }
-
-        public UIScrollContainer()
+        
+        public UIScrollContainer(IScrollInputHandler scroll)
         {
-            inputHandler = ScrollInputHandler.Instance;
-            
+            inputHandler = scroll;
             // Register and bind
-            inputHandler.RegisterScrollTarget(this, Physics, () => this.AbsViewportBounds, new ScrollBehavior
+            scroll.RegisterScrollTarget(this, Physics, () => this.AbsViewportBounds, new ScrollBehavior
             {
                 AllowDragY = true,
                 AllowDragX = false,

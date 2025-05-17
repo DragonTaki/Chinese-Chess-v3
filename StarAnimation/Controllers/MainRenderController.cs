@@ -59,7 +59,7 @@ namespace StarAnimation.Controllers
             effectController = new EffectController(width, height, starController);
 
             // Register update event
-            timer.OnAnimationFrame += Update;
+            //timer.OnAnimationFrame += Update;
         }
 
         /// <summary>

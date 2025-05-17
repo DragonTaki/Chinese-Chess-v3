@@ -26,17 +26,22 @@ namespace Chinese_Chess_v3.UI.Input
         private readonly List<IInputHandler> handlers = new();
 
         /// <summary>Optional scroll handler to control vertical scroll interaction.</summary>
-        private readonly ScrollInputHandler scrollHandler;
+        private readonly IScrollInputHandler scrollHandler;
 
         /// <summary>If true, stops further UI mouse event delivery during scroll drag.</summary>
         public bool SuppressUIWhenDragging { get; set; } = true;
+        private bool dragStarted = false;
+        private bool hasDragged = false;
+        private UIElement pressedElement = null;
+        private bool suppressClick = false;
 
-        public MouseInputRouter(UIElement root = null)
+#nullable enable
+        public MouseInputRouter(UIElement root, IScrollInputHandler? scroll = null)
+#nullable disable
         {
             this.Root = root;
-            this.scrollHandler = ScrollInputHandler.Instance;
+            this.scrollHandler = scroll;
 
-            this.handlers = new List<IInputHandler>();
             if (scrollHandler != null)
                 this.handlers.Add(scrollHandler);
         }
@@ -46,13 +51,28 @@ namespace Chinese_Chess_v3.UI.Input
         /// <summary>Handle MouseDown: trigger scroll + UI input.</summary>
         public bool OnMouseDown(MouseEventArgs e)
         {
-            // Process UI mouse event first
-            if (Root.OnMouseDown(e))
-                return true;
+            dragStarted = false;
+            hasDragged = false;
+            suppressClick = false;
+            pressedElement = Root.HitTestDeep(e.Location);
+            bool handled = false;
 
             // Than other mouse event handlers
             foreach (var h in handlers)
-                if (h.OnMouseDown(e)) return true;
+            {
+                if (h.OnMouseDown(e))
+                {
+                    handled = true;
+                    break;
+                }
+            }
+
+            // Process UI mouse event first
+            if (!handled && pressedElement != null)
+            {
+                pressedElement.OnMouseDown(e);
+                return true;
+            }
 
             return false;
         }
@@ -60,27 +80,33 @@ namespace Chinese_Chess_v3.UI.Input
         /// <summary>Handle MouseMove: update scroll and forward to UI.</summary>
         public bool OnMouseMove(MouseEventArgs e)
         {
-            // Process UI mouse event first
-            if (Root.OnMouseMove(e))
-            {
-                //Console.WriteLine("[Router] Consumed by UI.");
-                return true;
-            }
-
-            if (SuppressUIWhenDragging && scrollHandler?.IsDragging == true)
-            {
-                if (scrollHandler.IsDraggingWithinActiveTarget(e.Location))
-                    return false;
-            }
-
-            // Than other mouse event handlers
+            // Event handlers first, then we know if is dragging or not
             foreach (var h in handlers)
             {
                 if (h.OnMouseMove(e))
                 {
-                    //Console.WriteLine("[Router] Consumed by handler.");
+                    break;
+                }
+            }
+
+            if (SuppressUIWhenDragging)
+            {
+                if (!dragStarted && scrollHandler?.IsDragging == true && scrollHandler.HasMovedEnoughToDrag())
+                {
+                    hasDragged = true;
+                    dragStarted = true;
                     return true;
                 }
+                if (dragStarted && scrollHandler.IsDraggingWithinActiveTarget(e.Location))
+                {
+                    return true;
+                }
+            }
+
+            // Than process UI mouse event
+            if (Root.OnMouseMove(e))
+            {
+                return true;
             }
 
             return false;
@@ -89,15 +115,24 @@ namespace Chinese_Chess_v3.UI.Input
         /// <summary>Handle MouseUp: release drag and forward to UI.</summary>
         public bool OnMouseUp(MouseEventArgs e)
         {
-            // Process UI mouse event first
-            if (Root.OnMouseUp(e))
-                return true;
-
-            // Than other mouse event handlers
+            // Release scroll whatever
             foreach (var h in handlers)
-                if (h.OnMouseUp(e)) return true;
+                h.OnMouseUp(e);
 
-            return false;
+            bool blockClick = SuppressUIWhenDragging && dragStarted && hasDragged;
+
+            if (pressedElement != null)
+            {
+                pressedElement.OnMouseUp(e);
+
+                if (!blockClick && pressedElement.HitTest(e.Location))
+                    pressedElement.OnMouseClick(e);
+
+                pressedElement = null;
+            }
+
+            dragStarted = false;
+            return true;
         }
 
         /// <summary>Handle mouse wheel scrolling (optional).</summary>
@@ -116,13 +151,16 @@ namespace Chinese_Chess_v3.UI.Input
 
         public bool OnMouseClick(MouseEventArgs e)
         {
-            // Process UI mouse event first
-            if (Root.OnMouseClick(e))
-                return true;
+            if (!dragStarted)
+            {
+                // Process UI mouse event first
+                if (Root.OnMouseClick(e))
+                    return true;
 
-            // Than other mouse event handlers
-            foreach (var h in handlers)
-                if (h.OnMouseClick(e)) return true;
+                // Than other mouse event handlers
+                foreach (var h in handlers)
+                    if (h.OnMouseClick(e)) return true;
+            }
 
             return false;
         }

@@ -23,13 +23,19 @@ namespace Chinese_Chess_v3.UI.Input
     /// Handles mouse-based scroll input, including drag detection, threshold filtering,
     /// and inertial velocity output. This class does not directly update any physics system.
     /// </summary>
-    public class ScrollInputHandler : IInputHandler
+    public sealed class ScrollInputHandler : IScrollInputHandler
     {
-        //Singleton
+        /// <summary>
+        /// [DEPRECATED] Singleton
+        /// Replaced by DI
+        /// </summary>
+
+        /*
         private static readonly Lazy<ScrollInputHandler> _instance =
             new Lazy<ScrollInputHandler>(() => new ScrollInputHandler());
 
         public static ScrollInputHandler Instance => _instance.Value;
+        */
 
         private readonly List<ScrollTarget> scrollTargets = new();
 
@@ -40,9 +46,9 @@ namespace Chinese_Chess_v3.UI.Input
         private readonly DragHandler dragHandler;
 
         public bool IsDragging => dragHandler.IsDragging;
-        public int ZIndex = 0;
+        public int ZIndex { get; set; } = 0;
 
-        private ScrollInputHandler()
+        public ScrollInputHandler()
         {
             dragHandler = new DragHandler();
             dragHandler.OnDrag += HandleDrag;
@@ -123,8 +129,8 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public bool OnMouseMove(MouseEventArgs e)
         {
-            dragHandler.OnMouseMove(e);
-            return true;
+            bool handled = dragHandler.OnMouseMove(e);
+            return handled;
         }
 
         /// <summary>
@@ -132,8 +138,8 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public bool OnMouseUp(MouseEventArgs e)
         {
-            dragHandler.OnMouseUp(e);
-            return true;
+            bool handled = dragHandler.OnMouseUp(e);
+            return handled;
         }
 
         private void HandleDrag(Vector2F delta)
@@ -196,5 +202,8 @@ namespace Chinese_Chess_v3.UI.Input
             public bool AllowDragY { get; set; } = true;
             public bool AllowWheel { get; set; } = true;
         }
+
+        public bool HasMovedEnoughToDrag() => dragHandler.HasMovedEnoughToDrag;
+        public float DragThreshold() => dragHandler.DragThreshold;
     }
 }

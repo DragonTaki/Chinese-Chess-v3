@@ -11,6 +11,7 @@ namespace Chinese_Chess_v3.UI.Menu
 {
     public enum NewGameMenuType
     {
+        Default,
         Traditional,       //傳統大盤
         FlipChess,         //揭棋大盤
         DarkHalf,          //暗棋半盤

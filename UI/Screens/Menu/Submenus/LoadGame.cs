@@ -24,23 +24,23 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
     public class LoadGameMenu : UIElement
     {
+        private UIScrollContainer _scroll;
         private readonly LoadGameMenuRenderer renderer;
-        private UIScrollContainer scroll;
         private List<UIButton> buttons = new();
-        public LoadGameMenu()
+        public LoadGameMenu(IUiFactory factory)
         {
+            _scroll = factory.CreateScrollContainer();
+            
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
 
             renderer = new LoadGameMenuRenderer(this);
 
-            scroll = new UIScrollContainer();
-            scroll.LocalPosition = UILayoutConstants.Submenu.ScrollContainer.Position;
-            scroll.Size = UILayoutConstants.Submenu.ScrollContainer.Size;
-            scroll.BaseScrollY = -UILayoutConstants.Submenu.MarginY;
-            scroll.OverscrollLimit = UILayoutConstants.Submenu.MarginY;
+            _scroll.Layout = UILayoutConstants.Submenu.ScrollContainer.Layout;
+            _scroll.BaseScrollY = -UILayoutConstants.Submenu.MarginY;
+            _scroll.OverscrollLimit = UILayoutConstants.Submenu.MarginY;
 
-            this.AddChild(scroll);
+            this.AddChild(_scroll);
 
             var menuEntries = new List<MenuEntry<NewGameMenuType>>
             {
@@ -63,11 +63,11 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
                     new Vector2F(0.0f, (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY) * i);
                 button.Size = UILayoutConstants.Submenu.Button.Size;
 
-                scroll.AddChild(button);
+                _scroll.AddChild(button);
                 buttons.Add(button);
             }
 
-            scroll.ContentHeight = buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
+            _scroll.ContentHeight = buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
         }
 
         private void StartNewGame(NewGameMenuType selectedGamemode)
@@ -77,7 +77,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
         protected override void OnUpdate()
         {
-            scroll.Update();
+            _scroll.Update();
         }
         
         protected override void OnDraw(Graphics g)
@@ -92,6 +92,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
             return buttons.Where(b => b.IsEnabled).ToList();
         }
 
-        public RectangleF GetAbsClipRect() => scroll.GetAbsClippingRect();
+        public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
     }
 }

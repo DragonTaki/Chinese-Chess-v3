@@ -9,20 +9,27 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+
 using Chinese_Chess_v3.UI.Core;
 
 namespace Chinese_Chess_v3.UI.Input
 {
-    public class UIInputManager
+    public class UIInputManager : IInputHandler
     {
+        /// <summary>
+        /// Collect all IInputHandler handlers and dispatch them to mouse events in order.
+        /// </summary>
         public MouseInputRouter MouseRouter { get; }
         private readonly List<IInputHandler> generalHandlers = new();
 
-        public UIInputManager(UIElement root)
+#nullable enable
+        public UIInputManager(UIElement root, IScrollInputHandler? scroll = null)
+#nullable disable
         {
-            MouseRouter = new MouseInputRouter(root);
+            MouseRouter = new MouseInputRouter(root, scroll);
             RegisterHandler(MouseRouter); // Add mouse router itself to the general processor
-            RegisterHandler(ScrollInputHandler.Instance);
+            if (scroll != null)
+                RegisterHandler(scroll);
         }
 
         public void RegisterHandler(IInputHandler handler)
@@ -35,12 +42,36 @@ namespace Chinese_Chess_v3.UI.Input
         {
             generalHandlers.Remove(handler);
         }
+        public bool OnMouseDown(MouseEventArgs e)
+        {
+            return MouseRouter.OnMouseDown(e);
+        }
 
-        public void ProcessMouseDown(object sender, MouseEventArgs e) => MouseRouter.OnMouseDown(e);
-        public void ProcessMouseMove(object sender, MouseEventArgs e) => MouseRouter.OnMouseMove(e);
-        public void ProcessMouseUp(object sender, MouseEventArgs e) => MouseRouter.OnMouseUp(e);
-        public void ProcessMouseClick(object sender, MouseEventArgs e) => MouseRouter.OnMouseClick(e);
-        public void ProcessMouseWheel(object sender, MouseEventArgs e) => MouseRouter.OnMouseWheel(e);
+        public bool OnMouseMove(MouseEventArgs e)
+        {
+            return MouseRouter.OnMouseMove(e);
+        }
+
+        public bool OnMouseUp(MouseEventArgs e)
+        {
+            return MouseRouter.OnMouseUp(e);
+        }
+
+        public bool OnMouseClick(MouseEventArgs e)
+        {
+            return MouseRouter.OnMouseClick(e);
+        }
+
+        public bool OnMouseWheel(MouseEventArgs e)
+        {
+            return MouseRouter.OnMouseWheel(e);
+        }
+
+        public void ProcessMouseDown (object s, MouseEventArgs e)=> OnMouseDown(e);
+        public void ProcessMouseMove (object s, MouseEventArgs e)=> OnMouseMove(e);
+        public void ProcessMouseUp   (object s, MouseEventArgs e)=> OnMouseUp(e);
+        public void ProcessMouseClick(object s, MouseEventArgs e)=> OnMouseClick(e);
+        public void ProcessMouseWheel(object s, MouseEventArgs e)=> OnMouseWheel(e);
 
         public void EndFrame()
         {

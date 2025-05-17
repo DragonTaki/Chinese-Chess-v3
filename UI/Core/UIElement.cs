@@ -13,7 +13,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Input;
-
+using SharedLib.Geometry;
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
 
@@ -29,7 +29,15 @@ namespace Chinese_Chess_v3.UI.Core
 
         public virtual UIPosition LocalPosition { get; set; } = new UIPosition(Vector2F.Zero);
         public virtual Vector2F Size { get; set; } = Vector2F.Zero;
-
+        public virtual LayoutF Layout
+        {
+            get => new LayoutF(LocalPosition.Current, Size);
+            set
+            {
+                LocalPosition = new UIPosition(value.Position);
+                Size = value.Size;
+            }
+        }
         /// <summary>
         /// Is it logically visible (use for UI display and HitTest).
         /// `IsVisible = false` means that the object is not drawn and cannot be clicked.
@@ -312,6 +320,7 @@ namespace Chinese_Chess_v3.UI.Core
 
         public virtual bool OnMouseClick(MouseEventArgs e)
         {
+            //return false;
             return PropagateMouseEvent(e, UIEventType.MouseClick);
         }
         protected virtual bool HandleMouseClick(MouseEventArgs e)

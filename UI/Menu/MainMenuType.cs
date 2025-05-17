@@ -11,11 +11,12 @@ namespace Chinese_Chess_v3.UI.Menu
 {
     public enum MainMenuType
     {
-        NewGame,
-        LoadGame,
-        RuleSettings,
-        Help,
-        Settings,
-        Exit
+        Default,
+        NewGame,       // 開新一局
+        LoadGame,      // 讀取存檔
+        RuleSettings,  // 規則設定
+        Help,          // 教學／幫助
+        Settings,      // 遊戲設定
+        Exit           // 離開遊戲
     }
 }

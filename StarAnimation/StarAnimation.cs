@@ -30,7 +30,7 @@ namespace StarAnimation
 
             controller = new MainRenderController();
             ITimerProvider timer = GlobalTime.Timer;
-            timer.OnAnimationFrame += Update;
+            //timer.OnAnimationFrame += Update;
 
             initialized = true;
         }
