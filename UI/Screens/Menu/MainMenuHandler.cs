@@ -27,6 +27,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         private MainMenu mainMenu;
         private MainMenuType? currentSubmenu = null;
         private IUiFactory uiFactory;
+        private NavigationManager _nav;
         private readonly Dictionary<MainMenuType, UIElement> submenus = new();
 
         public MainMenuHandler() {}
@@ -34,10 +35,10 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         {
             this.mainMenu = mainMenu;
             this.uiFactory = uiFactory;
+            _nav = uiFactory.Resolve<NavigationManager>();
 
             RegisterFactory();
             // Initialize submenus
-            //submenus[MainMenuType.NewGame] = CreateSubMenu<NewGameMenu>();
             submenus[MainMenuType.NewGame] = CreateSubMenu(() => uiFactory.Create<NewGameMenu>());
             submenus[MainMenuType.LoadGame] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
@@ -137,6 +138,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         public void OnExit()
         {
             CancelCurrentSubmenu();
+            
         }
     }
 }

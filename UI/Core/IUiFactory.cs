@@ -19,12 +19,12 @@ namespace Chinese_Chess_v3.UI.Core
     public interface IUiFactory
     {
         UIScrollContainer CreateScrollContainer();
-        NavigationManager GetNavigationManager();
         MainMenu CreateMainMenu();
         GameMenu CreateGameMenu();
 
         void RegisterFactory<T>(Func<IUiFactoryContext, T> factory) where T : UIElement;
         T Create<T>() where T : UIElement;
+        T Resolve<T>();
     
         //SubMenu CreateSubMenu();
         //Tooltip CreateTooltip(string text);

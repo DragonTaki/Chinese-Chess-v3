@@ -28,7 +28,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         private NewGameMenuRenderer renderer;
         private NewGameMenuHandler handler;
         private readonly List<UIButton> buttons = new();
-        private Action<NewGameMenuType> onStart;
 
         public NewGameMenu() {}
         
@@ -52,7 +51,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
             this.AddChild(_scroll);
 
-            var menuEntries = NewGameMenuOptions.Create(onStart);
+            var menuEntries = NewGameMenuOptions.Create(handler.StartNewGame);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {

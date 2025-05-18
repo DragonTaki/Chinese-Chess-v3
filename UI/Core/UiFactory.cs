@@ -70,10 +70,7 @@ namespace Chinese_Chess_v3.UI.Core
             var scroll = _sp.GetRequiredService<IScrollInputHandler>();
             return new UIScrollContainer(scroll);
         }
-        public NavigationManager GetNavigationManager()
-        {
-            return _sp.GetRequiredService<NavigationManager>();
-        }
+        public T Resolve<T>() => _sp.GetRequiredService<T>();
 
         public MainMenu CreateMainMenu()
         {

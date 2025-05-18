@@ -54,7 +54,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = menu.Buttons;
+            var buttons = menu.GetVisibleButtons();
             var clip = menu.GetAbsClipRect();
 
             DrawOutline(g);

@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         public NewGameMenuHandler(IUiFactory factory, NewGameMenu menu)
         {
             this.menu = menu;
-            this.navigation = factory.GetNavigationManager();
+            this.navigation = factory.Resolve<NavigationManager>();
         }
 
         public void StartNewGame(NewGameMenuType selectedGamemode)

@@ -20,13 +20,13 @@ namespace Chinese_Chess_v3.UI.Screens.Game
     public class GameMenuHandler
     {
         private GameMenu menu;
-        private NavigationManager navigation;
+        private NavigationManager _nav;
 
         public GameMenuHandler() {}
         public void Init(IUiFactory factory, GameMenu menu)
         {
             this.menu = menu;
-            this.navigation = factory.GetNavigationManager();
+            _nav = factory.Resolve<NavigationManager>();
         }
 
         public void GameMenuAction(GameMenuType selectedAction)
@@ -41,7 +41,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game
         
         public void OnExit()
         {
-            //
+            _nav.ShowGameScreen();
         }
     }
 }
