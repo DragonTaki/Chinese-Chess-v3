@@ -22,22 +22,26 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class NewGameMenu : UIElement
+    public class NewGameMenu : UIElement, IScreen
     {
-        private readonly UIScrollContainer _scroll;
-        private readonly NewGameMenuRenderer renderer;
-        private readonly NewGameMenuHandler handler;
+        private UIScrollContainer _scroll;
+        private NewGameMenuRenderer renderer;
+        private NewGameMenuHandler handler;
         private readonly List<UIButton> buttons = new();
         private Action<NewGameMenuType> onStart;
 
-        public NewGameMenu(IUiFactory factory)
+        public NewGameMenu() {}
+        
+        public void Setup(IUiFactory factory, NewGameMenuHandler handler, NewGameMenuRenderer renderer)
         {
             _scroll = factory.CreateScrollContainer();
+            this.handler = handler;
+            this.renderer = renderer;
 
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
 
-            renderer = new NewGameMenuRenderer(this);
+            BuildMenu();
         }
 
         private void BuildMenu()
@@ -64,11 +68,15 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
             _scroll.ContentHeight = buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
         }
-        
-        public void Setup(Action<NewGameMenuType> onStartGame)
+
+        public void OnEnter()
         {
-            onStart = onStartGame;
-            BuildMenu();
+            handler.OnEnter();
+        }
+        
+        public void OnExit()
+        {
+            handler.OnExit();
         }
 
         protected override void OnUpdate()

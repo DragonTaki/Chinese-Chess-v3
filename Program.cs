@@ -15,10 +15,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Chinese_Chess_v3.UI;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Input;
+using Chinese_Chess_v3.UI.Screens;
 using Chinese_Chess_v3.UI.Screens.Menu;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
 using SharedLib.RandomTable;
+using Chinese_Chess_v3.UI.Screens.Game;
 
 namespace Chinese_Chess_v3
 {
@@ -37,10 +39,21 @@ namespace Chinese_Chess_v3
             services.AddSingleton<MainForm>();
 
             services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
-
+            
+            services.AddSingleton<NavigationManager>();
             services.AddSingleton<MainMenu>();
+            services.AddSingleton<MainMenuHandler>();
+            services.AddSingleton<MainMenuRenderer>();
             services.AddTransient<NewGameMenu>();
+            services.AddSingleton<NewGameMenuHandler>();
+            services.AddSingleton<NewGameMenuRenderer>();
             services.AddTransient<LoadGameMenu>();
+            services.AddSingleton<LoadGameMenuHandler>();
+            services.AddSingleton<LoadGameMenuRenderer>();
+
+            services.AddTransient<GameMenu>();
+            services.AddSingleton<GameMenuHandler>();
+            services.AddSingleton<GameMenuRenderer>();
 
             var sp = services.BuildServiceProvider();
 

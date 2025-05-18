@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Input;
@@ -21,6 +22,8 @@ namespace Chinese_Chess_v3.UI.Core
 {
     public class UIElement : IUpdatable, IDrawable, IInputHandler
     {
+    private static long s_nextId = 0; // 靜態遞增 ID 來源
+    public long InstanceId { get; }   // 每個物件唯一的實體 ID
         // If `Parent == null`, means the most top UI object
 #nullable enable
         public UIElement? Parent { get; set; }
@@ -69,6 +72,11 @@ namespace Chinese_Chess_v3.UI.Core
 #nullable enable
         public virtual Physics2D? Physics { get; set; }
 #nullable disable
+
+        public UIElement()
+        {
+            InstanceId = Interlocked.Increment(ref s_nextId);
+        }
 
         /// <summary>
         /// Calculate absolute coordinates: Base + offsets of all ancestors
@@ -153,6 +161,15 @@ namespace Chinese_Chess_v3.UI.Core
         {
             child.Parent = null;
             Children.Remove(child);
+        }
+
+        public virtual void RemoveAllChild()
+        {
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                Children[i].Parent = null;
+                Children.Remove(Children[i]);
+            }
         }
 
         /// <summary>

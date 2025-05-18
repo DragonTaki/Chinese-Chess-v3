@@ -25,6 +25,7 @@ using SharedLib.Timing;
 using SharedLib.Globals;
 
 using StarAnimation;
+using Chinese_Chess_v3.UI.Screens;
 
 namespace Chinese_Chess_v3.UI
 {
@@ -34,6 +35,7 @@ namespace Chinese_Chess_v3.UI
         private readonly IServiceProvider _sp;
         private readonly UIInputManager _inputMgr;
         private readonly UIRoot _rootCanvas;
+        private NavigationManager _navigationManager;
 
         private StarAnimationApp _bgStar;
 
@@ -46,9 +48,13 @@ namespace Chinese_Chess_v3.UI
             InitComponents();  // Create WinForms Designer
             InitWindow();
 
-            _rootCanvas = BuildUIRoot();          // 建立 RootCanvas & 子選單
             var uiFactory = _sp.GetRequiredService<IUiFactory>();
-            _rootCanvas.AddChild(uiFactory.CreateMainMenu());
+
+            _rootCanvas = BuildUIRoot();
+
+            _navigationManager = _sp.GetRequiredService<NavigationManager>();
+            _navigationManager.Init(_rootCanvas);            
+            _navigationManager.ShowMainMenu();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
@@ -80,8 +86,6 @@ namespace Chinese_Chess_v3.UI
         private UIRoot BuildUIRoot()
         {
             var root = new UIRoot();
-
-            var mainMenu = _sp.GetRequiredService<MainMenu>();
 
             return root;
         }

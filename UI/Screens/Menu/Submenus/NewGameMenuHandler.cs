@@ -8,7 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
-    
+using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Menu;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
@@ -18,19 +18,30 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
     /// </summary>
     public class NewGameMenuHandler
     {
-        private readonly NewGameMenu newGameMenu;
-        private readonly Action cancelMainMenu;
-        public NewGameMenuHandler(NewGameMenu newGameMenu, Action cancelMainMenu)
+        private readonly NewGameMenu menu;
+        private readonly NavigationManager navigation;
+
+        public NewGameMenuHandler(IUiFactory factory, NewGameMenu menu)
         {
-            this.newGameMenu = newGameMenu;
-            this.cancelMainMenu = cancelMainMenu;
+            this.menu = menu;
+            this.navigation = factory.GetNavigationManager();
         }
 
         public void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
-            cancelMainMenu?.Invoke();
             //mainMenu.CancelCurrentSubmenu();
+            navigation.ShowGameScreen();
+        }
+
+        public void OnEnter()
+        {
+            //
+        }
+        
+        public void OnExit()
+        {
+            //
         }
     }
 }

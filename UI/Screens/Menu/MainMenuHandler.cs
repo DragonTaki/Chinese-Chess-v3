@@ -15,6 +15,8 @@ using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Menu;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Chinese_Chess_v3.UI.Screens.Menu
 {
     /// <summary>
@@ -22,29 +24,47 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
     /// </summary>
     public class MainMenuHandler
     {
-        private readonly MainMenu mainMenu;
+        private MainMenu mainMenu;
         private MainMenuType? currentSubmenu = null;
-        private readonly IUiFactory uiFactory;
+        private IUiFactory uiFactory;
         private readonly Dictionary<MainMenuType, UIElement> submenus = new();
 
-        public MainMenuHandler(MainMenu mainMenu, IUiFactory uiFactory)
+        public MainMenuHandler() {}
+        public void Init(IUiFactory uiFactory, MainMenu mainMenu)
         {
             this.mainMenu = mainMenu;
             this.uiFactory = uiFactory;
 
+            RegisterFactory();
             // Initialize submenus
             //submenus[MainMenuType.NewGame] = CreateSubMenu<NewGameMenu>();
-            submenus[MainMenuType.NewGame] = CreateSubMenu(() =>
+            submenus[MainMenuType.NewGame] = CreateSubMenu(() => uiFactory.Create<NewGameMenu>());
+            submenus[MainMenuType.LoadGame] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+            submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+            submenus[MainMenuType.Help] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+            submenus[MainMenuType.Settings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+        }
+
+        private void RegisterFactory()
+        {
+            // Initialize submenu creation factory
+            uiFactory.RegisterFactory<NewGameMenu>(ctx =>
             {
-                var menu = uiFactory.Create<NewGameMenu>();
-                var handler = new NewGameMenuHandler(menu, CancelCurrentSubmenu);
-                menu.Setup(handler.StartNewGame);
+                var menu = new NewGameMenu();
+                var renderer = new NewGameMenuRenderer(menu);
+                var handler = new NewGameMenuHandler(uiFactory, menu);
+                menu.Setup(uiFactory, handler, renderer);
                 return menu;
             });
-            submenus[MainMenuType.LoadGame]     = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.Help]         = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.Settings]     = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+
+            uiFactory.RegisterFactory<LoadGameMenu>(ctx =>
+            {
+                var menu = new LoadGameMenu();
+                var renderer = new LoadGameMenuRenderer(menu);
+                var handler = new LoadGameMenuHandler(uiFactory, menu);
+                menu.Setup(uiFactory, handler, renderer);
+                return menu;
+            });
         }
 
         /// <summary>
@@ -109,5 +129,14 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
 
         public Dictionary<MainMenuType, UIElement> Submenus => submenus;
         public MainMenuType? CurrentSubmenu => currentSubmenu;
+
+        public void OnEnter()
+        {
+            //
+        }
+        public void OnExit()
+        {
+            CancelCurrentSubmenu();
+        }
     }
 }

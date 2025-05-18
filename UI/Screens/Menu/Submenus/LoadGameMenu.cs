@@ -22,20 +22,28 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class LoadGameMenu : UIElement
+    public class LoadGameMenu : UIElement, IScreen
     {
         private UIScrollContainer _scroll;
-        private readonly LoadGameMenuRenderer renderer;
+        private LoadGameMenuRenderer renderer;
+        private LoadGameMenuHandler handler;
         private List<UIButton> buttons = new();
-        public LoadGameMenu(IUiFactory factory)
+        
+        public LoadGameMenu() {}
+        public void Setup(IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer)
         {
             _scroll = factory.CreateScrollContainer();
-            
+            this.handler = handler;
+            this.renderer = renderer;
+
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
 
-            renderer = new LoadGameMenuRenderer(this);
+            BuildMenu();
+        }
 
+        private void BuildMenu()
+        {
             _scroll.Layout = UILayoutConstants.Submenu.ScrollContainer.Layout;
             _scroll.BaseScrollY = -UILayoutConstants.Submenu.MarginY;
             _scroll.OverscrollLimit = UILayoutConstants.Submenu.MarginY;
@@ -73,6 +81,16 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         private void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
+        }
+
+        public void OnEnter()
+        {
+            handler.OnEnter();
+        }
+        
+        public void OnExit()
+        {
+            handler.OnExit();
         }
 
         protected override void OnUpdate()

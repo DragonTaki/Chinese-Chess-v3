@@ -44,7 +44,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
                 height = Math.Max(value, 1);
             }
         }
-        private readonly NewGameMenu menu;
+        private NewGameMenu menu;
 
         public NewGameMenuRenderer(NewGameMenu menu)
         {

@@ -1,37 +1,36 @@
 /* ----- ----- ----- ----- */
-// GameMenuHandler.cs
+// LoadGameMenuHandler.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
-// Create Date: 2025/05/17
-// Update Date: 2025/05/17
+// Create Date: 2025/05/16
+// Update Date: 2025/05/16
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
 using System;
-
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Menu;
 
-namespace Chinese_Chess_v3.UI.Screens.Game
+namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
     /// <summary>
-    /// Handles logic and interactions for the GameMenu.
+    /// Handles logic and interactions for the LoadGameMenu.
     /// </summary>
-    public class GameMenuHandler
+    public class LoadGameMenuHandler
     {
-        private GameMenu menu;
-        private NavigationManager navigation;
+        private readonly LoadGameMenu menu;
+        private readonly NavigationManager navigation;
 
-        public GameMenuHandler() {}
-        public void Init(IUiFactory factory, GameMenu menu)
+        public LoadGameMenuHandler(IUiFactory factory, LoadGameMenu menu)
         {
             this.menu = menu;
             this.navigation = factory.GetNavigationManager();
         }
 
-        public void GameMenuAction(GameMenuType selectedAction)
+        public void StartNewGame()
         {
-            Console.WriteLine($"NewgameMenu: selected: {selectedAction}");
+            Console.WriteLine($"LoadGameMenu: selected");
+            //mainMenu.CancelCurrentSubmenu();
         }
 
         public void OnEnter()

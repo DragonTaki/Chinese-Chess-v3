@@ -14,7 +14,6 @@ using System.Linq;
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Elements;
-using Chinese_Chess_v3.UI.Input;
 using Chinese_Chess_v3.UI.Menu;
 using Chinese_Chess_v3.UI.Utils;
 
@@ -22,22 +21,22 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu
 {
-    public class MainMenu : UIElement
+    public class MainMenu : UIElement, IScreen
     {
-        private readonly UIScrollContainer _scroll;
-        private readonly MainMenuRenderer renderer;
-        private readonly MainMenuHandler handler;
+        private UIScrollContainer _scroll;
+        private MainMenuRenderer renderer;
+        private MainMenuHandler handler;
         private readonly List<UIButton> buttons = new();
 
-        public MainMenu(IUiFactory factory)
+        public MainMenu() {}
+        public void Setup(IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer)
         {
             _scroll = factory.CreateScrollContainer();
+            this.handler = handler;
+            this.renderer = renderer;
 
             LocalPosition = UILayoutConstants.MainMenu.Position;
             Size = UILayoutConstants.MainMenu.Size;
-
-            renderer = new MainMenuRenderer(this);
-            handler = new MainMenuHandler(this, factory);
 
             BuildMenu();
         }
@@ -65,6 +64,16 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             }
 
             _scroll.ContentHeight = buttons.Count * (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin);
+        }
+
+        public void OnEnter()
+        {
+            handler.OnEnter();
+        }
+        
+        public void OnExit()
+        {
+            handler.OnExit();
         }
 
         protected override void OnUpdate()

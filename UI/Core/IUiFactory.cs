@@ -7,7 +7,11 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
+
 using Chinese_Chess_v3.UI.Elements;
+using Chinese_Chess_v3.UI.Screens;
+using Chinese_Chess_v3.UI.Screens.Game;
 using Chinese_Chess_v3.UI.Screens.Menu;
 
 namespace Chinese_Chess_v3.UI.Core
@@ -15,8 +19,11 @@ namespace Chinese_Chess_v3.UI.Core
     public interface IUiFactory
     {
         UIScrollContainer CreateScrollContainer();
+        NavigationManager GetNavigationManager();
         MainMenu CreateMainMenu();
+        GameMenu CreateGameMenu();
 
+        void RegisterFactory<T>(Func<IUiFactoryContext, T> factory) where T : UIElement;
         T Create<T>() where T : UIElement;
     
         //SubMenu CreateSubMenu();

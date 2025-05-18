@@ -8,11 +8,13 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Generic;
 
 using Chinese_Chess_v3.UI.Elements;
 using Chinese_Chess_v3.UI.Input;
+using Chinese_Chess_v3.UI.Screens;
+using Chinese_Chess_v3.UI.Screens.Game;
 using Chinese_Chess_v3.UI.Screens.Menu;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chinese_Chess_v3.UI.Core
@@ -25,10 +27,42 @@ namespace Chinese_Chess_v3.UI.Core
         {
             _sp = sp;
         }
+        private readonly Dictionary<Type, Func<IUiFactory, UIElement>> factories = new();
+        private readonly Dictionary<Type, Func<IUiFactoryContext, UIElement>> factoriesWithContext = new();
 
         public T Create<T>() where T : UIElement
         {
-            return _sp.GetRequiredService<T>();
+            var type = typeof(T);
+
+            if (factoriesWithContext.TryGetValue(type, out var contextFactory))
+            {
+                var ctx = new UiFactoryContext(_sp, this);
+                return (T)contextFactory(ctx);
+            }
+            
+            if (factories.TryGetValue(type, out var factory))
+                return (T)factory(this);
+                
+            throw new InvalidOperationException($"No factory registered for {type}");
+        }
+
+        public void RegisterFactory<T>(Func<IUiFactory, T> factory) where T : UIElement
+        {
+            factories[typeof(T)] = factory;
+        }
+        public void RegisterFactory<T>(Func<IUiFactoryContext, T> factory) where T : UIElement
+        {
+            factoriesWithContext[typeof(T)] = ctx => factory(ctx);
+        }
+
+        public void ClearCache<T>() where T : UIElement
+        {
+            factories.Remove(typeof(T));
+        }
+
+        public void ClearAllCache()
+        {
+            factories.Clear();
         }
 
         public UIScrollContainer CreateScrollContainer()
@@ -36,20 +70,54 @@ namespace Chinese_Chess_v3.UI.Core
             var scroll = _sp.GetRequiredService<IScrollInputHandler>();
             return new UIScrollContainer(scroll);
         }
+        public NavigationManager GetNavigationManager()
+        {
+            return _sp.GetRequiredService<NavigationManager>();
+        }
 
         public MainMenu CreateMainMenu()
         {
-            return new MainMenu(this); // 傳遞 factory 給 MainMenu 建立其他元件
+            var menu = _sp.GetRequiredService<MainMenu>();
+            var handler = _sp.GetRequiredService<MainMenuHandler>();
+            var renderer = _sp.GetRequiredService<MainMenuRenderer>();
+
+            handler.Init(this, menu);
+            menu.Setup(this, handler, renderer);
+
+            return menu;
         }
-/*
-        public SubMenu CreateSubMenu()
+        public GameMenu CreateGameMenu()
         {
-            return new SubMenu(this); // 同上
+            var menu = _sp.GetRequiredService<GameMenu>();
+            var handler = _sp.GetRequiredService<GameMenuHandler>();
+            var renderer = _sp.GetRequiredService<GameMenuRenderer>();
+
+            handler.Init(this, menu);
+            menu.Setup(this, handler, renderer);
+
+            return menu;
         }
 
+        /*
+        public NewGameMenu CreateNewGameMenu()
+        {
+            return new NewGameMenu(this); // 同上
+        }
         public Tooltip CreateTooltip(string text)
         {
             return new Tooltip(text);
         }*/
+
+        private class UiFactoryContext : IUiFactoryContext
+        {
+            public IServiceProvider ServiceProvider { get; }
+            public IUiFactory UiFactory { get; }
+
+            public UiFactoryContext(IServiceProvider sp, IUiFactory factory)
+            {
+                ServiceProvider = sp;
+                UiFactory = factory;
+            }
+        }
     }
 }
