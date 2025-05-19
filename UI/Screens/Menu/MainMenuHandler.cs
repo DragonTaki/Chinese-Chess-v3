@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Dialog;
 using Chinese_Chess_v3.UI.Menu;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
@@ -29,8 +30,9 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         private IUiFactory uiFactory;
         private NavigationManager _nav;
         private readonly Dictionary<MainMenuType, UIElement> submenus = new();
+        private ConfirmDialog confirmDialog;
 
-        public MainMenuHandler() {}
+        public MainMenuHandler() { }
         public void Init(IUiFactory uiFactory, MainMenu mainMenu)
         {
             this.mainMenu = mainMenu;
@@ -44,6 +46,8 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.Help] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.Settings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+
+            confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer());
         }
 
         private void RegisterFactory()
@@ -89,21 +93,61 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// </summary>
         public void SwitchSubmenu(MainMenuType selectedMenu)
         {
-            CancelCurrentSubmenu();
-
-            if (currentSubmenu == selectedMenu)
+            if (selectedMenu != MainMenuType.Exit)
             {
-                // Same menu clicked again, collapse
-                currentSubmenu = null;
+                CancelCurrentSubmenu();
+
+                if (currentSubmenu == selectedMenu)
+                {
+                    // Same menu clicked again, collapse
+                    currentSubmenu = null;
+                }
+                else
+                {
+                    // Show new submenu
+                    currentSubmenu = selectedMenu;
+                    var submenu = submenus[currentSubmenu.Value];
+                    submenu.IsVisible = true;
+                    mainMenu.AddChild(submenu);
+                }
             }
             else
             {
-                // Show new submenu
-                currentSubmenu = selectedMenu;
-                var submenu = submenus[currentSubmenu.Value];
-                submenu.IsVisible = true;
-                mainMenu.AddChild(submenu);
+                ClickExitAction();
             }
+        }
+
+        private void ClickExitAction()
+        {
+            // 按 Exit，動態加入 ConfirmDialog
+            if (confirmDialog == null)
+            {
+                confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer());
+            }
+
+            var root = mainMenu.GetRoot();
+            if (!root.Children.Contains(confirmDialog))
+            {
+                root.AddChild(confirmDialog);
+            }
+
+            confirmDialog.Show(
+                "確認要離開遊戲嗎？",
+                ConfirmDialogType.YesNo,
+                result =>
+                {
+                    if (result == ConfirmDialogResult.Yes)
+                    {
+                        ExitApplication();
+                    }
+                    else
+                    {
+                        // 按否，關閉對話框後可以選擇是否移除 ConfirmDialog
+                        // mainUIRoot.RemoveChild(confirmDialog);
+                        confirmDialog.IsVisible = false;
+                    }
+                }
+            );
         }
 
         /// <summary>
@@ -123,7 +167,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// <summary>
         /// Exit the application.
         /// </summary>
-        public void ExitApplication()
+        public static void ExitApplication()
         {
             Application.Exit();
         }

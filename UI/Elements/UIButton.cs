@@ -42,7 +42,7 @@ namespace Chinese_Chess_v3.UI.Elements
             Action = action;
         }
 
-        public UIButton(MenuEntry<TEnum> button)
+        public UIButton(ButtonEntry<TEnum> button)
             : this(button.Label, button.Type, button.OnClick) { }
 
         public UIButton(string text)

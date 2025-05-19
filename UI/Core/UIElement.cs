@@ -142,6 +142,16 @@ namespace Chinese_Chess_v3.UI.Core
                 screenPoint.Y >= absPos.Y &&
                 screenPoint.Y <= absPos.Y + Size.Y;
         }
+        
+        public UIElement GetRoot()
+        {
+            UIElement node = this;
+            while (node.Parent != null)
+            {
+                node = node.Parent;
+            }
+            return node;
+        }
 
         public virtual void AddChild(UIElement child)
         {

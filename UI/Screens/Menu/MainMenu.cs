@@ -49,7 +49,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
 
             this.AddChild(_scroll);
 
-            var menuEntries = MainMenuOptions.Create(handler.SwitchSubmenu, handler.ExitApplication);
+            var menuEntries = MainMenuOptions.Create(handler.SwitchSubmenu);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {

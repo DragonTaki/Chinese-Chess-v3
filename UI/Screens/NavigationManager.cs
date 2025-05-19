@@ -41,8 +41,13 @@ namespace Chinese_Chess_v3.UI.Screens
         /// </summary>
         public void ShowMainMenu()
         {
+            foreach (var scene in rootElement.Children)
+            {
+                scene.IsVisible = false;
+            }
             rootElement.RemoveAllChild();
             _mainMenu ??= _factory.CreateMainMenu();
+            _mainMenu.IsVisible = true;
             rootElement.AddChild(_mainMenu);
         }
 
@@ -51,8 +56,13 @@ namespace Chinese_Chess_v3.UI.Screens
         /// </summary>
         public void ShowGameScreen()
         {
+            foreach (var scene in rootElement.Children)
+            {
+                scene.IsVisible = false;
+            }
             rootElement.RemoveAllChild();
             _gameMenu ??= _factory.CreateGameMenu();
+            _gameMenu.IsVisible = true;
             rootElement.AddChild(_gameMenu);
         }
 

@@ -31,7 +31,7 @@ namespace Chinese_Chess_v3
         {
             // Setting DI services
             var services = new ServiceCollection();
-            
+
             // WinForms window
             services.AddSingleton<IUiFactory, UiFactory>();
             services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
@@ -39,7 +39,7 @@ namespace Chinese_Chess_v3
             services.AddSingleton<MainForm>();
 
             services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
-            
+
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<MainMenu>();
             services.AddSingleton<MainMenuHandler>();
@@ -51,7 +51,7 @@ namespace Chinese_Chess_v3
             services.AddSingleton<LoadGameMenuHandler>();
             services.AddSingleton<LoadGameMenuRenderer>();
 
-            services.AddTransient<GameMenu>();
+            services.AddSingleton<GameMenu>();
             services.AddSingleton<GameMenuHandler>();
             services.AddSingleton<GameMenuRenderer>();
 

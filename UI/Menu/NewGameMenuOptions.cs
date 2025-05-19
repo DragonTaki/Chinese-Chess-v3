@@ -14,15 +14,15 @@ namespace Chinese_Chess_v3.UI.Menu
 {
     public static class NewGameMenuOptions
     {
-        public static List<MenuEntry<NewGameMenuType>> Create(Action<NewGameMenuType> startNewGame)
+        public static List<ButtonEntry<NewGameMenuType>> Create(Action<NewGameMenuType> startNewGame)
         {
-            return new List<MenuEntry<NewGameMenuType>>
+            return new List<ButtonEntry<NewGameMenuType>>
             {
-                new MenuEntry<NewGameMenuType>("傳統大盤", NewGameMenuType.Traditional,       () => startNewGame(NewGameMenuType.Traditional)),
-                new MenuEntry<NewGameMenuType>("揭棋大盤", NewGameMenuType.FlipChess,         () => startNewGame(NewGameMenuType.FlipChess)),
-                new MenuEntry<NewGameMenuType>("暗棋半盤", NewGameMenuType.DarkHalf,          () => startNewGame(NewGameMenuType.DarkHalf)),
-                new MenuEntry<NewGameMenuType>("明棋半盤", NewGameMenuType.OpenHalf,          () => startNewGame(NewGameMenuType.OpenHalf)),
-                new MenuEntry<NewGameMenuType>("三國半盤", NewGameMenuType.ThreeKingdomsHalf, () => startNewGame(NewGameMenuType.ThreeKingdomsHalf))
+                new ButtonEntry<NewGameMenuType>("傳統大盤", NewGameMenuType.Traditional,       () => startNewGame(NewGameMenuType.Traditional)),
+                new ButtonEntry<NewGameMenuType>("揭棋大盤", NewGameMenuType.FlipChess,         () => startNewGame(NewGameMenuType.FlipChess)),
+                new ButtonEntry<NewGameMenuType>("暗棋半盤", NewGameMenuType.DarkHalf,          () => startNewGame(NewGameMenuType.DarkHalf)),
+                new ButtonEntry<NewGameMenuType>("明棋半盤", NewGameMenuType.OpenHalf,          () => startNewGame(NewGameMenuType.OpenHalf)),
+                new ButtonEntry<NewGameMenuType>("三國半盤", NewGameMenuType.ThreeKingdomsHalf, () => startNewGame(NewGameMenuType.ThreeKingdomsHalf)),
             };
         }
     }

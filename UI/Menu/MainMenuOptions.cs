@@ -14,16 +14,17 @@ namespace Chinese_Chess_v3.UI.Menu
 {
     public static class MainMenuOptions
     {
-        public static List<MenuEntry<MainMenuType>> Create(Action<MainMenuType> switchSubmenu, Action exitApp)
+        public static List<ButtonEntry<MainMenuType>> Create(Action<MainMenuType> switchSubmenu)
         {
-            return new List<MenuEntry<MainMenuType>>
+            return new List<ButtonEntry<MainMenuType>>
             {
-                new MenuEntry<MainMenuType>("開新一局",   MainMenuType.NewGame,      () => switchSubmenu(MainMenuType.NewGame)),
-                new MenuEntry<MainMenuType>("讀取存檔",   MainMenuType.LoadGame,     () => switchSubmenu(MainMenuType.LoadGame)),
-                new MenuEntry<MainMenuType>("規則設定",   MainMenuType.RuleSettings, () => switchSubmenu(MainMenuType.RuleSettings)),
-                new MenuEntry<MainMenuType>("教學／幫助", MainMenuType.Help,         () => switchSubmenu(MainMenuType.Help)),
-                new MenuEntry<MainMenuType>("遊戲設定",   MainMenuType.Settings,     () => switchSubmenu(MainMenuType.Settings)),
-                new MenuEntry<MainMenuType>("離開遊戲",   MainMenuType.Exit,         exitApp)
+                new ButtonEntry<MainMenuType>("開新一局",   MainMenuType.NewGame,          () => switchSubmenu(MainMenuType.NewGame)),
+                new ButtonEntry<MainMenuType>("讀取存檔",   MainMenuType.LoadGame,         () => switchSubmenu(MainMenuType.LoadGame)),
+                new ButtonEntry<MainMenuType>("殘局闖關",   MainMenuType.EndgameChallenge, () => switchSubmenu(MainMenuType.EndgameChallenge)),
+                new ButtonEntry<MainMenuType>("規則設定",   MainMenuType.RuleSettings,     () => switchSubmenu(MainMenuType.RuleSettings)),
+                new ButtonEntry<MainMenuType>("教學／幫助", MainMenuType.Help,             () => switchSubmenu(MainMenuType.Help)),
+                new ButtonEntry<MainMenuType>("遊戲設定",   MainMenuType.Settings,         () => switchSubmenu(MainMenuType.Settings)),
+                new ButtonEntry<MainMenuType>("離開遊戲",   MainMenuType.Exit,             () => switchSubmenu(MainMenuType.Exit)),
             };
         }
     }

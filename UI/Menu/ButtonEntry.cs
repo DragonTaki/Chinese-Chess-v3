@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// MenuEntry.cs
+// ButtonEntry.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
@@ -15,7 +15,7 @@ namespace Chinese_Chess_v3.UI.Menu
     /// Generic menu item, TEnum must be of Enum type.
     /// </summary>
     /// <typeparam name="TEnum">Enum type, indicating the type of this menu item.</typeparam>
-    public class MenuEntry<TEnum> where TEnum : Enum
+    public class ButtonEntry<TEnum> where TEnum : Enum
     {
         /// <summary>
         /// Menu display text
@@ -32,7 +32,7 @@ namespace Chinese_Chess_v3.UI.Menu
         /// </summary>
         public Action OnClick { get; }
 
-        public MenuEntry(string label, TEnum type, Action onClick)
+        public ButtonEntry(string label, TEnum type, Action onClick)
         {
             Label = label;
             Type = type;

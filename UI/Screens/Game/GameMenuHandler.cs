@@ -31,7 +31,27 @@ namespace Chinese_Chess_v3.UI.Screens.Game
 
         public void GameMenuAction(GameMenuType selectedAction)
         {
-            Console.WriteLine($"NewgameMenu: selected: {selectedAction}");
+            Console.WriteLine($"GameMenu: selected: {selectedAction}");
+            switch (selectedAction)
+            {
+                case GameMenuType.Default:
+                    break;
+                case GameMenuType.Restart:
+                    break;
+                case GameMenuType.Undo:
+                    break;
+                case GameMenuType.SaveGame:
+                    break;
+                case GameMenuType.LoadLayout:
+                    break;
+                case GameMenuType.Surrender:
+                    break;
+                case GameMenuType.ReturnToMain:
+                    _nav.ShowMainMenu();
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void OnEnter()

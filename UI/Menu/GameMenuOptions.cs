@@ -14,16 +14,16 @@ namespace Chinese_Chess_v3.UI.Menu
 {
     public static class GameMenuOptions
     {
-        public static List<MenuEntry<GameMenuType>> Create(Action<GameMenuType> onSelect)
+        public static List<ButtonEntry<GameMenuType>> Create(Action<GameMenuType> onSelect)
         {
-            return new List<MenuEntry<GameMenuType>>
+            return new List<ButtonEntry<GameMenuType>>
             {
-                new MenuEntry<GameMenuType>("重新開始",   GameMenuType.Restart,      () => onSelect(GameMenuType.Restart)),
-                new MenuEntry<GameMenuType>("撤銷上步",   GameMenuType.Undo,         () => onSelect(GameMenuType.Undo)),
-                new MenuEntry<GameMenuType>("儲存遊戲",   GameMenuType.SaveGame,     () => onSelect(GameMenuType.LoadLayout)),
-                new MenuEntry<GameMenuType>("載入佈局",   GameMenuType.LoadLayout,   () => onSelect(GameMenuType.LoadLayout)),
-                new MenuEntry<GameMenuType>("放棄對局",   GameMenuType.Surrender,    () => onSelect(GameMenuType.Surrender)),
-                new MenuEntry<GameMenuType>("回到主畫面", GameMenuType.ReturnToMain, () => onSelect(GameMenuType.ReturnToMain)),
+                new ButtonEntry<GameMenuType>("重新開始",   GameMenuType.Restart,      () => onSelect(GameMenuType.Restart)),
+                new ButtonEntry<GameMenuType>("撤銷上步",   GameMenuType.Undo,         () => onSelect(GameMenuType.Undo)),
+                new ButtonEntry<GameMenuType>("儲存遊戲",   GameMenuType.SaveGame,     () => onSelect(GameMenuType.SaveGame)),
+                new ButtonEntry<GameMenuType>("載入佈局",   GameMenuType.LoadLayout,   () => onSelect(GameMenuType.LoadLayout)),
+                new ButtonEntry<GameMenuType>("放棄對局",   GameMenuType.Surrender,    () => onSelect(GameMenuType.Surrender)),
+                new ButtonEntry<GameMenuType>("回到主畫面", GameMenuType.ReturnToMain, () => onSelect(GameMenuType.ReturnToMain)),
             };
         }
     }
