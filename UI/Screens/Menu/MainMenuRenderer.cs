@@ -11,9 +11,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Configs.Style;
 using Chinese_Chess_v3.UI.Constants;
-using Chinese_Chess_v3.Utils.GraphicsUtils;
 
 using SharedLib.MathUtils;
 
@@ -65,7 +64,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
                 UILayoutConstants.MainMenu.Position.Y + margin,
                 menu.Size.X - margin * 2,
                 menu.Size.Y - margin * 2);
-            DrawDashedOutlineWithCleanCorners(g, rect);
+            DrawOutline(g);
 
             g.SetClip(clip);
             foreach (var button in buttons)
@@ -75,81 +74,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             g.ResetClip();
         }
         
-private void DrawDashedOutlineWithCleanCorners(Graphics g, RectangleF rect,
-    float unitLength = 16f, float dashRatio = 0.5f,
-    float cornerLength = 10f, float cornerMargin = 4f)
-{
-    float dashLength = unitLength * dashRatio;
-    float gapLength = unitLength * (1 - dashRatio);
-
-    using (Pen pen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
-    {
-        // 四邊（起點、方向向量、長度）
-        var edges = new[]
-        {
-            (Start: new PointF(rect.Left + cornerMargin, rect.Top),
-             Dir: new PointF(1, 0), Length: rect.Width - 2 * cornerMargin),             // Top
-
-            (Start: new PointF(rect.Right, rect.Top + cornerMargin),
-             Dir: new PointF(0, 1), Length: rect.Height - 2 * cornerMargin),            // Right
-
-            (Start: new PointF(rect.Right - cornerMargin, rect.Bottom),
-             Dir: new PointF(-1, 0), Length: rect.Width - 2 * cornerMargin),            // Bottom
-
-            (Start: new PointF(rect.Left, rect.Bottom - cornerMargin),
-             Dir: new PointF(0, -1), Length: rect.Height - 2 * cornerMargin)            // Left
-        };
-                int unitCount = 0;
-        foreach (var (start, dir, length) in edges)
-        {
-            unitCount = (int)Math.Floor(length / unitLength);
-            if (unitCount <= 0) continue;
-
-            float actualUsed = unitCount * unitLength;
-            float offset = (length - actualUsed) / 2f;
-
-            // 置中起點
-            PointF cursor = new PointF(
-                start.X + dir.X * offset,
-                start.Y + dir.Y * offset
-            );
-
-            for (int i = 0; i < unitCount; i++)
-            {
-                PointF dashEnd = new PointF(
-                    cursor.X + dir.X * dashLength,
-                    cursor.Y + dir.Y * dashLength
-                );
-                g.DrawLine(pen, cursor, dashEnd);
-
-                cursor.X += dir.X * unitLength;
-                cursor.Y += dir.Y * unitLength;
-            }
-        }
-
-        // 畫四個拐角：一筆 L 型（cornerLength）
-        DrawCornerL(g, pen, new PointF(rect.Left, rect.Top+dashLength), new PointF(0, -1), new PointF(1, 0), cornerLength);        // Top-Left
-        DrawCornerL(g, pen, new PointF(rect.Right, rect.Top), new PointF(-1, 0), new PointF(0, 1), cornerLength);      // Top-Right
-        DrawCornerL(g, pen, new PointF(rect.Right, rect.Bottom), new PointF(-1, 0), new PointF(0, -1), cornerLength);  // Bottom-Right
-        DrawCornerL(g, pen, new PointF(rect.Left, rect.Bottom), new PointF(1, 0), new PointF(0, -1), cornerLength);    // Bottom-Left
-    }
-
-    // 🔁 畫一筆拐角折線
-    static void DrawCornerL(Graphics g, Pen pen, PointF corner, PointF dir1, PointF dir2, float length)
-    {
-        var path = new System.Drawing.Drawing2D.GraphicsPath();
-        path.StartFigure();
-        path.AddLines(new[]
-        {
-            corner,
-            new PointF(corner.X + dir1.X * length, corner.Y + dir1.Y * length),
-            new PointF(
-                corner.X + dir1.X * length + dir2.X * length,
-                corner.Y + dir1.Y * length + dir2.Y * length)
-        });
-        g.DrawPath(pen, path);
-    }
-}
         private void DrawOutline(Graphics g)
         {
             using (Pen debugPen = new Pen(Color.FromArgb(100, 128, 128, 128), 4))
@@ -163,74 +87,10 @@ private void DrawDashedOutlineWithCleanCorners(Graphics g, RectangleF rect,
                 menu.Size.Y - margin * 2);
             }
         }
-
         private void DrawButton(Graphics g, string text, Vector2F position, Vector2F size)
         {
-            RectangleF rect = new RectangleF(position.X, position.Y, size.X, size.Y);
-
-            // Outer border
-            float outerGap = Styles.MainMenu.Button.Border.OuterWidth;
-            RectangleF outerPathRect = new RectangleF(
-                position.X + outerGap / 2,
-                position.Y + outerGap / 2,
-                size.X - outerGap,
-                size.Y - outerGap
-            );
-
-            // Inner border
-            float innerGap = Styles.MainMenu.Button.Border.OuterWidth + Styles.MainMenu.Button.Border.Margin * 2 + Styles.MainMenu.Button.Border.InnerWidth;
-            RectangleF innerPathRect = new RectangleF(
-                position.X + innerGap / 2,
-                position.Y + innerGap / 2,
-                size.X - innerGap,
-                size.Y - innerGap
-            );
-
-            using (GraphicsPath outerPath = GraphicsPaths.CreateRoundedRectPath(
-                outerPathRect.Width,
-                outerPathRect.Height,
-                Styles.MainMenu.Button.Border.CornerRadius))
-            using (GraphicsPath innerPath = GraphicsPaths.CreateRoundedRectPath(
-                innerPathRect.Width,
-                innerPathRect.Height,
-                Styles.MainMenu.Button.Border.CornerRadius - Styles.MainMenu.Button.Border.Margin))
-            using (Matrix mOuter = new Matrix())
-            using (Matrix mInner = new Matrix())
-            {
-                mOuter.Translate(outerPathRect.X, outerPathRect.Y);
-                outerPath.Transform(mOuter);
-
-                mInner.Translate(innerPathRect.X, innerPathRect.Y);
-                innerPath.Transform(mInner);
-
-                // Frosted fill
-                using (LinearGradientBrush fillBrush = new LinearGradientBrush(
-                    rect,
-                    Styles.MainMenu.Button.Background.TopColor,
-                    Styles.MainMenu.Button.Background.BottomColor,
-                    LinearGradientMode.Vertical))
-                {
-                    g.FillPath(fillBrush, outerPath);
-                }
-
-                // Outer thick border
-                using (Pen outerPen = new Pen(Styles.MainMenu.Button.Border.OuterColor, 4))
-                {
-                    g.DrawPath(outerPen, outerPath);
-                }
-
-                // Inner thin highlight
-                using (Pen innerPen = new Pen(Styles.MainMenu.Button.Border.InnerColor, 2))
-                {
-                    g.DrawPath(innerPen, innerPath);
-                }
-
-                // Draw button text
-                SizeF textSize = g.MeasureString(text, Styles.MainMenu.Button.Font);
-                float textX = position.X + (size.X - textSize.Width) / 2;
-                float textY = position.Y + (size.Y - textSize.Height) / 2;
-                g.DrawString(text, Styles.MainMenu.Button.Font, Styles.MainMenu.Button.TextBrush, textX, textY);
-            }
+            IButtonDrawStyle style = UILayoutStyles.MainMenu.Button.Style;
+            style.Draw(g, text, position, size);
         }
     }
 }

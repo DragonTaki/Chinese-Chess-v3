@@ -10,9 +10,10 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Chinese_Chess_v3.Configs;
+
+using Chinese_Chess_v3.Configs.Style;
 using Chinese_Chess_v3.UI.Constants;
-using Chinese_Chess_v3.Utils.GraphicsUtils;
+
 using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Game
@@ -83,71 +84,8 @@ namespace Chinese_Chess_v3.UI.Screens.Game
 
         private void DrawButton(Graphics g, string text, Vector2F position, Vector2F size)
         {
-            RectangleF rect = new RectangleF(position.X, position.Y, size.X, size.Y);
-
-            // Outer border
-            float outerGap = Styles.MainMenu.Button.Border.OuterWidth;
-            RectangleF outerPathRect = new RectangleF(
-                position.X + outerGap / 2,
-                position.Y + outerGap / 2,
-                size.X - outerGap,
-                size.Y - outerGap
-            );
-
-            // Inner border
-            float innerGap = Styles.MainMenu.Button.Border.OuterWidth + Styles.MainMenu.Button.Border.Margin * 2 + Styles.MainMenu.Button.Border.InnerWidth;
-            RectangleF innerPathRect = new RectangleF(
-                position.X + innerGap / 2,
-                position.Y + innerGap / 2,
-                size.X - innerGap,
-                size.Y - innerGap
-            );
-
-            using (GraphicsPath outerPath = GraphicsPaths.CreateRoundedRectPath(
-                outerPathRect.Width,
-                outerPathRect.Height,
-                Styles.MainMenu.Button.Border.CornerRadius))
-            using (GraphicsPath innerPath = GraphicsPaths.CreateRoundedRectPath(
-                innerPathRect.Width,
-                innerPathRect.Height,
-                Styles.MainMenu.Button.Border.CornerRadius - Styles.MainMenu.Button.Border.Margin))
-            using (Matrix mOuter = new Matrix())
-            using (Matrix mInner = new Matrix())
-            {
-                mOuter.Translate(outerPathRect.X, outerPathRect.Y);
-                outerPath.Transform(mOuter);
-
-                mInner.Translate(innerPathRect.X, innerPathRect.Y);
-                innerPath.Transform(mInner);
-
-                // Frosted fill
-                using (LinearGradientBrush fillBrush = new LinearGradientBrush(
-                    rect,
-                    Styles.MainMenu.Button.Background.TopColor,
-                    Styles.MainMenu.Button.Background.BottomColor,
-                    LinearGradientMode.Vertical))
-                {
-                    g.FillPath(fillBrush, outerPath);
-                }
-
-                // Outer thick border
-                using (Pen outerPen = new Pen(Styles.MainMenu.Button.Border.OuterColor, 4))
-                {
-                    g.DrawPath(outerPen, outerPath);
-                }
-
-                // Inner thin highlight
-                using (Pen innerPen = new Pen(Styles.MainMenu.Button.Border.InnerColor, 2))
-                {
-                    g.DrawPath(innerPen, innerPath);
-                }
-
-                // Draw button text
-                SizeF textSize = g.MeasureString(text, Styles.MainMenu.Button.Font);
-                float textX = position.X + (size.X - textSize.Width) / 2;
-                float textY = position.Y + (size.Y - textSize.Height) / 2;
-                g.DrawString(text, Styles.MainMenu.Button.Font, Styles.MainMenu.Button.TextBrush, textX, textY);
-            }
+            IButtonDrawStyle style = UILayoutStyles.MainMenu.Button.Style;
+            style.Draw(g, text, position, size);
         }
     }
 }

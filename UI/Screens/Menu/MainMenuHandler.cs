@@ -16,8 +16,6 @@ using Chinese_Chess_v3.UI.Dialog;
 using Chinese_Chess_v3.UI.Menu;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Chinese_Chess_v3.UI.Screens.Menu
 {
     /// <summary>
@@ -43,6 +41,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             // Initialize submenus
             submenus[MainMenuType.NewGame] = CreateSubMenu(() => uiFactory.Create<NewGameMenu>());
             submenus[MainMenuType.LoadGame] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
+            submenus[MainMenuType.EndgameChallenge] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.Help] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
             submenus[MainMenuType.Settings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());

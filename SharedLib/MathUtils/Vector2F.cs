@@ -212,6 +212,13 @@ namespace SharedLib.MathUtils
         public static implicit operator Vector2F(SizeF sz) => new Vector2F(sz);
 
         /// <summary>
+        /// Implicitly converts a <see cref="float"/> to a <see cref="Vector2F"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="float"/> to convert.</param>
+        /// <returns>A new <see cref="Vector2F"/> with X = value and Y = value.</returns>
+        public static implicit operator Vector2F(float value) => new Vector2F(value, value);
+
+        /// <summary>
         /// Converts two vectors to a <see cref="RectangleF"/> using one as the position and the other as the size.
         /// </summary>
         /// <param name="position">The top-left position of the rectangle.</param>
