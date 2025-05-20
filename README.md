@@ -1,15 +1,21 @@
+[![C#](https://custom-icon-badges.demolab.com/badge/Built%20with-C%23-%23239120.svg?style=flat-square&logo=cshrp&logoColor=white)](#)
 
 ---
 
 ## 💡 About This Project
 
+This project is only for private use.  
+Features:  
 - 使用自製的 UI 系統
 - 使用自製的 2D 物理計算系統
 - 使用 [DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.0) 系統管理實例
 
+---
+
 ## 🛡️ About Chinese Chess
 
-/* ----- */
+Chinese chess is a strategy board game for two players.  
+It is the most popular board game in East Asia. 
 
 ---
 

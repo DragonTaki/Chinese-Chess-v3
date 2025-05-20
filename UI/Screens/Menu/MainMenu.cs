@@ -12,9 +12,10 @@ using System.Drawing;
 using System.Linq;
 
 using Chinese_Chess_v3.UI.Constants;
-using Chinese_Chess_v3.UI.Core;
-using Chinese_Chess_v3.UI.Elements;
-using Chinese_Chess_v3.UI.Menu;
+using Chinese_Chess_v3.UI.Core.Base;
+using Chinese_Chess_v3.UI.Core.Elements;
+using Chinese_Chess_v3.UI.Core.Interfaces;
+using Chinese_Chess_v3.UI.Screens.Menu.Options;
 using Chinese_Chess_v3.UI.Utils;
 
 using SharedLib.MathUtils;
@@ -22,7 +23,7 @@ using SharedLib.MathUtils;
 namespace Chinese_Chess_v3.UI.Screens.Menu
 {
     public class MainMenu
-        : IInitializableOnceElement<(IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer)>
+        : InitializableOnceElement<(IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer)>
         , IScreen
     {
         private UIScrollContainer _scroll;

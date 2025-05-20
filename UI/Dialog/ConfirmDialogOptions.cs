@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Chinese_Chess_v3.UI.Menu;
+using Chinese_Chess_v3.UI.Widgets;
 
 namespace Chinese_Chess_v3.UI.Dialog
 {

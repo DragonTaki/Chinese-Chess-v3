@@ -9,7 +9,8 @@
 
 using System.Drawing;
 using System.Linq;
-using Chinese_Chess_v3.UI.Elements;
+
+using Chinese_Chess_v3.UI.Core.Elements;
 
 namespace Chinese_Chess_v3.UI.Dialog
 {

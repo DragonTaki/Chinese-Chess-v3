@@ -9,7 +9,6 @@
 
 using System.Drawing;
 
-using Chinese_Chess_v3.Configs;
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 

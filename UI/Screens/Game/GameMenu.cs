@@ -12,8 +12,9 @@ using System.Drawing;
 using System.Linq;
 
 using Chinese_Chess_v3.UI.Constants;
-using Chinese_Chess_v3.UI.Core;
-using Chinese_Chess_v3.UI.Elements;
+using Chinese_Chess_v3.UI.Core.Base;
+using Chinese_Chess_v3.UI.Core.Elements;
+using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Menu;
 using Chinese_Chess_v3.UI.Utils;
 
@@ -22,7 +23,7 @@ using SharedLib.MathUtils;
 namespace Chinese_Chess_v3.UI.Screens.Game
 {
     public class GameMenu
-        : IInitializableOnceElement<(IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer)>
+        : InitializableOnceElement<(IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer)>
         , IScreen
     {
         private UIScrollContainer _scroll;
@@ -96,5 +97,9 @@ namespace Chinese_Chess_v3.UI.Screens.Game
         }
 
         public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
+    }
+
+    public interface IInitializableOnceElement<T>
+    {
     }
 }

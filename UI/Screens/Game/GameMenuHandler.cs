@@ -9,7 +9,9 @@
 
 using System;
 
-using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Core.Base;
+using Chinese_Chess_v3.UI.Core.Infrastructure;
+using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Menu;
 
 namespace Chinese_Chess_v3.UI.Screens.Game

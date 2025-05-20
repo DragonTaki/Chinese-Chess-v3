@@ -10,7 +10,7 @@
 using System;
 using System.Drawing;
 
-using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Core.Elements;
 using static Chinese_Chess_v3.UI.Input.ScrollInputHandler;
 
 using SharedLib.PhysicsUtils;

@@ -13,15 +13,15 @@ using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.UI;
-using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Core.Elements;
+using Chinese_Chess_v3.UI.Core.Infrastructure;
+using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Input;
-using Chinese_Chess_v3.UI.Screens;
+using Chinese_Chess_v3.UI.Screens.Game;
 using Chinese_Chess_v3.UI.Screens.Menu;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
 using SharedLib.RandomTable;
-using Chinese_Chess_v3.UI.Screens.Game;
-using Chinese_Chess_v3.UI.Elements;
 
 namespace Chinese_Chess_v3
 {

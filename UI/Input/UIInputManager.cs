@@ -10,7 +10,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Core.Elements;
 
 namespace Chinese_Chess_v3.UI.Input
 {

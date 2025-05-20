@@ -11,9 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using Chinese_Chess_v3.UI.Constants;
-using Chinese_Chess_v3.UI.Core;
-using Chinese_Chess_v3.UI.Elements;
+using Chinese_Chess_v3.UI.Core.Elements;
+
 using SharedLib.Globals;
 using SharedLib.MathUtils;
 
@@ -66,7 +67,7 @@ namespace Chinese_Chess_v3.UI.Dialog
             float dlgH = textSize.Height + PaddingV * 2 + 70;
 
             Size = new Vector2F(dlgW, dlgH);
-            LocalPosition = GlobalWindow.Center - Size / 2f; // 可視窗居中
+            LocalPosition = GlobalWindow.Center - Size / 2f;  // Center the window
 
             _messageLabel.Text = message;
             _messageLabel.LocalPosition = new Vector2F(PaddingH, PaddingV);

@@ -11,9 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Core.Base;
+using Chinese_Chess_v3.UI.Core.Elements;
+using Chinese_Chess_v3.UI.Core.Infrastructure;
+using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Dialog;
-using Chinese_Chess_v3.UI.Menu;
+using Chinese_Chess_v3.UI.Screens.Menu.Options;
 using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu
