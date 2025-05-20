@@ -19,11 +19,11 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Board
 {
     public class BoardRenderer
     {
-        private Pen boardPen;
+        private Pen _boardPen;
         public BoardRenderer()
         {
             // Customized pen
-            boardPen = new Pen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
+            _boardPen = new Pen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
         }
 
         // Draw whole board
@@ -46,7 +46,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Board
                 float x = UILayoutConstants.Board.Position.X + i * UILayoutConstants.Board.Grid.Size;
                 // Black side vertical lines
                 g.DrawLine(
-                    boardPen,
+                    _boardPen,
                     x,
                     UILayoutConstants.Board.Position.Y,
                     x,
@@ -54,7 +54,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Board
                 );
                 // Red side vertical lines
                 g.DrawLine(
-                    boardPen,
+                    _boardPen,
                     x,
                     UILayoutConstants.Board.Position.Y + Configs.Constants.Board.RedYSideRiverLine * UILayoutConstants.Board.Grid.Size,
                     x,
@@ -71,7 +71,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Board
                 float y = UILayoutConstants.Board.Position.Y + i * UILayoutConstants.Board.Grid.Size;
                 // Horizontal lines
                 g.DrawLine(
-                    boardPen,
+                    _boardPen,
                     UILayoutConstants.Board.Position.X,
                     y,
                     UILayoutConstants.Board.Position.X + (Configs.Constants.Board.Columns - 1) * UILayoutConstants.Board.Grid.Size,
@@ -80,13 +80,13 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Board
             }
 
             // Step 5: Drow palace's diagonal line ("X" shape)
-            DrawPalaces(g, boardPen);
+            DrawPalaces(g, _boardPen);
 
             // Step 6: Draw cannon's and soldier's anchor point ("L" shape)
-            DrawPositioningPoints(g, boardPen);
+            DrawPositioningPoints(g, _boardPen);
 
             // Step 7: Draw board border ("=" line)
-            DrawOuterFrame(g, boardPen);
+            DrawOuterFrame(g, _boardPen);
         }
 
         // Drow palace's diagonal line ("X" shape)

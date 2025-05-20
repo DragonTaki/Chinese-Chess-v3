@@ -21,52 +21,51 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
     /// <summary>
     /// Handles logic and interactions for the MainMenu.
     /// </summary>
-    public class MainMenuHandler
+    public class MainMenuHandler : InitializableOnceBase<(IUiFactory factory, MainMenu menu)>
     {
-        private MainMenu mainMenu;
-        private MainMenuType? currentSubmenu = null;
-        private IUiFactory uiFactory;
+        private MainMenu _menu;
+        private MainMenuType? _currentSubmenu = null;
+        private IUiFactory _factory;
         private NavigationManager _nav;
-        private readonly Dictionary<MainMenuType, UIElement> submenus = new();
-        private ConfirmDialog confirmDialog;
+        private DialogManager _dia;
+        private readonly Dictionary<MainMenuType, UIElement> _submenus = new();
 
         public MainMenuHandler() { }
-        public void Init(IUiFactory uiFactory, MainMenu mainMenu)
+        protected override void OnInit((IUiFactory factory, MainMenu menu) arg)
         {
-            this.mainMenu = mainMenu;
-            this.uiFactory = uiFactory;
-            _nav = uiFactory.Resolve<NavigationManager>();
+            _menu = arg.menu;
+            _factory = arg.factory;
+            _nav = _factory.Resolve<NavigationManager>();
+            _dia = _factory.Resolve<DialogManager>();
 
             RegisterFactory();
-            // Initialize submenus
-            submenus[MainMenuType.NewGame] = CreateSubMenu(() => uiFactory.Create<NewGameMenu>());
-            submenus[MainMenuType.LoadGame] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.EndgameChallenge] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.Help] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-            submenus[MainMenuType.Settings] = CreateSubMenu(() => uiFactory.Create<LoadGameMenu>());
-
-            confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer());
+            // Initialize _submenus
+            _submenus[MainMenuType.NewGame] = CreateSubMenu(() => _factory.Create<NewGameMenu>());
+            _submenus[MainMenuType.LoadGame] = CreateSubMenu(() => _factory.Create<LoadGameMenu>());
+            _submenus[MainMenuType.EndgameChallenge] = CreateSubMenu(() => _factory.Create<LoadGameMenu>());
+            _submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => _factory.Create<LoadGameMenu>());
+            _submenus[MainMenuType.Help] = CreateSubMenu(() => _factory.Create<LoadGameMenu>());
+            _submenus[MainMenuType.Settings] = CreateSubMenu(() => _factory.Create<LoadGameMenu>());
         }
 
         private void RegisterFactory()
         {
             // Initialize submenu creation factory
-            uiFactory.RegisterFactory<NewGameMenu>(ctx =>
+            _factory.RegisterFactory<NewGameMenu>(ctx =>
             {
                 var menu = new NewGameMenu();
                 var renderer = new NewGameMenuRenderer(menu);
-                var handler = new NewGameMenuHandler(uiFactory, menu);
-                menu.Setup(uiFactory, handler, renderer);
+                var handler = new NewGameMenuHandler(_factory, menu);
+                menu.Init((_factory, handler, renderer));
                 return menu;
             });
 
-            uiFactory.RegisterFactory<LoadGameMenu>(ctx =>
+            _factory.RegisterFactory<LoadGameMenu>(ctx =>
             {
                 var menu = new LoadGameMenu();
                 var renderer = new LoadGameMenuRenderer(menu);
-                var handler = new LoadGameMenuHandler(uiFactory, menu);
-                menu.Setup(uiFactory, handler, renderer);
+                var handler = new LoadGameMenuHandler(_factory, menu);
+                menu.Init((_factory, handler, renderer));
                 return menu;
             });
         }
@@ -76,15 +75,15 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// </summary>
         private static UIElement CreateSubMenu<T>() where T : UIElement, new()
         {
-            var menu = new T();
-            menu.IsVisible = false;
-            return menu;
+            var submenu = new T();
+            submenu.IsVisible = false;
+            return submenu;
         }
         private static UIElement CreateSubMenu(Func<UIElement> factory)
         {
-            var menu = factory();
-            menu.IsVisible = false;
-            return menu;
+            var submenu = factory();
+            submenu.IsVisible = false;
+            return submenu;
         }
 
         /// <summary>
@@ -96,18 +95,18 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             {
                 CancelCurrentSubmenu();
 
-                if (currentSubmenu == selectedMenu)
+                if (_currentSubmenu == selectedMenu)
                 {
                     // Same menu clicked again, collapse
-                    currentSubmenu = null;
+                    _currentSubmenu = null;
                 }
                 else
                 {
                     // Show new submenu
-                    currentSubmenu = selectedMenu;
-                    var submenu = submenus[currentSubmenu.Value];
+                    _currentSubmenu = selectedMenu;
+                    var submenu = _submenus[_currentSubmenu.Value];
                     submenu.IsVisible = true;
-                    mainMenu.AddChild(submenu);
+                    _menu.AddChild(submenu);
                 }
             }
             else
@@ -118,19 +117,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
 
         private void ClickExitAction()
         {
-            // 按 Exit，動態加入 ConfirmDialog
-            if (confirmDialog == null)
-            {
-                confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer());
-            }
-
-            var root = mainMenu.GetRoot();
-            if (!root.Children.Contains(confirmDialog))
-            {
-                root.AddChild(confirmDialog);
-            }
-
-            confirmDialog.Show(
+            DialogManager.ShowConfirm(
                 "確認要離開遊戲嗎？",
                 ConfirmDialogType.YesNo,
                 result =>
@@ -138,12 +125,6 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
                     if (result == ConfirmDialogResult.Yes)
                     {
                         ExitApplication();
-                    }
-                    else
-                    {
-                        // 按否，關閉對話框後可以選擇是否移除 ConfirmDialog
-                        // mainUIRoot.RemoveChild(confirmDialog);
-                        confirmDialog.IsVisible = false;
                     }
                 }
             );
@@ -154,12 +135,12 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// </summary>
         public void CancelCurrentSubmenu()
         {
-            if (currentSubmenu.HasValue)
+            if (_currentSubmenu.HasValue)
             {
-                var submenu = submenus[currentSubmenu.Value];
+                var submenu = _submenus[_currentSubmenu.Value];
                 submenu.IsVisible = false;
-                mainMenu.RemoveChild(submenu);
-                currentSubmenu = null;
+                _menu.RemoveChild(submenu);
+                _currentSubmenu = null;
             }
         }
 
@@ -171,8 +152,8 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             Application.Exit();
         }
 
-        public Dictionary<MainMenuType, UIElement> Submenus => submenus;
-        public MainMenuType? CurrentSubmenu => currentSubmenu;
+        public Dictionary<MainMenuType, UIElement> Submenus => _submenus;
+        public MainMenuType? CurrentSubmenu => _currentSubmenu;
 
         public void OnEnter()
         {

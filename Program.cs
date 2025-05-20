@@ -21,6 +21,7 @@ using Chinese_Chess_v3.UI.Screens.Menu.Submenus;
 
 using SharedLib.RandomTable;
 using Chinese_Chess_v3.UI.Screens.Game;
+using Chinese_Chess_v3.UI.Elements;
 
 namespace Chinese_Chess_v3
 {
@@ -41,6 +42,9 @@ namespace Chinese_Chess_v3
             services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
 
             services.AddSingleton<NavigationManager>();
+            services.AddSingleton<UIRootNode>();
+            services.AddSingleton<DialogManager>();
+
             services.AddSingleton<MainMenu>();
             services.AddSingleton<MainMenuHandler>();
             services.AddSingleton<MainMenuRenderer>();

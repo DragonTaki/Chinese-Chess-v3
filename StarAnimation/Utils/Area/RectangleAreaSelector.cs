@@ -16,38 +16,38 @@ namespace StarAnimation.Utils.Area
 {
     public class RectangleAreaSelector : IAreaSelector
     {
-        private readonly float minWidth, minHeight;
-        private float maxWidth, maxHeight;
+        private readonly float _minWidth, _minHeight;
+        private readonly float _maxWidth, _maxHeight;
         private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
         public RectangleAreaSelector(float minWidth, float minHeight, float maxWidth, float maxHeight)
         {
-            this.minWidth = minWidth;
-            this.minHeight = minHeight;
-            this.maxWidth = maxWidth;
-            this.maxHeight = maxHeight;
+            _minWidth = minWidth;
+            _minHeight = minHeight;
+            _maxWidth = maxWidth;
+            _maxHeight = maxHeight;
         }
 
         public IAreaShape GetArea(float canvasWidth, float canvasHeight)
         {
             if (canvasWidth <= 0 || canvasHeight <= 0)
                 throw new ArgumentException("Canvas size must be positive.");
-            if (minWidth <= 0 || minHeight <= 0 || maxWidth <= 0 || maxHeight <= 0)
+            if (_minWidth <= 0 || _minHeight <= 0 || _maxWidth <= 0 || _maxHeight <= 0)
                 throw new ArgumentException("Size must be positive.");
                 
             float width, height;
             float x, y;
 
             // Handle width
-            if (minWidth >= canvasWidth)
+            if (_minWidth >= canvasWidth)
             {
                 width = canvasWidth;
                 x = 0;
             }
             else
             {
-                float limitedMaxWidth = Math.Min(maxWidth, canvasWidth);
-                float effectiveMinWidth = Math.Min(minWidth, limitedMaxWidth);
+                float limitedMaxWidth = Math.Min(_maxWidth, canvasWidth);
+                float effectiveMinWidth = Math.Min(_minWidth, limitedMaxWidth);
                 width = (limitedMaxWidth == effectiveMinWidth)
                     ? limitedMaxWidth
                     : Rand.NextFloat(effectiveMinWidth, limitedMaxWidth);
@@ -55,15 +55,15 @@ namespace StarAnimation.Utils.Area
             }
 
             // Handle height
-            if (minHeight >= canvasHeight)
+            if (_minHeight >= canvasHeight)
             {
                 height = canvasHeight;
                 y = 0;
             }
             else
             {
-                float limitedMaxHeight = Math.Min(maxHeight, canvasHeight);
-                float effectiveMinHeight = Math.Min(minHeight, limitedMaxHeight);
+                float limitedMaxHeight = Math.Min(_maxHeight, canvasHeight);
+                float effectiveMinHeight = Math.Min(_minHeight, limitedMaxHeight);
                 height = (limitedMaxHeight == effectiveMinHeight)
                     ? limitedMaxHeight
                     : Rand.NextFloat(effectiveMinHeight, limitedMaxHeight);

@@ -15,7 +15,6 @@ using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Elements;
 using Chinese_Chess_v3.UI.Input;
-using Chinese_Chess_v3.UI.Screens.Menu;
 using Chinese_Chess_v3.Utils;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +33,7 @@ namespace Chinese_Chess_v3.UI
         private readonly TimerManager _timerMgr = new TimerManager();
         private readonly IServiceProvider _sp;
         private readonly UIInputManager _inputMgr;
-        private readonly UIRoot _rootCanvas;
+        private readonly UIRootNode _rootCanvas;
         private NavigationManager _navigationManager;
 
         private StarAnimationApp _bgStar;
@@ -83,9 +82,11 @@ namespace Chinese_Chess_v3.UI
             _bgStar = new StarAnimationApp();
         }
 
-        private UIRoot BuildUIRoot()
+        private UIRootNode BuildUIRoot()
         {
-            var root = new UIRoot();
+            var root = _sp.GetRequiredService<UIRootNode>();
+            var dialogManager = _sp.GetRequiredService<DialogManager>();
+            dialogManager.Init(root);
 
             return root;
         }

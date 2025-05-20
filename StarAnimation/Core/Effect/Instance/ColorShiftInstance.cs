@@ -25,7 +25,7 @@ namespace StarAnimation.Core.Effect.Instance
     /// </summary>
     public class ColorShiftInstance : EffectInstance
     {
-        private List<Star> affectedStars;
+        private readonly List<Star> _affectedStars;
 
         /// <summary>
         /// Constructs the ColorShift effect with optional parameters.
@@ -37,7 +37,7 @@ namespace StarAnimation.Core.Effect.Instance
             Area = area;
             Duration = duration;
             EffectAppliedChance = effectAppliedChance;
-            affectedStars = new List<Star>();
+            _affectedStars = new List<Star>();
         }
 
         public static ColorShiftInstance CreateRandom(IAreaShape area, ColorShiftParameter config)
@@ -79,7 +79,7 @@ namespace StarAnimation.Core.Effect.Instance
                         star.Color.Base = star.ColorShift.BiasDirection < 0
                             ? Color.FromArgb(255, 0, 0) // Red
                             : Color.FromArgb(0, 0, 255); // Blue
-                        affectedStars.Add(star);
+                        _affectedStars.Add(star);
                     }
                 }
             }
@@ -96,21 +96,21 @@ namespace StarAnimation.Core.Effect.Instance
         {
             float elapsedTime = normalizedTime * Duration;
 
-            if (affectedStars.Count == 0)
+            if (_affectedStars.Count == 0)
             {
                 return;
             }
 
-            for (int i = affectedStars.Count - 1; i >= 0; i--)
+            for (int i = _affectedStars.Count - 1; i >= 0; i--)
             {
-                var star = affectedStars[i];
+                var star = _affectedStars[i];
 
                 if (!star.ColorShift.HasPhase) continue;
                 if (elapsedTime - star.ColorShift.Delay > Duration)
                 {
                     star.ColorShift.HasPhase = false;
                     star.Color.Current = Color.White;
-                    affectedStars.RemoveAt(i);
+                    _affectedStars.RemoveAt(i);
                     continue;
                 }
 
@@ -124,13 +124,13 @@ namespace StarAnimation.Core.Effect.Instance
         }
         protected override void OnReset()
         {
-            foreach (var star in affectedStars)
+            foreach (var star in _affectedStars)
             {
                 star.ColorShift.HasPhase = false;
                 star.Opacity = 1.0f;
             }
 
-            affectedStars.Clear();
+            _affectedStars.Clear();
         }
     }
 }

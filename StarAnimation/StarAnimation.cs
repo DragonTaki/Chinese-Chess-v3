@@ -17,8 +17,8 @@ namespace StarAnimation
 {
     public class StarAnimationApp
     {
-        private MainRenderController controller;
-        private bool initialized = false;
+        private readonly MainRenderController _controller;
+        private readonly bool _initialized = false;
 
         /// <summary>
         /// Initialize the StarAnimation module.
@@ -26,13 +26,13 @@ namespace StarAnimation
         /// </summary>
         public StarAnimationApp()
         {
-            if (initialized) return;
+            if (_initialized) return;
 
-            controller = new MainRenderController();
+            _controller = new MainRenderController();
             ITimerProvider timer = GlobalTime.Timer;
             //timer.OnAnimationFrame += Update;
 
-            initialized = true;
+            _initialized = true;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace StarAnimation
         /// </summary>
         public void Update()
         {
-            controller?.Update();
+            _controller?.Update();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace StarAnimation
         /// </summary>
         public void Resize(int width, int height)
         {
-            controller?.Resize(width, height);
+            _controller?.Resize(width, height);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace StarAnimation
         /// </summary>
         public void Render(Graphics g)
         {
-            controller?.Render(g);
+            _controller?.Render(g);
         }
     }
 }

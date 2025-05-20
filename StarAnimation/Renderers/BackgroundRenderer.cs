@@ -20,26 +20,26 @@ namespace StarAnimation.Renderers
         /// <summary>
         /// Width of the drawing canvas.
         /// </summary>
-        private int width;
+        private int _width;
         public int Width
         {
-            get => width;
+            get => _width;
             set
             {
-                width = Math.Max(value, 1);
+                _width = Math.Max(value, 1);
             }
         }
 
         /// <summary>
         /// Height of the drawing canvas.
         /// </summary>
-        private int height;
+        private int _height;
         public int Height
         {
-            get => height;
+            get => _height;
             set
             {
-                height = Math.Max(value, 1);
+                _height = Math.Max(value, 1);
             }
         }
 

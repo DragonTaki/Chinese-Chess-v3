@@ -8,6 +8,8 @@
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
+using SharedLib.Geometry;
+using SharedLib.MathUtils;
 
 namespace SharedLib.Globals
 {
@@ -38,13 +40,18 @@ namespace SharedLib.Globals
         }
 
         /// <summary>
-        /// Gets the current center point of the window.
+        /// Gets the current window size.
         /// </summary>
-        public static PointF Center => new PointF(Width / 2f, Height / 2f);
+        public static PointF Size => new PointF(Width, Height);
 
         /// <summary>
-        /// Gets the current window bounds as a rectangle.
+        /// Gets the current center point of the window.
         /// </summary>
-        public static RectangleF Bounds => new RectangleF(0, 0, Width, Height);
+        public static Vector2F Center => new Vector2F(Width / 2f, Height / 2f);
+
+        /// <summary>
+        /// Gets the current window bounds as a LayoutF.
+        /// </summary>
+        public static LayoutF Bounds => new LayoutF(0, 0, Width, Height);
     }
 }

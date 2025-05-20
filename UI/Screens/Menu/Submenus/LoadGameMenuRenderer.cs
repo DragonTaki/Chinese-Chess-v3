@@ -23,40 +23,40 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         /// <summary>
         /// Width of the drawing canvas.
         /// </summary>
-        private int width;
+        private int _width;
         public int Width
         {
-            get => width;
+            get => _width;
             set
             {
-                width = Math.Max(value, 1);
+                _width = Math.Max(value, 1);
             }
         }
 
         /// <summary>
         /// Height of the drawing canvas.
         /// </summary>
-        private int height;
+        private int _height;
         public int Height
         {
-            get => height;
+            get => _height;
             set
             {
-                height = Math.Max(value, 1);
+                _height = Math.Max(value, 1);
             }
         }
-        private LoadGameMenu menu;
+        private LoadGameMenu _menu;
 
         public LoadGameMenuRenderer(LoadGameMenu menu)
         {
-            this.menu = menu;
+            _menu = menu;
         }
 
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = menu.Buttons;
-            var clip = menu.GetAbsClipRect();
+            var buttons = _menu.Buttons;
+            var clip = _menu.GetAbsClipRect();
 
             DrawOutline(g);
 
@@ -77,8 +77,8 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
                 g.DrawRectangle(debugPen,
                 UILayoutConstants.Submenu.Position.X + margin,
                 UILayoutConstants.Submenu.Position.Y + margin,
-                menu.Size.X - margin * 2,
-                menu.Size.Y - margin * 2);
+                _menu.Size.X - margin * 2,
+                _menu.Size.Y - margin * 2);
             }
         }
 

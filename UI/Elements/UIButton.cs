@@ -29,6 +29,11 @@ namespace Chinese_Chess_v3.UI.Elements
             Action?.Invoke();
             return true;
         }
+
+        public UIButton() : base(zIndex: 0, isPersistent: false, type: UIElementType.Button)
+        {
+            
+        }
     }
     
     public class UIButton<TEnum> : UIButton where TEnum : Enum

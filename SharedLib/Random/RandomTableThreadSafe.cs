@@ -17,12 +17,12 @@ namespace SharedLib.RandomTable
     /// </summary>
     public class RandomTableThreadSafe : IRandomProvider
     {
-        private readonly int[] intTable;
-        private readonly float[] floatTable;
-        private readonly double[] doubleTable;
-        private int index;
-        private readonly int tableSize;
-        private readonly object lockObj = new object();
+        private readonly int[] _intTable;
+        private readonly float[] _floatTable;
+        private readonly double[] _doubleTable;
+        private int _index;
+        private readonly int _tableSize;
+        private readonly object _lockObj = new object();
 
         /// <summary>
         /// Initializes a new instance of the RandomTableThreadSafe class.
@@ -31,20 +31,20 @@ namespace SharedLib.RandomTable
         /// <param name="seed">The seed value to ensure deterministic results.</param>
         public RandomTableThreadSafe(int size, int seed)
         {
-            tableSize = size;
-            intTable = new int[size];
-            floatTable = new float[size];
-            doubleTable = new double[size];
+            _tableSize = size;
+            _intTable = new int[size];
+            _floatTable = new float[size];
+            _doubleTable = new double[size];
             Random rand = new Random(seed);
 
             for (int i = 0; i < size; i++)
             {
-                intTable[i] = rand.Next();
-                floatTable[i] = (float)rand.NextDouble();
-                doubleTable[i] = rand.NextDouble();
+                _intTable[i] = rand.Next();
+                _floatTable[i] = (float)rand.NextDouble();
+                _doubleTable[i] = rand.NextDouble();
             }
 
-            index = 0;
+            _index = 0;
         }
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace SharedLib.RandomTable
         /// <returns>An integer from the table.</returns>
         public int NextInt()
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
-                int value = intTable[index];
+                int value = _intTable[_index];
                 Advance();
                 return value;
             }
@@ -68,7 +68,7 @@ namespace SharedLib.RandomTable
         /// <returns>An integer in [0, max).</returns>
         public int NextInt(int max)
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
                 return NextInt() % max;
             }
@@ -82,7 +82,7 @@ namespace SharedLib.RandomTable
         /// <returns>An integer in [min, max).</returns>
         public int NextInt(int min, int max)
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
                 return min + NextInt(max - min);
             }
@@ -94,9 +94,9 @@ namespace SharedLib.RandomTable
         /// <returns>A float in [0.0, 1.0).</returns>
         public float NextFloat()
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
-                float value = floatTable[index];
+                float value = _floatTable[_index];
                 Advance();
                 return value;
             }
@@ -129,9 +129,9 @@ namespace SharedLib.RandomTable
         /// <returns>A double in [0.0, 1.0).</returns>
         public double NextDouble()
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
-                double value = doubleTable[index];
+                double value = _doubleTable[_index];
                 Advance();
                 return value;
             }
@@ -159,21 +159,21 @@ namespace SharedLib.RandomTable
         }
 
         /// <summary>
-        /// Thread-safe advancement of the current index.
+        /// Thread-safe advancement of the current _index.
         /// </summary>
         private void Advance()
         {
-            index = (index + 1) % tableSize;
+            _index = (_index + 1) % _tableSize;
         }
 
         /// <summary>
-        /// Resets the index back to 0 in a thread-safe way.
+        /// Resets the _index back to 0 in a thread-safe way.
         /// </summary>
         public void Reset()
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
-                index = 0;
+                _index = 0;
             }
         }
     }

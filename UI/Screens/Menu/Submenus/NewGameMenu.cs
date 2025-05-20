@@ -22,20 +22,22 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class NewGameMenu : UIElement, IScreen
+    public class NewGameMenu
+        : IInitializableOnceElement<(IUiFactory factory, NewGameMenuHandler handler, NewGameMenuRenderer renderer)>
+        , IScreen
     {
         private UIScrollContainer _scroll;
-        private NewGameMenuRenderer renderer;
-        private NewGameMenuHandler handler;
-        private readonly List<UIButton> buttons = new();
+        private NewGameMenuRenderer _renderer;
+        private NewGameMenuHandler _handler;
+        private readonly List<UIButton> _buttons = new();
 
         public NewGameMenu() {}
         
-        public void Setup(IUiFactory factory, NewGameMenuHandler handler, NewGameMenuRenderer renderer)
+        protected override void OnInit((IUiFactory factory, NewGameMenuHandler handler, NewGameMenuRenderer renderer) arg)
         {
-            _scroll = factory.CreateScrollContainer();
-            this.handler = handler;
-            this.renderer = renderer;
+            _scroll = arg.factory.CreateScrollContainer();
+            _handler = arg.handler;
+            _renderer = arg.renderer;
 
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
@@ -51,7 +53,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
             this.AddChild(_scroll);
 
-            var menuEntries = NewGameMenuOptions.Create(handler.StartNewGame);
+            var menuEntries = NewGameMenuOptions.Create(_handler.StartNewGame);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {
@@ -62,20 +64,20 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
                 button.Size = UILayoutConstants.Submenu.Button.Size;
 
                 _scroll.AddChild(button);
-                buttons.Add(button);
+                _buttons.Add(button);
             }
 
-            _scroll.ContentHeight = buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
+            _scroll.ContentHeight = _buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
         }
 
         public void OnEnter()
         {
-            handler.OnEnter();
+            _handler.OnEnter();
         }
         
         public void OnExit()
         {
-            handler.OnExit();
+            _handler.OnExit();
         }
 
         protected override void OnUpdate()
@@ -85,14 +87,14 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         
         protected override void OnDraw(Graphics g)
         {
-            renderer.Draw(g);
+            _renderer.Draw(g);
         }
 
-        public List<UIButton> Buttons => buttons;
+        public List<UIButton> Buttons => _buttons;
         public List<UIButton> GetVisibleButtons()
         {
-            UIElementUtils.UpdateVisibleState(buttons, GetAbsClipRect());
-            return buttons.Where(b => b.IsEnabled).ToList();
+            UIElementUtils.UpdateVisibleState(_buttons, GetAbsClipRect());
+            return _buttons.Where(b => b.IsEnabled).ToList();
         }
 
         public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();

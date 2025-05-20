@@ -17,16 +17,16 @@ namespace Chinese_Chess_v3.UI.Screens.Game
     /// <summary>
     /// Handles logic and interactions for the GameMenu.
     /// </summary>
-    public class GameMenuHandler
+    public class GameMenuHandler : InitializableOnceBase<(IUiFactory factory, GameMenu menu)>
     {
-        private GameMenu menu;
+        private GameMenu _menu;
         private NavigationManager _nav;
 
         public GameMenuHandler() {}
-        public void Init(IUiFactory factory, GameMenu menu)
+        protected override void OnInit((IUiFactory factory, GameMenu menu) arg)
         {
-            this.menu = menu;
-            _nav = factory.Resolve<NavigationManager>();
+            _menu = arg.menu;
+            _nav = arg.factory.Resolve<NavigationManager>();
         }
 
         public void GameMenuAction(GameMenuType selectedAction)

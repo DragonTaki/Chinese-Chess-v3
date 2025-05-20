@@ -7,13 +7,15 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Input;
+
 using SharedLib.Geometry;
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
@@ -22,16 +24,49 @@ namespace Chinese_Chess_v3.UI.Core
 {
     public class UIElement : IUpdatable, IDrawable, IInputHandler
     {
-    private static long s_nextId = 0; // 靜態遞增 ID 來源
-    public long InstanceId { get; }   // 每個物件唯一的實體 ID
-        // If `Parent == null`, means the most top UI object
+        private static long s_nextId = 0;
+    
+        /// <summary>
+        /// Unique entity ID for each UI element, auto-incremented.
+        /// Can be used to track or identify specific UI elements.
+        /// </summary>
+        public long InstanceId { get; }
+
+        /// <summary>
+        /// Parent node: if null, it means the top node of the UI hierarchy.
+        /// </summary>
 #nullable enable
         public UIElement? Parent { get; set; }
 #nullable disable
+
+        /// <summary>
+        /// The collection of all child nodes. The logical children of this UI element.
+        /// </summary>
         public List<UIElement> Children { get; } = new();
 
+        /// <summary>
+        /// Whether the child nodes need to be reordered.
+        /// </summary>
+        private bool _isChildrenSortedDirty = true;
+
+        /// <summary>
+        /// Cache sorted child nodes (by ZIndex).
+        /// </summary>
+        private List<UIElement> _sortedChildren = new();
+
+        /// <summary>
+        /// The position of the component relative to the parent node.
+        /// </summary>
         public virtual UIPosition LocalPosition { get; set; } = new UIPosition(Vector2F.Zero);
+        
+        /// <summary>
+        /// The width and height of the UI element.
+        /// </summary>
         public virtual Vector2F Size { get; set; } = Vector2F.Zero;
+
+        /// <summary>
+        /// The actual display area (position + size) of this element.
+        /// </summary>
         public virtual LayoutF Layout
         {
             get => new LayoutF(LocalPosition.Current, Size);
@@ -41,6 +76,42 @@ namespace Chinese_Chess_v3.UI.Core
                 Size = value.Size;
             }
         }
+        
+        /// <summary>
+        /// Controls the priority of drawing and input event handling of components in the parent node.
+        /// The higher value means the higher layer, which will be drawn and receive input first.
+        /// </summary>
+        private int _zIndex = 0;
+
+        /// <summary>
+        /// Controls the priority of drawing and input event handling of components in the parent node.
+        /// The higher value means the higher layer, which will be drawn and receive input first.
+        /// When modified, parent is notified to reorder its child nodes.
+        /// </summary>
+        public int ZIndex
+        {
+            get => _zIndex;
+            set
+            {
+                if (_zIndex != value)
+                {
+                    _zIndex = value;
+                    Parent?.NotifyChildOrderChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether this element should be kept when its parent's children are cleared.
+        /// Useful for long-lived elements like overlay layers, backgrounds, or root HUDs.
+        /// </summary>
+        public bool IsPersistent { get; set; } = false;
+
+        /// <summary>
+        /// Optional UI type classification, useful for filtering or managing cleanup logic.
+        /// </summary>
+        public UIElementType ElementType { get; set; } = UIElementType.Generic;
+
         /// <summary>
         /// Is it logically visible (use for UI display and HitTest).
         /// `IsVisible = false` means that the object is not drawn and cannot be clicked.
@@ -68,14 +139,19 @@ namespace Chinese_Chess_v3.UI.Core
         /// </summary>
         public virtual bool DisableRender => !IsVisible;
 
-        // Initialize when need animated calculation
+        /// <summary>
+        /// Optional physics animation controller for animating position, velocity, elasticity, and other effects.
+        /// </summary>
 #nullable enable
         public virtual Physics2D? Physics { get; set; }
 #nullable disable
 
-        public UIElement()
+        public UIElement(int zIndex = 0, bool isPersistent = false, UIElementType type = UIElementType.Generic)
         {
             InstanceId = Interlocked.Increment(ref s_nextId);
+            _zIndex = zIndex;
+            IsPersistent = isPersistent;
+            ElementType = type;
         }
 
         /// <summary>
@@ -153,12 +229,30 @@ namespace Chinese_Chess_v3.UI.Core
             return node;
         }
 
+        /// <summary>
+        /// Gets a collection of child nodes sorted by ZIndex, re-sorting only when data changes.
+        /// </summary>
+        public IReadOnlyList<UIElement> GetSortedChildrenByZIndex(bool descending = false)
+        {
+            if (_isChildrenSortedDirty)
+            {
+                _sortedChildren = descending
+                    ? Children.OrderByDescending(c => c.ZIndex).ToList()
+                    : Children.OrderBy(c => c.ZIndex).ToList();
+                _isChildrenSortedDirty = false;
+            }
+
+            return _sortedChildren;
+        }
+
         public virtual void AddChild(UIElement child)
         {
             child.Parent = this;
             Children.Add(child);
             // Update child's phisics2D absolute position
             child.OnAddedToParent();
+
+            _isChildrenSortedDirty = true;
         }
 
         protected virtual void OnAddedToParent()
@@ -170,15 +264,44 @@ namespace Chinese_Chess_v3.UI.Core
         public virtual void RemoveChild(UIElement child)
         {
             child.Parent = null;
-            Children.Remove(child);
+            if (Children.Remove(child))
+                _isChildrenSortedDirty = true;
         }
 
-        public virtual void RemoveAllChild()
+        /// <summary>
+        /// When the ZIndex changes, this method should be called manually to invalidate the sort cache.
+        /// </summary>
+        public void NotifyChildOrderChanged()
+        {
+            _isChildrenSortedDirty = true;
+        }
+
+        /// <summary>
+        /// Removes all children based on optional filtering rules.
+        /// </summary>
+        /// <param name="includePersistent">If true, persistent elements will also be removed.</param>
+        /// <param name="onlyTypes">Optional: only remove children with specific element types.</param>
+        /// <param name="excludeTypes">Optional: skip removal for children with these element types.</param>
+        public virtual void RemoveAllChild(
+            bool includePersistent = false,
+            List<UIElementType> onlyTypes = null,
+            List<UIElementType> excludeTypes = null)
         {
             for (int i = Children.Count - 1; i >= 0; i--)
             {
-                Children[i].Parent = null;
-                Children.Remove(Children[i]);
+                var child = Children[i];
+
+                if (!includePersistent && child.IsPersistent)
+                    continue;
+
+                if (onlyTypes != null && !onlyTypes.Contains(child.ElementType))
+                    continue;
+
+                if (excludeTypes != null && excludeTypes.Contains(child.ElementType))
+                    continue;
+
+                child.Parent = null;
+                Children.RemoveAt(i);
             }
         }
 
@@ -220,9 +343,10 @@ namespace Chinese_Chess_v3.UI.Core
             }
 
             // Search from the last child element forward (elements with higher ZIndex are at the back)
-            for (int i = Children.Count - 1; i >= 0; i--)
+            foreach (var child in Children
+                .Where(c => c.IsInteractable)
+                .OrderByDescending(c => c.ZIndex))
             {
-                var child = Children[i];
                 if (!child.HitTest(point))
                     continue;
 
@@ -253,7 +377,9 @@ namespace Chinese_Chess_v3.UI.Core
 
             OnDraw(g);
 
-            foreach (var child in Children)
+            foreach (var child in GetSortedChildrenByZIndex()
+                .Where(c => !c.DisableRender)
+                .OrderBy(c => c.ZIndex))
                 if (child.IsVisible)
                     child.Draw(g);
         }
@@ -266,15 +392,15 @@ namespace Chinese_Chess_v3.UI.Core
             bool isInside = IsInteractable && GetCurrentAbsoluteBounds().Contains(e.Location);
 
             // Propagate to child
-            for (int i = Children.Count - 1; i >= 0; i--)
+            foreach (var child in GetSortedChildrenByZIndex(descending: true))
             {
                 bool handled = eventName switch
                 {
-                    UIEventType.MouseClick => Children[i].OnMouseClick(e),
-                    UIEventType.MouseDown => Children[i].OnMouseDown(e),
-                    UIEventType.MouseMove => Children[i].OnMouseMove(e),
-                    UIEventType.MouseUp => Children[i].OnMouseUp(e),
-                    UIEventType.MouseWheel => Children[i].OnMouseWheel(e),
+                    UIEventType.MouseClick => child.OnMouseClick(e),
+                    UIEventType.MouseDown => child.OnMouseDown(e),
+                    UIEventType.MouseMove => child.OnMouseMove(e),
+                    UIEventType.MouseUp => child.OnMouseUp(e),
+                    UIEventType.MouseWheel => child.OnMouseWheel(e),
                     _ => false
                 };
 

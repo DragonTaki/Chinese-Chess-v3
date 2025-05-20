@@ -14,16 +14,16 @@ using System.Windows.Forms;
 namespace Chinese_Chess_v3.Timing
 {
     /// <summary>
-    /// Manages countdown timer and total time tracking for a player.
+    /// Manages countdown _timer and total time tracking for a player.
     /// </summary>
     public class PlayerTimer
     {
-        private readonly Timer timer;
-        private readonly Stopwatch stopwatch;
+        private readonly Timer _timer;
+        private readonly Stopwatch _stopwatch;
 
         public TimeSpan TotalTime { get; private set; }
         public TimeSpan TimeLeft { get; private set; }
-        public bool IsRunning => timer.Enabled;
+        public bool IsRunning => _timer.Enabled;
 
         /// <summary>
         /// Raised when TimeLeft is updated.
@@ -34,14 +34,14 @@ namespace Chinese_Chess_v3.Timing
         {
             TimeLeft = initialTime;
             TotalTime = initialTime;
-            stopwatch = new Stopwatch();
-            timer = new Timer { Interval = intervalMilliseconds };
-            timer.Tick += Timer_Tick;
+            _stopwatch = new Stopwatch();
+            _timer = new Timer { Interval = intervalMilliseconds };
+            _timer.Tick += Timer_Tick;
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            TimeLeft = TimeLeft.Subtract(TimeSpan.FromMilliseconds(timer.Interval));
+            TimeLeft = TimeLeft.Subtract(TimeSpan.FromMilliseconds(_timer.Interval));
 
             if (TimeLeft <= TimeSpan.Zero)
             {
@@ -56,8 +56,8 @@ namespace Chinese_Chess_v3.Timing
         {
             if (!IsRunning)
             {
-                stopwatch.Start();
-                timer.Start();
+                _stopwatch.Start();
+                _timer.Start();
             }
         }
 
@@ -65,8 +65,8 @@ namespace Chinese_Chess_v3.Timing
         {
             if (IsRunning)
             {
-                stopwatch.Stop();
-                timer.Stop();
+                _stopwatch.Stop();
+                _timer.Stop();
             }
         }
 
@@ -74,7 +74,7 @@ namespace Chinese_Chess_v3.Timing
         {
             Stop();
             TimeLeft = TotalTime;
-            stopwatch.Reset();
+            _stopwatch.Reset();
             OnTimeUpdated?.Invoke(TimeLeft);
         }
 

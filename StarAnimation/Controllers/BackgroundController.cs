@@ -15,15 +15,15 @@ namespace StarAnimation.Controllers
 {
     public class BackgroundController
     {
-        private readonly int width;
-        private readonly int height;
+        private readonly int _width;
+        private readonly int _height;
         private readonly BackgroundRenderer renderer;
         public BackgroundController(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
             
-            renderer = new BackgroundRenderer(width, height);
+            renderer = new BackgroundRenderer(_width, _height);
         }
 
         public void Resize(int width, int height)

@@ -9,6 +9,7 @@
 
 using System.Drawing;
 using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Elements;
 
 namespace Chinese_Chess_v3.UI.Dialog
 {
@@ -41,6 +42,11 @@ namespace Chinese_Chess_v3.UI.Dialog
         /// Indicates whether text wrapping is enabled.
         /// </summary>
         public bool WordWrap { get; set; } = true;
+
+        public UILabel() : base(type: UIElementType.Label)
+        {
+
+        }
 
         /// <summary>
         /// Draws the label's text.

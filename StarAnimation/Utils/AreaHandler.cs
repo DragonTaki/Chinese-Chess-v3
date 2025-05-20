@@ -22,15 +22,15 @@ namespace StarAnimation.Utils
         /// The list of excluded screen-space rectangular areas.
         /// Stars within these areas will be skipped or hidden.
         /// </summary>
-        private List<RectangleF> excludedAreas = new();
+        private List<RectangleF> _excludedAreas = new();
 
         /// <summary>
         /// Gets or sets the list of excluded rectangular areas.
         /// </summary>
         public List<RectangleF> ExcludedAreas
         {
-            get => excludedAreas;
-            set => excludedAreas = value ?? new List<RectangleF>();
+            get => _excludedAreas;
+            set => _excludedAreas = value ?? new List<RectangleF>();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace StarAnimation.Utils
         /// <returns>True if the point is within an excluded region; otherwise false.</returns>
         public bool IsInExcludedArea(float x, float y)
         {
-            foreach (var area in excludedAreas)
+            foreach (var area in _excludedAreas)
             {
                 if (area.Contains((int)x, (int)y))
                     return true;
@@ -64,7 +64,7 @@ namespace StarAnimation.Utils
         /// </summary>
         public void ClearExcludedAreas()
         {
-            excludedAreas.Clear();
+            _excludedAreas.Clear();
         }
     }
 }

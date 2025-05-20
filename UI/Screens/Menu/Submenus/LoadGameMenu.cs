@@ -22,19 +22,21 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
-    public class LoadGameMenu : UIElement, IScreen
+    public class LoadGameMenu
+        : IInitializableOnceElement<(IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer)>
+        , IScreen
     {
         private UIScrollContainer _scroll;
-        private LoadGameMenuRenderer renderer;
-        private LoadGameMenuHandler handler;
+        private LoadGameMenuRenderer _renderer;
+        private LoadGameMenuHandler _handler;
         private List<UIButton> buttons = new();
         
         public LoadGameMenu() {}
-        public void Setup(IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer)
+        protected override void OnInit((IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer) arg)
         {
-            _scroll = factory.CreateScrollContainer();
-            this.handler = handler;
-            this.renderer = renderer;
+            _scroll = arg.factory.CreateScrollContainer();
+            _handler = arg.handler;
+            _renderer = arg.renderer;
 
             LocalPosition = UILayoutConstants.Submenu.Position;
             Size = UILayoutConstants.Submenu.Size;
@@ -85,12 +87,12 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 
         public void OnEnter()
         {
-            handler.OnEnter();
+            _handler.OnEnter();
         }
         
         public void OnExit()
         {
-            handler.OnExit();
+            _handler.OnExit();
         }
 
         protected override void OnUpdate()
@@ -100,7 +102,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
         
         protected override void OnDraw(Graphics g)
         {
-            renderer.Draw(g);
+            _renderer.Draw(g);
         }
 
         public List<UIButton> Buttons => buttons;

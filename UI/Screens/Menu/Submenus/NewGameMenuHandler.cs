@@ -18,20 +18,20 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
     /// </summary>
     public class NewGameMenuHandler
     {
-        private readonly NewGameMenu menu;
-        private readonly NavigationManager navigation;
+        private readonly NewGameMenu _menu;
+        private readonly NavigationManager _navigation;
 
         public NewGameMenuHandler(IUiFactory factory, NewGameMenu menu)
         {
-            this.menu = menu;
-            this.navigation = factory.Resolve<NavigationManager>();
+            _menu = menu;
+            _navigation = factory.Resolve<NavigationManager>();
         }
 
         public void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
-            //mainMenu.CancelCurrentSubmenu();
-            navigation.ShowGameScreen();
+            //mainMenu.CancelCurrentSub_menu();
+            _navigation.ShowGameScreen();
         }
 
         public void OnEnter()

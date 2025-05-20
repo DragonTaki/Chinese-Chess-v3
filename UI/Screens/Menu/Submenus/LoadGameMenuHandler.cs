@@ -8,8 +8,8 @@
 /* ----- ----- ----- ----- */
 
 using System;
+
 using Chinese_Chess_v3.UI.Core;
-using Chinese_Chess_v3.UI.Menu;
 
 namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
 {
@@ -18,19 +18,19 @@ namespace Chinese_Chess_v3.UI.Screens.Menu.Submenus
     /// </summary>
     public class LoadGameMenuHandler
     {
-        private readonly LoadGameMenu menu;
-        private readonly NavigationManager navigation;
+        private readonly LoadGameMenu _menu;
+        private readonly NavigationManager _navigation;
 
         public LoadGameMenuHandler(IUiFactory factory, LoadGameMenu menu)
         {
-            this.menu = menu;
-            this.navigation = factory.Resolve<NavigationManager>();
+            _menu = menu;
+            _navigation = factory.Resolve<NavigationManager>();
         }
 
         public void StartNewGame()
         {
             Console.WriteLine($"LoadGameMenu: selected");
-            //mainMenu.CancelCurrentSubmenu();
+            //mainMenu.CancelCurrentSub_menu();
         }
 
         public void OnEnter()

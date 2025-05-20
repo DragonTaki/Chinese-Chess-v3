@@ -33,9 +33,9 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
         public TimeSpan RedTime { get; set; } = TimeSpan.FromMinutes(5);
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
-        private readonly Font nameFont = InfoBoardSettings.NameFont;
-        private readonly Font timerFont = InfoBoardSettings.TimerFont;
-        private readonly Pen glowPen = new Pen(Color.Gold, 3);
+        private readonly Font _nameFont = InfoBoardSettings.NameFont;
+        private readonly Font _timerFont = InfoBoardSettings.TimerFont;
+        private readonly Pen _glowPen = new Pen(Color.Gold, 3);
 
         public InfoBoard()
         {
@@ -133,7 +133,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
         {
             using (SolidBrush nameBrush = new SolidBrush(Color.White))
             using (StringFormat nameFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near })
-                g.DrawString(playerName, nameFont, nameBrush, new Rectangle(x, y + 10, width, 30), nameFormat);
+                g.DrawString(playerName, _nameFont, nameBrush, new Rectangle(x, y + 10, width, 30), nameFormat);
 
             Rectangle timerRect = new Rectangle(x + 20, y + 50, width - 40, 40);
             using (SolidBrush timerBgBrush = new SolidBrush(Color.DimGray))
@@ -141,7 +141,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
 
             using (SolidBrush timerTextBrush = new SolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
             using (StringFormat timerFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                g.DrawString(time.ToString(@"mm\:ss"), timerFont, timerTextBrush, timerRect, timerFormat);
+                g.DrawString(time.ToString(@"mm\:ss"), _timerFont, timerTextBrush, timerRect, timerFormat);
         }
         protected void OnPaint_old(PaintEventArgs e)
         {
@@ -254,7 +254,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
             // Player name
             using (SolidBrush nameBrush = new SolidBrush(Color.White))
             using (StringFormat nameFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near })
-                g.DrawString(playerName, nameFont, nameBrush, new Rectangle(x, y + 10, width, 30), nameFormat);
+                g.DrawString(playerName, _nameFont, nameBrush, new Rectangle(x, y + 10, width, 30), nameFormat);
 
             // Timer background
             Rectangle timerRect = new Rectangle(x + 20, y + 50, width - 40, 40);
@@ -264,7 +264,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
             // Timer text
             using (SolidBrush timerTextBrush = new SolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
             using (StringFormat timerFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                g.DrawString(time.ToString(@"mm\:ss"), timerFont, timerTextBrush, timerRect, timerFormat);
+                g.DrawString(time.ToString(@"mm\:ss"), _timerFont, timerTextBrush, timerRect, timerFormat);
         }
 
         // Create shield shape

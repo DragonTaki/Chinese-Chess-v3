@@ -22,11 +22,11 @@ namespace StarAnimation.Controllers
     /// </summary>
     public class FrameController
     {
-        private readonly int width;
-        private readonly int height;
-        private readonly FrameRenderer renderer;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly FrameRenderer _renderer;
 
-        private readonly List<Frame> activeFrames = new();
+        private readonly List<Frame> _activeFrames = new();
 
         #region Settings (Adjustable Parameters)
 
@@ -49,10 +49,10 @@ namespace StarAnimation.Controllers
 
         public FrameController(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
 
-            renderer = new FrameRenderer(width, height);
+            _renderer = new FrameRenderer(_width, _height);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace StarAnimation.Controllers
         /// <param name="thickness">Optional border thickness (default: DefaultThickness).</param>
         public void AddFrame(RectangleF rect, Color? color = null, int? thickness = null)
         {
-            activeFrames.Add(new Frame
+            _activeFrames.Add(new Frame
             {
                 Rect = rect,
                 Color = color ?? DefaultColor,
@@ -92,7 +92,7 @@ namespace StarAnimation.Controllers
         public void Update()
         {
             DateTime now = DateTime.Now;
-            activeFrames.RemoveAll(f => f.ExpirationTime < now);
+            _activeFrames.RemoveAll(f => f.ExpirationTime < now);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace StarAnimation.Controllers
         /// <param name="g">The graphics context to draw to.</param>
         public void Draw(Graphics g)
         {
-            renderer.Draw(g, activeFrames);
+            _renderer.Draw(g, _activeFrames);
         }
     }
 }

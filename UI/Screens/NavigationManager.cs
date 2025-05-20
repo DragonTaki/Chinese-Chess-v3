@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Linq;
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Screens.Game;
 using Chinese_Chess_v3.UI.Screens.Menu;
@@ -22,7 +23,7 @@ namespace Chinese_Chess_v3.UI.Screens
     public class NavigationManager
     {
         private readonly IUiFactory _factory;
-        private UIElement rootElement;
+        private UIElement _rootElement;
 
         private MainMenu _mainMenu;
         private GameMenu _gameMenu;
@@ -33,7 +34,7 @@ namespace Chinese_Chess_v3.UI.Screens
 
         public void Init(UIElement root)
         {
-            rootElement = root ?? throw new ArgumentNullException(nameof(root));
+            _rootElement = root ?? throw new ArgumentNullException(nameof(root));
         }
 
         /// <summary>
@@ -41,14 +42,10 @@ namespace Chinese_Chess_v3.UI.Screens
         /// </summary>
         public void ShowMainMenu()
         {
-            foreach (var scene in rootElement.Children)
-            {
-                scene.IsVisible = false;
-            }
-            rootElement.RemoveAllChild();
+            ClearNonPersistentChildren(_rootElement);
             _mainMenu ??= _factory.CreateMainMenu();
             _mainMenu.IsVisible = true;
-            rootElement.AddChild(_mainMenu);
+            _rootElement.AddChild(_mainMenu);
         }
 
         /// <summary>
@@ -56,18 +53,20 @@ namespace Chinese_Chess_v3.UI.Screens
         /// </summary>
         public void ShowGameScreen()
         {
-            foreach (var scene in rootElement.Children)
-            {
-                scene.IsVisible = false;
-            }
-            rootElement.RemoveAllChild();
+            ClearNonPersistentChildren(_rootElement);
             _gameMenu ??= _factory.CreateGameMenu();
             _gameMenu.IsVisible = true;
-            rootElement.AddChild(_gameMenu);
+            _rootElement.AddChild(_gameMenu);
         }
 
-        /// <summary>
-        /// 可擴充其他畫面切換方法...
-        /// </summary>
+        public static void ClearNonPersistentChildren(UIElement parent)
+        {
+            var toRemove = parent.Children.Where(c => !c.IsPersistent).ToList();
+
+            foreach (var child in toRemove)
+            {
+                parent.RemoveChild(child);
+            }
+        }
     }
 }

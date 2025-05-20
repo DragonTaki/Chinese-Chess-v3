@@ -16,21 +16,20 @@ namespace StarAnimation.Utils.Area
 {
     public class CircleAreaSelector : IAreaSelector
     {
-        private readonly float minRadius;
-        private float maxRadius;
+        private readonly float _minRadius, _maxRadius;
         private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
         public CircleAreaSelector(float minRadius, float maxRadius)
         {
-            this.minRadius = minRadius;
-            this.maxRadius = maxRadius;
+            _minRadius = minRadius;
+            _maxRadius = maxRadius;
         }
 
         public IAreaShape GetArea(float canvasWidth, float canvasHeight)
         {
             if (canvasWidth <= 0 || canvasHeight <= 0)
                 throw new ArgumentException("Canvas size must be positive.");
-            if (minRadius <= 0 || maxRadius <= 0)
+            if (_minRadius <= 0 || _maxRadius <= 0)
                 throw new ArgumentException("Radius must be positive.");
             
             float canvasRadius = (float)Math.Sqrt(Math.Pow(canvasWidth, 2) + Math.Pow(canvasHeight, 2)) / 2;
@@ -38,7 +37,7 @@ namespace StarAnimation.Utils.Area
             float cx, cy;
 
             // Handle radius
-            if (minRadius >= canvasRadius)
+            if (_minRadius >= canvasRadius)
             {
                 radius = canvasRadius;
                 cx = canvasWidth / 2;
@@ -46,8 +45,8 @@ namespace StarAnimation.Utils.Area
             }
             else
             {
-                float limitedRadius = Math.Min(maxRadius, canvasRadius);
-                float effectiveRadius = Math.Min(minRadius, limitedRadius);
+                float limitedRadius = Math.Min(_maxRadius, canvasRadius);
+                float effectiveRadius = Math.Min(_minRadius, limitedRadius);
                 radius = (limitedRadius == effectiveRadius)
                     ? limitedRadius
                     : Rand.NextFloat(effectiveRadius, limitedRadius);

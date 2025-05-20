@@ -28,7 +28,7 @@ namespace StarAnimation.Core.Effect.Instance
     {
         public float Amplitude { get; private set; } = 0.5f;
         public float MidOpacity { get; private set; } = 0.5f;
-        private List<Star> affectedStars;
+        private readonly List<Star> _affectedStars = new();
 
         /// <summary>
         /// Constructs the Pulse effect with optional configuration parameters.
@@ -42,7 +42,7 @@ namespace StarAnimation.Core.Effect.Instance
             EffectAppliedChance = effectAppliedChance;
             Amplitude = amplitude;
             MidOpacity = midOpacity;
-            affectedStars = new List<Star>();
+            _affectedStars = new List<Star>();
         }
 
         public static PulseInstance CreateRandom(IAreaShape area, PulseParameter config)
@@ -62,7 +62,7 @@ namespace StarAnimation.Core.Effect.Instance
         /// </summary>
         protected override void OnApplyTo(IReadOnlyList<Star> stars)
         {
-            affectedStars.Clear();
+            _affectedStars.Clear();
 
             foreach (var star in stars)
             {
@@ -73,7 +73,7 @@ namespace StarAnimation.Core.Effect.Instance
                         star.Pulse.HasPhase = true;
                         star.Pulse.Delay = Rand.NextFloat() * 2.0f;
                         star.Pulse.ShiningTimes = Rand.NextInt(1, 4);
-                        affectedStars.Add(star);
+                        _affectedStars.Add(star);
                     }
                 }
             }
@@ -89,21 +89,21 @@ namespace StarAnimation.Core.Effect.Instance
         {
             float elapsedTime = normalizedTime * Duration;
 
-            if (affectedStars.Count == 0)
+            if (_affectedStars.Count == 0)
             {
                 return;
             }
 
-            for (int i = affectedStars.Count - 1; i >= 0; i--)
+            for (int i = _affectedStars.Count - 1; i >= 0; i--)
             {
-                var star = affectedStars[i];
+                var star = _affectedStars[i];
 
                 if (!star.Pulse.HasPhase) continue;
                 if (elapsedTime - star.Pulse.Delay > Duration)
                 {
                     star.Pulse.HasPhase = false;
                     star.Opacity = 1f;
-                    affectedStars.RemoveAt(i);
+                    _affectedStars.RemoveAt(i);
                     continue;
                 }
 
@@ -117,13 +117,13 @@ namespace StarAnimation.Core.Effect.Instance
         }
         protected override void OnReset()
         {
-            foreach (var star in affectedStars)
+            foreach (var star in _affectedStars)
             {
                 star.Pulse.HasPhase = false;
                 star.Opacity = 1f;
             }
 
-            affectedStars.Clear();
+            _affectedStars.Clear();
         }
     }
 }

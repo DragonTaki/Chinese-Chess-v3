@@ -23,50 +23,50 @@ namespace StarAnimation.Controllers
 {
     public class StarController
     {
-        private int width;
-        private int height;
-        private readonly StarRenderer renderer;
-        private readonly int starCount;
-        IRandomProvider Rand = GlobalRandom.Instance;
+        private int _width;
+        private int _height;
+        private readonly StarRenderer _renderer;
+        private readonly int _starCount;
+        private readonly IRandomProvider Rand = GlobalRandom.Instance;
 
-        private List<Star> stars = new List<Star>();
-        public IReadOnlyList<Star> Stars => stars;
+        private readonly List<Star> _stars = new List<Star>();
+        public IReadOnlyList<Star> Stars => _stars;
 
-        private Queue<Star> waitingPool = new Queue<Star>();
+        private readonly Queue<Star> _waitingPool = new Queue<Star>();
 
-        private int minVisibleCount;
-        private int maxVisibleCount;
+        private readonly int _minVisibleCount;
+        private readonly int _maxVisibleCount;
 
-        private DateTime lastResizeTime;
-        private bool pendingShrinkCleanup = false;
+        private DateTime _lastResizeTime;
+        private bool _pendingShrinkCleanup = false;
         private const float ResizeCleanupDelaySeconds = 1.0f;
         private const float OutsideCanvasMargin = 40.0f;
 
         // Countdown timers for effects
-        private int directionChangeCountdown;
-        private int speedChangeCountdown;
+        private int _directionChangeCountdown;
+        private int _speedChangeCountdown;
 
-        public StarController(int width, int height, int starCount = 250)
+        public StarController(int _width, int _height, int _starCount = 250)
         {
-            this.width = width;
-            this.height = height;
-            this.starCount = starCount;
+            this._width = _width;
+            this._height = _height;
+            this._starCount = _starCount;
 
-            minVisibleCount = starCount - Settings.StarCountRange;
-            maxVisibleCount = starCount + Settings.StarCountRange;
+            _minVisibleCount = _starCount - Settings.StarCountRange;
+            _maxVisibleCount = _starCount + Settings.StarCountRange;
 
-            renderer = new StarRenderer(width, height);
+            _renderer = new StarRenderer(_width, _height);
             InitializeStars();
         }
 
         private void InitializeStars()
         {
-            stars.Clear();
-            waitingPool.Clear();
+            _stars.Clear();
+            _waitingPool.Clear();
 
-            for (int i = 0; i < starCount; i++)
+            for (int i = 0; i < _starCount; i++)
             {
-                stars.Add(new Star(width, height));
+                _stars.Add(new Star(_width, _height));
             }
             
             InitializeCounters();
@@ -74,12 +74,12 @@ namespace StarAnimation.Controllers
 
         private void InitializeCounters()
         {
-            directionChangeCountdown = Rand.NextInt(300, 800);
-            speedChangeCountdown = Rand.NextInt(100, 300);
+            _directionChangeCountdown = Rand.NextInt(300, 800);
+            _speedChangeCountdown = Rand.NextInt(100, 300);
         }
 
         /// <summary>
-        /// Update all stars' movement and handle dynamic effects.
+        /// Update all _stars' movement and handle dynamic effects.
         /// </summary>
         public void Update()
         {
@@ -91,17 +91,17 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Updates star positions and queues out-of-bounds stars for reuse.
+        /// Updates star positions and queues out-of-bounds _stars for reuse.
         /// </summary>
         private void UpdateStarPositions()
         {
-            foreach (var star in stars.ToArray())
+            foreach (var star in _stars.ToArray())
             {
                 // If outside canvas, clear all status and put to waiting area
                 if (star.Position.Current.X < -OutsideCanvasMargin || star.Position.Current.Y < -OutsideCanvasMargin ||
-                    star.Position.Current.X > width + OutsideCanvasMargin || star.Position.Current.Y > height + OutsideCanvasMargin)
+                    star.Position.Current.X > _width + OutsideCanvasMargin || star.Position.Current.Y > _height + OutsideCanvasMargin)
                 {
-                    waitingPool.Enqueue(star);
+                    _waitingPool.Enqueue(star);
                     star.Position.Current = new Vector2F(-100.0f, -100.0f);
                     star.Position.Target = Vector2F.Zero;
                     star.Position.HasTarget = false;
@@ -110,28 +110,28 @@ namespace StarAnimation.Controllers
                     star.Velocity.Target = Vector2F.Zero;
                     star.Acceleration.Current = Vector2F.Zero;
                     star.Acceleration.Target = Vector2F.Zero;
-                    stars.Remove(star);
+                    _stars.Remove(star);
                 }
             }
         }
 
         /// <summary>
-        /// Releases stars from waiting pool based on Gaussian probability.
+        /// Releases _stars from waiting pool based on Gaussian probability.
         /// </summary>
         private void ReleaseStars()
         {
-            int starsToRelease = CalculateStarsToRelease();
+            int _starsToRelease = CalculateStarsToRelease();
 
-            for (int i = 0; i < starsToRelease; i++)
+            for (int i = 0; i < _starsToRelease; i++)
             {
-                if (waitingPool.Count > 0)
+                if (_waitingPool.Count > 0)
                 {
-                    Star star = waitingPool.Dequeue();
-                    star.Position.Current.X = Rand.NextInt(width);
-                    star.Position.Current.Y = Rand.NextInt(height);
+                    Star star = _waitingPool.Dequeue();
+                    star.Position.Current.X = Rand.NextInt(_width);
+                    star.Position.Current.Y = Rand.NextInt(_height);
                     star.RandomizeBaseSpeed();
                     star.RandomizeAcceleration();
-                    stars.Add(star);
+                    _stars.Add(star);
                 }
             }
         }
@@ -141,21 +141,21 @@ namespace StarAnimation.Controllers
         /// </summary>
         private int CalculateStarsToRelease()
         {
-            int targetStars = starCount;
-            int starsInScene = stars.Count;
-            float normalized = (float)Math.Exp(-0.5 * Math.Pow((starsInScene - targetStars) / 25.0, 2));
-            return Math.Max(minVisibleCount, Math.Min(maxVisibleCount, (int)(normalized * (maxVisibleCount - minVisibleCount))));
+            int targetStars = _starCount;
+            int _starsInScene = _stars.Count;
+            float normalized = (float)Math.Exp(-0.5 * Math.Pow((_starsInScene - targetStars) / 25.0, 2));
+            return Math.Max(_minVisibleCount, Math.Min(_maxVisibleCount, (int)(normalized * (_maxVisibleCount - _minVisibleCount))));
         }
 
         /// <summary>
-        /// Removes stars out of bounds after a delay.
+        /// Removes _stars out of bounds after a delay.
         /// </summary>
         private void CleanUpAfterResize()
         {
-            if (pendingShrinkCleanup && (DateTime.Now - lastResizeTime).TotalSeconds > ResizeCleanupDelaySeconds)
+            if (_pendingShrinkCleanup && (DateTime.Now - _lastResizeTime).TotalSeconds > ResizeCleanupDelaySeconds)
             {
-                stars.RemoveAll(star => star.Position.Current.X > width || star.Position.Current.Y > height);
-                pendingShrinkCleanup = false;
+                _stars.RemoveAll(star => star.Position.Current.X > _width || star.Position.Current.Y > _height);
+                _pendingShrinkCleanup = false;
             }
         }
 
@@ -164,16 +164,16 @@ namespace StarAnimation.Controllers
         /// </summary>
         private void UpdateEffects()
         {
-            if (false && --speedChangeCountdown <= 0)
+            if (false && --_speedChangeCountdown <= 0)
             {
-                foreach (var star in stars)
+                foreach (var star in _stars)
                     star.RandomizeAcceleration();
-                speedChangeCountdown = Rand.NextInt(100, 300);
+                _speedChangeCountdown = Rand.NextInt(100, 300);
             }
         }
 
         /// <summary>
-        /// Handles resizing of the renderer and adjusts star count accordingly.
+        /// Handles resizing of the _renderer and adjusts star count accordingly.
         /// </summary>
         public void Resize(int newWidth, int newHeight)
         {
@@ -181,49 +181,49 @@ namespace StarAnimation.Controllers
             newWidth = Math.Max(newWidth, MinDimension);
             newHeight = Math.Max(newHeight, MinDimension);
 
-            if (newWidth > width || newHeight > height)
+            if (newWidth > _width || newHeight > _height)
             {
-                int added = (int)((newWidth * newHeight - width * height) / (1920f * 1080f) * starCount);
+                int added = (int)((newWidth * newHeight - _width * _height) / (1920f * 1080f) * _starCount);
                 for (int i = 0; i < added; i++)
-                    stars.Add(new Star(newWidth, newHeight));
+                    _stars.Add(new Star(newWidth, newHeight));
             }
             else
             {
-                lastResizeTime = DateTime.Now;
-                pendingShrinkCleanup = true;
+                _lastResizeTime = DateTime.Now;
+                _pendingShrinkCleanup = true;
             }
 
-            width = newWidth;
-            height = newHeight;
+            _width = newWidth;
+            _height = newHeight;
         }
 
         /// <summary>
-        /// Clear canvas and render all visible stars.
+        /// Clear canvas and render all visible _stars.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
         public void Draw(Graphics g)
         {
-            renderer.Draw(g, stars);
+            _renderer.Draw(g, _stars);
         }
 
         /// <summary>
-        /// Get reference to all current stars (e.g. for external effects).
+        /// Get reference to all current _stars (e.g. for external effects).
         /// </summary>
-        public List<Star> GetStars() => stars;
+        public List<Star> GetStars() => _stars;
 
         /// <summary>
-        /// Dynamically adjusts the number of visible stars using a bell curve-like behavior.
+        /// Dynamically adjusts the number of visible _stars using a bell curve-like behavior.
         /// </summary>
         /// [DEPRECATED] Replaced by Gaussian-based dynamic control using ReleaseStars()
         private void AdjustStarCount()
         {
-            if (stars.Count < maxVisibleCount && Rand.NextDouble() < 0.2)
+            if (_stars.Count < _maxVisibleCount && Rand.NextDouble() < 0.2)
             {
-                stars.Add(new Star(width, height));
+                _stars.Add(new Star(_width, _height));
             }
-            else if (stars.Count > minVisibleCount && Rand.NextDouble() < 0.1)
+            else if (_stars.Count > _minVisibleCount && Rand.NextDouble() < 0.1)
             {
-                stars.RemoveAt(Rand.NextInt(stars.Count));
+                _stars.RemoveAt(Rand.NextInt(_stars.Count));
             }
         }
     }

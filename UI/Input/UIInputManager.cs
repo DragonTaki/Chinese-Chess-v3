@@ -20,7 +20,7 @@ namespace Chinese_Chess_v3.UI.Input
         /// Collect all IInputHandler handlers and dispatch them to mouse events in order.
         /// </summary>
         public MouseInputRouter MouseRouter { get; }
-        private readonly List<IInputHandler> generalHandlers = new();
+        private readonly List<IInputHandler> _generalHandlers = new();
 
 #nullable enable
         public UIInputManager(UIElement root, IScrollInputHandler? scroll = null)
@@ -34,13 +34,13 @@ namespace Chinese_Chess_v3.UI.Input
 
         public void RegisterHandler(IInputHandler handler)
         {
-            if (!generalHandlers.Contains(handler))
-                generalHandlers.Add(handler);
+            if (!_generalHandlers.Contains(handler))
+                _generalHandlers.Add(handler);
         }
 
         public void UnregisterHandler(IInputHandler handler)
         {
-            generalHandlers.Remove(handler);
+            _generalHandlers.Remove(handler);
         }
         public bool OnMouseDown(MouseEventArgs e)
         {
@@ -76,7 +76,7 @@ namespace Chinese_Chess_v3.UI.Input
         public void EndFrame()
         {
             MouseRouter.EndFrame();
-            foreach (var h in generalHandlers)
+            foreach (var h in _generalHandlers)
                 h.EndFrame();
         }
     }

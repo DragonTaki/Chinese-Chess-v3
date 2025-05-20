@@ -35,7 +35,7 @@ namespace StarAnimation.Core.Effect.Instance
         public float Strength { get; private set; }
         public float Radius { get; private set; }
         public float Direction { get; private set; }
-        private List<Star> affectedStars = new();
+        private readonly List<Star> _affectedStars = new();
         private const float MaxAngle = 2f * (float)Math.PI;
         private const float MaxSpeedBoost = 1.5f;
         private const float SpeedCorrectionFactor = 0.2f;
@@ -90,7 +90,7 @@ namespace StarAnimation.Core.Effect.Instance
         }
         protected override void OnApplyTo(IReadOnlyList<Star> stars)
         {
-            affectedStars.Clear();
+            _affectedStars.Clear();
             starInfos.Clear();
             
             foreach (var star in stars)
@@ -100,13 +100,13 @@ namespace StarAnimation.Core.Effect.Instance
                     if (Rand.NextDouble() < EffectAppliedChance)
                     {
                         InitializeStarInfo(star);
-                        affectedStars.Add(star);
+                        _affectedStars.Add(star);
                     }
                 }
             }
 
             // If no stars are affected, at least the nearest one will be selected.
-            if (affectedStars.Count == 0)
+            if (_affectedStars.Count == 0)
             {
 #nullable enable
                 Star? closest = null;
@@ -132,7 +132,7 @@ namespace StarAnimation.Core.Effect.Instance
                 if (closest != null)
                 {
                     InitializeStarInfo(closest);
-                    affectedStars.Add(closest);
+                    _affectedStars.Add(closest);
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace StarAnimation.Core.Effect.Instance
         /// </param>
         protected override void OnUpdate(float normalizedTime)
         {
-            foreach (var star in affectedStars)
+            foreach (var star in _affectedStars)
             {
                 // Twist around the center `toCenter`
                 Vector2F toCenter = star.Position.Current - Center;
@@ -182,7 +182,7 @@ namespace StarAnimation.Core.Effect.Instance
         
         protected override void OnReset()
         {
-            affectedStars.Clear();
+            _affectedStars.Clear();
         }
     }
 }

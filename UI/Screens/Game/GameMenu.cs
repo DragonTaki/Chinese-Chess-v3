@@ -21,19 +21,21 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Game
 {
-    public class GameMenu : UIElement, IScreen
+    public class GameMenu
+        : IInitializableOnceElement<(IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer)>
+        , IScreen
     {
         private UIScrollContainer _scroll;
-        private GameMenuRenderer renderer;
-        private GameMenuHandler handler;
-        private readonly List<UIButton> buttons = new();
+        private GameMenuRenderer _renderer;
+        private GameMenuHandler _handler;
+        private readonly List<UIButton> _buttons = new();
 
         public GameMenu() {}
-        public void Setup(IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer)
+        protected override void OnInit((IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer) arg)
         {
-            _scroll = factory.CreateScrollContainer();
-            this.handler = handler;
-            this.renderer = renderer;
+            _scroll = arg.factory.CreateScrollContainer();
+            _handler = arg.handler;
+            _renderer = arg.renderer;
 
             LocalPosition = UILayoutConstants.GameMenu.Position;
             Size = UILayoutConstants.GameMenu.Size;
@@ -49,7 +51,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game
 
             this.AddChild(_scroll);
 
-            var menuEntries = GameMenuOptions.Create(handler.GameMenuAction);
+            var menuEntries = GameMenuOptions.Create(_handler.GameMenuAction);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {
@@ -60,20 +62,20 @@ namespace Chinese_Chess_v3.UI.Screens.Game
                 button.Size = UILayoutConstants.GameMenu.Button.Size;
 
                 _scroll.AddChild(button);
-                buttons.Add(button);
+                _buttons.Add(button);
             }
 
-            _scroll.ContentHeight = buttons.Count * (UILayoutConstants.GameMenu.Button.Size.Y + UILayoutConstants.GameMenu.Margin);
+            _scroll.ContentHeight = _buttons.Count * (UILayoutConstants.GameMenu.Button.Size.Y + UILayoutConstants.GameMenu.Margin);
         }
 
         public void OnEnter()
         {
-            handler.OnEnter();
+            _handler.OnEnter();
         }
 
         public void OnExit()
         {
-            handler.OnExit();
+            _handler.OnExit();
         }
 
         protected override void OnUpdate()
@@ -83,14 +85,14 @@ namespace Chinese_Chess_v3.UI.Screens.Game
 
         protected override void OnDraw(Graphics g)
         {
-            renderer.Draw(g);
+            _renderer.Draw(g);
         }
 
-        public List<UIButton> Buttons => buttons;
+        public List<UIButton> Buttons => _buttons;
         public List<UIButton> GetVisibleButtons()
         {
-            UIElementUtils.UpdateVisibleState(buttons, GetAbsClipRect());
-            return buttons.Where(b => b.IsEnabled).ToList();
+            UIElementUtils.UpdateVisibleState(_buttons, GetAbsClipRect());
+            return _buttons.Where(b => b.IsEnabled).ToList();
         }
 
         public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();

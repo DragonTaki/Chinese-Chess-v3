@@ -9,7 +9,6 @@
 
 using System.Collections.Generic;
 
-using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
@@ -19,7 +18,7 @@ namespace StarAnimation.Core.Effect.Instance
 {
     public class ConcentrateInstance : EffectInstance
     {
-        private List<Star> affectedStars = new();
+        private readonly List<Star> _affectedStars = new();
         public ConcentrateInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance)
             : base(center, area, duration, effectAppliedChance) { }
 
@@ -29,7 +28,7 @@ namespace StarAnimation.Core.Effect.Instance
         }
         protected override void OnUpdate(float t)
         {
-            foreach (var star in affectedStars)
+            foreach (var star in _affectedStars)
             {
                 star.Position.Current.X = MathUtil.Lerp(star.Position.Current.X, Center.X, t);
                 star.Position.Current.Y = MathUtil.Lerp(star.Position.Current.Y, Center.Y, t);
@@ -37,7 +36,7 @@ namespace StarAnimation.Core.Effect.Instance
         }
         protected override void OnReset()
         {
-            affectedStars.Clear();
+            _affectedStars.Clear();
         }
     }
 }

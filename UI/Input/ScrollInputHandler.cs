@@ -37,24 +37,24 @@ namespace Chinese_Chess_v3.UI.Input
         public static ScrollInputHandler Instance => _instance.Value;
         */
 
-        private readonly List<ScrollTarget> scrollTargets = new();
+        private readonly List<ScrollTarget> _scrollTargets = new();
 
 #nullable enable
-        private ScrollTarget? activeTarget = null;
+        private ScrollTarget? _activeTarget = null;
 #nullable disable
 
-        private readonly DragHandler dragHandler;
+        private readonly DragHandler _dragHandler;
 
-        public bool IsDragging => dragHandler.IsDragging;
+        public bool IsDragging => _dragHandler.IsDragging;
         public int ZIndex { get; set; } = 0;
 
         public ScrollInputHandler()
         {
-            dragHandler = new DragHandler();
-            dragHandler.OnDrag += HandleDrag;
+            _dragHandler = new DragHandler();
+            _dragHandler.OnDrag += HandleDrag;
             {
-                if (activeTarget?.Physics != null)
-                    activeTarget.Physics.Velocity.Reset();
+                if (_activeTarget?.Physics != null)
+                    _activeTarget.Physics.Velocity.Reset();
             }
             ;
         }
@@ -66,9 +66,9 @@ namespace Chinese_Chess_v3.UI.Input
             ScrollBehavior behavior = null,
             int zIndex = 0)
         {
-            if (scrollTargets.Exists(t => t.Element == element)) return;
+            if (_scrollTargets.Exists(t => t.Element == element)) return;
 
-            scrollTargets.Add(new ScrollTarget
+            _scrollTargets.Add(new ScrollTarget
             {
                 Element = element,
                 Physics = physics,
@@ -85,7 +85,7 @@ namespace Chinese_Chess_v3.UI.Input
         public bool IsDraggingWithinActiveTarget(Point location)
         {
             return IsDragging &&
-                activeTarget?.ViewportGetter().Contains(location) == true;
+                _activeTarget?.ViewportGetter().Contains(location) == true;
         }
 
         /// <summary>
@@ -95,12 +95,12 @@ namespace Chinese_Chess_v3.UI.Input
         {
             if (IsDragging)
             {
-                dragHandler.OnMouseUp(e);
-                activeTarget = null;
+                _dragHandler.OnMouseUp(e);
+                _activeTarget = null;
             }
-            for (int i = scrollTargets.Count - 1; i >= 0; i--)
+            for (int i = _scrollTargets.Count - 1; i >= 0; i--)
             {
-                var target = scrollTargets[i];
+                var target = _scrollTargets[i];
 
                 // If not IsVisible or not IsEnabled
                 if (!target.Element.IsInteractable || target.Element.Parent == null)
@@ -115,8 +115,8 @@ namespace Chinese_Chess_v3.UI.Input
                 var hitElement = target.Element.HitTestDeep(e.Location);
                 if (hitElement != null)
                 {
-                    activeTarget = target;
-                    dragHandler.OnMouseDown(e);
+                    _activeTarget = target;
+                    _dragHandler.OnMouseDown(e);
                     return true;
                 }
             }
@@ -129,7 +129,7 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public bool OnMouseMove(MouseEventArgs e)
         {
-            bool handled = dragHandler.OnMouseMove(e);
+            bool handled = _dragHandler.OnMouseMove(e);
             return handled;
         }
 
@@ -138,20 +138,20 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public bool OnMouseUp(MouseEventArgs e)
         {
-            bool handled = dragHandler.OnMouseUp(e);
+            bool handled = _dragHandler.OnMouseUp(e);
             return handled;
         }
 
         private void HandleDrag(Vector2F delta)
         {
-            if (activeTarget.Physics == null) return;
+            if (_activeTarget.Physics == null) return;
 
-            var b = activeTarget.Behavior;
+            var b = _activeTarget.Behavior;
             float dx = b.AllowDragX ? delta.X : 0;
             float dy = b.AllowDragY ? delta.Y : 0;
 
-            activeTarget.Physics.Position.Current += new Vector2F(dx, dy);
-            activeTarget.Physics.Velocity.Current = Vector2F.Zero;
+            _activeTarget.Physics.Position.Current += new Vector2F(dx, dy);
+            _activeTarget.Physics.Velocity.Current = Vector2F.Zero;
         }
 
         /// <summary>
@@ -159,10 +159,10 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public bool OnMouseWheel(MouseEventArgs e)
         {
-            if (activeTarget?.Physics == null || activeTarget?.Behavior?.AllowWheel != true)
+            if (_activeTarget?.Physics == null || _activeTarget?.Behavior?.AllowWheel != true)
                 return false;
 
-            activeTarget.Physics.Position.Current += new Vector2F(0, -e.Delta * 0.25f);
+            _activeTarget.Physics.Position.Current += new Vector2F(0, -e.Delta * 0.25f);
             return true;
         }
 
@@ -179,12 +179,12 @@ namespace Chinese_Chess_v3.UI.Input
         /// </summary>
         public void ResetDelta()
         {
-            if (activeTarget?.Physics == null) return;
+            if (_activeTarget?.Physics == null) return;
 
             // Only reset delta if not dragging
             if (!IsDragging)
             {
-                activeTarget.Physics.Velocity.Current = Vector2F.Zero;
+                _activeTarget.Physics.Velocity.Current = Vector2F.Zero;
             }
         }
         public void EndFrame() => ResetDelta();
@@ -203,7 +203,7 @@ namespace Chinese_Chess_v3.UI.Input
             public bool AllowWheel { get; set; } = true;
         }
 
-        public bool HasMovedEnoughToDrag() => dragHandler.HasMovedEnoughToDrag;
-        public float DragThreshold() => dragHandler.DragThreshold;
+        public bool HasMovedEnoughToDrag() => _dragHandler.HasMovedEnoughToDrag;
+        public float DragThreshold() => _dragHandler.DragThreshold;
     }
 }

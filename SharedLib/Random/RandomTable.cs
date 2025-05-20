@@ -17,11 +17,11 @@ namespace SharedLib.RandomTable
     /// </summary>
     public class RandomTable : IRandomProvider
     {
-        private readonly int[] intTable;
-        private readonly float[] floatTable;
-        private readonly double[] doubleTable;
-        private int index;
-        private readonly int tableSize;
+        private readonly int[] _intTable;
+        private readonly float[] _floatTable;
+        private readonly double[] _doubleTable;
+        private int _index;
+        private readonly int _tableSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RandomTable"/> class.
@@ -30,20 +30,20 @@ namespace SharedLib.RandomTable
         /// <param name="seed">The seed used to generate deterministic random sequences.</param>
         public RandomTable(int size, int seed)
         {
-            tableSize = size;
-            intTable = new int[size];
-            floatTable = new float[size];
-            doubleTable = new double[size];
+            _tableSize = size;
+            _intTable = new int[size];
+            _floatTable = new float[size];
+            _doubleTable = new double[size];
             Random rand = new Random(seed);
 
             for (int i = 0; i < size; i++)
             {
-                intTable[i] = rand.Next();
-                floatTable[i] = (float)rand.NextDouble();
-                doubleTable[i] = rand.NextDouble();
+                _intTable[i] = rand.Next();
+                _floatTable[i] = (float)rand.NextDouble();
+                _doubleTable[i] = rand.NextDouble();
             }
 
-            index = 0;
+            _index = 0;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace SharedLib.RandomTable
         /// <returns>An integer from the table.</returns>
         public int NextInt()
         {
-            int value = intTable[index];
+            int value = _intTable[_index];
             Advance();
             return value;
         }
@@ -84,7 +84,7 @@ namespace SharedLib.RandomTable
         /// <returns>A float in [0.0, 1.0).</returns>
         public float NextFloat()
         {
-            float value = floatTable[index];
+            float value = _floatTable[_index];
             Advance();
             return value;
         }
@@ -116,7 +116,7 @@ namespace SharedLib.RandomTable
         /// <returns>A double in [0.0, 1.0).</returns>
         public double NextDouble()
         {
-            double value = doubleTable[index];
+            double value = _doubleTable[_index];
             Advance();
             return value;
         }
@@ -143,16 +143,16 @@ namespace SharedLib.RandomTable
         }
 
         /// <summary>
-        /// Advances the current index to the next element in the tables (circular buffer).
+        /// Advances the current _index to the next element in the tables (circular buffer).
         /// </summary>
         private void Advance()
         {
-            index = (index + 1) % tableSize;
+            _index = (_index + 1) % _tableSize;
         }
 
         /// <summary>
-        /// Resets the index to the beginning of the table.
+        /// Resets the _index to the beginning of the table.
         /// </summary>
-        public void Reset() => index = 0;
+        public void Reset() => _index = 0;
     }
 }

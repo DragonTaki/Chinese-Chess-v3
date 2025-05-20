@@ -13,9 +13,10 @@ using System.Windows.Forms;
 
 using Chinese_Chess_v3.UI.Core;
 using Chinese_Chess_v3.UI.Input;
-using Microsoft.Extensions.DependencyInjection;
+
 using SharedLib.MathUtils;
 using SharedLib.PhysicsUtils;
+
 using static Chinese_Chess_v3.UI.Input.ScrollInputHandler;
 
 namespace Chinese_Chess_v3.UI.Elements
@@ -40,7 +41,7 @@ namespace Chinese_Chess_v3.UI.Elements
         public Velocity Velocity => _physics.Velocity;
         public Acceleration Acceleration => _physics.Acceleration;
 
-        private readonly IScrollInputHandler inputHandler;
+        private readonly IScrollInputHandler _inputHandler;
 
         // In abs position
         public RectangleF AbsViewportBounds
@@ -104,8 +105,9 @@ namespace Chinese_Chess_v3.UI.Elements
         }
         
         public UIScrollContainer(IScrollInputHandler scroll)
+            : base(zIndex: 0, isPersistent: false, type: UIElementType.ScrollContainer)
         {
-            inputHandler = scroll;
+            _inputHandler = scroll;
             // Register and bind
             scroll.RegisterScrollTarget(this, Physics, () => this.AbsViewportBounds, new ScrollBehavior
             {
@@ -193,7 +195,7 @@ namespace Chinese_Chess_v3.UI.Elements
         /// </summary>
         protected override bool HandleMouseDown(MouseEventArgs e)
         {
-            return inputHandler.OnMouseDown(e);
+            return _inputHandler.OnMouseDown(e);
         }
 
         /// <summary>
@@ -201,7 +203,7 @@ namespace Chinese_Chess_v3.UI.Elements
         /// </summary>
         protected override bool HandleMouseMove(MouseEventArgs e)
         {
-            return inputHandler.OnMouseMove(e);
+            return _inputHandler.OnMouseMove(e);
         }
 
         /// <summary>
@@ -209,7 +211,7 @@ namespace Chinese_Chess_v3.UI.Elements
         /// </summary>
         protected override bool HandleMouseUp(MouseEventArgs e)
         {
-            return inputHandler.OnMouseUp(e);
+            return _inputHandler.OnMouseUp(e);
         }
 
         /// <summary>
@@ -217,7 +219,7 @@ namespace Chinese_Chess_v3.UI.Elements
         /// </summary>
         protected override bool HandleMouseWheel(MouseEventArgs e)
         {
-            return inputHandler.OnMouseWheel(e);
+            return _inputHandler.OnMouseWheel(e);
         }
 
         /// <summary>
@@ -234,7 +236,7 @@ namespace Chinese_Chess_v3.UI.Elements
         /// </summary>
         public override void EndFrame()
         {
-            inputHandler.EndFrame();
+            _inputHandler.EndFrame();
         }
 
         /// <summary>

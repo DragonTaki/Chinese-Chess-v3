@@ -23,47 +23,47 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// <summary>
         /// Width of the drawing canvas.
         /// </summary>
-        private int width;
+        private int _width;
         public int Width
         {
-            get => width;
+            get => _width;
             set
             {
-                width = Math.Max(value, 1);
+                _width = Math.Max(value, 1);
             }
         }
 
         /// <summary>
         /// Height of the drawing canvas.
         /// </summary>
-        private int height;
+        private int _height;
         public int Height
         {
-            get => height;
+            get => _height;
             set
             {
-                height = Math.Max(value, 1);
+                _height = Math.Max(value, 1);
             }
         }
-        private readonly MainMenu menu;
+        private readonly MainMenu _menu;
 
         public MainMenuRenderer(MainMenu menu)
         {
-            this.menu = menu;
+            _menu = menu;
         }
 
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = menu.GetVisibleButtons();
-            var clip = menu.GetAbsClipRect();
+            var buttons = _menu.GetVisibleButtons();
+            var clip = _menu.GetAbsClipRect();
 
             //DrawOutline(g);
                 float margin = 3.0f;
             RectangleF rect = new RectangleF(UILayoutConstants.MainMenu.Position.X + margin,
                 UILayoutConstants.MainMenu.Position.Y + margin,
-                menu.Size.X - margin * 2,
-                menu.Size.Y - margin * 2);
+                _menu.Size.X - margin * 2,
+                _menu.Size.Y - margin * 2);
             DrawOutline(g);
 
             g.SetClip(clip);
@@ -83,8 +83,8 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
                 g.DrawRectangle(debugPen,
                 UILayoutConstants.MainMenu.Position.X + margin,
                 UILayoutConstants.MainMenu.Position.Y + margin,
-                menu.Size.X - margin * 2,
-                menu.Size.Y - margin * 2);
+                _menu.Size.X - margin * 2,
+                _menu.Size.Y - margin * 2);
             }
         }
         private void DrawButton(Graphics g, string text, Vector2F position, Vector2F size)

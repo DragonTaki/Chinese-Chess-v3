@@ -22,22 +22,22 @@ namespace StarAnimation.Controllers
         /// <summary>
         /// Optional background renderer (static or animated).
         /// </summary>
-        private readonly BackgroundController backgroundController;
+        private readonly BackgroundController _backgroundController;
 
         /// <summary>
         /// Controller that applies visual effects and overlays on the starfield.
         /// </summary>
-        private readonly EffectController effectController;
+        private readonly EffectController _effectController;
 
         /// <summary>
         /// Renderer responsible for drawing and updating star particles.
         /// </summary>
-        private readonly StarController starController;
+        private readonly StarController _starController;
 
         /// <summary>
-        /// Star animation timer.
+        /// Star animation _timer.
         /// </summary>
-        private readonly ITimerProvider timer;
+        private readonly ITimerProvider _timer;
 
 
         /// <summary>
@@ -51,15 +51,15 @@ namespace StarAnimation.Controllers
             int width = GlobalWindow.Width;
             int height = GlobalWindow.Height;
 
-            timer = GlobalTime.Timer;
+            _timer = GlobalTime.Timer;
 
             // Initialize all renderers and controllers
-            backgroundController = new BackgroundController(width, height);
-            starController = new StarController(width, height);
-            effectController = new EffectController(width, height, starController);
+            _backgroundController = new BackgroundController(width, height);
+            _starController = new StarController(width, height);
+            _effectController = new EffectController(width, height, _starController);
 
             // Register update event
-            //timer.OnAnimationFrame += Update;
+            //_timer.OnAnimationFrame += Update;
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace StarAnimation.Controllers
         /// </summary>
         public void Update()
         {
-            backgroundController.Update();
-            effectController.Update();
-            starController.Update();
+            _backgroundController.Update();
+            _effectController.Update();
+            _starController.Update();
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace StarAnimation.Controllers
         {
             if (g == null) return;
 
-            backgroundController.Draw(g);
-            effectController.Draw(g);
-            starController.Draw(g);
+            _backgroundController.Draw(g);
+            _effectController.Draw(g);
+            _starController.Draw(g);
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace StarAnimation.Controllers
         /// <param name="height">New screen height.</param>
         public void Resize(int width, int height)
         {
-            backgroundController.Resize(width, height);
-            effectController.Resize(width, height);
-            starController.Resize(width, height);
+            _backgroundController.Resize(width, height);
+            _effectController.Resize(width, height);
+            _starController.Resize(width, height);
         }
     }
 }

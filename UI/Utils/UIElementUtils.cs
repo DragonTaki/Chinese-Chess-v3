@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Chinese_Chess_v3.UI.Core;
+using Chinese_Chess_v3.UI.Elements;
 
 namespace Chinese_Chess_v3.UI.Utils
 {
@@ -30,8 +31,20 @@ namespace Chinese_Chess_v3.UI.Utils
             {
                 float y = element.LocalPosition.Current.Y;
                 float h = element.Size.Y;
-                element.IsEnabled =  y + h > clippingRect.Top && y < clippingRect.Bottom;
+                element.IsEnabled = y + h > clippingRect.Top && y < clippingRect.Bottom;
             }
+        }
+        
+        public static UIOverlayNode GetOrCreateOverlay(this UIElement element)
+        {
+            var root = element.GetRoot();
+            var overlay = root.Children.OfType<UIOverlayNode>().FirstOrDefault();
+            if (overlay == null)
+            {
+                overlay = new UIOverlayNode();
+                root.AddChild(overlay);
+            }
+            return overlay;
         }
     }
 }

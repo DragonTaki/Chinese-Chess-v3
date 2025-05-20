@@ -19,8 +19,9 @@ namespace SharedLib.Timing
     /// </summary>
     public class TimerManager : ITimerProvider
     {
-        private Stopwatch animationStopwatch;
-        private long lastAnimationTimestamp;
+        private Stopwatch _animationStopwatch;
+        private Timer _animationTimer;
+        private long _lastAnimationTimestamp;
 
         /// <summary>
         /// Gets the elapsed time in seconds since the last animation frame.
@@ -30,9 +31,7 @@ namespace SharedLib.Timing
         /// <summary>
         /// Gets the total elapsed time in seconds since the timer started.
         /// </summary>
-        public float ElapsedTimeInSeconds => animationStopwatch.ElapsedMilliseconds / 1000f;
-
-        private Timer animationTimer;
+        public float ElapsedTimeInSeconds => _animationStopwatch.ElapsedMilliseconds / 1000f;
 
         /// <summary>
         /// Event invoked on every animation frame tick.
@@ -44,17 +43,17 @@ namespace SharedLib.Timing
         /// </summary>
         public TimerManager()
         {
-            animationStopwatch = new Stopwatch();
-            lastAnimationTimestamp = 0;
+            _animationStopwatch = new Stopwatch();
+            _lastAnimationTimestamp = 0;
 
-            animationTimer = new Timer { Interval = TimerSettings.GameAnimationInterval };
-            animationTimer.Tick += (s, e) =>
+            _animationTimer = new Timer { Interval = TimerSettings.GameAnimationInterval };
+            _animationTimer.Tick += (s, e) =>
             {
-                if (!animationStopwatch.IsRunning) return;
+                if (!_animationStopwatch.IsRunning) return;
 
-                long current = animationStopwatch.ElapsedMilliseconds;
-                DeltaTimeInSeconds = (current - lastAnimationTimestamp) / 1000f;
-                lastAnimationTimestamp = current;
+                long current = _animationStopwatch.ElapsedMilliseconds;
+                DeltaTimeInSeconds = (current - _lastAnimationTimestamp) / 1000f;
+                _lastAnimationTimestamp = current;
 
                 OnAnimationFrame?.Invoke();
             };
@@ -75,9 +74,9 @@ namespace SharedLib.Timing
         /// </summary>
         public void StartTimers()
         {
-            animationStopwatch.Restart();
-            lastAnimationTimestamp = 0;
-            animationTimer.Start();
+            _animationStopwatch.Restart();
+            _lastAnimationTimestamp = 0;
+            _animationTimer.Start();
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace SharedLib.Timing
         /// </summary>
         public void StopTimers()
         {
-            animationTimer.Stop();
+            _animationTimer.Stop();
         }
     }
 }

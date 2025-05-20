@@ -27,20 +27,20 @@ namespace Chinese_Chess_v3.UI.Core
         {
             _sp = sp;
         }
-        private readonly Dictionary<Type, Func<IUiFactory, UIElement>> factories = new();
-        private readonly Dictionary<Type, Func<IUiFactoryContext, UIElement>> factoriesWithContext = new();
+        private readonly Dictionary<Type, Func<IUiFactory, UIElement>> _factories = new();
+        private readonly Dictionary<Type, Func<IUiFactoryContext, UIElement>> _factoriesWithContext = new();
 
         public T Create<T>() where T : UIElement
         {
             var type = typeof(T);
 
-            if (factoriesWithContext.TryGetValue(type, out var contextFactory))
+            if (_factoriesWithContext.TryGetValue(type, out var contextFactory))
             {
                 var ctx = new UiFactoryContext(_sp, this);
                 return (T)contextFactory(ctx);
             }
             
-            if (factories.TryGetValue(type, out var factory))
+            if (_factories.TryGetValue(type, out var factory))
                 return (T)factory(this);
                 
             throw new InvalidOperationException($"No factory registered for {type}");
@@ -48,21 +48,21 @@ namespace Chinese_Chess_v3.UI.Core
 
         public void RegisterFactory<T>(Func<IUiFactory, T> factory) where T : UIElement
         {
-            factories[typeof(T)] = factory;
+            _factories[typeof(T)] = factory;
         }
         public void RegisterFactory<T>(Func<IUiFactoryContext, T> factory) where T : UIElement
         {
-            factoriesWithContext[typeof(T)] = ctx => factory(ctx);
+            _factoriesWithContext[typeof(T)] = ctx => factory(ctx);
         }
 
         public void ClearCache<T>() where T : UIElement
         {
-            factories.Remove(typeof(T));
+            _factories.Remove(typeof(T));
         }
 
         public void ClearAllCache()
         {
-            factories.Clear();
+            _factories.Clear();
         }
 
         public UIScrollContainer CreateScrollContainer()
@@ -78,8 +78,8 @@ namespace Chinese_Chess_v3.UI.Core
             var handler = _sp.GetRequiredService<MainMenuHandler>();
             var renderer = _sp.GetRequiredService<MainMenuRenderer>();
 
-            handler.Init(this, menu);
-            menu.Setup(this, handler, renderer);
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
 
             return menu;
         }
@@ -89,8 +89,8 @@ namespace Chinese_Chess_v3.UI.Core
             var handler = _sp.GetRequiredService<GameMenuHandler>();
             var renderer = _sp.GetRequiredService<GameMenuRenderer>();
 
-            handler.Init(this, menu);
-            menu.Setup(this, handler, renderer);
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
 
             return menu;
         }
