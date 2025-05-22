@@ -9,7 +9,7 @@
 
 using System.Drawing;
 
-using Chinese_Chess_v3.Utils;
+using Chinese_Chess_v3.Utils.StyleUtils;
 
 using SharedLib.Geometry;
 using SharedLib.MathUtils;

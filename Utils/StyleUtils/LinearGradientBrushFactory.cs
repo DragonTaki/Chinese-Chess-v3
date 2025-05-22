@@ -12,12 +12,12 @@ using System.Drawing.Drawing2D;
 
 using SharedLib.Geometry;
 
-namespace Chinese_Chess_v3.Configs.Style
+namespace Chinese_Chess_v3.Utils.StyleUtils
 {
     /// <summary>
     /// A factory that creates vertical or directional LinearGradientBrush instances.
     /// </summary>
-    public class LinearGradientBrushFactory
+    public class LinearGradientBrushFactory : IBrushFactory
     {
         public Color TopColor { get; set; }
         public Color BottomColor { get; set; }
@@ -33,7 +33,7 @@ namespace Chinese_Chess_v3.Configs.Style
         /// <summary>
         /// Creates a LinearGradientBrush from a RectangleF.
         /// </summary>
-        public LinearGradientBrush Create(RectangleF bounds)
+        public Brush Create(RectangleF bounds)
         {
             return new LinearGradientBrush(bounds, TopColor, BottomColor, Mode);
         }
@@ -41,6 +41,6 @@ namespace Chinese_Chess_v3.Configs.Style
         /// <summary>
         /// Creates a LinearGradientBrush from a LayoutF by converting it to RectangleF.
         /// </summary>
-        public LinearGradientBrush Create(LayoutF layout) => Create(layout.ToRectangleF());
+        public Brush Create(LayoutF layout) => Create(layout.ToRectangleF());
     }
 }

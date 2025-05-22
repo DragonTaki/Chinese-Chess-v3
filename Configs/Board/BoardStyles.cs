@@ -10,7 +10,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Chinese_Chess_v3.Utils;
+using Chinese_Chess_v3.Utils.StyleUtils;
 
 public static class BoardStyles
 {

@@ -1,9 +1,9 @@
 /* ----- ----- ----- ----- */
-// IButtonDrawStyle.cs
+// IBoxDrawStyle.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
-// Create Date: 2025/05/19
-// Update Date: 2025/05/19
+// Create Date: 2025/05/22
+// Update Date: 2025/05/22
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -14,9 +14,9 @@ using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.Configs.Style
 {
-    public interface IButtonDrawStyle : IBoxDrawStyle
+    public interface IBoxDrawStyle
     {
-        void Draw(Graphics g, string text, LayoutF bounds);
-        void Draw(Graphics g, string text, Vector2F position, Vector2F size);
+        void Draw(Graphics g, LayoutF bounds);
+        void Draw(Graphics g, Vector2F position, Vector2F size);
     }
 }

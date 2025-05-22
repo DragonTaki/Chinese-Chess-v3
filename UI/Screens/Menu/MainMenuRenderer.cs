@@ -58,8 +58,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             var buttons = _menu.GetVisibleButtons();
             var clip = _menu.GetAbsClipRect();
 
-            //DrawOutline(g);
-                float margin = 3.0f;
+            float margin = 3.0f;
             RectangleF rect = new RectangleF(UILayoutConstants.MainMenu.Position.X + margin,
                 UILayoutConstants.MainMenu.Position.Y + margin,
                 _menu.Size.X - margin * 2,

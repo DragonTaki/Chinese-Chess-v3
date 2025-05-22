@@ -18,6 +18,7 @@ using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
+using Chinese_Chess_v3.Utils.GraphicsUtils.GraphicsPaths;
 
 namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
 {
@@ -60,8 +61,8 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
             int h = this.Height;
             int inset = 4;
 
-            var fullShield = GraphicsPaths.CreateShieldPath(w, h);
-            var innerShield = GraphicsPaths.CreateShieldPath(w - inset * 2, h - inset * 2);
+            var fullShield = ShieldPath.Create(w, h);
+            var innerShield = ShieldPath.Create(w - inset * 2, h - inset * 2);
             innerShield.Transform(new Matrix(1, 0, 0, 1, inset, inset)); // move inward
 
             // Black side background
@@ -83,8 +84,8 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
             }
 
             // Draw inner shield overlays
-            using (GraphicsPath leftInnerPath = GraphicsPaths.CreateShieldPath(w - inset * 2, h - inset * 2))
-            using (GraphicsPath rightInnerPath = GraphicsPaths.CreateShieldPath(w - inset * 2, h - inset * 2))
+            using (GraphicsPath leftInnerPath = ShieldPath.Create(w - inset * 2, h - inset * 2))
+            using (GraphicsPath rightInnerPath = ShieldPath.Create(w - inset * 2, h - inset * 2))
             {
                 leftInnerPath.Transform(new Matrix(1, 0, 0, 1, inset, inset));
                 rightInnerPath.Transform(new Matrix(1, 0, 0, 1, inset, inset));
@@ -122,7 +123,7 @@ namespace Chinese_Chess_v3.UI.Screens.Game.Sidebar
             int w = this.Width;
             int h = this.Height;
 
-            using (GraphicsPath shieldPath = GraphicsPaths.CreateShieldPath(w, h))
+            using (GraphicsPath shieldPath = ShieldPath.Create(w, h))
             using (SolidBrush bgBrush = new SolidBrush(UILayoutConstants.Sidebar.BackgroundColor))
             {
                 g.FillPath(bgBrush, shieldPath); // 只填滿盾牌形狀，不畫整個矩形

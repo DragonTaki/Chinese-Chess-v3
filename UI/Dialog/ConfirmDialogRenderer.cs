@@ -9,7 +9,8 @@
 
 using System.Drawing;
 using System.Linq;
-
+using Chinese_Chess_v3.Configs.Style;
+using Chinese_Chess_v3.UI.Constants;
 using Chinese_Chess_v3.UI.Core.Elements;
 
 namespace Chinese_Chess_v3.UI.Dialog
@@ -19,11 +20,9 @@ namespace Chinese_Chess_v3.UI.Dialog
         public void Draw(Graphics g, ConfirmDialog dialog)
         {
             var bounds = dialog.GetCurrentAbsoluteBounds();
-            using var bgBrush = new SolidBrush(Color.FromArgb(220, Color.DarkGray));
-            using var borderPen = new Pen(Color.Black, 2);
-
-            g.FillRectangle(bgBrush, bounds);
-            g.DrawRectangle(borderPen, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            
+            IBoxDrawStyle style = UILayoutStyles.Overlay.Dialog.Style;
+            style.Draw(g, bounds);
             
             foreach (var child in dialog.Children.OfType<UIButton<ConfirmDialogResult>>())
             {

@@ -94,6 +94,7 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
         /// </summary>
         public void SwitchSubmenu(MainMenuType selectedMenu)
         {
+            Console.WriteLine($"MaunMenu: selected: {selectedMenu}");
             if (selectedMenu != MainMenuType.Exit)
             {
                 CancelCurrentSubmenu();
@@ -118,6 +119,19 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
             }
         }
 
+        /// <summary>
+        /// Cancel and remove current submenu from the view.
+        /// </summary>
+        public void CancelCurrentSubmenu()
+        {
+            if (_currentSubmenu.HasValue)
+            {
+                var submenu = _submenus[_currentSubmenu.Value];
+                submenu.IsVisible = false;
+                _menu.RemoveChild(submenu);
+            }
+        }
+
         private void ClickExitAction()
         {
             DialogManager.ShowConfirm(
@@ -129,22 +143,12 @@ namespace Chinese_Chess_v3.UI.Screens.Menu
                     {
                         ExitApplication();
                     }
+                    else if (result == ConfirmDialogResult.No)
+                    {
+                        //
+                    }
                 }
             );
-        }
-
-        /// <summary>
-        /// Cancel and remove current submenu from the view.
-        /// </summary>
-        public void CancelCurrentSubmenu()
-        {
-            if (_currentSubmenu.HasValue)
-            {
-                var submenu = _submenus[_currentSubmenu.Value];
-                submenu.IsVisible = false;
-                _menu.RemoveChild(submenu);
-                _currentSubmenu = null;
-            }
         }
 
         /// <summary>

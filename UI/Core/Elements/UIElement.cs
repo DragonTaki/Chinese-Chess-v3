@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
     public class UIElement : IUpdatable, IDrawable, IInputHandler
     {
         private static long s_nextId = 0;
-    
+
         /// <summary>
         /// Unique entity ID for each UI element, auto-incremented.
         /// Can be used to track or identify specific UI elements.
@@ -54,13 +55,14 @@ namespace Chinese_Chess_v3.UI.Core.Elements
         /// <summary>
         /// Cache sorted child nodes (by ZIndex).
         /// </summary>
-        private List<UIElement> _sortedChildren = new();
+        private List<UIElement> _sortedChildrenAsc;
+        private List<UIElement> _sortedChildrenDesc;
 
         /// <summary>
         /// The position of the component relative to the parent node.
         /// </summary>
         public virtual UIPosition LocalPosition { get; set; } = new UIPosition(Vector2F.Zero);
-        
+
         /// <summary>
         /// The width and height of the UI element.
         /// </summary>
@@ -78,7 +80,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
                 Size = value.Size;
             }
         }
-        
+
         /// <summary>
         /// Controls the priority of drawing and input event handling of components in the parent node.
         /// The higher value means the higher layer, which will be drawn and receive input first.
@@ -128,7 +130,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
         /// <summary>
         /// Whether it can interact with the mouse (click, drag, etc.) or keybord.
         /// </summary>
-        public bool IsInteractable => IsVisible && IsEnabled;
+        public virtual bool IsInteractable => IsVisible && IsEnabled;
 
         /// <summary>
         /// Is it still possible to HitTest even if `IsVisible == false` (e.g. transparent mask).
@@ -169,7 +171,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
             }
             return pos;
         }
-        
+
         /// <summary>
         /// Get absolute position of this UI element.
         /// </summary>
@@ -181,7 +183,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
 #nullable enable
             UIElement? current = this.Parent;
 #nullable disable
-            
+
             while (current != null)
             {
                 // Once a parent object with Physics2D is encountered, the position is the absolute anchor point and recursion stops
@@ -197,14 +199,14 @@ namespace Chinese_Chess_v3.UI.Core.Elements
 
             return accumulated;
         }
-        
+
         /// <summary>
         /// Get absolute bounds of this UI element.
         /// </summary>
         /// <returns>Absolute bounds of this UI element.</returns>
-        public RectangleF GetCurrentAbsoluteBounds()
+        public LayoutF GetCurrentAbsoluteBounds()
         {
-            return new RectangleF(GetCurrentAbsolutePosition().ToPointF(), Size.ToSizeF());
+            return new LayoutF(GetCurrentAbsolutePosition(), Size);
         }
 
         /// <summary>
@@ -220,7 +222,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
                 screenPoint.Y >= absPos.Y &&
                 screenPoint.Y <= absPos.Y + Size.Y;
         }
-        
+
         public UIElement GetRoot()
         {
             UIElement node = this;
@@ -236,15 +238,14 @@ namespace Chinese_Chess_v3.UI.Core.Elements
         /// </summary>
         public IReadOnlyList<UIElement> GetSortedChildrenByZIndex(bool descending = false)
         {
-            if (_isChildrenSortedDirty)
+            if (_isChildrenSortedDirty || _sortedChildrenAsc == null || _sortedChildrenDesc == null)
             {
-                _sortedChildren = descending
-                    ? Children.OrderByDescending(c => c.ZIndex).ToList()
-                    : Children.OrderBy(c => c.ZIndex).ToList();
+                _sortedChildrenAsc = Children.OrderBy(c => c.ZIndex).ToList();
+                _sortedChildrenDesc = Children.OrderByDescending(c => c.ZIndex).ToList();
                 _isChildrenSortedDirty = false;
             }
 
-            return _sortedChildren;
+            return descending ? _sortedChildrenDesc : _sortedChildrenAsc;
         }
 
         public virtual void AddChild(UIElement child)
@@ -326,13 +327,14 @@ namespace Chinese_Chess_v3.UI.Core.Elements
         /// Starting from this element, search the sub-elements depth-first to find the top-level UIElement that hits the point
         /// </summary>
 #nullable enable
-        public UIElement? HitTestDeep(PointF point)
+        public UIElement? HitTestDeep(PointF point, bool isRootCall = true)
 #nullable disable
         {
+            //Console.WriteLine($"[HitTestDeep] Checking: {this.GetType().Name}");
             // If no hit, return `null`
 
-            // Check self
-            if (!HitTest(point))
+            // Check root
+            if (isRootCall && this.GetRoot().ElementType != UIElementType.Root)
                 return null;
 
             // Check ancestors
@@ -343,22 +345,29 @@ namespace Chinese_Chess_v3.UI.Core.Elements
                     return null;
                 current = current.Parent;
             }
+            var root = this.GetRoot();
 
             // Search from the last child element forward (elements with higher ZIndex are at the back)
-            foreach (var child in Children
-                .Where(c => c.IsInteractable)
-                .OrderByDescending(c => c.ZIndex))
+            foreach (var child in GetSortedChildrenByZIndex(descending: true))
             {
-                if (!child.HitTest(point))
-                    continue;
-
+                //Console.WriteLine($"[HitTestDeep] Checking child deep: {child.GetType().Name}");
                 var hit = child.HitTestDeep(point);
-                if (hit != null)
+                if (hit != null && hit.IsInteractable)
+                {
+                    //Console.WriteLine($"[HitTestDeep] Hit child: {hit.GetType().Name}");
                     return hit;
+                }
+            }
+
+            // Check self in the end
+            if (HitTest(point))
+            {
+                return this;
             }
 
             // If none of the child elements are hit, return self
-            return this;
+            //Console.WriteLine($"[HitTestDeep] Child and this no hit: {this.GetType().Name}");
+            return null;
         }
 
         public virtual void Update()
@@ -380,12 +389,11 @@ namespace Chinese_Chess_v3.UI.Core.Elements
             OnDraw(g);
 
             foreach (var child in GetSortedChildrenByZIndex()
-                .Where(c => !c.DisableRender)
-                .OrderBy(c => c.ZIndex))
+                .Where(c => !c.DisableRender))
                 if (child.IsVisible)
                     child.Draw(g);
         }
-        
+
         protected virtual void OnDraw(Graphics g) { }
 
         // Mouse event handling
@@ -475,11 +483,13 @@ namespace Chinese_Chess_v3.UI.Core.Elements
 
         public virtual bool OnMouseClick(MouseEventArgs e)
         {
-            //return false;
+            var uIElement = this;
             return PropagateMouseEvent(e, UIEventType.MouseClick);
         }
-        protected virtual bool HandleMouseClick(MouseEventArgs e)
+        public virtual bool HandleMouseClick(MouseEventArgs e)
         {
+            var uIElement = this;
+            var root = this.GetRoot();
             return false;
         }
 
@@ -495,5 +505,4 @@ namespace Chinese_Chess_v3.UI.Core.Elements
             }
         }
     }
-
 }

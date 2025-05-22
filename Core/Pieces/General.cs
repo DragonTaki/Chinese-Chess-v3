@@ -17,8 +17,6 @@ namespace Chinese_Chess_v3.Core
 {
     public class General : Piece
     {
-        private PlayerSide side;
-
         // Constructor
         public General(int x, int y, PlayerSide side)
             : base(PieceType.General, x, y, side)

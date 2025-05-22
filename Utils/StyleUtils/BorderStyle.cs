@@ -9,7 +9,7 @@
 
 using System.Drawing;
 
-namespace Chinese_Chess_v3.Configs.Style
+namespace Chinese_Chess_v3.Utils.StyleUtils
 {
     public class BorderStyle
     {

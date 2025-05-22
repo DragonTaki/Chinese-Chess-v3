@@ -12,11 +12,42 @@ using System.Drawing.Drawing2D;
 
 using Chinese_Chess_v3.Configs.Style;
 using Chinese_Chess_v3.Utils;
+using Chinese_Chess_v3.Utils.StyleUtils;
 
 namespace Chinese_Chess_v3.UI.Constants
 {
     public static class UILayoutStyles
     {
+        public static class Overlay
+        {
+            public static class Dialog
+            {
+                public static class Border
+                {
+                    public const float CornerRadius = 12.0f;
+
+                    public static BorderStyle Style = new BorderStyle
+                    {
+                        Width = 4.0f,
+                        Color = StyleHelper.GetColor("#707C74", 1.0f)  // #707C74
+                    };
+                }
+                public static class Background
+                {
+                    public static readonly Color Color = StyleHelper.GetColor("#FFFFFF", 1.0f);  // #FFFFFF
+                    public static IBrushFactory BrushFactory =>
+                        new SolidBrushFactory(Color);
+                }
+
+                public static IBoxDrawStyle Style = new InwardCornerDialogStyle
+                {
+                    BackgroundBrushFactory = Background.BrushFactory,
+                    Border = Border.Style,
+                    CornerRadius = Border.CornerRadius
+                };
+            }
+        }
+
         public static class MainMenu
         {
             public static class Button
@@ -44,7 +75,7 @@ namespace Chinese_Chess_v3.UI.Constants
                 {
                     public static readonly Color TopColor = StyleHelper.GetColor("#FFFFFF", 0.25f);  // #FFFFFF
                     public static readonly Color BottomColor = StyleHelper.GetColor("#F0F0F0", 0.25f);  // #F0F0F0
-                    public static LinearGradientBrushFactory BrushFactory =>
+                    public static IBrushFactory BrushFactory =>
                         new LinearGradientBrushFactory(TopColor, BottomColor, LinearGradientMode.Vertical);
                 }
 

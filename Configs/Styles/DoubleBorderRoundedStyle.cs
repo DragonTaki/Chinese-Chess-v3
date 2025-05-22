@@ -10,25 +10,27 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Chinese_Chess_v3.Utils.GraphicsUtils;
+using Chinese_Chess_v3.Utils.GraphicsUtils.GraphicsPaths;
+using Chinese_Chess_v3.Utils.StyleUtils;
 
 using SharedLib.Geometry;
 using SharedLib.MathUtils;
 
 namespace Chinese_Chess_v3.Configs.Style
 {
-    public class DoubleBorderRoundedStyle : IButtonDrawStyle
+    public class DoubleBorderRoundedStyle : IBoxDrawStyle, IButtonDrawStyle
     {
-        public Font Font { get; set; }
-        public Brush TextBrush { get; set; }
-        public LinearGradientBrushFactory BackgroundBrushFactory { get; set; }
+        public float CornerRadius { get; set; }
+        public float Margin { get; set; }
         public BorderStyle OuterBorder { get; set; }
         public BorderStyle InnerBorder { get; set; }
 
-        public float Margin { get; set; }
-        public float CornerRadius { get; set; }
+        public IBrushFactory BackgroundBrushFactory { get; set; }
 
-        public void Draw(Graphics g, string text, LayoutF bounds)
+        public Font Font { get; set; }
+        public Brush TextBrush { get; set; }
+
+        private void DrawBox(Graphics g, LayoutF bounds)
         {
             var outerGap = OuterBorder.Width;
             var innerGap = outerGap + Margin * 2 + InnerBorder.Width;
@@ -36,8 +38,8 @@ namespace Chinese_Chess_v3.Configs.Style
             var outerRect = bounds.Inset(outerGap / 2f);
             var innerRect = bounds.Inset(innerGap / 2f);
 
-            using var outerPath = GraphicsPaths.CreateRoundedRectPath(outerRect.Size.X, outerRect.Size.Y, CornerRadius);
-            using var innerPath = GraphicsPaths.CreateRoundedRectPath(innerRect.Size.X, innerRect.Size.Y, CornerRadius - Margin);
+            using var outerPath = RoundedRectPath.Create(outerRect.Size.X, outerRect.Size.Y, CornerRadius);
+            using var innerPath = RoundedRectPath.Create(innerRect.Size.X, innerRect.Size.Y, CornerRadius - Margin);
 
             using var outerMatrix = new Matrix();
             using var innerMatrix = new Matrix();
@@ -46,21 +48,39 @@ namespace Chinese_Chess_v3.Configs.Style
             outerPath.Transform(outerMatrix);
             innerPath.Transform(innerMatrix);
 
-            using var fillBrush = BackgroundBrushFactory.Create(bounds);
-            g.FillPath(fillBrush, outerPath);
+            using var brush = BackgroundBrushFactory.Create(bounds);
+            g.FillPath(brush, outerPath);
 
             using var outerPen = new Pen(OuterBorder.Color, OuterBorder.Width);
             using var innerPen = new Pen(InnerBorder.Color, InnerBorder.Width);
             g.DrawPath(outerPen, outerPath);
             g.DrawPath(innerPen, innerPath);
+        }
 
-            var textSize = g.MeasureString(text, Font);
-            float textX = bounds.Position.X + (bounds.Size.X - textSize.Width) / 2f;
-            float textY = bounds.Position.Y + (bounds.Size.Y - textSize.Height) / 2f;
-            g.DrawString(text, Font, TextBrush, textX, textY);
+        // IBoxDrawStyle
+        public void Draw(Graphics g, LayoutF bounds)
+        {
+            DrawBox(g, bounds);
+        }
+
+        public void Draw(Graphics g, Vector2F position, Vector2F size)
+            => Draw(g, new LayoutF(position, size));
+
+        // IButtonDrawStyle
+        public void Draw(Graphics g, string text, LayoutF bounds)
+        {
+            DrawBox(g, bounds);
+
+            if (!string.IsNullOrEmpty(text) && TextBrush != null)
+            {
+                var textSize = g.MeasureString(text, Font);
+                float textX = bounds.Position.X + (bounds.Size.X - textSize.Width) / 2f;
+                float textY = bounds.Position.Y + (bounds.Size.Y - textSize.Height) / 2f;
+                g.DrawString(text, Font, TextBrush, textX, textY);
+            }
         }
 
         public void Draw(Graphics g, string text, Vector2F position, Vector2F size)
-            => Draw( g, text, new LayoutF(position, size));
+            => Draw(g, text, new LayoutF(position, size));
     }
 }

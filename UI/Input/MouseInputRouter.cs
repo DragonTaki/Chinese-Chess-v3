@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -31,6 +32,7 @@ namespace Chinese_Chess_v3.UI.Input
         public bool SuppressUIWhenDragging { get; set; } = true;
         private bool _dragStarted = false;
         private bool _hasDragged = false;
+        public bool IsDragging => _dragStarted || _hasDragged;
         private UIElement _pressedElement = null;
 
 #nullable enable
@@ -51,7 +53,8 @@ namespace Chinese_Chess_v3.UI.Input
         {
             _dragStarted = false;
             _hasDragged = false;
-            _pressedElement = Root.HitTestDeep(e.Location);
+            Console.WriteLine($"[MouseDown] MouseDown start");
+            
             bool handled = false;
 
             // Than other mouse event _handlers
@@ -63,6 +66,9 @@ namespace Chinese_Chess_v3.UI.Input
                     break;
                 }
             }
+
+            _pressedElement = Root.HitTestDeep(e.Location);
+            Console.WriteLine($"[MouseDown] _pressedElement = {_pressedElement?.GetType().Name}");
 
             // Process UI mouse event first
             if (!handled && _pressedElement != null)
@@ -77,16 +83,20 @@ namespace Chinese_Chess_v3.UI.Input
         /// <summary>Handle MouseMove: update scroll and forward to UI.</summary>
         public bool OnMouseMove(MouseEventArgs e)
         {
+            Console.WriteLine($"[MouseMove] _dragStarted = {_dragStarted}, _hasDragged = {_hasDragged}");
+            bool handled = false;
+
             // Event _handlers first, then we know if is dragging or not
             foreach (var h in _handlers)
             {
                 if (h.OnMouseMove(e))
                 {
+                    handled = true;
                     break;
                 }
             }
 
-            if (SuppressUIWhenDragging)
+            if (!handled && SuppressUIWhenDragging)
             {
                 if (!_dragStarted && _scrollHandler?.IsDragging == true && _scrollHandler.HasMovedEnoughToDrag())
                 {
@@ -117,13 +127,16 @@ namespace Chinese_Chess_v3.UI.Input
                 h.OnMouseUp(e);
 
             bool blockClick = SuppressUIWhenDragging && _dragStarted && _hasDragged;
+            Console.WriteLine($"[MouseUp] _pressedElement = {_pressedElement?.GetType().Name}, blockClick = {blockClick}");
 
             if (_pressedElement != null)
             {
                 _pressedElement.OnMouseUp(e);
 
                 if (!blockClick && _pressedElement.HitTest(e.Location))
-                    _pressedElement.OnMouseClick(e);
+                {
+                    _pressedElement.HandleMouseClick(e);
+                }
 
                 _pressedElement = null;
             }
@@ -148,16 +161,14 @@ namespace Chinese_Chess_v3.UI.Input
 
         public bool OnMouseClick(MouseEventArgs e)
         {
-            if (!_dragStarted)
-            {
-                // Process UI mouse event first
-                if (Root.OnMouseClick(e))
-                    return true;
+            // Windows mouse event
+            // If [press -> drag -> release]
+            // Windows will give [mouse down -> mouse move -> mouse click + mouse up]
+            // If [click]
+            // Windows will give [mouse click + mouse up]
 
-                // Than other mouse event _handlers
-                foreach (var h in _handlers)
-                    if (h.OnMouseClick(e)) return true;
-            }
+            // Thus manual disable mouse click action
+            // All handling by mouse up, it will decided user is drag or click
 
             return false;
         }

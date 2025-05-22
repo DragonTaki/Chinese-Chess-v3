@@ -19,17 +19,28 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
     public class DialogManager : InitializableOnceBase<UIRootNode>
     {
         private static ConfirmDialog _confirmDialog;
-        private static UIOverlayNode _overlay;
+        private static UIOverlayMask _overlayMask;
+        private static UIOverlayNode _overlayNode;
 
-        public DialogManager() {}
+        public DialogManager() { }
 
         protected override void OnInit(UIRootNode root)
         {
-            _overlay = UIElementUtils.GetOrCreateOverlay(root);
+            _overlayNode = UIElementUtils.GetOrCreateOverlay(root);
+
             if (_confirmDialog == null)
             {
-                _confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer());
-                _overlay.AddChild(_confirmDialog);
+                _confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer())
+                {
+                    ZIndex = int.MaxValue - 1
+                };
+                _overlayMask = new UIOverlayMask(_confirmDialog)
+                {
+                    ZIndex = int.MaxValue
+                };
+
+                _overlayNode.AddChild(_overlayMask);
+                _overlayNode.AddChild(_confirmDialog);
             }
         }
 
@@ -38,7 +49,13 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
             ConfirmDialogType type,
             Action<ConfirmDialogResult> callback)
         {
+            _overlayMask.Show();
             _confirmDialog.Show(message, type, callback);
+        }
+        public static void HideConfirm()
+        {
+            _overlayMask?.Hide();
+            _confirmDialog?.Hide();
         }
     }
 }

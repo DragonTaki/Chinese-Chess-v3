@@ -47,6 +47,8 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
             ClearNonPersistentChildren(_rootElement);
             _mainMenu ??= _factory.CreateMainMenu();
             _mainMenu.IsVisible = true;
+            if (_gameMenu != null)
+                _gameMenu.IsVisible = false;
             _rootElement.AddChild(_mainMenu);
         }
 
@@ -58,6 +60,8 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
             ClearNonPersistentChildren(_rootElement);
             _gameMenu ??= _factory.CreateGameMenu();
             _gameMenu.IsVisible = true;
+            if (_mainMenu != null)
+                _mainMenu.IsVisible = false;
             _rootElement.AddChild(_gameMenu);
         }
 

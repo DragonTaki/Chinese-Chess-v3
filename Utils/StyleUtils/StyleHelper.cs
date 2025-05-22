@@ -9,9 +9,8 @@
 
 using System;
 using System.Drawing;
-using System.Globalization;
 
-namespace Chinese_Chess_v3.Utils
+namespace Chinese_Chess_v3.Utils.StyleUtils
 {
     public static class StyleHelper
     {

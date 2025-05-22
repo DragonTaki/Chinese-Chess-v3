@@ -19,6 +19,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
     /// </summary>
     public class UINode : UIElement
     {
+        public override bool IsInteractable => false;
         public UINode(int zIndex = 0, bool isPersistent = false, UIElementType type = UIElementType.Generic)
             : base(zIndex, isPersistent, type)
         {

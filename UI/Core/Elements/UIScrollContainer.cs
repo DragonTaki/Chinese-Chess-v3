@@ -222,15 +222,6 @@ namespace Chinese_Chess_v3.UI.Core.Elements
         {
             return _inputHandler.OnMouseWheel(e);
         }
-
-        /// <summary>
-        /// Mouse click event handler
-        /// </summary>
-        protected override bool HandleMouseClick(MouseEventArgs e)
-        {
-            // If no event need to be handle, return base to pass to child
-            return base.HandleMouseClick(e);
-        }
         
         /// <summary>
         /// Call every frame after processing input to reset scroll delta.

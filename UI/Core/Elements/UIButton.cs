@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.UI.Core.Elements
 #nullable disable
         public bool IsHighlighted { get; set; } = false;
 
-        protected override bool HandleMouseClick(MouseEventArgs e)
+        public override bool HandleMouseClick(MouseEventArgs e)
         {
             Action?.Invoke();
             return true;
