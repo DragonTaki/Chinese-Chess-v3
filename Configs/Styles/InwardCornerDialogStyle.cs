@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.Configs.Style
     public class InwardCornerDialogStyle : IBoxDrawStyle
     {
         public float CornerRadius { get; set; }
-        public BorderStyle Border { get; set; }
+        public BorderStyle BorderStyle { get; set; }
         public IBrushFactory BackgroundBrushFactory { get; set; }
 
         /// <summary>
@@ -32,15 +32,20 @@ namespace Chinese_Chess_v3.Configs.Style
         /// </summary>
         public void Draw(Graphics g, LayoutF bounds)
         {
-            using var path = InvertedRoundedRectPath.Create(bounds.Size.X, bounds.Size.Y, CornerRadius);
+            var gap = BorderStyle.Width;
+
+            var rect = bounds.Inset(gap / 2f);
+
+            using var path = InvertedRoundedRectPath.Create(rect.Size.X, rect.Size.Y, CornerRadius);
+
             using var matrix = new Matrix();
-            matrix.Translate(bounds.Position.X, bounds.Position.Y);
+            matrix.Translate(rect.Position.X, rect.Position.Y);
             path.Transform(matrix);
 
             using var brush = BackgroundBrushFactory.Create(bounds);
             g.FillPath(brush, path);
 
-            using var pen = new Pen(Border.Color, Border.Width);
+            using var pen = new Pen(BorderStyle.Color, BorderStyle.Width);
             g.DrawPath(pen, path);
         }
 

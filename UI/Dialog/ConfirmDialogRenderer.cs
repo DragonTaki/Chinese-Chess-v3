@@ -32,24 +32,8 @@ namespace Chinese_Chess_v3.UI.Dialog
         
         private void DrawButton(Graphics g, UIButton<ConfirmDialogResult> button)
         {
-            var bounds = button.GetCurrentAbsoluteBounds();
-
-            using var brush = new SolidBrush(Color.LightGray);
-            using var border = new Pen(Color.Black, 1);
-            using var textBrush = new SolidBrush(Color.Black);
-            using var font = new Font("Microsoft JhengHei", 12);
-
-            // 背景
-            g.FillRectangle(brush, bounds);
-            g.DrawRectangle(border, bounds.X, bounds.Y, bounds.Width, bounds.Height);
-
-            // 文字置中
-            var text = button.Text;
-            var textSize = g.MeasureString(text, font);
-            var textX = bounds.X + (bounds.Width - textSize.Width) / 2;
-            var textY = bounds.Y + (bounds.Height - textSize.Height) / 2;
-
-            g.DrawString(text, font, textBrush, textX, textY);
+            IButtonDrawStyle style = UILayoutStyles.Overlay.Dialog.Button.Style;
+            style.Draw(g, button.Text, button.GetCurrentAbsoluteBounds());
         }
     }
 }
