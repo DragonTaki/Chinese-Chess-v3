@@ -32,11 +32,11 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
             {
                 _confirmDialog = new ConfirmDialog(new ConfirmDialogRenderer())
                 {
-                    ZIndex = int.MaxValue - 1
+                    ZIndex = int.MaxValue
                 };
                 _overlayMask = new UIOverlayMask(_confirmDialog)
                 {
-                    ZIndex = int.MaxValue
+                    ZIndex = int.MaxValue - 1
                 };
 
                 _overlayNode.AddChild(_overlayMask);
