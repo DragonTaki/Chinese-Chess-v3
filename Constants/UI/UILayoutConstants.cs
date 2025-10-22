@@ -230,7 +230,8 @@ namespace Chinese_Chess_v3.Constants.UI
             }
 
             // Color
-            public static readonly Color BackgroundColor = StyleHelper.GetColor("#0A0A0A");  // #0A0A0A
+            public static readonly Color BackgroundColor = StyleHelper.GetColor("#716c6cff");  // #0A0A0A
+            //public static readonly Color BackgroundColor = StyleHelper.GetColor("#0A0A0A");  // #0A0A0A
         }
     }
 }

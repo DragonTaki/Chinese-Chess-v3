@@ -8,7 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
-
+using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Core.Base;
 using Chinese_Chess_v3.UI.Core.Interfaces;
 
@@ -26,8 +26,11 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars.InfoBoards
         {
             _handler = arg.handler;
             _renderer = arg.renderer;
+
+            LocalPosition = UILayoutConstants.Sidebar.Infoboard.Position - UILayoutConstants.Sidebar.Position;
+            Size = UILayoutConstants.Sidebar.Size;
         }
-        public override void Draw(Graphics g)
+        protected override void OnDraw(Graphics g)
         {
             _renderer.Draw(g);
             /*

@@ -10,6 +10,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Chinese_Chess_v3.Constants.UI;
 
 namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars.LoggerBoxes
 {
@@ -50,6 +51,9 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars.LoggerBoxes
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
+            using var bgBrush = new SolidBrush(Color.Red);
+            g.FillRectangle(bgBrush, UILayoutConstants.Sidebar.Logger.Layout);
+            Console.WriteLine(UILayoutConstants.Sidebar.Logger.Layout);
         }
     }
 }

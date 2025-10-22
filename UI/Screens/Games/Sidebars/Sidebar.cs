@@ -83,7 +83,7 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
         /// Draws the sidebar (delegates to renderer).
         /// </summary>
         /// <param name="g">Graphics context.</param>
-        public override void Draw(Graphics g)
+        protected override void OnDraw(Graphics g)
         {
             _renderer.Draw(g);
         }

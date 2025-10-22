@@ -21,8 +21,6 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
     /// </summary>
     public class SidebarRenderer
     {
-        private readonly InfoBoard _infoBoard;
-        private readonly LoggerBox _loggerBox;
         private readonly Sidebar _sidebar;
 
         public SidebarRenderer(Sidebar sidebar)
@@ -47,13 +45,13 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            DrawOutline(g);
-            // Draw sidebar background
-            using var bgBrush = new SolidBrush(Color.Red);
-            g.FillRectangle(bgBrush, UILayoutConstants.Sidebar.Layout);
 
-            // Draw divider line between InfoBoard and LoggerBox (optional)
-            // g.DrawLine(Pens.Gray, new Point(0, _sidebar.InfoBoardHeight), new Point(_sidebar.Width, _sidebar.InfoBoardHeight));
+            float margin = 3.0f;
+            RectangleF rect = new RectangleF(UILayoutConstants.Sidebar.Position.X + margin,
+                UILayoutConstants.MainMenu.Position.Y + margin,
+                _sidebar.Size.X - margin * 2,
+                _sidebar.Size.Y - margin * 2);
+            DrawOutline(g);
         }
         private void DrawOutline(Graphics g)
         {
@@ -62,8 +60,8 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
                 float margin = 3.0f;
                 debugPen.DashStyle = DashStyle.Dash;
                 g.DrawRectangle(debugPen,
-                UILayoutConstants.MainMenu.Position.X + margin,
-                UILayoutConstants.MainMenu.Position.Y + margin,
+                UILayoutConstants.Sidebar.Position.X + margin,
+                UILayoutConstants.Sidebar.Position.Y + margin,
                 _sidebar.Size.X - margin * 2,
                 _sidebar.Size.Y - margin * 2);
             }
