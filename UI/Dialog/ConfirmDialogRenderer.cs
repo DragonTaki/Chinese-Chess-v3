@@ -10,10 +10,10 @@
 using System.Drawing;
 using System.Linq;
 using Chinese_Chess_v3.Configs.Style;
-using Chinese_Chess_v3.UI.Constants;
+using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Core.Elements;
 
-namespace Chinese_Chess_v3.UI.Dialog
+namespace Chinese_Chess_v3.UI.Dialogs
 {
     public class ConfirmDialogRenderer
     {

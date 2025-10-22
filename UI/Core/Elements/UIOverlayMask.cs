@@ -9,7 +9,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using Chinese_Chess_v3.UI.Dialog;
+using Chinese_Chess_v3.UI.Dialogs;
 using SharedLib.Globals;
 
 namespace Chinese_Chess_v3.UI.Core.Elements

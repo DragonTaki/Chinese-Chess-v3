@@ -11,13 +11,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Chinese_Chess_v3.UI.Constants;
+using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Core.Elements;
 using Chinese_Chess_v3.UI.Core.Infrastructure;
 using SharedLib.Globals;
 using SharedLib.MathUtils;
 
-namespace Chinese_Chess_v3.UI.Dialog
+namespace Chinese_Chess_v3.UI.Dialogs
 {
     public class ConfirmDialog : UIElement
     {

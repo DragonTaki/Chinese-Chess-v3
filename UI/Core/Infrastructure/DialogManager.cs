@@ -11,7 +11,7 @@ using System;
 
 using Chinese_Chess_v3.UI.Core.Base;
 using Chinese_Chess_v3.UI.Core.Elements;
-using Chinese_Chess_v3.UI.Dialog;
+using Chinese_Chess_v3.UI.Dialogs;
 using Chinese_Chess_v3.UI.Utils;
 
 namespace Chinese_Chess_v3.UI.Core.Infrastructure

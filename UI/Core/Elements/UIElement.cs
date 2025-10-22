@@ -14,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.UI.Constants;
+using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Input;
 using Chinese_Chess_v3.UI.Models;

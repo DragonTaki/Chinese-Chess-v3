@@ -13,8 +13,12 @@ using System.Collections.Generic;
 using Chinese_Chess_v3.UI.Core.Elements;
 using Chinese_Chess_v3.UI.Core.Interfaces;
 using Chinese_Chess_v3.UI.Input;
-using Chinese_Chess_v3.UI.Screens.Game;
-using Chinese_Chess_v3.UI.Screens.Menu;
+using Chinese_Chess_v3.UI.Screens.Games;
+using Chinese_Chess_v3.UI.Screens.Games.Boards;
+using Chinese_Chess_v3.UI.Screens.Games.Sidebars;
+using Chinese_Chess_v3.UI.Screens.Games.Sidebars.InfoBoards;
+using Chinese_Chess_v3.UI.Screens.Games.Sidebars.LoggerBoxes;
+using Chinese_Chess_v3.UI.Screens.Menus;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -89,6 +93,50 @@ namespace Chinese_Chess_v3.UI.Core.Infrastructure
             var menu = _sp.GetRequiredService<GameMenu>();
             var handler = _sp.GetRequiredService<GameMenuHandler>();
             var renderer = _sp.GetRequiredService<GameMenuRenderer>();
+
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
+
+            return menu;
+        }
+        public ChessBoard CreateChessBoard()
+        {
+            var menu = _sp.GetRequiredService<ChessBoard>();
+            var handler = _sp.GetRequiredService<ChessBoardHandler>();
+            var renderer = _sp.GetRequiredService<ChessBoardRenderer>();
+
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
+
+            return menu;
+        }
+        public Sidebar CreateSidebar()
+        {
+            var menu = _sp.GetRequiredService<Sidebar>();
+            var handler = _sp.GetRequiredService<SidebarHandler>();
+            var renderer = _sp.GetRequiredService<SidebarRenderer>();
+
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
+
+            return menu;
+        }
+        public InfoBoard CreateInfoBoard()
+        {
+            var menu = _sp.GetRequiredService<InfoBoard>();
+            var handler = _sp.GetRequiredService<InfoBoardHandler>();
+            var renderer = _sp.GetRequiredService<InfoBoardRenderer>();
+
+            handler.Init((this, menu));
+            menu.Init((this, handler, renderer));
+
+            return menu;
+        }
+        public LoggerBox CreateLoggerBox()
+        {
+            var menu = _sp.GetRequiredService<LoggerBox>();
+            var handler = _sp.GetRequiredService<LoggerBoxHandler>();
+            var renderer = _sp.GetRequiredService<LoggerBoxRenderer>();
 
             handler.Init((this, menu));
             menu.Init((this, handler, renderer));

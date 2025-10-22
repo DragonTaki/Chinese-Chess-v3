@@ -27,9 +27,9 @@ public static class BoardStyles
         blend.Positions = new[] { 0.0f, 0.5f, 1.0f };
         blend.Colors = new[]
         {
-            StyleHelper.GetColor("(7, 81, 138)"),
-            StyleHelper.GetColor("(8, 136, 217)"),
-            StyleHelper.GetColor("(7, 81, 138)")
+            StyleHelper.GetColor("(7, 81, 138)", 0.9f),
+            StyleHelper.GetColor("(8, 136, 217)", 0.9f),
+            StyleHelper.GetColor("(7, 81, 138)", 0.9f)
         };
         brush.InterpolationColors = blend;
 

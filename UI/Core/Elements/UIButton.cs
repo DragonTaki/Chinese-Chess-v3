@@ -10,7 +10,7 @@
 using System;
 using System.Windows.Forms;
 
-using Chinese_Chess_v3.UI.Constants;
+using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Widgets;
 
 namespace Chinese_Chess_v3.UI.Core.Elements

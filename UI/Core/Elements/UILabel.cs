@@ -9,7 +9,7 @@
 
 using System.Drawing;
 
-using Chinese_Chess_v3.UI.Constants;
+using Chinese_Chess_v3.Constants.UI;
 
 namespace Chinese_Chess_v3.UI.Core.Elements
 {

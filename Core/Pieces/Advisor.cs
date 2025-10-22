@@ -10,33 +10,56 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Constants.Game;
 using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core.Pieces
 {
+    /// <summary>
+    /// Represents the <b>Advisor (仕/士)</b> piece in Chinese Chess.
+    /// The Advisor protects the General and can only move diagonally by one step.
+    /// It must always remain within the 3×3 palace area of its own side.
+    /// </summary>
     public class Advisor : Piece
     {
-        // Constructor
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Advisor"/> class with the specified position and player side.
+        /// </summary>
+        /// <param name="x">The initial X-coordinate of the piece.</param>
+        /// <param name="y">The initial Y-coordinate of the piece.</param>
+        /// <param name="side">The player side this piece belongs to (Red or Black).</param>
         public Advisor(int x, int y, PlayerSide side)
             : base(PieceType.Advisor, x, y, side)
         {
         }
 
-        // Check if moved to valid area
+        /// <summary>
+        /// Determines whether the target position is within the legal area where this piece is allowed to stay.
+        /// For the Advisor, this means staying inside its palace area.
+        /// </summary>
+        /// <param name="targetX">The X-coordinate of the destination.</param>
+        /// <param name="targetY">The Y-coordinate of the destination.</param>
+        /// <returns><c>true</c> if the destination is within the palace; otherwise, <c>false</c>.</returns>
         public override bool IsInLegalZone(int targetX, int targetY)
         {
             // Only can stay in palace (九宮格)
-            if (targetX < Constants.Board.PalaceXRange.MinX || targetX > Constants.Board.PalaceXRange.MaxX)
+            if (targetX < BoardConstants.PalaceXRange.MinX || targetX > BoardConstants.PalaceXRange.MaxX)
                 return false;
 
             if (Side == PlayerSide.Red)
-                return targetY >= Constants.Board.RedPalaceYRange.MinY && targetY <= Constants.Board.RedPalaceYRange.MaxY;
+                return targetY >= BoardConstants.RedPalaceYRange.MinY && targetY <= BoardConstants.RedPalaceYRange.MaxY;
             else
-                return targetY >= Constants.Board.BlackPalaceYRange.MinY && targetY <= Constants.Board.BlackPalaceYRange.MaxY;
+                return targetY >= BoardConstants.BlackPalaceYRange.MinY && targetY <= BoardConstants.BlackPalaceYRange.MaxY;
         }
 
-        // Check if is a valid move
+        /// <summary>
+        /// Checks whether the Advisor can move to the target position according to Chinese Chess rules.
+        /// The Advisor must move exactly one step diagonally, remain in its palace, and cannot capture allied pieces.
+        /// </summary>
+        /// <param name="targetX">The X-coordinate of the target position.</param>
+        /// <param name="targetY">The Y-coordinate of the target position.</param>
+        /// <param name="board">The current game board instance, used to check piece positions.</param>
+        /// <returns><c>true</c> if the move is valid; otherwise, <c>false</c>.</returns>
         public override bool IsValidMove(int targetX, int targetY, Board board)
         {
             int dx = Math.Abs(targetX - X);
@@ -49,15 +72,24 @@ namespace Chinese_Chess_v3.Core.Pieces
             // Check if in palace
             if (!IsInLegalZone(targetX, targetY))
                 return false;
-            
-            // Check if destination has ally
+
+            // Check if there is an ally piece at the destination
             if (!IsDestinationLegal(targetX, targetY, board))
                 return false;
 
             return true;
         }
 
-        // Get every moves can do
+        /// <summary>
+        /// Gets a list of all legal moves this Advisor can make from its current position.
+        /// Each move is represented as a tuple of (x, y) coordinates.
+        /// </summary>
+        /// <param name="x">The current X-coordinate of the Advisor.</param>
+        /// <param name="y">The current Y-coordinate of the Advisor.</param>
+        /// <param name="board">The current game board state.</param>
+        /// <returns>
+        /// A list of all possible (x, y) positions the Advisor can legally move to.
+        /// </returns>
         public override List<(int x, int y)> GetLegalMoves(int x, int y, Board board)
         {
             List<(int x, int y)> legalMoves = new List<(int x, int y)>();
@@ -77,13 +109,15 @@ namespace Chinese_Chess_v3.Core.Pieces
                 int newX = x + dx;
                 int newY = y + dy;
 
+                // Skip if outside palace boundaries
                 if (!IsInLegalZone(newX, newY))
                     continue;
 
-                // Check if destination has ally
+                // Skip if destination occupied by ally
                 if (!IsDestinationLegal(newX, newY, board))
                     continue;
 
+                // Add to legal moves
                 legalMoves.Add((newX, newY));
             }
 

@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/07
+// Update Date: 2025/10/22
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -18,7 +18,6 @@ namespace Chinese_Chess_v3.Core
     public class GameManager
     {
         public Board Board { get; private set; }
-        public event Action<PlayerSide> TurnChanged;
         public Player Red { get; private set; }
         public Player Black { get; private set; }
         private PlayerSide currentTurn = PlayerSide.Red;
@@ -34,21 +33,55 @@ namespace Chinese_Chess_v3.Core
                 }
             }
         }
+        public event Action<PlayerSide> TurnChanged;
+        
+
+#nullable enable
         private Piece? selectedPiece;
         public Piece? SelectedPiece => selectedPiece;
+#nullable disable
+
+        private bool isPaused = false;
+
+        public bool IsPaused
+        {
+            get => isPaused;
+            private set
+            {
+                if (isPaused != value)
+                {
+                    isPaused = value;
+                    PausedChanged?.Invoke(isPaused);
+                }
+            }
+        }
+
+        public event Action<bool> PausedChanged;
+    
+#nullable enable
         private static GameManager? instance;
+#nullable disable
+
         public static GameManager Instance => instance ??= new GameManager();
 
         public GameManager()
         {
             // Initialize the board
             Board = new Board();
-            Board.Initialize();
+            Board.Initialize(BoardConfigLoader.Load());
             CurrentTurn = PlayerSide.Red;
             selectedPiece = null;
             Red = new Player(PlayerSide.Red, TimeSpan.FromMinutes(5));
             Black = new Player(PlayerSide.Black, TimeSpan.FromMinutes(5));
         }
+
+        public void LoadCustomBoard(List<PieceInfo> customInitialPieces)
+        {
+            Board.Initialize(customInitialPieces);
+            selectedPiece = null;
+            CurrentTurn = PlayerSide.Red;
+        }
+
         public List<Piece> GetCurrentPieces()
         {
             return Board.GetAllPieces();
@@ -149,5 +182,9 @@ namespace Chinese_Chess_v3.Core
                 CurrentTurn = PlayerSide.Red;
             }
         }
+        
+        public void PauseGame() => IsPaused = true;
+        public void ResumeGame() => IsPaused = false;
+        public void TogglePause() => IsPaused = !IsPaused;
     }
 }

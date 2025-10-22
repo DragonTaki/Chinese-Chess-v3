@@ -10,27 +10,54 @@
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Configs;
+using Chinese_Chess_v3.Constants.Game;
 using Chinese_Chess_v3.Models;
 
 namespace Chinese_Chess_v3.Core.Pieces
 {
+    /// <summary>
+    /// Represents the <b>Horse (傌/馬)</b> piece in Chinese Chess.
+    /// The Horse moves in an L-shape (two squares in one direction, one square in perpendicular direction) and 
+    /// cannot jump over a piece directly adjacent in the primary direction ("horse leg" rule).
+    /// </summary>
     public class Horse : Piece
     {
-        // Constructor
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Horse"/> class with the specified position and player side.
+        /// </summary>
+        /// <param name="x">The initial X-coordinate of the piece.</param>
+        /// <param name="y">The initial Y-coordinate of the piece.</param>
+        /// <param name="side">The player side this piece belongs to (Red or Black).</param>
         public Horse(int x, int y, PlayerSide side)
             : base(PieceType.Horse, x, y, side)
         {
         }
 
-        // Check if moved to valid area
+        /// <summary>
+        /// Determines whether the target position is within the board bounds.
+        /// Horses have no special zone limitation.
+        /// </summary>
+        /// <param name="targetX">The X-coordinate of the destination.</param>
+        /// <param name="targetY">The Y-coordinate of the destination.</param>
+        /// <returns><c>true</c> if the destination is within the board; otherwise, <c>false</c>.</returns>
         public override bool IsInLegalZone(int targetX, int targetY)
         {
             // No specific zone limit for chariot, but method reserved for consistency
-            return Constants.Board.IsInBounds(targetX, targetY);
+            return BoardConstants.IsInBounds(targetX, targetY);
         }
 
-        // Check if is a valid move
+        /// <summary>
+        /// Checks whether the Horse can move to the target position according to Chinese Chess rules.
+        /// <para>
+        /// - Must move in an "L" shape (1+2 or 2+1 squares).  
+        /// - Must not be blocked by a piece in the primary movement direction ("horse leg").  
+        /// - Cannot capture an allied piece.
+        /// </para>
+        /// </summary>
+        /// <param name="targetX">The X-coordinate of the target position.</param>
+        /// <param name="targetY">The Y-coordinate of the target position.</param>
+        /// <param name="board">The current game board used to check piece positions.</param>
+        /// <returns><c>true</c> if the move is legal for the Horse; otherwise, <c>false</c>.</returns>
         public override bool IsValidMove(int targetX, int targetY, Board board)
         {
             if (!IsInLegalZone(targetX, targetY))
@@ -55,14 +82,21 @@ namespace Chinese_Chess_v3.Core.Pieces
             if (absDy == 2 && board.Grid[X, blockY] != null)
                 return false;
 
-            // Check if destination has ally
+            // Check if there is an ally piece at the destination
             if (!IsDestinationLegal(targetX, targetY, board))
                 return false;
 
             return true;
         }
 
-        // Get every moves can do
+        /// <summary>
+        /// Gets a list of all legal moves the Horse can make from its current position.
+        /// Each move is represented as a tuple of (x, y) coordinates.
+        /// </summary>
+        /// <param name="x">The current X-coordinate of the Horse.</param>
+        /// <param name="y">The current Y-coordinate of the Horse.</param>
+        /// <param name="board">The current board state.</param>
+        /// <returns>A list of all possible (x, y) positions the Horse can legally move to.</returns>
         public override List<(int x, int y)> GetLegalMoves(int x, int y, Board board)
         {
             List<(int x, int y)> legalMoves = new List<(int x, int y)>();
@@ -85,20 +119,23 @@ namespace Chinese_Chess_v3.Core.Pieces
                 int newX = x + dx;
                 int newY = y + dy;
 
-                if (!Constants.Board.IsInBounds(newX, newY))
+                // Skip if outside board bounds
+                if (!BoardConstants.IsInBounds(newX, newY))
                     continue;
 
-                // Check if horse's leg is hobbled
+                // Determine the horse's leg position
                 int blockX = x + (Math.Abs(dx) == 2 ? Math.Sign(dx) : 0);
                 int blockY = y + (Math.Abs(dy) == 2 ? Math.Sign(dy) : 0);
 
+                // Skip if horse's leg is hobbled
                 if (board.Grid[blockX, blockY] != null)
                     continue;
 
-                // Check if destination has ally
+                // Skip if destination occupied by ally
                 if (!IsDestinationLegal(newX, newY, board))
                     continue;
 
+                // Add to legal moves
                 legalMoves.Add((newX, newY));
             }
 

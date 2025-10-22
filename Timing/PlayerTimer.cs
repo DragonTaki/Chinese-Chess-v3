@@ -28,7 +28,9 @@ namespace Chinese_Chess_v3.Timing
         /// <summary>
         /// Raised when TimeLeft is updated.
         /// </summary>
+#nullable enable
         public event Action<TimeSpan>? OnTimeUpdated;
+#nullable disable
 
         public PlayerTimer(TimeSpan initialTime, int intervalMilliseconds = 1000)
         {
@@ -39,7 +41,9 @@ namespace Chinese_Chess_v3.Timing
             _timer.Tick += Timer_Tick;
         }
 
+#nullable enable
         private void Timer_Tick(object? sender, EventArgs e)
+#nullable disable
         {
             TimeLeft = TimeLeft.Subtract(TimeSpan.FromMilliseconds(_timer.Interval));
 

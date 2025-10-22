@@ -12,8 +12,8 @@ using System.Linq;
 
 using Chinese_Chess_v3.UI.Core.Elements;
 using Chinese_Chess_v3.UI.Core.Interfaces;
-using Chinese_Chess_v3.UI.Screens.Game;
-using Chinese_Chess_v3.UI.Screens.Menu;
+using Chinese_Chess_v3.UI.Screens.Games;
+using Chinese_Chess_v3.UI.Screens.Menus;
 
 namespace Chinese_Chess_v3.UI.Core.Infrastructure
 {
