@@ -49,6 +49,17 @@ namespace Chinese_Chess_v3.UI.Screens.Games
                 case GameMenuType.Surrender:
                     break;
                 case GameMenuType.ReturnToMain:
+                    // 1. 移除或 Dispose 棋盤及子元素
+                    _menu.ChessBoard?.Dispose();  // ChessBoard 繼承 InitializableOnceElement => 需要實作 Dispose
+                    _menu.Sidebar?.Dispose();
+
+                    // 2. 解除 Binder 綁定
+                    _menu.ChessBoard?.PieceBinder?.UnbindAll();
+
+                    // 3. 清空 Child 元件
+                    _menu.RemoveAllChild();
+
+                    // 4. 導航回主選單
                     _nav.ShowMainMenu();
                     break;
                 default:

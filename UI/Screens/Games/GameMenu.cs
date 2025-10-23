@@ -32,8 +32,8 @@ namespace Chinese_Chess_v3.UI.Screens.Games
         private GameMenuHandler _handler;
         private GameMenuRenderer _renderer;
         private readonly List<UIButton> _buttons = new();
-        private ChessBoard _chessBoard;
-        private Sidebar _sidebar;
+        internal ChessBoard ChessBoard { get; private set; }
+        internal Sidebar Sidebar { get; private set; }
 
         public GameMenu() {}
         protected override void OnInit((IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer) arg)
@@ -45,10 +45,10 @@ namespace Chinese_Chess_v3.UI.Screens.Games
             LocalPosition = UILayoutConstants.GameMenu.Position;
             Size = UILayoutConstants.GameMenu.Size;
 
-            _chessBoard = arg.factory.CreateChessBoard();
-            AddChild(_chessBoard);
-            _sidebar = arg.factory.CreateSidebar();
-            AddChild(_sidebar);
+            ChessBoard = arg.factory.CreateChessBoard();
+            AddChild(ChessBoard);
+            Sidebar = arg.factory.CreateSidebar();
+            AddChild(Sidebar);
 
             BuildMenu();
         }
@@ -105,7 +105,6 @@ namespace Chinese_Chess_v3.UI.Screens.Games
             UIElementUtils.UpdateVisibleState(_buttons, GetAbsClipRect());
             return _buttons.Where(b => b.IsEnabled).ToList();
         }
-
         public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
     }
 

@@ -22,5 +22,6 @@ namespace Chinese_Chess_v3.Constants.UI
         HUD,
         Popup,
         Debug,
+        Piece,
     }
 }

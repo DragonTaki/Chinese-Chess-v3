@@ -57,8 +57,16 @@ namespace Chinese_Chess_v3.Core
         }
 
         public event Action<bool> PausedChanged;
-    
+
 #nullable enable
+        // events for UI bridge
+        public event Action<Piece>? PieceSelected;
+        public event Action<Piece>? PieceUnselected;
+        public event Action<Piece, int, int>? PieceMoved; // piece, toX, toY
+        public event Action<Piece>? PieceCaptured;
+        public event Action<Piece>? PieceAdded;
+        public event Action<Piece>? PieceRemoved;
+        public event Action? BoardReset;
         private static GameManager? instance;
 #nullable disable
 
@@ -73,6 +81,11 @@ namespace Chinese_Chess_v3.Core
             selectedPiece = null;
             Red = new Player(PlayerSide.Red, TimeSpan.FromMinutes(5));
             Black = new Player(PlayerSide.Black, TimeSpan.FromMinutes(5));
+
+            // notify UI that board is ready
+            BoardReset?.Invoke();
+            foreach (var p in Board.GetAllPieces())
+                PieceAdded?.Invoke(p);
         }
 
         public void LoadCustomBoard(List<PieceInfo> customInitialPieces)
@@ -80,6 +93,12 @@ namespace Chinese_Chess_v3.Core
             Board.Initialize(customInitialPieces);
             selectedPiece = null;
             CurrentTurn = PlayerSide.Red;
+
+            BoardReset?.Invoke();
+
+            // emit PieceAdded for all pieces
+            foreach (var p in Board.GetAllPieces())
+                PieceAdded?.Invoke(p);
         }
 
         public List<Piece> GetCurrentPieces()
@@ -94,7 +113,16 @@ namespace Chinese_Chess_v3.Core
 
             if (piece.CanMoveTo(toX, toY, Board))
             {
+                var targetPiece = Board.GetPiece(toX, toY);
+                if (targetPiece != null)
+                {
+                    Board.RemovePiece(toX, toY);
+                    PieceCaptured?.Invoke(targetPiece);
+                    PieceRemoved?.Invoke(targetPiece);
+                }
+
                 Board.MovePiece(fromX, fromY, toX, toY);
+                PieceMoved?.Invoke(piece, toX, toY);
                 SwitchTurn();
                 return true;
             }
@@ -116,6 +144,7 @@ namespace Chinese_Chess_v3.Core
                 {
                     selectedPiece = clickedPiece;
                     AppLogger.Log($"(Action) Selected {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                    PieceSelected?.Invoke(selectedPiece);
                 }
                 return;
             }
@@ -126,12 +155,15 @@ namespace Chinese_Chess_v3.Core
                 if (clickedPiece == selectedPiece)
                 {
                     AppLogger.Log($"(Action) Un-selected {selectedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                    PieceUnselected?.Invoke(selectedPiece);
                     selectedPiece = null;
                 }
                 else
                 {
-                    selectedPiece = clickedPiece;
                     AppLogger.Log($"(Action) Switched to {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                    PieceUnselected?.Invoke(selectedPiece);
+                    selectedPiece = clickedPiece;
+                    PieceSelected?.Invoke(selectedPiece);
                 }
                 return;
             }
@@ -144,10 +176,21 @@ namespace Chinese_Chess_v3.Core
                 {
                     Board.RemovePiece(x, y);
                     AppLogger.Log($"(Action) Captured {clickedPiece.Type} at ({x},{y})", LogLevel.DEBUG);
+                    PieceCaptured?.Invoke(clickedPiece);
+                    PieceRemoved?.Invoke(clickedPiece);
                 }
 
-                Board.MovePiece(selectedPiece.Position.X, selectedPiece.Position.Y, x, y);
+                // move logic
+                int fromX = selectedPiece.Position.X;
+                int fromY = selectedPiece.Position.Y;
+                Board.MovePiece(fromX, fromY, x, y);
                 AppLogger.Log($"(Action) Moved {selectedPiece.Type} to ({x},{y})", LogLevel.DEBUG);
+
+                // raise moved event AFTER board updated
+                PieceMoved?.Invoke(selectedPiece, x, y);
+
+                // unselect and notify
+                PieceUnselected?.Invoke(selectedPiece);
                 selectedPiece = null;
                 SwitchTurn();
             }
@@ -163,6 +206,7 @@ namespace Chinese_Chess_v3.Core
                 {
                     AppLogger.Log($"(Action) Invalid move to ({x},{y})", LogLevel.DEBUG);
                 }
+                PieceUnselected?.Invoke(selectedPiece);
                 selectedPiece = null;
             }
         }

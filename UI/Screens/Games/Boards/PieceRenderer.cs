@@ -14,24 +14,25 @@ using Chinese_Chess_v3.Configs.Board;
 using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.Models;
+using Chinese_Chess_v3.UI.Elements;
 using Chinese_Chess_v3.Utils.GraphicsUtils;
 
 namespace Chinese_Chess_v3.UI.Screens.Games.Boards
 {
     public class PieceRenderer
     {
-        public void DrawPieces(Graphics g, List<Piece> pieces, Piece selectedPiece = null)
+        public void DrawPieces(Graphics g, List<UIPiece> uiPieces)
         {
             GraphicsHelper.ApplyHighQualitySettings(g);
 
-            foreach (var piece in pieces)
+            foreach (var uiPiece in uiPieces)
             {
-                bool isSelected = selectedPiece != null && piece == selectedPiece;
-                DrawPiece(g, piece, isSelected);
+                DrawPiece(g, uiPiece);
             }
         }
-        private void DrawPiece(Graphics g, Piece piece, bool isSelected)
+        private void DrawPiece(Graphics g, UIPiece uiPiece)
         {
+            Piece piece = uiPiece.PieceModel;
             float centerX = UILayoutConstants.Board.Grid.Position.X + piece.X * UILayoutConstants.Board.Grid.CellSize;
             float centerY = UILayoutConstants.Board.Grid.Position.Y + piece.Y * UILayoutConstants.Board.Grid.CellSize;
 
@@ -40,7 +41,7 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Boards
 
             bool isRed = piece.Side == PlayerSide.Red;
 
-            if (isSelected)
+            if (uiPiece.IsSelected)
             {
                 float glowRadius = radius + PieceSettings.GlowMargin;
                 Color glowColor = PieceSettings.GlowColor;

@@ -14,6 +14,9 @@ using Chinese_Chess_v3.Core;
 using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.UI.Core.Base;
 using Chinese_Chess_v3.UI.Core.Interfaces;
+using Chinese_Chess_v3.UI.Controllers;
+using System.Collections.Generic;
+using System;
 
 namespace Chinese_Chess_v3.UI.Screens.Games.Boards
 {
@@ -22,18 +25,29 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Boards
     /// </summary>
     public class ChessBoard
         : InitializableOnceElement<(IUiFactory factory, ChessBoardHandler handler, ChessBoardRenderer renderer)>
-        , IScreen
+        , IScreen, IUiContainer, IDisposable
     {
         private ChessBoardHandler _handler;
         private ChessBoardRenderer _renderer;
 
-        public Piece SelectedPiece => GameManager.Instance.SelectedPiece;
+        // fields
+        private bool disposed = false;
+        public UIPieceBinder PieceBinder { get; private set; }
+        private GameManager _gameManager = GameManager.Instance;
+
+        public Piece SelectedPiece => _gameManager.SelectedPiece;
+        
+        // IUiContainer 實作
+        private readonly List<Action> _pendingActions = new();
+        public bool IsDisposed { get; private set; } = false;
 
         public ChessBoard() {}
         protected override void OnInit((IUiFactory factory, ChessBoardHandler handler, ChessBoardRenderer renderer) arg)
         {
             _handler = arg.handler;
             _renderer = arg.renderer;
+            
+            PieceBinder = new UIPieceBinder(_gameManager, this /* or boardPanel */);
 
             LocalPosition = UILayoutConstants.Board.Position;
             Size = UILayoutConstants.Board.Size;
@@ -41,8 +55,8 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Boards
 
         protected override void OnDraw(Graphics g)
         {
-            var pieces = GameManager.Instance.GetCurrentPieces();
-            _renderer.Draw(g, pieces, SelectedPiece);
+            var uiPieces = PieceBinder.GetUIPieces();
+            _renderer.Draw(g, uiPieces);
         }
         
         public override bool OnMouseDown(MouseEventArgs e)
@@ -69,6 +83,32 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Boards
         public void OnExit()
         {
             _handler.OnExit();
+        }
+        public void Post(Action action)
+        {
+            _pendingActions.Add(action);
+        }
+
+        // 在每個更新週期呼叫
+        protected override void OnUpdate()
+        {
+            var actions = _pendingActions.ToArray();
+            _pendingActions.Clear();
+            foreach (var a in actions) a();
+        }
+
+        public void DisposeUI()
+        {
+            IsDisposed = true;
+            _pendingActions.Clear();
+        }
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+
+            PieceBinder?.Dispose();
+            PieceBinder = null;
         }
     }
 }

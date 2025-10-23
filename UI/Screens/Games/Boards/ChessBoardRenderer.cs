@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using Chinese_Chess_v3.Core;
+using Chinese_Chess_v3.UI.Elements;
 
 namespace Chinese_Chess_v3.UI.Screens.Games.Boards
 {
@@ -28,13 +29,13 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Boards
         /// <param name="g">Graphics物件</param>
         /// <param name="pieces">棋子列表</param>
         /// <param name="selectedPiece">目前選取的棋子（可為null）</param>
-        public void Draw(Graphics g, List<Piece> pieces, Piece selectedPiece = null)
+        public void Draw(Graphics g, List<UIPiece> uiPieces)
         {
             // 畫棋盤
             _boardRenderer.DrawBoard(g);
 
             // 畫棋子
-            _pieceRenderer.DrawPieces(g, pieces, selectedPiece);
+            _pieceRenderer.DrawPieces(g, uiPieces);
         }
     }
 }

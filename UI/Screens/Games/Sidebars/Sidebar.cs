@@ -7,7 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Drawing;
+
 using Chinese_Chess_v3.Constants.UI;
 using Chinese_Chess_v3.Models;
 using Chinese_Chess_v3.UI.Core.Base;
@@ -23,8 +25,9 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
     /// </summary>
     public class Sidebar
         : InitializableOnceElement<(IUiFactory factory, SidebarHandler handler, SidebarRenderer renderer)>
-        , IScreen
+        , IScreen, IDisposable
     {
+        private bool disposed = false;
         private SidebarHandler _handler;
         private SidebarRenderer _renderer;
         private InfoBoard _infoBoard;
@@ -86,6 +89,13 @@ namespace Chinese_Chess_v3.UI.Screens.Games.Sidebars
         protected override void OnDraw(Graphics g)
         {
             _renderer.Draw(g);
+        }
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+
+            // 停止 timer、解除事件或清理資源
         }
     }
 }
