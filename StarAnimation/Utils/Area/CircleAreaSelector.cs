@@ -10,7 +10,7 @@
 using System;
 using System.Drawing;
 
-using SharedLib.RandomTable;
+using Engine.Randomization;
 
 namespace StarAnimation.Utils.Area
 {

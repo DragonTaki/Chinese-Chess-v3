@@ -11,7 +11,7 @@ using System.Drawing;
 
 using StarAnimation.Controllers;
 
-using SharedLib.Timing;
+using Engine.Timing;
 
 namespace StarAnimation
 {

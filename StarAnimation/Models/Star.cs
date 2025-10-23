@@ -9,9 +9,9 @@
 
 using System.Drawing;
 
-using SharedLib.RandomTable;
-using SharedLib.MathUtils;
-using SharedLib.PhysicsUtils;
+using Engine.Mathematics;
+using Engine.Physics;
+using Engine.Randomization;
 
 namespace StarAnimation.Models
 {

@@ -11,7 +11,7 @@ using StarAnimation.Utils.Area;
 
 using StarAnimation.Core.Effect.Instance;
 
-using SharedLib.MathUtils;
+using Engine.Mathematics;
 
 namespace StarAnimation.Core.Effect.Parameter
 {

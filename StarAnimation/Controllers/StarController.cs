@@ -15,9 +15,9 @@ using StarAnimation.Configs;
 using StarAnimation.Models;
 using StarAnimation.Renderers;
 
-using SharedLib.MathUtils;
-using SharedLib.PhysicsUtils;
-using SharedLib.RandomTable;
+using Engine.Mathematics;
+using Engine.Randomization;
+using Engine.Physics;
 
 namespace StarAnimation.Controllers
 {

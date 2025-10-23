@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using StarAnimation.Models;
 using StarAnimation.Renderers;
 using StarAnimation.Utils.Area;

@@ -17,8 +17,8 @@ using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
-using SharedLib.RandomTable;
-using SharedLib.Timing;
+using Engine.Randomization;
+using Engine.Timing;
 
 namespace StarAnimation.Controllers
 {

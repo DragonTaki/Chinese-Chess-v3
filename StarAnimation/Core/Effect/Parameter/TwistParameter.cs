@@ -11,8 +11,8 @@ using StarAnimation.Utils.Area;
 
 using StarAnimation.Core.Effect.Instance;
 
-using SharedLib.MathUtils;
-using SharedLib.RandomTable;
+using Engine.Mathematics;
+using Engine.Randomization;
 
 namespace StarAnimation.Core.Effect.Parameter
 {

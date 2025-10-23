@@ -13,7 +13,7 @@ using System.Drawing;
 
 using StarAnimation.Utils.Area;
 
-using SharedLib.MathUtils;
+using Engine.Mathematics;
 using SharedLib.RandomTable;
 
 namespace StarAnimation.Core.Effect

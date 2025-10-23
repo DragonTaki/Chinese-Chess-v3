@@ -15,10 +15,10 @@ using System.Linq;
 using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
-using SharedLib.MathUtils;
-using SharedLib.PhysicsUtils;
-using SharedLib.RandomTable;
-using SharedLib.Timing;
+using Engine.Mathematics;
+using Engine.Randomization;
+using Engine.Physics;
+using Engine.Timing;
 
 namespace StarAnimation.Core.Effect
 {

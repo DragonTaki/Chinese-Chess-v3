@@ -9,7 +9,7 @@
 
 using System.Drawing;
 
-using SharedLib.MathUtils;
+using Engine.Mathematics;
 
 namespace StarAnimation.Utils.Area
 {

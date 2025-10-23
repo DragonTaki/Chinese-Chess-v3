@@ -9,8 +9,8 @@
 
 using System.Drawing;
 
-using SharedLib.Globals;
-using SharedLib.Timing;
+using Engine.Globals;
+using Engine.Timing;
 
 namespace StarAnimation.Controllers
 {
