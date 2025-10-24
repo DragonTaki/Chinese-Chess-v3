@@ -54,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes
             g.SmoothingMode = SmoothingMode.AntiAlias;
             using var bgBrush = new SolidBrush(Color.Red);
             g.FillRectangle(bgBrush, UILayoutConstants.Sidebar.Logger.Layout);
-            Console.WriteLine(UILayoutConstants.Sidebar.Logger.Layout);
+            //Console.WriteLine(UILayoutConstants.Sidebar.Logger.Layout);
         }
     }
 }

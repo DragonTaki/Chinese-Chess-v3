@@ -7,60 +7,27 @@
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
 using Chinese_Chess_v3.Game.Constants.UI;
+using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Boards;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Options;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars;
 
 using Engine.Mathematics;
-using Engine.UI.Core.Base;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Utils;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games
 {
-    public class GameMenu
-        : InitializableOnceElement<(IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer)>
-        , IScreen
+    public class GameMenu : UIMenu<GameMenuHandler>, IScreen
     {
-        private UIScrollContainer _scroll;
-        private GameMenuHandler _handler;
-        private GameMenuRenderer _renderer;
-        private readonly List<UIButton> _buttons = new();
         internal ChessBoard ChessBoard { get; private set; }
         internal Sidebar Sidebar { get; private set; }
 
         public GameMenu() {}
-        protected override void OnInit((IUiFactory factory, GameMenuHandler handler, GameMenuRenderer renderer) arg)
+
+        protected override void BuildButtons()
         {
-            _scroll = arg.factory.CreateScrollContainer();
-            _handler = arg.handler;
-            _renderer = arg.renderer;
-
-            LocalPosition = UILayoutConstants.GameMenu.Position;
-            Size = UILayoutConstants.GameMenu.Size;
-
-            ChessBoard = arg.factory.CreateScreen<ChessBoard, ChessBoardHandler, ChessBoardRenderer>();
-            AddChild(ChessBoard);
-            Sidebar = arg.factory.CreateScreen<Sidebar, SidebarHandler, SidebarRenderer>();
-            AddChild(Sidebar);
-
-            BuildMenu();
-        }
-
-        private void BuildMenu()
-        {
-            _scroll.Layout = UILayoutConstants.GameMenu.ScrollContainer.Layout;
-            _scroll.BaseScrollY = -UILayoutConstants.GameMenu.Margin;
-            _scroll.OverscrollLimit = UILayoutConstants.GameMenu.Margin;
-
-            this.AddChild(_scroll);
-
             var menuEntries = GameMenuOptions.Create(_handler.GameMenuAction);
 
             for (int i = 0; i < menuEntries.Count; i++)
@@ -71,33 +38,26 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
                     new Vector2F(0.0f, (UILayoutConstants.GameMenu.Button.Size.Y + UILayoutConstants.GameMenu.Margin) * i);
                 button.Size = UILayoutConstants.GameMenu.Button.Size;
 
-                _scroll.AddChild(button);
-                _buttons.Add(button);
+                ScrollContainer.AddChild(button);
+                Buttons.Add(button);
             }
-
-            _scroll.ContentHeight = _buttons.Count * (UILayoutConstants.GameMenu.Button.Size.Y + UILayoutConstants.GameMenu.Margin);
         }
-
-        public void OnEnter()
+        protected override void BuildUIObjects()
         {
-            _handler.OnEnter();
-        }
+            // 1. 重置資料層
+            GameManager.Instance.ResetBoardToDefault();
 
-        public void OnExit()
-        {
-            _handler.OnExit();
-        }
+            // 2. 重置 UI
+            ChessBoard?.Dispose();
+            ChessBoard = _factory.CreateScreen<ChessBoard, ChessBoardHandler>();
+            AddChild(ChessBoard);
 
-        protected override void OnUpdate()
-        {
-            _scroll.Update();
+            Sidebar?.Dispose();
+            Sidebar = _factory.CreateScreen<Sidebar, SidebarHandler>();
+            AddChild(Sidebar);
         }
+        public void ResetGameUI() => BuildUIObjects();
 
-        protected override void OnDraw(Graphics g)
-        {
-            // Draw button(s)
-            _renderer.Draw(g);
-        }
         // 方法來安全清理
         public void DisposeChildren()
         {
@@ -107,17 +67,5 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
             Sidebar?.Dispose();
             Sidebar = null;
         }
-
-        public List<UIButton> Buttons => _buttons;
-        public List<UIButton> GetVisibleButtons()
-        {
-            UIElementUtils.UpdateVisibleState(_buttons, GetAbsClipRect());
-            return _buttons.Where(b => b.IsEnabled).ToList();
-        }
-        public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
-    }
-
-    public interface IInitializableOnceElement<T>
-    {
     }
 }

@@ -61,8 +61,8 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
                 g.DrawRectangle(debugPen,
                 UILayoutConstants.Sidebar.Position.X + margin,
                 UILayoutConstants.Sidebar.Position.Y + margin,
-                _sidebar.Size.X - margin * 2,
-                _sidebar.Size.Y - margin * 2);
+                UILayoutConstants.Sidebar.Size.X - margin * 2,
+                UILayoutConstants.Sidebar.Size.Y - margin * 2);
             }
         }
     }

@@ -7,31 +7,19 @@
 // Version: v2.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Drawing;
 
 using Chinese_Chess_v3.Game.Constants.UI;
 
-using Engine.UI.Core.Base;
+using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 {
-    public class InfoBoard
-        : InitializableOnceElement<(IUiFactory factory, InfoBoardHandler handler, InfoBoardRenderer renderer)>
-        , IScreen
+    public class InfoBoard : UIContainer<InfoBoardHandler>, IScreen, IDisposable
     {
-        private InfoBoardHandler _handler;
-        private InfoBoardRenderer _renderer;
-
         public InfoBoard() {}
-        protected override void OnInit((IUiFactory factory, InfoBoardHandler handler, InfoBoardRenderer renderer) arg)
-        {
-            _handler = arg.handler;
-            _renderer = arg.renderer;
-
-            LocalPosition = UILayoutConstants.Sidebar.Infoboard.Position - UILayoutConstants.Sidebar.Position;
-            Size = UILayoutConstants.Sidebar.Size;
-        }
         protected override void OnDraw(Graphics g)
         {
             _renderer.Draw(g);

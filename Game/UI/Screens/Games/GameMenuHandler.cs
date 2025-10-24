@@ -12,26 +12,16 @@ using System;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Options;
 using Chinese_Chess_v3.Game.UI.Screens.Menus;
 
-using Engine.UI.Core.Base;
-using Engine.UI.Core.Infrastructure;
-using Engine.UI.Core.Interfaces;
+using Engine.UI.Core.Handlers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games
 {
     /// <summary>
     /// Handles logic and interactions for the GameMenu.
     /// </summary>
-    public class GameMenuHandler : InitializableOnceBase<(IUiFactory factory, GameMenu menu)>
+    public class GameMenuHandler : UIMenuHandler<GameMenuHandler>
     {
-        private GameMenu _menu;
-        private NavigationManager _navigationManager;
-
         public GameMenuHandler() {}
-        protected override void OnInit((IUiFactory factory, GameMenu menu) arg)
-        {
-            _menu = arg.menu;
-            _navigationManager = arg.factory.Resolve<NavigationManager>();
-        }
 
         public void GameMenuAction(GameMenuType selectedAction)
         {
@@ -51,24 +41,14 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
                 case GameMenuType.Surrender:
                     break;
                 case GameMenuType.ReturnToMain:
-                    _menu.DisposeChildren();
+                    _menu.Dispose();
 
                     // 4. 導航回主選單
-                    _navigationManager.Show<MainMenu, MainMenuHandler, MainMenuRenderer>();
+                    _navigationManager.Show<MainMenu, MainMenuHandler>();
                     break;
                 default:
                     break;
             }
-        }
-
-        public void OnEnter()
-        {
-            //
-        }
-        
-        public void OnExit()
-        {
-            _navigationManager.Show<GameMenu, GameMenuHandler, GameMenuRenderer>();
         }
     }
 }

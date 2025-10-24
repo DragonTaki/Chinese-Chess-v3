@@ -212,7 +212,7 @@ namespace Chinese_Chess_v3.Game.Constants.UI
                 public static Vector2F Size => Layout.Size;
                 public static readonly LayoutF Layout = new LayoutF(
                     Sidebar.Position + Margin,
-                    new Vector2F(Sidebar.Size.X - Margin * 2.0f, 160.0f));
+                    new Vector2F(Sidebar.Size.X - Margin * 2.0f, 200.0f));
             }
 
             /// <summary>

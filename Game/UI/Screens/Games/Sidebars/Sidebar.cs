@@ -16,6 +16,7 @@ using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes;
 
 using Engine.UI.Core.Base;
+using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
@@ -24,13 +25,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
     /// Represents the logical data structure of the sidebar UI,
     /// storing both players' names, remaining time, and current turn.
     /// </summary>
-    public class Sidebar
-        : InitializableOnceElement<(IUiFactory factory, SidebarHandler handler, SidebarRenderer renderer)>
-        , IScreen, IDisposable
+    public class Sidebar : UIContainer<SidebarHandler>, IScreen, IDisposable
     {
         private bool disposed = false;
-        private SidebarHandler _handler;
-        private SidebarRenderer _renderer;
         private InfoBoard _infoBoard;
         private LoggerBox _loggerBox;
 
@@ -48,55 +45,13 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
         /// <summary>
         /// Creates a new Sidebar with default player names and timers.
         /// </summary>
-        public Sidebar() {}
-        protected override void OnInit((IUiFactory factory, SidebarHandler handler, SidebarRenderer renderer) arg)
+        public Sidebar() { }
+        protected override void BuildUIObjects()
         {
-            _handler = arg.handler;
-            _renderer = arg.renderer;
-
-            LocalPosition = UILayoutConstants.Sidebar.Position;
-            Size = UILayoutConstants.Sidebar.Size;
-
-            _infoBoard = arg.factory.CreateScreen<InfoBoard, InfoBoardHandler, InfoBoardRenderer>();
+            _infoBoard = _factory.CreateScreen<InfoBoard, InfoBoardHandler>();
             AddChild(_infoBoard);
-            _loggerBox = arg.factory.CreateScreen<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>();
-            AddChild(_loggerBox);
-        }
-
-        public void OnEnter()
-        {
-            _handler.OnEnter();
-        }
-
-        public void OnExit()
-        {
-            _handler.OnExit();
-        }
-
-        /// <summary>
-        /// Updates the sidebar each frame (delegates to handler and renderer).
-        /// </summary>
-        /// <param name="deltaTime">Elapsed time since last frame.</param>
-        protected override void OnUpdate()
-        {
-            _handler.OnUpdate();
-            _renderer.OnUpdate();
-        }
-
-        /// <summary>
-        /// Draws the sidebar (delegates to renderer).
-        /// </summary>
-        /// <param name="g">Graphics context.</param>
-        protected override void OnDraw(Graphics g)
-        {
-            _renderer.Draw(g);
-        }
-        public void Dispose()
-        {
-            if (disposed) return;
-            disposed = true;
-
-            // 停止 timer、解除事件或清理資源
+            //_loggerBox = _factory.CreateScreen<LoggerBox, LoggerBoxHandler>();
+            //AddChild(_loggerBox);
         }
     }
 }

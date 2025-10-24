@@ -13,6 +13,7 @@ using System.Drawing.Drawing2D;
 
 using Chinese_Chess_v3.Game.Configs.Sidebar;
 using Chinese_Chess_v3.Game.Constants.UI;
+using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
 using Engine.GraphicsUtils;
@@ -99,16 +100,18 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
             using GraphicsPath fullShield = ShieldPath.Create(width, height);
             fullShield.Transform(new Matrix(1, 0, 0, 1, baseX, baseY));
 
+            PlayerSide currentTurn = GameManager.Instance.CurrentTurn;
+
             // 左半背景
             using Region leftRegion = new Region(fullShield);
             leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
-            using SolidBrush leftBrush = new SolidBrush(_handler.CurrentTurn == PlayerSide.Black ? Color.Gold : Color.Gray);
+            using SolidBrush leftBrush = new SolidBrush(currentTurn == PlayerSide.Black ? Color.Gold : Color.Gray);
             g.FillRegion(leftBrush, leftRegion);
 
             // 右半背景
             using Region rightRegion = new Region(fullShield);
             rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
-            using SolidBrush rightBrush = new SolidBrush(_handler.CurrentTurn == PlayerSide.Red ? Color.Gold : Color.LightCoral);
+            using SolidBrush rightBrush = new SolidBrush(currentTurn == PlayerSide.Red ? Color.Gold : Color.LightCoral);
             g.FillRegion(rightBrush, rightRegion);
 
             // 內層盾牌

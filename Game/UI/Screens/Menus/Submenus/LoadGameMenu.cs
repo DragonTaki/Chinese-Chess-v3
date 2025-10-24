@@ -9,51 +9,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 using Chinese_Chess_v3.Game.Constants.UI;
 using Chinese_Chess_v3.Game.UI.Screens.Menus.Options;
 
 using Engine.Mathematics;
-using Engine.UI.Core.Base;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Utils;
 using Engine.UI.Widgets;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
 {
-    public class LoadGameMenu
-        : InitializableOnceElement<(IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer)>
-        , IScreen
+    public class LoadGameMenu : UIMenu<LoadGameMenuHandler>, IScreen
     {
-        private UIScrollContainer _scroll;
-        private LoadGameMenuHandler _handler;
-        private LoadGameMenuRenderer _renderer;
-        private List<UIButton> buttons = new();
-        
-        public LoadGameMenu() {}
-        protected override void OnInit((IUiFactory factory, LoadGameMenuHandler handler, LoadGameMenuRenderer renderer) arg)
+        public LoadGameMenu() { }
+
+        protected override void BuildButtons()
         {
-            _scroll = arg.factory.CreateScrollContainer();
-            _handler = arg.handler;
-            _renderer = arg.renderer;
-
-            LocalPosition = UILayoutConstants.Submenu.Position;
-            Size = UILayoutConstants.Submenu.Size;
-
-            BuildMenu();
-        }
-
-        private void BuildMenu()
-        {
-            _scroll.Layout = UILayoutConstants.Submenu.ScrollContainer.Layout;
-            _scroll.BaseScrollY = -UILayoutConstants.Submenu.MarginY;
-            _scroll.OverscrollLimit = UILayoutConstants.Submenu.MarginY;
-
-            this.AddChild(_scroll);
-
             var menuEntries = new List<ButtonEntry<NewGameMenuType>>
             {
                 new ButtonEntry<NewGameMenuType>("LoadGameMenu Option 1", NewGameMenuType.Traditional, () => Console.WriteLine("假選項1被點擊")),
@@ -75,45 +47,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
                     new Vector2F(0.0f, (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY) * i);
                 button.Size = UILayoutConstants.Submenu.Button.Size;
 
-                _scroll.AddChild(button);
-                buttons.Add(button);
+                ScrollContainer.AddChild(button);
+                Buttons.Add(button);
             }
-
-            _scroll.ContentHeight = buttons.Count * (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY);
         }
-
-        private void StartNewGame(NewGameMenuType selectedGamemode)
-        {
-            Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
-        }
-
-        public void OnEnter()
-        {
-            _handler.OnEnter();
-        }
-        
-        public void OnExit()
-        {
-            _handler.OnExit();
-        }
-
-        protected override void OnUpdate()
-        {
-            _scroll.Update();
-        }
-        
-        protected override void OnDraw(Graphics g)
-        {
-            _renderer.Draw(g);
-        }
-
-        public List<UIButton> Buttons => buttons;
-        public List<UIButton> GetVisibleButtons()
-        {
-            UIElementUtils.UpdateVisibleState(buttons, GetAbsClipRect());
-            return buttons.Where(b => b.IsEnabled).ToList();
-        }
-
-        public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
     }
 }

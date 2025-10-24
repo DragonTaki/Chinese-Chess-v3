@@ -18,35 +18,28 @@ using Chinese_Chess_v3.Game.UI.Binders;
 
 using Engine.UI.Core.Base;
 using Engine.UI.Core.Interfaces;
+using Engine.UI.Core.Elements;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
     /// <summary>
     /// 棋盤元件，作為 GameMenu 的子元件
     /// </summary>
-    public class ChessBoard
-        : InitializableOnceElement<(IUiFactory factory, ChessBoardHandler handler, ChessBoardRenderer renderer)>
-        , IScreen, IUiContainer, IDisposable
+    public class ChessBoard : UIContainer<ChessBoardHandler>, IScreen, IDisposable
     {
-        private ChessBoardHandler _handler;
-        private ChessBoardRenderer _renderer;
-
         // fields
         private bool disposed = false;
         public UIPieceBinder PieceBinder { get; private set; }
         private GameManager _gameManager = GameManager.Instance;
-
         public Piece SelectedPiece => _gameManager.SelectedPiece;
         
         // IUiContainer 實作
-        private readonly List<Action> _pendingActions = new();
 
         public ChessBoard() {}
-        protected override void OnInit((IUiFactory factory, ChessBoardHandler handler, ChessBoardRenderer renderer) arg)
+        protected override void OnInit((IUiFactory, ChessBoardHandler) arg)
         {
-            _handler = arg.handler;
-            _renderer = arg.renderer;
-            
+            base.OnInit();
+
             PieceBinder = new UIPieceBinder(_gameManager, this /* or boardPanel */);
 
             LocalPosition = UILayoutConstants.Board.Position;
@@ -56,7 +49,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
         protected override void OnDraw(Graphics g)
         {
             var uiPieces = PieceBinder.GetUIPieces();
-            _renderer.Draw(g, uiPieces);
+            //_renderer.Draw(g, uiPieces);
         }
         
         public override bool OnMouseDown(MouseEventArgs e)
@@ -73,20 +66,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
             _handler.HandleClick(gridX, gridY);
 
             return true;
-        }
-
-        public void OnEnter()
-        {
-            _handler.OnEnter();
-        }
-
-        public void OnExit()
-        {
-            _handler.OnExit();
-        }
-        public void Post(Action action)
-        {
-            _pendingActions.Add(action);
         }
 
         // 在每個更新週期呼叫

@@ -8,10 +8,11 @@
 /* ----- ----- ----- ----- */
 
 using System;
-
+using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
 using Engine.UI.Core.Base;
+using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
 
@@ -20,10 +21,8 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
     /// <summary>
     /// Handles the data and logic of the InfoBoard.
     /// </summary>
-    public class InfoBoardHandler : InitializableOnceBase<(IUiFactory factory, InfoBoard infoBoard)>
+    public class InfoBoardHandler : UIContainerHandler<InfoBoardHandler>
     {
-        private NavigationManager _navigationManager;
-        private InfoBoard _infoBoard;
         public string BlackPlayerName { get; set; } = "黑方玩家";
         public string RedPlayerName { get; set; } = "紅方玩家";
 
@@ -31,14 +30,14 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
         public TimeSpan RedTime { get; set; } = TimeSpan.FromMinutes(5);
 
         public PlayerSide CurrentTurn { get; set; } = PlayerSide.Red;
+        private GameManager _gameManager;
 
-        public InfoBoardHandler() {}
-        protected override void OnInit((IUiFactory factory, InfoBoard infoBoard) arg)
+        public InfoBoardHandler() { }
+        public void SetGameManager(GameManager gameManager)
         {
-            _infoBoard = arg.infoBoard;
-            _navigationManager = arg.factory.Resolve<NavigationManager>();
+            _gameManager = gameManager;
         }
-        
+
         /// <summary>
         /// Updates timers based on delta time.
         /// </summary>
@@ -53,15 +52,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
         public void SwitchTurn()
         {
             CurrentTurn = CurrentTurn == PlayerSide.Black ? PlayerSide.Red : PlayerSide.Black;
-        }
-        public void OnEnter()
-        {
-            //
-        }
-        
-        public void OnExit()
-        {
-            //
         }
     }
 }

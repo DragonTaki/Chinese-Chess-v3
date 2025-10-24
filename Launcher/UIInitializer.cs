@@ -54,11 +54,12 @@ namespace Launcher
             var _factory = sp.GetRequiredService<IUiFactory>();
 
             // Create and register the main menu screen
-            var _mainMenu = _factory.CreateScreen<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            //var _mainMenu = _factory.CreateScreen<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            var _mainMenu = _factory.CreateScreen<MainMenu, MainMenuHandler>();
             _navigationManager.RegisterScreen(_mainMenu);
 
             // Show the initial screen (MainMenu)
-            _navigationManager.Show<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            _navigationManager.Show<MainMenu, MainMenuHandler>();
 
             return _root; // Return the fully initialized root UI node
         }

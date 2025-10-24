@@ -9,7 +9,7 @@
 
 using Chinese_Chess_v3.Game.Core;
 
-using Engine.UI.Constants;
+using Engine.UI.Constants.Components;
 using Engine.UI.Core.Elements;
 
 namespace Chinese_Chess_v3.Game.UI.Elements

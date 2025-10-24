@@ -7,32 +7,20 @@
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
 using Chinese_Chess_v3.Game.Constants.UI;
 using Chinese_Chess_v3.Game.UI.Screens.Menus.Options;
 
 using Engine.Mathematics;
-using Engine.UI.Core.Base;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Utils;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Menus
 {
-    public class MainMenu
-        : InitializableOnceElement<(IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer)>
-        , IScreen
+    public class MainMenu : UIMenu<MainMenuHandler>, IScreen
     {
-        private UIScrollContainer _scroll;
-        private MainMenuHandler _handler;
-        private MainMenuRenderer _renderer;
-        private readonly List<UIButton> _buttons = new();
-
-        public MainMenu() {}
-        protected override void OnInit((IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer) arg)
+        public MainMenu() { }
+        /*
+        protected override void OnInit((IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer) arg)  // OLD
         {
             _scroll = arg.factory.CreateScrollContainer();
             _handler = arg.handler;
@@ -42,8 +30,34 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
             Size = UILayoutConstants.MainMenu.Size;
 
             BuildMenu();
+        }*/
+        protected override void BuildButtons()
+        {
+            // 建立按鈕
+            var menuEntries = MainMenuOptions.Create(_handler.SwitchSubmenu);
+            Vector2F btnStartPos = UILayoutConstants.MainMenu.Button.Position; // 若未用可註解
+
+            for (int i = 0; i < menuEntries.Count; i++)
+            {
+                var entry = menuEntries[i];
+                var button = new UIButton<MainMenuType>(entry);
+
+                // 設定文字與動作
+                button.Text = entry.Label;
+                button.Action = () => _handler.SwitchSubmenu(entry.Type);
+
+                // 設定位置與大小
+                button.Size = UILayoutConstants.MainMenu.Button.Size;
+                button.LocalPosition = UILayoutConstants.MainMenu.Button.Position +
+                    new Vector2F(0, i * (button.Size.Y + UILayoutConstants.MainMenu.Margin));
+
+                // 加入 ScrollContainer 與 Buttons 列表
+                ScrollContainer.AddChild(button);
+                Buttons.Add(button);
+            }
         }
 
+/*
         private void BuildMenu()
         {
             _scroll.Layout = UILayoutConstants.MainMenu.ScrollContainer.Layout;
@@ -67,35 +81,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
             }
 
             _scroll.ContentHeight = _buttons.Count * (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin);
-        }
-
-        public void OnEnter()
-        {
-            _handler.OnEnter();
-        }
-        
-        public void OnExit()
-        {
-            _handler.OnExit();
-        }
-
-        protected override void OnUpdate()
-        {
-            _scroll.Update();
-        }
-
-        protected override void OnDraw(Graphics g)
-        {
-            _renderer.Draw(g);
-        }
-
-        public List<UIButton> Buttons => _buttons;
-        public List<UIButton> GetVisibleButtons()
-        {
-            UIElementUtils.UpdateVisibleState(_buttons, GetAbsClipRect());
-            return _buttons.Where(b => b.IsEnabled).ToList();
-        }
-
-        public RectangleF GetAbsClipRect() => _scroll.GetAbsClippingRect();
+        }*/
     }
 }

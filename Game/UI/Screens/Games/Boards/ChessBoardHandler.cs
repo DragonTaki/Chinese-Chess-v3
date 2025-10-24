@@ -9,7 +9,7 @@
 
 using Chinese_Chess_v3.Game.Core;
 
-using Engine.UI.Core.Base;
+using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
 
@@ -18,29 +18,12 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
     /// <summary>
     /// 處理棋盤互動邏輯，例如滑鼠點擊選取棋子
     /// </summary>
-    public class ChessBoardHandler : InitializableOnceBase<(IUiFactory factory, ChessBoard chessBoard)>
+    public class ChessBoardHandler : UIContainerHandler<ChessBoardHandler>
     {
-        private NavigationManager _navigationManager;
-        private ChessBoard _chessBoard;
         public ChessBoardHandler() {}
-        protected override void OnInit((IUiFactory factory, ChessBoard chessBoard) arg)
-        {
-            _chessBoard = arg.chessBoard;
-            _navigationManager = arg.factory.Resolve<NavigationManager>();
-        }
-
         public void HandleClick(int gridX, int gridY)
         {
             GameManager.Instance.HandleClick(gridX, gridY);
-        }
-        public void OnEnter()
-        {
-            //
-        }
-        
-        public void OnExit()
-        {
-            //
         }
     }
 }

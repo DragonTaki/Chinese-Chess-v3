@@ -7,7 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -20,31 +19,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
 {
     public class LoadGameMenuRenderer
     {
-        /// <summary>
-        /// Width of the drawing canvas.
-        /// </summary>
-        private int _width;
-        public int Width
-        {
-            get => _width;
-            set
-            {
-                _width = Math.Max(value, 1);
-            }
-        }
-
-        /// <summary>
-        /// Height of the drawing canvas.
-        /// </summary>
-        private int _height;
-        public int Height
-        {
-            get => _height;
-            set
-            {
-                _height = Math.Max(value, 1);
-            }
-        }
         private LoadGameMenu _menu;
 
         public LoadGameMenuRenderer(LoadGameMenu menu)
@@ -55,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
         public void Draw(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            var buttons = _menu.Buttons;
+            var buttons = _menu.ButtonList;
             var clip = _menu.GetAbsClipRect();
 
             DrawOutline(g);
