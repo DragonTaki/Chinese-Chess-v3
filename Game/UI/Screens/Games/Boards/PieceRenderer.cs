@@ -16,57 +16,72 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 using Chinese_Chess_v3.Game.UI.Elements;
 
-using Engine.GraphicsUtils;
+using Engine.UI.Core.Elements;
+using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
-    public class PieceRenderer
+    public class PieceRenderer : UIRenderer
     {
-        public void DrawPieces(Graphics g, List<UIPiece> uiPieces)
-        {
-            GraphicsHelper.ApplyHighQualitySettings(g);
+        private readonly Pieces _pieces = new Pieces();
+        public PieceRenderer() {}
 
-            foreach (var uiPiece in uiPieces)
+        public override void Render(Graphics g, UIElement element)
+        {
+            if (element is ChessBoard board)
             {
-                DrawPiece(g, uiPiece);
+                _pieces.Draw(g, board.PieceBinder.UIPieces);
             }
         }
-        private void DrawPiece(Graphics g, UIPiece uiPiece)
+
+        private class Pieces
         {
-            Piece piece = uiPiece.PieceModel;
-            float centerX = UILayoutConstants.Board.Grid.Position.X + piece.X * UILayoutConstants.Board.Grid.CellSize;
-            float centerY = UILayoutConstants.Board.Grid.Position.Y + piece.Y * UILayoutConstants.Board.Grid.CellSize;
-
-            float radius = PieceSettings.Radius;
-            float outerRadius = radius - PieceSettings.OuterMargin;
-
-            bool isRed = piece.Side == PlayerSide.Red;
-
-            if (uiPiece.IsSelected)
+            public void Draw(Graphics g, List<UIPiece> uiPieces)
             {
-                float glowRadius = radius + PieceSettings.GlowMargin;
-                Color glowColor = PieceSettings.GlowColor;
-                using (SolidBrush glowBrush = new SolidBrush(glowColor))
+                if (uiPieces == null) return;
+                foreach (var uiPiece in uiPieces)
                 {
-                    g.FillEllipse(glowBrush, centerX - glowRadius, centerY - glowRadius, glowRadius * 2, glowRadius * 2);
+                    DrawPiece(g, uiPiece);
                 }
             }
 
-            // Draw main circle (fill color)
-            Brush fillBrush = isRed ? PieceSettings.RedBackgroundBrush : PieceSettings.BlackBackgroundBrush;
-            g.FillEllipse(fillBrush, centerX - radius, centerY - radius, radius * 2, radius * 2);
+            private void DrawPiece(Graphics g, UIPiece uiPiece)
+            {
+                Piece piece = uiPiece.PieceModel;
+                float centerX = UILayoutConstants.Board.Grid.Position.X + piece.X * UILayoutConstants.Board.Grid.CellSize;
+                float centerY = UILayoutConstants.Board.Grid.Position.Y + piece.Y * UILayoutConstants.Board.Grid.CellSize;
 
-            // Draw border circle (outline color)
-            Pen outlinePen = new Pen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
-                                     isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth);
-            g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
+                float radius = PieceSettings.Radius;
+                float outerRadius = radius - PieceSettings.OuterMargin;
 
-            // Draw text (label)
-            string label = PieceConstants.GetPieceText(piece.Type, isRed);
-            Font font = PieceSettings.Font;
-            SizeF textSize = g.MeasureString(label, font);
-            Brush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;
-            g.DrawString(label, font, textBrush, centerX - textSize.Width / 2, centerY - textSize.Height / 2);
+                bool isRed = piece.Side == PlayerSide.Red;
+
+                if (uiPiece.IsSelected)
+                {
+                    float glowRadius = radius + PieceSettings.GlowMargin;
+                    Color glowColor = PieceSettings.GlowColor;
+                    using (SolidBrush glowBrush = new SolidBrush(glowColor))
+                    {
+                        g.FillEllipse(glowBrush, centerX - glowRadius, centerY - glowRadius, glowRadius * 2, glowRadius * 2);
+                    }
+                }
+
+                // Draw main circle (fill color)
+                Brush fillBrush = isRed ? PieceSettings.RedBackgroundBrush : PieceSettings.BlackBackgroundBrush;
+                g.FillEllipse(fillBrush, centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+                // Draw border circle (outline color)
+                Pen outlinePen = new Pen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
+                                         isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth);
+                g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
+
+                // Draw text (label)
+                string label = PieceConstants.GetPieceText(piece.Type, isRed);
+                Font font = PieceSettings.Font;
+                SizeF textSize = g.MeasureString(label, font);
+                Brush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;
+                g.DrawString(label, font, textBrush, centerX - textSize.Width / 2, centerY - textSize.Height / 2);
+            }
         }
     }
 }

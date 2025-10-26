@@ -26,6 +26,16 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
 
         public GameMenu() {}
 
+        protected override void OnInit((IUiFactory, GameMenuHandler) arg)
+        {
+            ButtonSpacing = UILayoutConstants.GameMenu.Button.Spacing;
+
+            base.OnInit(arg);
+
+            Layout = UILayoutConstants.GameMenu.Layout;
+            ScrollContainer.Layout = UILayoutConstants.GameMenu.ScrollContainer.Layout;
+        }
+
         protected override void BuildButtons()
         {
             var menuEntries = GameMenuOptions.Create(_handler.GameMenuAction);
@@ -35,7 +45,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
                 var entry = menuEntries[i];
                 var button = new UIButton<GameMenuType>(entry);
                 button.LocalPosition = UILayoutConstants.GameMenu.Button.Position +
-                    new Vector2F(0.0f, (UILayoutConstants.GameMenu.Button.Size.Y + UILayoutConstants.GameMenu.Margin) * i);
+                    new Vector2F(0.0f, (UILayoutConstants.GameMenu.Button.Size.Y + ButtonSpacing) * i);
                 button.Size = UILayoutConstants.GameMenu.Button.Size;
 
                 ScrollContainer.AddChild(button);
@@ -45,27 +55,19 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
         protected override void BuildUIObjects()
         {
             // 1. 重置資料層
-            GameManager.Instance.ResetBoardToDefault();
+            ChessBoard?.GameManager.ResetBoardToDefault();
 
             // 2. 重置 UI
-            ChessBoard?.Dispose();
-            ChessBoard = _factory.CreateScreen<ChessBoard, ChessBoardHandler>();
-            AddChild(ChessBoard);
+            if (ChessBoard == null)
+                ChessBoard = _factory.CreateScreen<ChessBoard, ChessBoardHandler>();
+            if (!Children.Contains(ChessBoard))
+                AddChild(ChessBoard);
 
-            Sidebar?.Dispose();
-            Sidebar = _factory.CreateScreen<Sidebar, SidebarHandler>();
-            AddChild(Sidebar);
+            if (Sidebar == null)
+                Sidebar = _factory.CreateScreen<Sidebar, SidebarHandler>();
+            if (!Children.Contains(Sidebar))
+                AddChild(Sidebar);
         }
         public void ResetGameUI() => BuildUIObjects();
-
-        // 方法來安全清理
-        public void DisposeChildren()
-        {
-            ChessBoard?.Dispose();
-            ChessBoard = null;
-
-            Sidebar?.Dispose();
-            Sidebar = null;
-        }
     }
 }

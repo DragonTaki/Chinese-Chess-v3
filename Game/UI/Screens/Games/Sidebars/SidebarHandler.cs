@@ -7,9 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards;
-using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes;
 
 using Engine.UI.Core.Handlers;
 

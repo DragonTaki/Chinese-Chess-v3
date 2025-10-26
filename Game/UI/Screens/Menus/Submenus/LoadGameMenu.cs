@@ -24,6 +24,16 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
     {
         public LoadGameMenu() { }
 
+        protected override void OnInit((IUiFactory, LoadGameMenuHandler) arg)
+        {
+            ButtonSpacing = UILayoutConstants.Submenu.Button.Spacing;
+
+            base.OnInit(arg);
+
+            Layout = UILayoutConstants.Submenu.Layout;
+            ScrollContainer.Layout = UILayoutConstants.Submenu.ScrollContainer.Layout;
+        }
+
         protected override void BuildButtons()
         {
             var menuEntries = new List<ButtonEntry<NewGameMenuType>>
@@ -44,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
                 var entry = menuEntries[i];
                 var button = new UIButton<NewGameMenuType>(entry);
                 button.LocalPosition = UILayoutConstants.Submenu.Button.Position +
-                    new Vector2F(0.0f, (UILayoutConstants.Submenu.Button.Size.Y + UILayoutConstants.Submenu.MarginY) * i);
+                    new Vector2F(0.0f, (UILayoutConstants.Submenu.Button.Size.Y + ButtonSpacing) * i);
                 button.Size = UILayoutConstants.Submenu.Button.Size;
 
                 ScrollContainer.AddChild(button);

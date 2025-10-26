@@ -11,10 +11,7 @@ using System;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
-using Engine.UI.Core.Base;
 using Engine.UI.Core.Handlers;
-using Engine.UI.Core.Infrastructure;
-using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 {
@@ -31,6 +28,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 
         public PlayerSide CurrentTurn { get; set; } = PlayerSide.Red;
         private GameManager _gameManager;
+        public GameManager GameManager => _gameManager;
 
         public InfoBoardHandler() { }
         public void SetGameManager(GameManager gameManager)

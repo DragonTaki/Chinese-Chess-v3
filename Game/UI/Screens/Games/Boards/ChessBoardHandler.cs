@@ -7,11 +7,10 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System.ComponentModel;
 using Chinese_Chess_v3.Game.Core;
 
 using Engine.UI.Core.Handlers;
-using Engine.UI.Core.Infrastructure;
-using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
@@ -23,7 +22,10 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
         public ChessBoardHandler() {}
         public void HandleClick(int gridX, int gridY)
         {
-            GameManager.Instance.HandleClick(gridX, gridY);
+            if (_container is ChessBoard board)
+            {
+                board.GameManager.HandleClick(gridX, gridY);
+            }
         }
     }
 }

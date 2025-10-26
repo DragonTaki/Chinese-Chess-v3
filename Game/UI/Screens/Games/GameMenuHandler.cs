@@ -41,9 +41,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
                 case GameMenuType.Surrender:
                     break;
                 case GameMenuType.ReturnToMain:
-                    _menu.Dispose();
-
-                    // 4. 導航回主選單
                     _navigationManager.Show<MainMenu, MainMenuHandler>();
                     break;
                 default:

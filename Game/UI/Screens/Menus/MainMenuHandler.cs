@@ -31,9 +31,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
         private readonly Dictionary<MainMenuType, UIElement> _submenus = new();
 
         public MainMenuHandler() { }
-        protected override void OnInit((IUiFactory, UIMenu<MainMenuHandler>) arg)
+        protected override void OnMenuInit((IUiFactory, UIContainer<MainMenuHandler>) arg)
         {
-            base.OnInit(arg);
+            base.OnMenuInit(arg);
 
             // Initialize _submenus
             _submenus[MainMenuType.NewGame] = CreateSubMenu(() => _factory.CreateScreen<NewGameMenu, NewGameMenuHandler>());

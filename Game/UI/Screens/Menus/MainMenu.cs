@@ -19,18 +19,17 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
     public class MainMenu : UIMenu<MainMenuHandler>, IScreen
     {
         public MainMenu() { }
-        /*
-        protected override void OnInit((IUiFactory factory, MainMenuHandler handler, MainMenuRenderer renderer) arg)  // OLD
+
+        protected override void OnInit((IUiFactory, MainMenuHandler) arg)
         {
-            _scroll = arg.factory.CreateScrollContainer();
-            _handler = arg.handler;
-            _renderer = arg.renderer;
+            ButtonSpacing = UILayoutConstants.MainMenu.Button.Spacing;
 
-            LocalPosition = UILayoutConstants.MainMenu.Position;
-            Size = UILayoutConstants.MainMenu.Size;
+            base.OnInit(arg);
 
-            BuildMenu();
-        }*/
+            Layout = UILayoutConstants.MainMenu.Layout;
+            ScrollContainer.Layout = UILayoutConstants.MainMenu.ScrollContainer.Layout;
+        }
+
         protected override void BuildButtons()
         {
             // 建立按鈕
@@ -49,38 +48,12 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
                 // 設定位置與大小
                 button.Size = UILayoutConstants.MainMenu.Button.Size;
                 button.LocalPosition = UILayoutConstants.MainMenu.Button.Position +
-                    new Vector2F(0, i * (button.Size.Y + UILayoutConstants.MainMenu.Margin));
+                    new Vector2F(0, i * (button.Size.Y + ButtonSpacing));
 
                 // 加入 ScrollContainer 與 Buttons 列表
                 ScrollContainer.AddChild(button);
                 Buttons.Add(button);
             }
         }
-
-/*
-        private void BuildMenu()
-        {
-            _scroll.Layout = UILayoutConstants.MainMenu.ScrollContainer.Layout;
-            _scroll.BaseScrollY = -UILayoutConstants.MainMenu.Margin;
-            _scroll.OverscrollLimit = UILayoutConstants.MainMenu.Margin;
-
-            this.AddChild(_scroll);
-
-            var menuEntries = MainMenuOptions.Create(_handler.SwitchSubmenu);
-
-            for (int i = 0; i < menuEntries.Count; i++)
-            {
-                var entry = menuEntries[i];
-                var button = new UIButton<MainMenuType>(entry);
-                button.LocalPosition = UILayoutConstants.MainMenu.Button.Position +
-                    new Vector2F(0.0f, (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin) * i);
-                button.Size = UILayoutConstants.MainMenu.Button.Size;
-
-                _scroll.AddChild(button);
-                _buttons.Add(button);
-            }
-
-            _scroll.ContentHeight = _buttons.Count * (UILayoutConstants.MainMenu.Button.Size.Y + UILayoutConstants.MainMenu.Margin);
-        }*/
     }
 }

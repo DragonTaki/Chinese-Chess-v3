@@ -3,38 +3,35 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2025/10/21
-// Version: v1.0
+// Update Date: 2025/10/25
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System.Collections.Generic;
 using System.Drawing;
 
-using Chinese_Chess_v3.Game.UI.Elements;
+using Engine.UI.Core.Elements;
+using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
     /// <summary>
     /// 負責繪製棋盤與棋子
     /// </summary>
-    public class ChessBoardRenderer
+    public class ChessBoardRenderer : UIContainerRenderer<ChessBoardHandler>
     {
-        private readonly BoardRenderer _boardRenderer = new();
-        private readonly PieceRenderer _pieceRenderer = new();
+        private readonly CompositeRenderer _composite = new CompositeRenderer();
 
-        /// <summary>
-        /// 繪製棋盤與棋子
-        /// </summary>
-        /// <param name="g">Graphics物件</param>
-        /// <param name="pieces">棋子列表</param>
-        /// <param name="selectedPiece">目前選取的棋子（可為null）</param>
-        public void Draw(Graphics g, List<UIPiece> uiPieces)
+        public ChessBoardRenderer(ChessBoard container) : base(container)
         {
-            // 畫棋盤
-            _boardRenderer.DrawBoard(g);
+            // 將原本的 BoardRenderer 與 PieceRenderer 封裝成單獨 UIRenderer
+            _composite
+                .Add(new BoardRenderer())   // 畫棋盤格子
+                .Add(new PieceRenderer());  // 畫棋子
+        }
 
-            // 畫棋子
-            _pieceRenderer.DrawPieces(g, uiPieces);
+        public override void Render(Graphics g, UIElement element)
+        {
+            _composite.Render(g, element);
         }
     }
 }

@@ -9,10 +9,13 @@
 
 using System;
 
+using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Screens.Games;
 using Chinese_Chess_v3.Game.UI.Screens.Menus.Options;
 
 using Engine.UI.Core.Handlers;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
 {
@@ -22,13 +25,14 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
     public class NewGameMenuHandler : UIMenuHandler<NewGameMenuHandler>
     {
 
-        public NewGameMenuHandler() {}
+        public NewGameMenuHandler() { }
 
         public void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
             //mainMenu.CancelCurrentSub_menu();
             var gameMenu = _navigationManager.Show<GameMenu, GameMenuHandler>();
+            var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
             gameMenu.ResetGameUI();
         }
     }

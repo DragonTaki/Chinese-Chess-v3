@@ -8,7 +8,6 @@
 /* ----- ----- ----- ----- */
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -16,9 +15,9 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Constants.UI;
 using Chinese_Chess_v3.Game.UI.Binders;
 
-using Engine.UI.Core.Base;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Elements;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
@@ -28,9 +27,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
     public class ChessBoard : UIContainer<ChessBoardHandler>, IScreen, IDisposable
     {
         // fields
-        private bool disposed = false;
         public UIPieceBinder PieceBinder { get; private set; }
-        private GameManager _gameManager = GameManager.Instance;
+        private GameManager _gameManager;
+        public GameManager GameManager => _gameManager;
         public Piece SelectedPiece => _gameManager.SelectedPiece;
         
         // IUiContainer 實作
@@ -38,23 +37,30 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
         public ChessBoard() {}
         protected override void OnInit((IUiFactory, ChessBoardHandler) arg)
         {
-            base.OnInit();
+            base.OnInit(arg);
 
+            _gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
             PieceBinder = new UIPieceBinder(_gameManager, this /* or boardPanel */);
 
             LocalPosition = UILayoutConstants.Board.Position;
             Size = UILayoutConstants.Board.Size;
+
+            _renderer = new ChessBoardRenderer(this);
+            _factory.ServiceProvider.GetRequiredService<GameManager>();
         }
 
         protected override void OnDraw(Graphics g)
         {
-            var uiPieces = PieceBinder.GetUIPieces();
-            //_renderer.Draw(g, uiPieces);
+            if (_renderer == null)
+                throw new InvalidOperationException("Renderer not initialized for ChessBoard");
+
+            // 將自身（ChessBoard）傳給 Renderer，讓 CompositeRenderer 依序呼叫 BoardRenderer 和 PieceRenderer
+            _renderer.Render(g, this);
         }
         
         public override bool OnMouseDown(MouseEventArgs e)
         {
-            var board = GameManager.Instance.Board;
+            var board = _gameManager.Board;
 
             // 1. 判斷是否在棋盤範圍
             if (!board.IsWithinBoard(e.X, e.Y))
