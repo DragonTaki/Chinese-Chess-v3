@@ -16,14 +16,12 @@ using Engine.UI.Elements;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes
 {
-    public class LoggerBox : UITextBox<LoggerBoxHandler>, IScreen, IDisposable
+    public class LoggerBox : UITextBox<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>
     {
         public LoggerBox() { }
 
-        protected override void OnInit((IUiFactory, LoggerBoxHandler) arg)
+        protected override void OnInit(IUiFactory factory)
         {
-            base.OnInit(arg);
-
             Layout = UILayoutConstants.Sidebar.LoggerBox.Layout;
             ScrollContainer.Layout = UILayoutConstants.Sidebar.LoggerBox.ScrollContainer.Layout;
         }

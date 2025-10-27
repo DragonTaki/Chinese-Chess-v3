@@ -51,14 +51,14 @@ namespace Launcher
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _navigationManager.Init(_rootCanvas);
-            _navigationManager.Show<MainMenu, MainMenuHandler>();
+            _navigationManager.Show<MainMenu, MainMenuHandler, MainMenuRenderer>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
 
             WireInputEvents();
             InitTimer();
-            
+
             _bgStar = new StarAnimationApp();
         }
 

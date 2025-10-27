@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-using Engine.Configs;
 using Engine.Geometry;
 using Engine.UI.Core.Elements;
 

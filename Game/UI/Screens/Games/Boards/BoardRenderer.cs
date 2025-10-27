@@ -20,7 +20,7 @@ using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
-    public class BoardRenderer : UIRenderer
+    public class BoardRenderer : UIRenderer<ChessBoard, ChessBoardHandler, ChessBoardRenderer>
     {
         private readonly IBoardDrawStrategy _strategy;
 
@@ -30,7 +30,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
             _strategy = strategy ?? new ClassicBoard();
         }
 
-        public override void Render(Graphics g, UIElement element)
+        protected override void OnRender(Graphics g, UIElement element)
         {
             if (element is not ChessBoard board)
                 return;

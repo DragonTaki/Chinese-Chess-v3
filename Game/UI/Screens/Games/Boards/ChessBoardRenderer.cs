@@ -9,7 +9,6 @@
 
 using System.Drawing;
 
-using Engine.UI.Core.Elements;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
@@ -17,19 +16,28 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
     /// <summary>
     /// 負責繪製棋盤與棋子
     /// </summary>
-    public class ChessBoardRenderer : UIContainerRenderer<ChessBoardHandler>
+    public class ChessBoardRenderer : UIContainerRenderer<ChessBoard, ChessBoardHandler, ChessBoardRenderer>
     {
-        private readonly CompositeRenderer _composite = new CompositeRenderer();
+        protected CompositeRenderer<ChessBoard, ChessBoardHandler, ChessBoardRenderer> _composite = new();
 
-        public ChessBoardRenderer(ChessBoard container) : base(container)
+        public ChessBoardRenderer() { }
+        
+        protected override void AfterInit()
         {
-            // 將原本的 BoardRenderer 與 PieceRenderer 封裝成單獨 UIRenderer
-            _composite
-                .Add(new BoardRenderer())   // 畫棋盤格子
-                .Add(new PieceRenderer());  // 畫棋子
+            SetupRendererChildren();
         }
 
-        public override void Render(Graphics g, UIElement element)
+        private void SetupRendererChildren()
+        {
+            if (_composite.ListCount == 0)
+            {
+                _composite
+                    .Add(new BoardRenderer())
+                    .Add(new PieceRenderer());
+            }
+        }
+
+        protected override void OnRender(Graphics g, ChessBoard element)
         {
             _composite.Render(g, element);
         }

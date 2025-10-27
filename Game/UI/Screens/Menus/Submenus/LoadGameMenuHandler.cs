@@ -16,9 +16,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
     /// <summary>
     /// Handles logic and interactions for the LoadGameMenu.
     /// </summary>
-    public class LoadGameMenuHandler : UIMenuHandler<LoadGameMenuHandler>
+    public class LoadGameMenuHandler : UIMenuHandler<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>
     {
-        public LoadGameMenuHandler() {}
+        public LoadGameMenuHandler() { }
 
         public void StartNewGame()
         {

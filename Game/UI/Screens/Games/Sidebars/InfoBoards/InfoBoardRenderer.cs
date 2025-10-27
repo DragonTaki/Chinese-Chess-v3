@@ -12,13 +12,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 using Chinese_Chess_v3.Game.Configs.Sidebar;
-using Chinese_Chess_v3.Game.Constants.UI;
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
+using Engine.Geometry;
 using Engine.GraphicsUtils;
 using Engine.GraphicsUtils.GraphicsPaths;
-using Engine.UI.Core.Elements;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
@@ -26,45 +24,51 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
     /// <summary>
     /// Responsible for drawing the InfoBoard visuals.
     /// </summary>
-    public class InfoBoardRenderer : UIContainerRenderer<InfoBoardHandler>
+    public class InfoBoardRenderer : UIContainerRenderer<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
     {
-        private InfoBoardHandler _handler;
+        protected CompositeRenderer<InfoBoard, InfoBoardHandler, InfoBoardRenderer> _composite = new();
 
-        private readonly CompositeRenderer _composite = new CompositeRenderer();
-
-        public InfoBoardRenderer(InfoBoard container) : base(container) {}
-
-        public void Initialize(InfoBoardHandler handler)
+        public InfoBoardRenderer() { }
+        
+        protected override void AfterInit()
         {
-            _handler = handler;
-            _composite
-                .Add(new ClassicBoard(_handler));
+            SetupRendererChildren();
         }
 
-        public override void Render(Graphics g, UIElement element)
+        private void SetupRendererChildren()
+        {
+            if (_composite.ListCount == 0)
+            {
+                _composite
+                    .Add(new ClassicBoard());
+            }
+        }
+
+        protected override void OnRender(Graphics g, InfoBoard element)
         {
             _composite.Render(g, element);
         }
 
-        private class ClassicBoard : UIRenderer
+        private class ClassicBoard : UIRenderer<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
         {
-            private readonly InfoBoardHandler _handler;
-            private readonly float _width;
-            private readonly float _height;
+            private InfoBoardHandler _handler;
+            private LayoutF Layout;
             protected readonly Font _nameFont;
             protected readonly Font _timerFont;
 
-            public ClassicBoard(InfoBoardHandler handler)
+            public ClassicBoard()
             {
-                _handler = handler;
-                _width = UILayoutConstants.Sidebar.Infoboard.Size.X;
-                _height = UILayoutConstants.Sidebar.Infoboard.Size.Y;
                 _nameFont = InfoBoardSettings.NameFont;
                 _timerFont = InfoBoardSettings.TimerFont;
             }
 
-            public override void Render(Graphics g, UIElement element)
+            protected override void OnRender(Graphics g, InfoBoard element)
             {
+                if (_handler == null)
+                {
+                    _handler = element.Handler;
+                    Layout = element.Layout;
+                }
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
                 using var bgBrush = new SolidBrush(Color.Red);
@@ -76,10 +80,10 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 
             private void DrawShieldBackground(Graphics g)
             {
-                float baseX = UILayoutConstants.Sidebar.Infoboard.Position.X;
-                float baseY = UILayoutConstants.Sidebar.Infoboard.Position.Y;
-                float width = UILayoutConstants.Sidebar.Infoboard.Size.X;
-                float height = UILayoutConstants.Sidebar.Infoboard.Size.Y;
+                float baseX = Layout.X;
+                float baseY = Layout.Y;
+                float width = Layout.Width;
+                float height = Layout.Height;
                 int inset = 4;
 
                 // 外層盾牌
@@ -131,10 +135,10 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 
             private void DrawPlayers(Graphics g)
             {
-                float baseX = UILayoutConstants.Sidebar.Infoboard.Position.X;
-                float baseY = UILayoutConstants.Sidebar.Infoboard.Position.Y;
-                float width = UILayoutConstants.Sidebar.Infoboard.Size.X;
-                float height = UILayoutConstants.Sidebar.Infoboard.Size.Y;
+                float baseX = Layout.X;
+                float baseY = Layout.Y;
+                float width = Layout.Width;
+                float height = Layout.Height;
 
                 DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, _handler.BlackPlayerName, _handler.BlackTime,
                                 _handler.CurrentTurn == PlayerSide.Black);

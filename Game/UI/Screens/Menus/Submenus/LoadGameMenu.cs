@@ -15,21 +15,24 @@ using Chinese_Chess_v3.Game.UI.Screens.Menus.Options;
 
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
+using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
+using Engine.UI.Core.Renderers;
 using Engine.UI.Widgets;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
 {
-    public class LoadGameMenu : UIMenu<LoadGameMenuHandler>, IScreen
+    public class LoadGameMenu : UIMenu<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>
     {
         public LoadGameMenu() { }
 
-        protected override void OnInit((IUiFactory, LoadGameMenuHandler) arg)
+        protected override void BeforeInit(IUiFactory factory)
         {
             ButtonSpacing = UILayoutConstants.Submenu.Button.Spacing;
+        }
 
-            base.OnInit(arg);
-
+        protected override void OnInit(IUiFactory factory)
+        {
             Layout = UILayoutConstants.Submenu.Layout;
             ScrollContainer.Layout = UILayoutConstants.Submenu.ScrollContainer.Layout;
         }
@@ -52,7 +55,11 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
             for (int i = 0; i < menuEntries.Count; i++)
             {
                 var entry = menuEntries[i];
-                var button = new UIButton<NewGameMenuType>(entry);
+                var button = _factory.CreateElement<UIButton, UIButtonHandler, UIButtonRenderer>();
+
+                button.Text = entry.Label;
+                button.Handler.Action = () => Handler.StartNewGame();
+
                 button.LocalPosition = UILayoutConstants.Submenu.Button.Position +
                     new Vector2F(0.0f, (UILayoutConstants.Submenu.Button.Size.Y + ButtonSpacing) * i);
                 button.Size = UILayoutConstants.Submenu.Button.Size;

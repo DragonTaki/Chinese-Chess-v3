@@ -17,6 +17,7 @@ using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes;
 
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
@@ -25,7 +26,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
     /// Represents the logical data structure of the sidebar UI,
     /// storing both players' names, remaining time, and current turn.
     /// </summary>
-    public class Sidebar : UIContainer<SidebarHandler>, IScreen, IDisposable
+    public class Sidebar : UIContainer<Sidebar, SidebarHandler, SidebarRenderer>
     {
         internal InfoBoard InfoBoard { get; private set; }
         internal LoggerBox LoggerBox { get; private set; }
@@ -46,24 +47,20 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
         /// </summary>
         public Sidebar() { }
 
-        protected override void OnInit((IUiFactory, SidebarHandler) arg)
+        protected override void OnInit(IUiFactory factory)
         {
-            base.OnInit(arg);
-
             Layout = UILayoutConstants.Sidebar.Layout;
-
-            _renderer = new SidebarRenderer(this);
         }
 
         protected override void BuildUIObjects()
         {
             if (InfoBoard == null)
-                InfoBoard = _factory.CreateScreen<InfoBoard, InfoBoardHandler>();
+                InfoBoard = _factory.CreateDIElement<InfoBoard, InfoBoardHandler, InfoBoardRenderer>();
             if (!Children.Contains(InfoBoard))
                 AddChild(InfoBoard);
 
             if (LoggerBox == null)
-                LoggerBox = _factory.CreateScreen<LoggerBox, LoggerBoxHandler>();
+                LoggerBox = _factory.CreateDIElement<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>();
             if (!Children.Contains(LoggerBox))
                 AddChild(LoggerBox);
 

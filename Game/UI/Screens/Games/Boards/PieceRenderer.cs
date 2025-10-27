@@ -21,12 +21,12 @@ using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 {
-    public class PieceRenderer : UIRenderer
+    public class PieceRenderer : UIRenderer<ChessBoard, ChessBoardHandler, ChessBoardRenderer>
     {
         private readonly Pieces _pieces = new Pieces();
-        public PieceRenderer() {}
+        public PieceRenderer() { }
 
-        public override void Render(Graphics g, UIElement element)
+        protected override void OnRender(Graphics g, UIElement element)
         {
             if (element is ChessBoard board)
             {

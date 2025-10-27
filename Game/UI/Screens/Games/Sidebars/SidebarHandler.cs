@@ -17,8 +17,8 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
     /// Handles runtime logic for the Sidebar,
     /// such as time countdown, turn switching, and state synchronization.
     /// </summary>
-    public class SidebarHandler : UIContainerHandler<SidebarHandler>
+    public class SidebarHandler : UIContainerHandler<Sidebar, SidebarHandler, SidebarRenderer>
     {
-        public SidebarHandler() {}
+        public SidebarHandler() { }
     }
 }

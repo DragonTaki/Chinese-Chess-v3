@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
+
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
@@ -18,7 +19,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
     /// <summary>
     /// Handles the data and logic of the InfoBoard.
     /// </summary>
-    public class InfoBoardHandler : UIContainerHandler<InfoBoardHandler>
+    public class InfoBoardHandler : UIContainerHandler<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
     {
         public string BlackPlayerName { get; set; } = "黑方玩家";
         public string RedPlayerName { get; set; } = "紅方玩家";

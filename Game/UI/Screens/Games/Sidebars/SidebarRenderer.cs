@@ -7,25 +7,12 @@
 // Version: v2.0
 /* ----- ----- ----- ----- */
 
-using System.Drawing;
-
-using Engine.UI.Core.Elements;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
 {
-    public class SidebarRenderer : UIContainerRenderer<SidebarHandler>
+    public class SidebarRenderer : UIContainerRenderer<Sidebar, SidebarHandler, SidebarRenderer>
     {
-        private readonly CompositeRenderer _composite = new CompositeRenderer();
-
-        public SidebarRenderer(Sidebar container) : base(container)
-        {
-            //
-        }
-
-        public override void Render(Graphics g, UIElement element)
-        {
-            //_composite.Render(g, element);
-        }
+        public SidebarRenderer() : base() { }
     }
 }

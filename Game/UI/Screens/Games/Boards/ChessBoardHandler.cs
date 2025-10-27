@@ -7,9 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System.ComponentModel;
-using Chinese_Chess_v3.Game.Core;
-
 using Engine.UI.Core.Handlers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
@@ -17,15 +14,22 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
     /// <summary>
     /// 處理棋盤互動邏輯，例如滑鼠點擊選取棋子
     /// </summary>
-    public class ChessBoardHandler : UIContainerHandler<ChessBoardHandler>
+    public class ChessBoardHandler : UIContainerHandler<ChessBoard, ChessBoardHandler, ChessBoardRenderer>
     {
-        public ChessBoardHandler() {}
+        public ChessBoardHandler() { }
         public void HandleClick(int gridX, int gridY)
         {
-            if (_container is ChessBoard board)
+            if (Element is ChessBoard board)
             {
                 board.GameManager.HandleClick(gridX, gridY);
             }
+        }
+
+        internal override void OnUpdate()
+        {
+            var actions = Element._pendingActions.ToArray();
+            Element._pendingActions.Clear();
+            foreach (var a in actions) a();
         }
     }
 }

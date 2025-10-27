@@ -22,16 +22,15 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
     /// <summary>
     /// Handles logic and interactions for the NewGameMenu.
     /// </summary>
-    public class NewGameMenuHandler : UIMenuHandler<NewGameMenuHandler>
+    public class NewGameMenuHandler : UIMenuHandler<NewGameMenu, NewGameMenuHandler, NewGameMenuRenderer>
     {
-
         public NewGameMenuHandler() { }
 
         public void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
             //mainMenu.CancelCurrentSub_menu();
-            var gameMenu = _navigationManager.Show<GameMenu, GameMenuHandler>();
+            var gameMenu = _navigationManager.Show<GameMenu, GameMenuHandler, GameMenuRenderer>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
             gameMenu.ResetGameUI();
         }

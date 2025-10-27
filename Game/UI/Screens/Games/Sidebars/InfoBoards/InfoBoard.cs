@@ -7,8 +7,6 @@
 // Version: v2.0
 /* ----- ----- ----- ----- */
 
-using System;
-
 using Chinese_Chess_v3.Game.Constants.UI;
 
 using Engine.UI.Core.Elements;
@@ -16,18 +14,13 @@ using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 {
-    public class InfoBoard : UIContainer<InfoBoardHandler>, IScreen, IDisposable
+    public class InfoBoard : UIContainer<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
     {
-        public InfoBoard() {}
+        public InfoBoard() { }
 
-        protected override void OnInit((IUiFactory, InfoBoardHandler) arg)
+        protected override void OnInit(IUiFactory factory)
         {
-            base.OnInit(arg);
-
             Layout = UILayoutConstants.Sidebar.Infoboard.Layout;
-
-            _renderer = new InfoBoardRenderer(this);
-            (_renderer as InfoBoardRenderer)?.Initialize(arg.Item2);
         }
     }
 }

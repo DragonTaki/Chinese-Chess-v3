@@ -17,7 +17,9 @@ using Chinese_Chess_v3.Game.Constants.UI;
 using Engine.Globals;
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
+using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Infrastructure;
+using Engine.UI.Core.Renderers;
 using Engine.UI.Dialogs;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
@@ -93,11 +95,15 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             {
                 var result = entries[i];
 
-                var button = new UIButton<ConfirmDialogResult>(result);
+                var button = _factory.CreateButton<ConfirmDialogResult>();
+
+                button.Text = result.Label;
+                button.Handler.Action = () => _onResult?.Invoke(result.Type);
+
                 button.Size = new Vector2F(80, 40);
                 button.LocalPosition = new Vector2F(startX + i * 90, 110);
-                var originalAction = button.Action;
-                button.Action = () =>
+                var originalAction = button.Handler.Action;
+                button.Handler.Action = () =>
                 {
                     originalAction?.Invoke();
                     DialogManager.HideConfirm();
@@ -107,16 +113,14 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 _buttons.Add(button);
             }
         }
+    }
 
-        protected override void OnDraw(Graphics g)
-        {
-            _renderer.Draw(g, this);
-        }
-        
-        protected override bool HandleMouseDown(MouseEventArgs e) => true;
-        protected override bool HandleMouseMove(MouseEventArgs e) => true;
-        protected override bool HandleMouseUp(MouseEventArgs e) => true;
-        protected override bool HandleMouseWheel(MouseEventArgs e) => true;
-        public override bool HandleMouseClick(MouseEventArgs e) => true;
+    public class ConfirmDialogHandler : UIHandler
+    {
+        internal override bool HandleMouseDown(MouseEventArgs e) => true;
+        internal override bool HandleMouseMove(MouseEventArgs e) => true;
+        internal override bool HandleMouseUp(MouseEventArgs e) => true;
+        internal override bool HandleMouseWheel(MouseEventArgs e) => true;
+        internal override bool HandleMouseClick(MouseEventArgs e) => true;
     }
 }

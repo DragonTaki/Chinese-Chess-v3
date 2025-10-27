@@ -25,23 +25,21 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
     /// <summary>
     /// Handles logic and interactions for the MainMenu.
     /// </summary>
-    public class MainMenuHandler : UIMenuHandler<MainMenuHandler>
+    public class MainMenuHandler : UIMenuHandler<MainMenu, MainMenuHandler, MainMenuRenderer>, IScreen
     {
         private MainMenuType? _currentSubmenu = null;
         private readonly Dictionary<MainMenuType, UIElement> _submenus = new();
 
         public MainMenuHandler() { }
-        protected override void OnMenuInit((IUiFactory, UIContainer<MainMenuHandler>) arg)
+        protected override void OnInit(IUiFactory factory)
         {
-            base.OnMenuInit(arg);
-
             // Initialize _submenus
-            _submenus[MainMenuType.NewGame] = CreateSubMenu(() => _factory.CreateScreen<NewGameMenu, NewGameMenuHandler>());
-            _submenus[MainMenuType.LoadGame] = CreateSubMenu(() => _factory.CreateScreen<LoadGameMenu, LoadGameMenuHandler>());
-            _submenus[MainMenuType.EndgameChallenge] = CreateSubMenu(() => _factory.CreateScreen<LoadGameMenu, LoadGameMenuHandler>());
-            _submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => _factory.CreateScreen<LoadGameMenu, LoadGameMenuHandler>());
-            _submenus[MainMenuType.Help] = CreateSubMenu(() => _factory.CreateScreen<LoadGameMenu, LoadGameMenuHandler>());
-            _submenus[MainMenuType.Settings] = CreateSubMenu(() => _factory.CreateScreen<LoadGameMenu, LoadGameMenuHandler>());
+            _submenus[MainMenuType.NewGame] = CreateSubMenu(() => factory.CreateDIElement<NewGameMenu, NewGameMenuHandler, NewGameMenuRenderer>());
+            _submenus[MainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>());
+            _submenus[MainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>());
+            _submenus[MainMenuType.RuleSettings] = CreateSubMenu(() => factory.CreateDIElement<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>());
+            _submenus[MainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>());
+            _submenus[MainMenuType.Settings] = CreateSubMenu(() => factory.CreateDIElement<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>());
         }
 
         /// <summary>
@@ -75,7 +73,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
                     _currentSubmenu = selectedMenu;
                     var submenu = _submenus[_currentSubmenu.Value];
                     submenu.IsVisible = true;
-                    _menu.AddChild(submenu);
+                    Element.AddChild(submenu);
                 }
             }
             else
@@ -93,7 +91,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
             {
                 var submenu = _submenus[_currentSubmenu.Value];
                 submenu.IsVisible = false;
-                _menu.RemoveChild(submenu);
+                Element.RemoveChild(submenu);
             }
         }
 
@@ -127,7 +125,9 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
         public Dictionary<MainMenuType, UIElement> Submenus => _submenus;
         public MainMenuType? CurrentSubmenu => _currentSubmenu;
 
-        public override void OnExit()
+
+        public void OnEnter() { }
+        public void OnExit()
         {
             CancelCurrentSubmenu();
         }
