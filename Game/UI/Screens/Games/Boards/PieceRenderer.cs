@@ -26,7 +26,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
         private readonly Pieces _pieces = new Pieces();
         public PieceRenderer() { }
 
-        protected override void OnRender(Graphics g, UIElement element)
+        public override void OnRender(Graphics g, ChessBoard element)
         {
             if (element is ChessBoard board)
             {

@@ -40,29 +40,29 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
             if (_composite.ListCount == 0)
             {
                 _composite
-                    .Add(new ClassicBoard());
+                    .Add(new ClassicInfoBoard());
             }
         }
 
-        protected override void OnRender(Graphics g, InfoBoard element)
+        public override void OnRender(Graphics g, InfoBoard element)
         {
             _composite.Render(g, element);
         }
 
-        private class ClassicBoard : UIRenderer<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
+        private class ClassicInfoBoard : UIRenderer<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
         {
             private InfoBoardHandler _handler;
             private LayoutF Layout;
             protected readonly Font _nameFont;
             protected readonly Font _timerFont;
 
-            public ClassicBoard()
+            public ClassicInfoBoard()
             {
                 _nameFont = InfoBoardSettings.NameFont;
                 _timerFont = InfoBoardSettings.TimerFont;
             }
 
-            protected override void OnRender(Graphics g, InfoBoard element)
+            public override void OnRender(Graphics g, InfoBoard element)
             {
                 if (_handler == null)
                 {

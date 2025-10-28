@@ -37,7 +37,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
             }
         }
 
-        protected override void OnRender(Graphics g, ChessBoard element)
+        public override void OnRender(Graphics g, ChessBoard element)
         {
             _composite.Render(g, element);
         }

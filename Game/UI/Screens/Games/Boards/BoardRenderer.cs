@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Constants.UI;
 
 using Engine.GraphicsUtils;
 using Engine.Mathematics;
-using Engine.UI.Core.Elements;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
@@ -30,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
             _strategy = strategy ?? new ClassicBoard();
         }
 
-        protected override void OnRender(Graphics g, UIElement element)
+        public override void OnRender(Graphics g, ChessBoard element)
         {
             if (element is not ChessBoard board)
                 return;
