@@ -7,8 +7,6 @@
 // Version: v2.0
 /* ----- ----- ----- ----- */
 
-using System;
-
 using Chinese_Chess_v3.Game.Constants.UI;
 
 using Engine.UI.Core.Interfaces;
@@ -16,7 +14,7 @@ using Engine.UI.Elements;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes
 {
-    public class LoggerBox : UITextBox<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>
+    public class LoggerBox : UITextBox<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>, IResettable
     {
         public LoggerBox() { }
 
@@ -24,6 +22,11 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes
         {
             Layout = UILayoutConstants.Sidebar.LoggerBox.Layout;
             ScrollContainer.Layout = UILayoutConstants.Sidebar.LoggerBox.ScrollContainer.Layout;
+        }
+
+        protected override void OnReset()
+        {
+            ClearLogs();
         }
     }
 }

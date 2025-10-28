@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
     /// <summary>
     /// 棋盤元件，作為 GameMenu 的子元件
     /// </summary>
-    public class ChessBoard : UIContainer<ChessBoard, ChessBoardHandler, ChessBoardRenderer>
+    public class ChessBoard : UIContainer<ChessBoard, ChessBoardHandler, ChessBoardRenderer>, IResettable
     {
         // fields
         public UIPieceBinder PieceBinder { get; private set; }
@@ -61,11 +61,16 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
         }
 
 
-        public override void DisposeUI()
+        protected override void DisposeUI()
         {
             _pendingActions.Clear();
             PieceBinder?.Dispose();
             PieceBinder = null;
+        }
+
+        protected override void OnReset()
+        {
+            GameManager.ResetBoardToDefault();
         }
     }
 }

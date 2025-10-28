@@ -21,7 +21,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus
     public class MainMenu : UIMenu<MainMenu, MainMenuHandler, MainMenuRenderer>
     {
         public MainMenu() { }
-        protected override void BeforeInit(IUiFactory factory)
+        protected override void OnBeforeInit(IUiFactory factory)
         {
             ButtonSpacing = UILayoutConstants.MainMenu.Button.Spacing;
         }

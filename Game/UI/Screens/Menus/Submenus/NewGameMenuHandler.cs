@@ -29,10 +29,11 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus
         public void StartNewGame(NewGameMenuType selectedGamemode)
         {
             Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
-            //mainMenu.CancelCurrentSub_menu();
+
             var gameMenu = _navigationManager.Show<GameMenu, GameMenuHandler, GameMenuRenderer>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-            gameMenu.ResetGameUI();
+
+            gameMenu.ResetGameUI();  //reset gameManager
         }
     }
 }

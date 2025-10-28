@@ -7,8 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System;
-
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Models;
 
@@ -21,36 +19,16 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
     /// </summary>
     public class InfoBoardHandler : UIContainerHandler<InfoBoard, InfoBoardHandler, InfoBoardRenderer>
     {
-        public string BlackPlayerName { get; set; } = "黑方玩家";
-        public string RedPlayerName { get; set; } = "紅方玩家";
-
-        public TimeSpan BlackTime { get; set; } = TimeSpan.FromMinutes(5);
-        public TimeSpan RedTime { get; set; } = TimeSpan.FromMinutes(5);
-
-        public PlayerSide CurrentTurn { get; set; } = PlayerSide.Red;
-        private GameManager _gameManager;
-        public GameManager GameManager => _gameManager;
 
         public InfoBoardHandler() { }
         public void SetGameManager(GameManager gameManager)
         {
-            _gameManager = gameManager;
-        }
-
-        /// <summary>
-        /// Updates timers based on delta time.
-        /// </summary>
-        public void UpdateTimers(TimeSpan delta)
-        {
-            if (CurrentTurn == PlayerSide.Black)
-                BlackTime -= delta;
-            else
-                RedTime -= delta;
+            Element.GameManager = gameManager;
         }
 
         public void SwitchTurn()
         {
-            CurrentTurn = CurrentTurn == PlayerSide.Black ? PlayerSide.Red : PlayerSide.Black;
+            Element.CurrentTurn = Element.CurrentTurn == PlayerSide.Black ? PlayerSide.Red : PlayerSide.Black;
         }
     }
 }

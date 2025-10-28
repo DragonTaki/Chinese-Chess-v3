@@ -48,6 +48,7 @@ namespace Launcher
             InitWindow();
 
             _rootCanvas = UIInitializer.Initialize(_sp);
+            _rootCanvas.MainForm = this;
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _navigationManager.Init(_rootCanvas);
@@ -83,20 +84,11 @@ namespace Launcher
             GlobalWindow.UpdateSize(Width, Height);
         }
 
-        private UIRootNode BuildUIRoot()
-        {
-            var root = _sp.GetRequiredService<UIRootNode>();
-            var dialogManager = _sp.GetRequiredService<DialogManager>();
-            dialogManager.Init(root);
-
-            return root;
-        }
-
         private void WireInputEvents()
         {
-            MouseDown += _inputMgr.ProcessMouseDown;
-            MouseMove += _inputMgr.ProcessMouseMove;
-            MouseUp += _inputMgr.ProcessMouseUp;
+            MouseDown  += _inputMgr.ProcessMouseDown;
+            MouseMove  += _inputMgr.ProcessMouseMove;
+            MouseUp    += _inputMgr.ProcessMouseUp;
             MouseWheel += _inputMgr.ProcessMouseWheel;
             MouseClick += _inputMgr.ProcessMouseClick;
         }
@@ -114,6 +106,7 @@ namespace Launcher
             };
             _timerMgr.StartTimers();
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);

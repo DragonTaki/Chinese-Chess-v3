@@ -26,7 +26,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
     /// Represents the logical data structure of the sidebar UI,
     /// storing both players' names, remaining time, and current turn.
     /// </summary>
-    public class Sidebar : UIContainer<Sidebar, SidebarHandler, SidebarRenderer>
+    public class Sidebar : UIContainer<Sidebar, SidebarHandler, SidebarRenderer>, IResettable
     {
         internal InfoBoard InfoBoard { get; private set; }
         internal LoggerBox LoggerBox { get; private set; }
@@ -68,6 +68,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars
             gameManager.SetLogger(LoggerBox.Handler);
             InfoBoard.Handler.SetGameManager(gameManager);
         }
+
         public void ResetGameUI() => BuildUIObjects();
     }
 }

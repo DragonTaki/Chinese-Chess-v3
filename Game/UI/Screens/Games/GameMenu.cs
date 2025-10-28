@@ -21,14 +21,14 @@ using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Screens.Games
 {
-    public class GameMenu : UIMenu<GameMenu, GameMenuHandler, GameMenuRenderer>
+    public class GameMenu : UIMenu<GameMenu, GameMenuHandler, GameMenuRenderer>, IResettable
     {
         internal ChessBoard ChessBoard { get; private set; }
         internal Sidebar Sidebar { get; private set; }
 
         public GameMenu() { }
 
-        protected override void BeforeInit(IUiFactory factory)
+        protected override void OnBeforeInit(IUiFactory factory)
         {
             ButtonSpacing = UILayoutConstants.GameMenu.Button.Spacing;
         }
@@ -61,10 +61,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
         }
         protected override void BuildUIObjects()
         {
-            // 1. 重置資料層
-            ChessBoard?.GameManager.ResetBoardToDefault();
-
-            // 2. 重置 UI
             if (ChessBoard == null)
                 ChessBoard = _factory.CreateDIElement<ChessBoard, ChessBoardHandler, ChessBoardRenderer>();
             if (!Children.Contains(ChessBoard))
@@ -75,6 +71,11 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games
             if (!Children.Contains(Sidebar))
                 AddChild(Sidebar);
         }
-        public void ResetGameUI() => BuildUIObjects();
+        public void ResetGameUI() => Reset();
+        
+        protected override void OnAfterReset()
+        {
+            Renderer?.Invalidate();
+        }
     }
 }
