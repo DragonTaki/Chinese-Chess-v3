@@ -11,6 +11,7 @@ namespace Chinese_Chess_v3.Game.Models
 {
     public enum PieceType
     {
+        None,
         General,   // 帥；將
         Advisor,   // 仕；士
         Elephant,  // 相；象

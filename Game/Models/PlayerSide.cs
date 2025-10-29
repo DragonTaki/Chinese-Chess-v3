@@ -11,7 +11,9 @@ namespace Chinese_Chess_v3.Game.Models
 {
     public enum PlayerSide
     {
+        None,
         Red,
-        Black
+        Black,
+        Neutral,
     }
 }

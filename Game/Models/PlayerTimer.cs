@@ -24,7 +24,9 @@ namespace Chinese_Chess_v3.Game.Models
         private DateTime _lastUpdate;
         public TimerState State { get; private set; } = TimerState.Idle;
 
+#nullable enable
         public event Action? TimeUp;
+#nullable disable
 
         // --- 自訂顯示模板 ---
         public string StoppedSymbol { get; set; } = "--:--";
