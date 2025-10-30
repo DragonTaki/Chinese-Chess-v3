@@ -13,13 +13,14 @@ using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.UI.Screens.Games;
-using Chinese_Chess_v3.Game.UI.Screens.Games.Boards;
-using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars;
-using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards;
-using Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.LoggerBoxes;
-using Chinese_Chess_v3.Game.UI.Screens.Menus;
-using Chinese_Chess_v3.Game.UI.Screens.Menus.Submenus;
+using Chinese_Chess_v3.Game.UI.Boards;
+using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
+using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
+using Chinese_Chess_v3.Game.UI.Sidebars;
+using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
+using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Infrastructure;
@@ -65,16 +66,16 @@ namespace Launcher
             services.AddSingleton<GameManager>();
 
             // Register singleton UI modules with handlers and renderers
-            services.AddSingletonUiModule<MainMenu, MainMenuHandler, MainMenuRenderer>();
-            services.AddSingletonUiModule<NewGameMenu, NewGameMenuHandler, NewGameMenuRenderer>();
-            services.AddSingletonUiModule<LoadGameMenu, LoadGameMenuHandler, LoadGameMenuRenderer>();
-            services.AddSingletonUiModule<GameMenu, GameMenuHandler, GameMenuRenderer>();
+            services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
+            services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
+            services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
+            services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
-            services.AddTransientUiModule<ChessBoard, ChessBoardHandler, ChessBoardRenderer>();
-            services.AddTransientUiModule<Sidebar, SidebarHandler, SidebarRenderer>();
-            services.AddTransientUiModule<InfoBoard, InfoBoardHandler, InfoBoardRenderer>();
-            services.AddTransientUiModule<LoggerBox, LoggerBoxHandler, LoggerBoxRenderer>();
+            services.AddTransientUiModule<UIBoard,     UIBoardHandler,     UIBoardRenderer>();
+            services.AddTransientUiModule<UISidebar,   UISidebarHandler,   UISidebarRenderer>();
+            services.AddTransientUiModule<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
+            services.AddTransientUiModule<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();
 
             // Build the service provider
             var sp = services.BuildServiceProvider();

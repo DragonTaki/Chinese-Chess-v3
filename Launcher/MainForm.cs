@@ -13,8 +13,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Chinese_Chess_v3.Game.Constants.UI;
-using Chinese_Chess_v3.Game.UI.Screens.Menus;
+using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Globals;
 using Engine.Physics;
@@ -25,6 +24,7 @@ using Engine.UI.Core.Infrastructure;
 using Engine.UI.Input;
 
 using StarAnimation;
+using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 namespace Launcher
 {
@@ -52,7 +52,7 @@ namespace Launcher
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _navigationManager.Init(_rootCanvas);
-            _navigationManager.Show<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);

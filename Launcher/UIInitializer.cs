@@ -11,7 +11,7 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Chinese_Chess_v3.Game.UI.Screens.Menus;
+using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Infrastructure;
@@ -54,11 +54,11 @@ namespace Launcher
             var _factory = sp.GetRequiredService<IUiFactory>();
 
             // Create and register the main menu screen
-            MainMenu _mainMenu = _factory.CreateDIElement<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            UIMainMenu _mainMenu = _factory.CreateDIElement<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
             _navigationManager.RegisterScreen(_mainMenu);
 
             // Show the initial screen (MainMenu)
-            _navigationManager.Show<MainMenu, MainMenuHandler, MainMenuRenderer>();
+            _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
 
             return _root; // Return the fully initialized root UI node
         }

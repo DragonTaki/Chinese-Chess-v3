@@ -11,7 +11,8 @@ using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.UI.Elements;
+using Chinese_Chess_v3.Game.Core.Pieces;
+using Chinese_Chess_v3.Game.UI.Boards.Pieces;
 
 using Engine.UI.Core.Interfaces;
 
