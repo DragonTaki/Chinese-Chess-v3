@@ -20,13 +20,6 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
     {
         public string BlackPlayerName { get; set; } = "黑方玩家";
         public string RedPlayerName { get; set; } = "紅方玩家";
-
-        public TimeSpan BlackTotalTime { get; set; } = TimeSpan.FromMinutes(30);
-        public TimeSpan RedTotalTime { get; set; } = TimeSpan.FromMinutes(30);
-        public TimeSpan BlackStepTime { get; set; } = TimeSpan.FromMinutes(5);
-        public TimeSpan RedStepTime { get; set; } = TimeSpan.FromMinutes(5);
-
-        public PlayerSide CurrentTurn { get; set; } = PlayerSide.Red;
         public GameManager GameManager;
 
         public InfoBoard() { }

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2025/05/14
-// Version: v1.0
+// Update Date: 2025/10/31
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.Models
@@ -18,6 +18,7 @@ namespace Chinese_Chess_v3.Game.Models
         Chariot,   // 俥；車
         Horse,     // 傌；馬
         Cannon,    // 炮；包
-        Soldier    // 兵；卒
+        Soldier,   // 兵；卒
+        Shadow,    // For rendering
     }
 }

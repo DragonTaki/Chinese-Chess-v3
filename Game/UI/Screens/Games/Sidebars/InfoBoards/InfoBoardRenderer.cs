@@ -3,11 +3,10 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2025/10/22
-// Version: v1.0
+// Update Date: 2025/10/31
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -73,12 +72,12 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 
                 using var bgBrush = new SolidBrush(Color.Red);
 
-                DrawShieldBackground(g);
+                DrawShieldBackground(g, element);
 
-                DrawPlayers(g);
+                DrawPlayers(g, element);
             }
 
-            private void DrawShieldBackground(Graphics g)
+            private void DrawShieldBackground(Graphics g, InfoBoard element)
             {
                 float baseX = Layout.X;
                 float baseY = Layout.Y;
@@ -90,7 +89,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
                 using GraphicsPath fullShield = ShieldPath.Create(width, height);
                 fullShield.Transform(new Matrix(1, 0, 0, 1, baseX, baseY));
 
-                PlayerSide currentTurn = _handler.GameManager.CurrentTurn;
+                PlayerSide currentTurn = element.GameManager.CurrentTurn;
 
                 // 左半背景
                 using Region leftRegion = new Region(fullShield);
@@ -111,14 +110,14 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
 
                 // 左半內層遮罩
                 using Region leftOverlay = new Region(innerShield);
-                float leftWidth = (_handler.CurrentTurn == PlayerSide.Black ? (width / 2f - inset) : width / 2f);
+                float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Black ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
                 g.FillRegion(Brushes.Black, leftOverlay);
 
                 // 右半內層遮罩
                 using Region rightOverlay = new Region(innerShield);
-                float rightX = (_handler.CurrentTurn == PlayerSide.Red ? baseX + width / 2f + inset : baseX + width / 2f);
-                float rightWidth = (_handler.CurrentTurn == PlayerSide.Red ? width / 2f - inset : width / 2f);
+                float rightX = (element.GameManager.CurrentTurn == PlayerSide.Red ? baseX + width / 2f + inset : baseX + width / 2f);
+                float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Red ? width / 2f - inset : width / 2f);
                 rightOverlay.Intersect(new RectangleF(rightX, baseY + inset, rightWidth, height - 2*inset));
                 g.FillRegion(Brushes.DarkRed, rightOverlay);
                 
@@ -133,22 +132,22 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
                 }
             }
 
-            private void DrawPlayers(Graphics g)
+            private void DrawPlayers(Graphics g, InfoBoard element)
             {
                 float baseX = Layout.X;
                 float baseY = Layout.Y;
                 float width = Layout.Width;
                 float height = Layout.Height;
 
-                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, _handler.BlackPlayerName, _handler.BlackTime,
-                                _handler.CurrentTurn == PlayerSide.Black);
+                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, element.BlackPlayerName, element.GameManager.Black.Timer.GetTotalTimeString(),
+                                element.GameManager.CurrentTurn == PlayerSide.Black);
 
-                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height, _handler.RedPlayerName, _handler.RedTime,
-                                _handler.CurrentTurn == PlayerSide.Red);
+                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height, element.RedPlayerName, element.GameManager.Red.Timer.GetTotalTimeString(),
+                                element.GameManager.CurrentTurn == PlayerSide.Red);
             }
 
             private void DrawPlayerSection(Graphics g, float x, float y, float width, float height,
-                                           string playerName, TimeSpan time, bool isActive)
+                                           string playerName, string totalTimeString, bool isActive)
             {
                 // Timer background
                 RectangleF timerRect = new RectangleF(x + 20.0f, y + 50.0f, width - 40.0f, 40.0f);
@@ -160,7 +159,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Sidebars.InfoBoards
                 using (StringFormat timerFormat = new StringFormat
                 { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 {
-                    g.DrawString(time.ToString(@"mm\:ss"), _timerFont, timerTextBrush, timerRect, timerFormat);
+                    g.DrawString(totalTimeString, _timerFont, timerTextBrush, timerRect, timerFormat);
                 }
 
                 // Player name

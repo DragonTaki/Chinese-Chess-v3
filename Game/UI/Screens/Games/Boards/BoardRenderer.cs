@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/08
-// Version: v1.1
+// Update Date: 2025/10/31
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -64,7 +64,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
 
                 // Calculated from the origin point
                 // Step 2: Draw vertical lines for the grid
-                for (int i = 1; i < BoardConstants.Columns - 1; i++)
+                for (int i = 1; i < BoardConstants.Full.Columns - 1; i++)
                 {
                     float x = UILayoutConstants.Board.Grid.Position.X + i * UILayoutConstants.Board.Grid.CellSize;
                     float y = UILayoutConstants.Board.Grid.Position.Y;
@@ -74,15 +74,15 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                         x,
                         y,
                         x,
-                        y + BoardConstants.BlackYSideRiverLine * UILayoutConstants.Board.Grid.CellSize
+                        y + BoardConstants.Full.RiverLineYBlackSide * UILayoutConstants.Board.Grid.CellSize
                     );
                     // Red side vertical lines
                     g.DrawLine(
                         _boardPen,
                         x,
-                        y + BoardConstants.RedYSideRiverLine * UILayoutConstants.Board.Grid.CellSize,
+                        y + BoardConstants.Full.RiverLineYRedSide * UILayoutConstants.Board.Grid.CellSize,
                         x,
-                        y + (BoardConstants.Rows - 1) * UILayoutConstants.Board.Grid.CellSize
+                        y + (BoardConstants.Full.Rows - 1) * UILayoutConstants.Board.Grid.CellSize
                     );
                 }
 
@@ -90,7 +90,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                 // ----- None -----
 
                 // Step 4: Draw horizontal lines for the grid
-                for (int i = 1; i < BoardConstants.Rows - 1; i++)
+                for (int i = 1; i < BoardConstants.Full.Rows - 1; i++)
                 {
                     float x = UILayoutConstants.Board.Grid.Position.X;
                     float y = UILayoutConstants.Board.Grid.Position.Y + i * UILayoutConstants.Board.Grid.CellSize;
@@ -99,7 +99,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                         _boardPen,
                         x,
                         y,
-                        x + (BoardConstants.Columns - 1) * UILayoutConstants.Board.Grid.CellSize,
+                        x + (BoardConstants.Full.Columns - 1) * UILayoutConstants.Board.Grid.CellSize,
                         y
                     );
                 }
@@ -119,19 +119,19 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
             {
                 // Calculated from the origin point
                 // Black side palace (top)
-                float x1 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.PalaceXRange.MinX * UILayoutConstants.Board.Grid.CellSize;
-                float y1 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.BlackPalaceYRange.MinY * UILayoutConstants.Board.Grid.CellSize;
-                float x2 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.CellSize;
-                float y2 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.BlackPalaceYRange.MaxY * UILayoutConstants.Board.Grid.CellSize;
+                float x1 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.Full.PalaceXRange.MinX * UILayoutConstants.Board.Grid.CellSize;
+                float y1 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.Full.BlackPalaceYRange.MinY * UILayoutConstants.Board.Grid.CellSize;
+                float x2 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.Full.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.CellSize;
+                float y2 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.Full.BlackPalaceYRange.MaxY * UILayoutConstants.Board.Grid.CellSize;
 
                 g.DrawLine(pen, x1, y1, x2, y2);  // Left-top to right-bottom
                 g.DrawLine(pen, x2, y1, x1, y2);  // Right-top to left-bottom
 
                 // Red side palace (bottom)
-                float x3 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.PalaceXRange.MinX * UILayoutConstants.Board.Grid.CellSize;
-                float y3 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.RedPalaceYRange.MinY * UILayoutConstants.Board.Grid.CellSize;
-                float x4 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.CellSize;
-                float y4 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.RedPalaceYRange.MaxY * UILayoutConstants.Board.Grid.CellSize;
+                float x3 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.Full.PalaceXRange.MinX * UILayoutConstants.Board.Grid.CellSize;
+                float y3 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.Full.RedPalaceYRange.MinY * UILayoutConstants.Board.Grid.CellSize;
+                float x4 = UILayoutConstants.Board.Grid.Position.X + BoardConstants.Full.PalaceXRange.MaxX * UILayoutConstants.Board.Grid.CellSize;
+                float y4 = UILayoutConstants.Board.Grid.Position.Y + BoardConstants.Full.RedPalaceYRange.MaxY * UILayoutConstants.Board.Grid.CellSize;
 
                 g.DrawLine(pen, x3, y3, x4, y4);  // Left-bottom to right-top
                 g.DrawLine(pen, x4, y3, x3, y4);  // Right-bottom to left-top
@@ -168,7 +168,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                 float gap = 4.0f;
 
                 bool leftEdge = x == 0;
-                bool rightEdge = x == BoardConstants.Columns - 1;
+                bool rightEdge = x == BoardConstants.Full.Columns - 1;
 
                 // Top-left
                 if (!leftEdge)
@@ -205,8 +205,8 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                 // Gap between grid line and frame line
                 float gap1 = 0.0f;
                 float gap2 = UILayoutConstants.Board.Grid.LineWidth * 2;
-                float boardWidthPx = (BoardConstants.Columns - 1) * UILayoutConstants.Board.Grid.CellSize;
-                float boardHeightPx = (BoardConstants.Rows - 1) * UILayoutConstants.Board.Grid.CellSize;
+                float boardWidthPx = (BoardConstants.Full.Columns - 1) * UILayoutConstants.Board.Grid.CellSize;
+                float boardHeightPx = (BoardConstants.Full.Rows - 1) * UILayoutConstants.Board.Grid.CellSize;
 
                 // Padding is calculated from the origin point, subtracting gap to move outward
                 RectangleF outerRect1 = new RectangleF(

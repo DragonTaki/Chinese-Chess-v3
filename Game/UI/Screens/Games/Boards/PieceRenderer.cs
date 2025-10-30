@@ -76,7 +76,7 @@ namespace Chinese_Chess_v3.Game.UI.Screens.Games.Boards
                 g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
 
                 // Draw text (label)
-                string label = PieceConstants.GetPieceText(piece.Type, isRed);
+                string label = PieceConstants.GetPieceText(piece.Type, piece.Color);
                 Font font = PieceSettings.Font;
                 SizeF textSize = g.MeasureString(label, font);
                 Brush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;

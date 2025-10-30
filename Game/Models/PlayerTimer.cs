@@ -33,7 +33,7 @@ namespace Chinese_Chess_v3.Game.Models
         public string UnlimitedSymbol { get; set; } = "∞:∞";
 
         // 時間顯示格式，例如 "hh:mm:ss.fff", "hh:mm:ss", "mm:ss.fff"
-        public string TimeFormat { get; set; } = @"mm\:ss.ff";
+        public string TimeFormat { get; set; } = "{minute}:{second.2}";
 
         public PlayerTimer(TimeSpan totalTimeLimit, TimeSpan stepTimeLimit, TimerMode mode = TimerMode.CountDown)
         {
@@ -156,7 +156,7 @@ namespace Chinese_Chess_v3.Game.Models
                 : CurrentStepTime;
 
             if (display < TimeSpan.Zero) display = TimeSpan.Zero;
-            return display.ToString(TimeFormat);
+            return FormatTimeSpan(display);
         }
 
         public string GetTotalTimeString()
@@ -166,9 +166,53 @@ namespace Chinese_Chess_v3.Game.Models
                 : CurrentTotalTime;
 
             if (display < TimeSpan.Zero) display = TimeSpan.Zero;
-            return display.ToString(TimeFormat);
+            return FormatTimeSpan(display);
         }
+        private string FormatTimeSpan(TimeSpan time)
+        {
+            const string defaultTemplate = "{minute}:{second.2}";  // default
 
+            string template = TimeFormat;
+            if (string.IsNullOrWhiteSpace(template))
+                template = defaultTemplate;
+
+            try
+            {
+                double totalSeconds = time.TotalSeconds;
+                int hours = (int)time.TotalHours;
+                int minutes = (int)time.TotalMinutes;
+                int seconds = time.Seconds;
+                double fractional = time.TotalSeconds - Math.Floor(time.TotalSeconds);
+
+                // --- 支援小數秒格式 {second.2}, {second.3} ---
+                string result = template;
+
+                // 解析 {second.X}
+                result = System.Text.RegularExpressions.Regex.Replace(result, @"\{second\.(\d+)\}", m =>
+                {
+                    int digits = int.Parse(m.Groups[1].Value);
+                    return (seconds + fractional).ToString($"F{digits}");
+                });
+
+                // 標準欄位
+                result = result
+                    .Replace("{hour}", hours.ToString("00"))
+                    .Replace("{minute}", minutes.ToString("00"))
+                    .Replace("{second}", seconds.ToString("00"))
+                    .Replace("{totalSecond}", totalSeconds.ToString("0.##"));
+
+                return result;
+            }
+            catch
+            {
+                // 發生錯誤 → 回退預設格式
+                double totalSeconds = time.TotalSeconds;
+                int minutes = (int)time.TotalMinutes;
+                double seconds = time.TotalSeconds - minutes * 60;
+
+                return $"{minutes:00}:{seconds:00.00}";
+            }
+        }
     }
 
     public enum TimerMode

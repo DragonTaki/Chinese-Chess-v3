@@ -63,8 +63,8 @@ namespace Chinese_Chess_v3.Game.Constants.UI
                 /// The pixel size of the grid area calculated from board constants.
                 /// </summary>
                 public static readonly Vector2F GridAreaSize = new Vector2F(
-                    (BoardConstants.Columns - 1) * CellSize,
-                    (BoardConstants.Rows - 1) * CellSize
+                    (BoardConstants.Full.Columns - 1) * CellSize,
+                    (BoardConstants.Full.Rows - 1) * CellSize
                 );
             }
         }
