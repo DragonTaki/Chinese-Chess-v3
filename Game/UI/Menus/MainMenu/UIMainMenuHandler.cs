@@ -89,7 +89,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     var networkManager = _factory.ServiceProvider.GetRequiredService<NetworkManager>();
 
                     if (!networkManager.IsConnected)
-                        networkManager.Connect();
+                        _ = networkManager.ConnectAsync();
                     else
                         networkManager.Reconnect();
 
