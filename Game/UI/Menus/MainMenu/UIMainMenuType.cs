@@ -16,6 +16,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         LoadGame,          // 讀取存檔
         EndgameChallenge,  // 殘局闖關
         RuleSettings,      // 規則設定
+        Multiplayer,       // 多人連線
         Help,              // 教學／幫助
         Settings,          // 遊戲設定
         Exit               // 離開遊戲

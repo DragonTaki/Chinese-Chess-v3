@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Game.UI.Constants;
+using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.Globals;
 using Engine.Physics;
@@ -24,7 +25,6 @@ using Engine.UI.Core.Infrastructure;
 using Engine.UI.Input;
 
 using StarAnimation;
-using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 namespace Launcher
 {

@@ -27,6 +27,7 @@ using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Input;
 using Engine.Randomization;
+using Engine.Network;
 
 namespace Launcher
 {
@@ -63,6 +64,7 @@ namespace Launcher
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<UIRootNode>();
             services.AddSingleton<DialogManager>();
+            services.AddSingleton<NetworkManager>();
             services.AddSingleton<GameManager>();
 
             // Register singleton UI modules with handlers and renderers
