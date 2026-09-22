@@ -7,12 +7,14 @@
 
 ## 階段 1 — Engine（最底層，最先整理，要求完善）
 
-- 修 `Engine/UI/Core/Renderers/UIContainerRenderer.cs:48` 的 TODO。
-- 解決 `Engine/SharedLib.csproj` 目前沒作用的問題：要嘛真的把 Engine 拆成
-  獨立 class library 讓 `Game`／`StarAnimation` 用 `ProjectReference` 引用
-  （這樣才能在編譯期強制「Engine 不依賴任何人」這條規則），要嘛就乾脆
-  刪掉這個 `.csproj`，承認目前就是單一專案。這件事要先做，因為
-  Engine 是所有東西的地基，地基的專案結構先定下來，後面才不用重改。
+- [x] `Engine/UI/Core/Renderers/UIContainerRenderer.cs:48` 的 TODO——已加上
+  可選的 `IBoxDrawStyle Style` 掛勾點，沒指定 `Style` 的容器（目前
+  `UISidebar`、`UIScrollContainer` 都是）行為不變。
+- [x] `Engine/SharedLib.csproj`／`StarAnimation.csproj` 沒作用的問題——已刪除
+  這兩個空轉的 `.csproj`，改用單一專案，跟刪除前的實際編譯行為相同。真的
+  拆成獨立 class library（強制「Engine 不依賴任何人」）故意先不做：Engine
+  裡有 5 處 `internal`，拆開後要逐一確認可見度，這只能在 Windows 上
+  build＋跑起來驗證，等有 Windows 環境再做，見 STATUS.md「Build 設定」。
 - Engine 完善之後，才有資格說「Game／StarAnimation／Network 都能放心依賴
   它」——這階段做完前，不要往上動 Game 或 StarAnimation 的架構性修改。
 

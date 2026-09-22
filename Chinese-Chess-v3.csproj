@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
-    <!--ProjectReference Include="StarAnimation\StarAnimation.csproj" /-->
     <Compile Remove="DEPRECATED\**\*.cs;**\DEPRECATED\**\*.cs" />
     <Content Include="Assets\Font\MoeLI.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

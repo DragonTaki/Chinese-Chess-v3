@@ -48,14 +48,21 @@
 
 ## Build 設定
 
-`.sln` 裡只有 `Chinese-Chess-v3.csproj` 被引用。`Engine/SharedLib.csproj`
-與 `StarAnimation/StarAnimation.csproj` 是獨立的專案檔，但沒有被任何地方
-引用（`StarAnimation` 的 `ProjectReference` 被註解掉了）。因為主專案用的是
-SDK-style 預設 globbing，`Engine/**/*.cs` 與 `StarAnimation/**/*.cs` 還是會
-被直接掃進同一個 exe——這兩個額外的 `.csproj` 目前自己什麼都沒編譯出來。
+已解決：`Engine/SharedLib.csproj` 與 `StarAnimation/StarAnimation.csproj` 這兩個
+沒被任何地方引用、自己什麼都沒編譯出來的 `.csproj` 已經刪除，`.csproj` 裡
+指向 `StarAnimation.csproj` 的註解掉的 `ProjectReference` 也一併清掉。現在是
+單一專案（`Chinese-Chess-v3.csproj`），`Engine/**/*.cs` 與
+`StarAnimation/**/*.cs` 一樣透過 SDK-style 預設 globbing 掃進同一個 exe，
+跟刪除前的實際編譯行為完全相同。
+
+真的把 Engine 拆成獨立 class library（用 `ProjectReference`、在編譯期強制
+「Engine 不依賴任何人」）目前故意不做：Engine 裡有 5 個檔案用了 `internal`
+存取修飾詞，拆成獨立組件後這些型別對 `Game`/`StarAnimation` 就會不可見，
+必須逐一確認要不要開放（改 `public` 或用 `InternalsVisibleTo`）——這件事
+只能在 Windows 上實際 build＋跑起來驗證，這台機器做不到，所以先不動，留在
+[`PLAN.md`](PLAN.md) 當作之後有 Windows 環境時的項目。
 
 ## 程式碼裡的 TODO
 
-- `Engine/UI/Core/Renderers/UIContainerRenderer.cs:48`
 - `Engine/Network/GameClient.cs:41`
 - `DEPRECATED/Panels/MainMenuPanel.cs:125`（死碼，不重要）
