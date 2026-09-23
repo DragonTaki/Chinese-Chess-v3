@@ -75,19 +75,53 @@ LinearGradientBrush 6 次
 Form               2 次
 ```
 
-建議分階段做,每一階段都要 build 驗證(`dotnet build -p:EnableWindowsTargeting=true`)
-維持 0 error、警告數量只減不增(換成介面呼叫後,原本的 `CA1416` 警告會消失,
-因為呼叫點不再直接碰 GDI+ 型別,只有 `WinForms/` 資料夾底下的實作檔案還會有):
+### 已完成:介面 + WinForms 後端(commit `ca4545e`)
 
-1. **`IFont`／`IBrush`／`IPen`／字型相關**——用量最大、但邏輯最簡單(大多是
-   資料容器,沒有複雜的繪圖狀態機),先做這批建立信心跟驗證介面形狀對不對。
-2. **`IGraphics`**——最核心、呼叫最多方法的一個,等 1 做完、介面設計穩定
-   後再動,牽連最廣。
-3. **`IGraphicsPath`／`IMatrix`／`IRegion`**——只有 `Engine/GraphicsUtils`
-   跟少數 `Engine/Styles` 檔案在用,範圍小。
-4. **`IWindow`／`IMouseEvent`**——只有 `Launcher/` 兩三個檔案跟輸入處理相關
-   的檔案在用,量小,但要等 `IGraphics` 做完才能讓 `MainForm` 真正透過
-   介面繪圖。
+`Engine/Platform/`(9 個介面檔)＋ `Engine/Platform/WinForms/`(10 個後端實作檔)
+已經建好,並且完整驗證過:0 error,警告從 305 → 400,多出來的 95 個警告
+**全部集中在新建的 `WinForms/` 資料夾**,舊檔案一個都沒受影響。這一步是純新增,
+零風險,可以直接 revert。
 
-第 1 步做完之後才決定要不要繼續——這個規模已經超過「整理」的範圍,是一個
-獨立的大工程,先做第 1 步看實際情況再往下排。
+### 修正:「先做 Font/Brush/Pen,再做 Graphics」這個分階段假設是錯的
+
+實際動手接 `Engine/Styles/` 時發現:Font/Brush/Pen **沒辦法真的獨立於
+Graphics 先做完**。原因是它們永遠是在同一個 Draw 呼叫點被一起消費的——
+例如 `IBoxDrawStyle.Draw(Graphics g, LayoutF bounds)` 內部要用
+`BackgroundBrushFactory.Create(bounds)` 產生的 brush 去呼叫
+`g.FillPath(brush, path)`。如果 `Create()` 回傳改成 `IBrush`,但 `g` 還是
+原生 `Graphics`,兩者就接不起來——`Graphics.FillPath` 只吃真正的
+`System.Drawing.Brush`,不吃我們包的 `IBrush`。
+
+也就是說,只要有任何一個消費點的簽章還沒換成 `IGraphics`,那個消費點用到的
+`IBrush`/`IFont`/`IPen` 就是「包了但用不到」的狀態。而 `Graphics` 參數的
+傳遞鏈是:`UIRenderer<T,H,R>.OnRender(Graphics g, ...)`(base class)→
+每一個具體 Renderer 覆寫 `OnRender` → 呼叫 `IBoxDrawStyle.Draw(g, ...)`/
+`IButtonDrawStyle.Draw(g, ...)`。這條鏈只要有一段沒換,`Engine/Styles/`
+就換不完。
+
+**修正後的認知**:這不是「分批做,批次之間互不影響」,而是「一旦要接通
+任何一條消費鏈,就要一次把那條鏈從 `UIRenderer` 基底一路換到最外層的具體
+Renderer」。原本以為的階段 1(Font/Brush/Pen)實際上包含了階段 2
+(`IGraphics`)的大部分工程量,兩者綁在一起。
+
+### 建議做法(取代原本的四階段規劃)
+
+按「消費鏈」而非「型別種類」分批,每接通一條鏈就是一次完整、可獨立驗證、
+可獨立 revert 的 commit:
+
+1. `Engine/Styles/` 的樣式系統一條鏈:`IBoxDrawStyle`／`IButtonDrawStyle`／
+   `SingleBorderRoundedStyle`／`DoubleBorderRoundedStyle`／
+   `InwardCornerDialogStyle`／`FontManager`／`StyleHelper`／
+   `IBrushFactory`／`SolidBrushFactory`／`LinearGradientBrushFactory`，
+   加上直接用到它們回傳型別的 `Game/UI/Constants/UILayoutStyles.cs`、
+   `Game/UI/Boards/UIBoardStyles.cs`。
+2. `UIRenderer`／`UIContainerRenderer` 等 base class 的 `OnRender` 簽章。
+3. 逐一把 `Engine/UI/Core/Renderers/`、`Game/UI/*Renderer.cs`、
+   `StarAnimation/Renderers/` 底下每個覆寫 `OnRender` 的具體類別換掉——
+   這批最多,建議每個檔案（或每組相關檔案）一個 commit。
+4. `Engine/GraphicsUtils/GraphicsPaths/`（`IGraphicsPath`／`IMatrix`）。
+5. `IWindow`／`IMouseEvent`（`Launcher/`、輸入處理）——最後做,因為要等
+   `IGraphics` 全部接通，`MainForm` 才有東西可以真正透過介面繪圖。
+
+規模比原本估計的更大——光是第 1 項就會连带牽動十幾個檔案。先確認範圍跟
+優先度再繼續動手。
