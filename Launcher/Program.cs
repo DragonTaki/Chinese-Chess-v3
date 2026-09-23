@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
@@ -28,6 +29,7 @@ using Engine.UI.Core.Interfaces;
 using Engine.UI.Input;
 using Engine.Randomization;
 using Engine.Network;
+using Engine.Logging;
 
 namespace Launcher
 {
@@ -47,6 +49,11 @@ namespace Launcher
         [STAThread]
         static void Main()
         {
+            // Push Game-level config into Engine (Engine must not read
+            // Game.Configs directly — see Engine/Logging/AppLogger.cs).
+            AppLogger.EnableDebug = Settings.EnableDebugMode;
+            AppLogger.CurrentUser = Settings.CurrentUser;
+
             // Create service collection for DI
             var services = new ServiceCollection();
 
