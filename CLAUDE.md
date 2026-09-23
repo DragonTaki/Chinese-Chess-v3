@@ -1,6 +1,14 @@
 # CLAUDE.md — operating rules for this repository
 
-## Layering
+## The custom UI/engine is the point of this project
+
+**Never suggest or implement replacing `Engine/UI`, `Engine/Physics`, or any
+other hand-built part of this engine with a third-party framework** (Avalonia,
+MAUI, a game engine, etc.), even to solve a real problem like cross-platform
+support. Building these from scratch is the actual purpose of this project,
+not an implementation detail up for optimization. If a problem's cleanest fix
+in the abstract would be "swap in an existing framework," that option is
+off the table here — find the fix that keeps the custom engine.
 
 Follow [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): `Engine/` is the
 foundation layer and must never reference `Chinese_Chess_v3.Game.*` or
