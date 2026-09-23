@@ -16,6 +16,7 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Constants;
+using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
@@ -73,7 +74,8 @@ namespace Launcher
             // Register managers and core systems
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<UIRootNode>();
-            services.AddSingleton<DialogManager>();
+            services.AddSingleton(_ => new DialogManager<UIConfirmDialog>(
+                () => new UIConfirmDialog(new UIConfirmDialogRenderer())));
             services.AddSingleton<NetworkManager>();
             services.AddSingleton<GameManager>();
 
