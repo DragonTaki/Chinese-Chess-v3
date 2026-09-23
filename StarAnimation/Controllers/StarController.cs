@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using StarAnimation.Configs;
+using StarAnimation.Core.Effect;
 using StarAnimation.Models;
 using StarAnimation.Renderers;
 
@@ -83,7 +84,7 @@ namespace StarAnimation.Controllers
         /// </summary>
         public void Update()
         {
-            Physics2D.CleanupAllPhysicsEffects();
+            Physics2D.CleanupAllPhysicsEffects(EffectInstance.GetAllActiveEffectIds());
             UpdateStarPositions();
             ReleaseStars();
             CleanUpAfterResize();
