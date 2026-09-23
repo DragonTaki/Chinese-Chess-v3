@@ -11,15 +11,14 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 
 using Engine.Network;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
-using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Dialogs;
 
 using Microsoft.Extensions.DependencyInjection;
 
