@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Boards;
+using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
@@ -30,6 +31,7 @@ using Engine.UI.Input;
 using Engine.Randomization;
 using Engine.Network;
 using Engine.Logging;
+using Engine.Styles;
 
 namespace Launcher
 {
@@ -53,6 +55,7 @@ namespace Launcher
             // Game.Configs directly — see Engine/Logging/AppLogger.cs).
             AppLogger.EnableDebug = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
+            DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
 
             // Create service collection for DI
             var services = new ServiceCollection();
