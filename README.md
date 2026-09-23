@@ -18,7 +18,9 @@ This project is only for private use.
 目前實際完成度與尚未完成的部分請見 [`docs/STATUS.md`](docs/STATUS.md)；
 後續修改的優先順序規劃請見 [`docs/PLAN.md`](docs/PLAN.md)；分層架構請見
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)；在非 Windows 機器上開發時的
-限制與現況請見 [`docs/CROSS-PLATFORM.md`](docs/CROSS-PLATFORM.md)。
+限制與現況請見 [`docs/CROSS-PLATFORM.md`](docs/CROSS-PLATFORM.md)；把繪圖/
+視窗包成可替換轉換層的設計請見
+[`docs/PLATFORM-ABSTRACTION.md`](docs/PLATFORM-ABSTRACTION.md)。
 
 ---
 
