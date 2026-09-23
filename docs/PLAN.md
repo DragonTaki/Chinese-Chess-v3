@@ -15,6 +15,14 @@
   拆成獨立 class library（強制「Engine 不依賴任何人」）故意先不做：Engine
   裡有 5 處 `internal`，拆開後要逐一確認可見度，這只能在 Windows 上
   build＋跑起來驗證，等有 Windows 環境再做，見 STATUS.md「Build 設定」。
+- [x] 5 處架構違規（`AppLogger`、`Physics2D`、`UIOverlayMask`、
+  `DialogManager`、`UIMenuRenderer` 對 `Game.*` 的依賴）——全部修完，`Engine/`
+  對 `Game.*` 的引用歸零。
+- [x] `Engine/Physics/` 完整整理——記憶體洩漏、死碼分支、null 檢查、
+  **`SmoothUpdate()` 缺 deltaTime 造成幀率相依的模擬**都修了，細節見
+  STATUS.md「2D 物理引擎」。常數重新調校（`SpringK`／`Damping`／
+  `AccelerationLerpFactor`）跟 `Acceleration.Current` 的 Lerp 平滑本身的
+  幀率相依問題，故意留給你在 Windows 上處理。
 - Engine 完善之後，才有資格說「Game／StarAnimation／Network 都能放心依賴
   它」——這階段做完前，不要往上動 Game 或 StarAnimation 的架構性修改。
 

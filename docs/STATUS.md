@@ -26,6 +26,33 @@
 - **比賽計時器** — 已完成。`PlayerTimer.cs` — 正數／倒數計時、局時與步時、
   無限模式，事件驅動。
 
+## 2D 物理引擎（`Engine/Physics/`）
+
+已完整整理（bug、記憶體洩漏、正確性都處理過，見 commit history）：
+
+- **已修**：`PhysicsRegistry` 用強引用 `HashSet` + finalizer 做 unregister 造成的記憶體洩漏（改成 `WeakReference`）。
+- **已修**：阻尼（damping）邏輯因為兩個互斥條件疊在一起，永遠不會執行的死碼。
+- **已修**：`EnforceBoundaries()` 對 `Boundary` 本身缺 null 檢查會炸的問題。
+- **已修（較大的一項）**：`SmoothUpdate()` 整個積分過程原本完全沒有乘上
+  deltaTime——`Velocity.Current += Acceleration.Current`、
+  `Position.Current += Velocity.Current` 都是直接累加，等於模擬速度綁死在
+  「多久呼叫一次 `SmoothUpdate()`」，不是真實時間。專案裡
+  `TimerManager.DeltaTimeInSeconds` 早就算好且被 `StarAnimation` 用了，只有
+  `Physics2D` 自己沒用到。已改成 `GlobalTime.Timer.DeltaTimeInSeconds` 正確
+  縮放（semi-implicit Euler，業界標準做法）。
+- **驗證方式的限制**：以上都只做了 `dotnet build` 編譯驗證，這台機器是
+  macOS，WinForms 無法實際執行，沒辦法用眼睛確認手感。
+- **待辦，故意先不動**：
+  - `SpringK`／`Damping`／`AccelerationLerpFactor` 這幾個常數，很可能是作者
+    在「沒有 deltaTime」的舊行為下肉眼調出來的。補上 deltaTime 後，同一組
+    數值的實際意義變了，視覺上的手感（彈簧軟硬、移動速度）大概率會跟以前
+    不一樣，需要在 Windows 上重新試、重新調——這台機器做不到，先留給你。
+  - `Acceleration.Current = Vector2F.Lerp(Acceleration.Current, Acceleration.Target, AccelerationLerpFactor)`
+    這行本身也是每次呼叫用固定係數做插值，同樣有幀率相依的問題（標準修法是
+    用 `1 - MathF.Pow(1 - lerpFactor, deltaTime * 60)` 這類指數衰減公式，而不
+    是單純乘 deltaTime）。這個沒有一起修，因為修法本身也會改變手感，跟上面
+    的常數問題是同一類「需要在 Windows 上重新調」的項目，一起留著。
+
 ## 連線系統（`Engine/Network/`）
 
 做出來了，但完全沒接到正在跑的 App 上。
