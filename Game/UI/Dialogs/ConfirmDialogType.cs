@@ -7,7 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-namespace Engine.UI.Dialogs
+namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
     public enum ConfirmDialogType
     {

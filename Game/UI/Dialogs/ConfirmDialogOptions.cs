@@ -13,7 +13,7 @@ using System.Linq;
 
 using Engine.UI.Widgets;
 
-namespace Engine.UI.Dialogs
+namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
     public static class ConfirmDialogOptions
     {

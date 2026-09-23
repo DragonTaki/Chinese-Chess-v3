@@ -11,6 +11,7 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.UI.Core.Elements;
@@ -43,7 +44,7 @@ namespace Launcher
             var _root = sp.GetRequiredService<UIRootNode>();
 
             // Resolve managers for dialogs and navigation
-            var _dialogManager = sp.GetRequiredService<DialogManager>();
+            var _dialogManager = sp.GetRequiredService<DialogManager<UIConfirmDialog>>();
             var _navigationManager = sp.GetRequiredService<NavigationManager>();
 
             // Initialize managers with the root node

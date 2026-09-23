@@ -14,7 +14,6 @@ using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Styles;
 using Engine.UI.Core.Elements;
-using Engine.UI.Dialogs;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {

@@ -18,12 +18,11 @@ using Engine.Globals;
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
-using Engine.UI.Core.Infrastructure;
 using Engine.UI.Dialogs;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
-    public class UIConfirmDialog : UIElement
+    public class UIConfirmDialog : UIElement, IUIDialog
     {
         private readonly UILabel _messageLabel = new();
         private readonly List<UIButton<ConfirmDialogResult>> _buttons = new();
@@ -79,6 +78,12 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             IsVisible = false;
             IsEnabled = false;
         }
+
+        /// <summary>
+        /// Called by <see cref="Engine.UI.Core.Elements.UIOverlayMask"/> when
+        /// the user dismisses this dialog by clicking outside it.
+        /// </summary>
+        public void Cancel() => _onResult?.Invoke(ConfirmDialogResult.Cancel);
 
         private void AddButtons(ConfirmDialogType type)
         {
