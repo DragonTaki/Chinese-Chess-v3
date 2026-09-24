@@ -53,6 +53,16 @@ namespace Launcher.Cross
             // Must be set before anything else — see Launcher.Program.Main.
             GraphicsBackend.Factory = new SkiaGraphicsFactory();
 
+            // Must run before any static class touches a custom font key
+            // (e.g. DefaultStyles.DefaultButtonStyle below, which triggers
+            // UILayoutStyles's static constructor) — otherwise FontManager
+            // hasn't registered "NotoSerif"/"MoeLI" yet, StyleHelper.GetFont
+            // silently falls back to GraphicsBackend.Factory.GetSystemFontFamily
+            // with that same string as a *system* font name, and since no
+            // such family exists, Skia substitutes some default Latin font
+            // with no CJK glyphs — Chinese text renders as tofu boxes.
+            FontManager.LoadFonts();
+
             var options = WindowOptions.Default with
             {
                 Title = "Chinese Chess v3 - created by @DragonTaki",
