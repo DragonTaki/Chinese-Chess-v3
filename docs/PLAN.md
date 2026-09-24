@@ -53,7 +53,14 @@
   （交叉點式、四角 4×2、中間十字開局無子但可通行）與機制（跟 HalfCenter
   同一套暗棋洗牌規則），並糾正了一開始的誤判——**真的是三方互相獨立敵對的
   陣營**，陣營3（將帥方）借用紅黑兩色棋子只是因為物理棋盤沒有第三色，不
-  代表跟陣營1／2結盟。`PlayerSide` 已加上 `Yellow` 給陣營3專用，見
+  代表跟陣營1／2結盟。`PlayerSide` 已加上第三個值給陣營3專用，見
+  `docs/STATUS.md`。
+- [x] **`PlayerSide` enum 全面改成跟顏色無關的命名**——作者指出玩家歸屬
+  不該用顏色命名（`Red`／`Black`／`Yellow`），之後開放自訂棋子顏色會混淆，
+  已全部改成 `Player1`／`Player2`／`Player3`，連帶 `GameManager.Red`／
+  `Black`、`UIInfoBoard.RedPlayerName`／`BlackPlayerName` 也一併改名，並
+  順手修正 `UIPieceRenderer.cs` 一處誤用 `Side` 判斷渲染顏色（應該看
+  `Color`）的小 bug。`PieceColor`（真正的視覺顏色 enum）沒有改名，見
   `docs/STATUS.md`。
 - **決定 `Game/Core/Rules.cs` 裡沒被用到的規則旗標**要不要留（暗棋、連吃、
   可吃己方棋子、自殺移動——`車衝`／`馬走斜`／`包必須跳吃` 這三個已經接進

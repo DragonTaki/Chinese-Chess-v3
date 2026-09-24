@@ -46,15 +46,43 @@
   **真的是三個互相獨立、互相敵對的陣營**，只是物理棋盤只有紅黑兩色可用，
   陣營3（將帥方，1紅將+1黑將+5紅兵+5黑兵）不得不借用紅黑兩色的棋子來代表
   自己這一整個陣營，數位版之後可以考慮開放自訂第三色／花紋讓陣營3視覺上
-  真正獨立。因此在 `PlayerSide` enum 新增了 `Yellow` 給陣營3專用，
+  真正獨立。因此在 `PlayerSide` enum 新增了第三個值給陣營3專用，
   `Rules.HalfCrossTeamSetup` 的資料結構也補上 `PlayerSide` 欄位（原本只有
-  `PieceColor`，沒有記錄真正的陣營歸屬）——陣營1＝`PlayerSide.Red`，陣營2＝
-  `PlayerSide.Black`，陣營3全部棋子（無論棋子本身塗紅或塗黑）都是
-  `PlayerSide.Yellow`。`Piece.CanCaptureInDarkChess`（跟 HalfCenter 共用的
-  吃子合法性判斷）本來就是純粹比較 `PlayerSide`，不是比較 `PieceColor`，
-  所以只要 `PlayerSide` 正確標成三種不同陣營，三方互打的邏輯不需要額外
-  改動就正確——已寫 scratch 測試驗證：陣營3裡塗紅色的棋子，會被陣營1
-  （紅方）攻擊，也能反過來攻擊陣營1，不會因為顏色一樣被誤判成同一陣營。
+  `PieceColor`，沒有記錄真正的陣營歸屬）。`Piece.CanCaptureInDarkChess`
+  （跟 HalfCenter 共用的吃子合法性判斷）本來就是純粹比較 `PlayerSide`，不是
+  比較 `PieceColor`，所以只要 `PlayerSide` 正確標成三種不同陣營，三方互打
+  的邏輯不需要額外改動就正確——已寫 scratch 測試驗證：陣營3裡塗紅色的
+  棋子，會被陣營1攻擊，也能反過來攻擊陣營1，不會因為顏色一樣被誤判成
+  同一陣營。
+
+  **後續再被作者糾正一次，這次是命名層級的**：`PlayerSide` 原本用
+  `Red`／`Black`／`Yellow` 命名，作者指出這樣把「玩家歸屬」跟「顯示顏色」
+  綁在一起，之後開放自訂棋子顏色／花紋時會混淆（例如陣營1如果之後選了藍色
+  顯示，`PlayerSide.Red` 這個名字就不對了）。已把整個 `PlayerSide` enum
+  改成跟顏色無關的命名——`Player1`／`Player2`／`Player3`（大盤傳統上
+  `Player1` 預設顯示紅色、`Player2` 預設顯示黑色，但這只是預設值，不是
+  名字本身的意義）。連帶重新命名了幾個一樣把「玩家」跟「顏色」綁在一起的
+  地方：
+  - `GameManager.Red`／`Black`（`Player` 型別的欄位）→ `Player1`／`Player2`。
+  - `UIInfoBoard.RedPlayerName`／`BlackPlayerName` → `Player1Name`／
+    `Player2Name`（顯示文字預設值「紅方玩家」「黑方玩家」維持不變，這是
+    給人看的文字，不是程式識別名稱）。
+  - `UIPieceRenderer.cs` 裡棋子渲染顏色原本是用 `piece.Side == PlayerSide.Player1`
+    判斷要不要畫成紅色——**這其實是個小 bug**，應該要看 `piece.Color`（視覺
+    顏色，跟歸屬刻意分開，`PieceInfo.Color` 的註解本來就寫了原因）而不是
+    `piece.Side`（歸屬）。HalfCross 陣營3的棋子如果塗紅色，用舊寫法會被
+    誤判成「跟陣營1一樣顯示紅色」剛好矇對，但邏輯本身是錯的，萬一之後陣營3
+    改成塗別的預設色就會露餡。已順手修正為 `piece.Color == PieceColor.Red`。
+  - `PieceColor` enum（視覺顏色，`Red`／`Black`／`Yellow`／`None`）本身
+    **沒有改名**——那個 enum 描述的本來就是顏色，正確地跟 `PlayerSide`
+    分開，不在這次修正範圍內。
+  - `PieceSettings.RedBackgroundBrush` 等實際色彩樣式常數、`Color.Gold`／
+    `Color.DarkRed` 等 GDI 顏色字面值、`Board.cs`／`Elephant.cs` 裡
+    `redGenerals`／`blackGenerals` 這類區域變數也都沒有動——這些描述的都是
+    「真的是某個顏色」這件事本身，不是「玩家歸屬」，跟這次要修的問題不是
+    同一件事。`UIInfoBoardRenderer.cs` 那個把畫面固定分成「左黑右紅」兩半
+    的資訊看板渲染邏輯本來就是寫死給大盤（兩人對局）用的，要讓它支援三人
+    對局是另一件更大的事，這次沒有一併做。
   - 盤面形狀（作者確認）：交叉點式（跟大盤一樣，棋子在線交叉點上，不是格
     子裡），9×5，四個角落各 4 欄×2 排（左上 X:0-3,Y:0-1；右上 X:5-8,Y:0-1；
     左下 X:0-3,Y:3-4；右下 X:5-8,Y:3-4），中間十字（X=4 整欄、Y=2 整排）
