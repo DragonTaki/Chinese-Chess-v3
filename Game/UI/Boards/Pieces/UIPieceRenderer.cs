@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using Chinese_Chess_v3.Game.Core.Pieces;
-using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Platform;
@@ -52,7 +51,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 float radius = PieceSettings.Radius;
                 float outerRadius = radius - PieceSettings.OuterMargin;
 
-                bool isRed = piece.Side == PlayerSide.Red;
+                // Visual color is piece.Color, not piece.Side — they're
+                // deliberately decoupled (see PieceInfo.Color's doc
+                // comment): a HalfCross faction-3 piece can be owned by
+                // PlayerSide.Player3 while still being colored Red, and
+                // must render as Red, not as whatever Player1 looks like.
+                bool isRed = piece.Color == PieceColor.Red;
 
                 if (uiPiece.IsSelected)
                 {

@@ -35,7 +35,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
         /// Indicates which side's turn it currently is.
         /// Accepts "Red" or "Black".
         /// </summary>
-        public PlayerSide CurrentTurn { get; set; } = PlayerSide.Red;
+        public PlayerSide CurrentTurn { get; set; } = PlayerSide.Player1;
 
         /// <summary>
         /// Indicates whether the sidebar should visually highlight the current turn.
