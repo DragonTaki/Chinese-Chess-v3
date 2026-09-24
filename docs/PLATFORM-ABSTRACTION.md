@@ -125,3 +125,43 @@ Renderer」。原本以為的階段 1(Font/Brush/Pen)實際上包含了階段 2
 
 規模比原本估計的更大——光是第 1 項就會连带牽動十幾個檔案。先確認範圍跟
 優先度再繼續動手。
+
+### 已完成:整條繪圖鏈全部接通(commit `3c08538`)
+
+上面第 1-4 項實際上沒辦法真的拆成獨立 commit——原因見前一段的修正說明,
+虛擬方法簽章一改,沒同步改到的覆寫會靜默失效、不是編譯錯誤,所以只能一次
+把整條鏈做完才 build 驗證。實際涵蓋:
+
+- `Engine/Platform/GraphicsBackend.cs`(新增)—— 靜態持有目前使用中的
+  `IGraphicsFactory`,由 `Launcher/Program.cs` 在 `Main()` 最開頭設定
+  (必須在任何 `Engine.Styles`／`Game.UI.Constants` 的靜態初始化跑之前)。
+- `UIRendererBase`／`UIRenderer`(3 個變體)／`UIContainerRenderer`／
+  `CompositeRenderer` 的 base class 簽章。
+- `UIElement.Draw`／`UIElementBase.Draw` 的抽象簽章。
+- `Engine/Styles/` 全部 10 個檔案(如上面第 1 項所列)。
+- `Engine/GraphicsUtils/`(`GraphicsHelper.cs` 加 4 個 `GraphicsPaths/` 檔案)。
+- 11 個具體 Renderer 覆寫:`UILabelRenderer`、`UIMenuRenderer`、
+  `UITextBoxRenderer`、`UIOverlayMask`(內部 Renderer)、`UITextBox`(內部
+  `UITextLineRenderer`)、`UIPieceRenderer`、`UIBoardRenderer`、
+  `UIInfoBoardRenderer`,以及對話框的 `UIConfirmDialogRenderer`。
+- `StarAnimation` 整條渲染鏈:`StarAnimationApp`、`MainRenderController`、
+  4 個 Controller、3 個 Renderer。
+- `UILabel`／`UIButton`／`UITextBox` 等元素類別上 `Font`／`Brush`／
+  `ContentAlignment` 型別的公開屬性,以及 `PieceSettings`、
+  `UIInfoBoardSettings`、`UILoggerBoxSettings`、`UILayoutStyles`、
+  `UIBoardStyles` 這些拿著這些型別當常數的設定檔。
+- `Launcher/MainForm.cs` 的 `OnPaint`——在最外層把 `e.Graphics` 包一次成
+  `WinFormsGraphics`,往下全部走 `IGraphics`。
+
+**驗證結果**:0 error,警告從 400 降到 **150**——降下去的都是因為呼叫點
+不再直接碰 GDI+ 型別,消失的警告是實際生效的訊號,不是巧合。剩下的 150 個
+警告全部落在預期範圍:`Engine/Platform/WinForms/` 後端本身、故意留到最後
+的滑鼠輸入與視窗部分(見下面「還沒做」清單),以及一個確認過整個專案零
+引用的死碼設定檔(`Engine/Configs/EngineSettings.cs`,沒有動它,只是記錄)。
+
+### 還沒做(下一步)
+
+`IWindow`／`IMouseEvent`——`MouseEventArgs`／`Form`／`Control`／
+`System.Windows.Forms.Timer` 這一層完全沒動,`Engine/Timing/TimerManager.cs`
+也還是 WinForms 實作。這是唯一還留著的 Windows-only 表面,做完才能真的在
+其他平台跑起來(前提仍然是要有對應的視窗/輸入後端可以實作這個介面)。

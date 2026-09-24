@@ -67,11 +67,21 @@
 - **Bug**：`NetworkManager.StartListening` 對每個非心跳封包都會呼叫兩次
   `OnPacketReceived`（deserialize 之後一次，心跳檢查之後又一次）。
 
+## 平台轉換層（`Engine/Platform/`）
+
+已完成:`IGraphics`／`IBrush`／`IPen`／`IFont`／`IGraphicsPath` 等介面 +
+WinForms 後端，已經完整接通到 `Engine/UI`、`Engine/Styles`、`Game/UI`、
+`StarAnimation` 整條繪圖鏈——不再有任何 Renderer 或樣式檔案直接碰
+`System.Drawing` 的 GDI+ 型別。細節、涵蓋清單、剩下的滑鼠輸入/視窗部分見
+[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)。
+
 ## 死碼
 
 - `DEPRECATED/`（頂層）與 `StarAnimation/DEPRECATED/` — 已透過 `.csproj`
   的 glob 規則排除在 build 之外（`DEPRECATED\**\*.cs`），全專案零引用。
   可以安全刪除。
+- `Engine/Configs/EngineSettings.cs` — 整個檔案（`DefaultScrollTextFont` 等
+  4 個 `ScrollTextBox` 預設值）在全專案零引用，確認過。
 
 ## Build 設定
 
