@@ -120,8 +120,38 @@
 - **棋譜／回放系統**（標準記譜法）— 未實作。目前的「紀錄」只是純文字 log
   （`GameManager.cs` 約 193-247 行，透過 `UILoggerBox`），不是結構化的移動
   清單，沒有悔棋，也沒有回放。
-- **比賽計時器** — 已完成。`PlayerTimer.cs` — 正數／倒數計時、局時與步時、
-  無限模式，事件驅動。
+- **比賽計時器** — 之前寫「已完成」不準確，這次繼續往下查地基（`Game/Core/`
+  剩餘還沒讀過的檔案）時發現 `PlayerTimer.cs` 有三個真的會炸的 bug，已修：
+  - `Update()` 用 `now - _lastUpdate` 算經過時間，但 `_lastUpdate` 從沒被
+    初始化過（預設 `DateTime.MinValue`）。`StartStep()` 又沒有把它設成
+    現在時間——只要真的接上一個每幀呼叫 `Update()` 的迴圈，第一次呼叫算出
+    來的經過時間會是幾千年，直接觸發「時間到」判斷，遊戲一開始計時器就會
+    立刻被判定超時。已修成 `StartStep()`／`Resume()` 都會把 `_lastUpdate`
+    重新戳章成現在時間。
+  - `EndStep()` 只是把狀態改成 `StepEnded`，指望之後某次 `Update()` 呼叫
+    `OnUpdate()` 來把狀態轉回 `Idle`——但 `Update()` 本身有一行
+    `if (State != TimerState.Active) return;`，只要不是 `Active` 狀態就
+    直接跳出，根本不會走到 `OnUpdate()`。結果 `EndStep()` 之後計時器永遠
+    卡在 `StepEnded`，而 `StartStep()` 只接受從 `Idle` 啟動，所以卡住之後
+    **再也無法重新開始**——對應到 `GameManager.SwitchTurn()` 的實際用法，
+    等於任何一方下完第一步之後，自己的計時器就永久停擺。已修成
+    `EndStep()` 自己同步完成這個轉換（直接算出最後一段經過時間、套用
+    increment、歸零步時、狀態轉 `Idle`），不再依賴一次不會發生的後續
+    `Update()`。
+  - `GameManager` 建構子從沒呼叫過 `Player1.Timer.StartStep()`——
+    `SwitchTurn()` 只有在「換到某一方」的時候才啟動那一方的計時器，代表
+    Player1 開局第一步永遠是在計時器 `Idle` 狀態下走的，完全不計時。已在
+    建構子補上。
+  
+  以上都已經用 scratch 測試驗證行為正確。但這整套計時器**目前完全沒有被
+  接進遊戲迴圈**——`PlayerTimer.Update()` 全專案零呼叫點（只有
+  `StartStep()`／`EndStep()` 在 `GameManager.SwitchTurn()` 裡用到），所以
+  UI 上顯示的時間字串實際上不會隨時間變化，這三個 bug 之前完全沒被觸發過
+  純粹是因為這樣。接上一個真正逐幀呼叫 `Update()` 的迴圈仍然是還沒做的
+  部分。另外 `ResetBoardToDefault()`／`LoadCustomBoard()`／`ClearBoard()`
+  重置對局時，也都沒有重置雙方計時器的已耗用時間（`Timer.Reset()`）——
+  這次故意先不動，因為量體比單純修 bug 大，且反正 `Update()` 都還沒接上，
+  不影響目前實際行為，留到真的要接計時器進遊戲迴圈那次再一起處理。
 
 ## 2D 物理引擎（`Engine/Physics/`）
 

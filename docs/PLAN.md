@@ -62,6 +62,12 @@
   順手修正 `UIPieceRenderer.cs` 一處誤用 `Side` 判斷渲染顏色（應該看
   `Color`）的小 bug。`PieceColor`（真正的視覺顏色 enum）沒有改名，見
   `docs/STATUS.md`。
+- [x] `Game/Core/` 剩餘還沒讀過的檔案讀完一輪——`Boards/BoardConfigLoader.cs`
+  （沒問題）、`Players/Player.cs`（沒問題）、`Players/PlayerTimerPresets.cs`
+  （純資料，沒問題）。`Players/PlayerTimer.cs` 抓到三個真的會炸的 bug 已修
+  （計時器從沒被真正接進遊戲迴圈跑過，所以之前沒人發現），`GameManager.cs`
+  也補上一個「Player1 開局第一步沒計時」的漏洞，細節見 `docs/STATUS.md`。
+  至此 `Game/Core/` 下所有檔案都至少讀過一輪。
 - **決定 `Game/Core/Rules.cs` 裡沒被用到的規則旗標**要不要留（暗棋、連吃、
   可吃己方棋子、自殺移動——`車衝`／`馬走斜`／`包必須跳吃` 這三個已經接進
   HalfCenter 了）。要嘛接進 `PieceTypes/*.cs` 的走法判斷，要嘛刪掉。
