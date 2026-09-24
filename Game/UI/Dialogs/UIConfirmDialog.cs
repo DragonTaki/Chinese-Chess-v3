@@ -39,7 +39,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         public UIConfirmDialog(UIConfirmDialogRenderer _renderer)
         {
             this._renderer = _renderer;
-            _maxDialogWidth = GlobalWindow.Width * 2f / 3f;
+            _maxDialogWidth = GlobalViewport.Size.X * 2f / 3f;
 
             IsVisible = false;
             IsEnabled = false;
@@ -60,7 +60,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             float dlgH = textSize.Height + PaddingV * 2 + 70;
 
             Size = new Vector2F(dlgW, dlgH);
-            LocalPosition = GlobalWindow.Center - Size / 2f;  // Center the window
+            LocalPosition = GlobalViewport.Center - Size / 2f;  // Center the window
 
             _messageLabel.Text = message;
             _messageLabel.LocalPosition = new Vector2F(PaddingH, PaddingV);
