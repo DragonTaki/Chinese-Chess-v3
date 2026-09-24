@@ -17,6 +17,7 @@ using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
+using Engine.Platform;
 using Engine.Randomization;
 using Engine.Timing;
 
@@ -168,7 +169,7 @@ namespace StarAnimation.Controllers
                 _frameController.Update();
         }
 
-        public void Draw(Graphics g)
+        public void Draw(IGraphics g)
         {
             if (EnableDebugFrame)
                 _frameController.Draw(g);

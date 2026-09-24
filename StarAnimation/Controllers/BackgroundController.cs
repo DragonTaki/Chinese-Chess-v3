@@ -9,6 +9,7 @@
 
 using System.Drawing;
 
+using Engine.Platform;
 using StarAnimation.Renderers;
 
 namespace StarAnimation.Controllers
@@ -36,7 +37,7 @@ namespace StarAnimation.Controllers
 
         }
 
-        public void Draw(Graphics g)
+        public void Draw(IGraphics g)
         {
             renderer.Draw(g);
         }

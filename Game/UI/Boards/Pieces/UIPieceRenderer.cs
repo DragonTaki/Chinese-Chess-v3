@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/22
-// Version: v1.2
+// Update Date: 2026/09/24
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
 
+using Engine.Platform;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
@@ -23,7 +24,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         private readonly Pieces _pieces = new Pieces();
         public UIPieceRenderer() { }
 
-        public override void OnRender(Graphics g, UIBoard element)
+        public override void OnRender(IGraphics g, UIBoard element)
         {
             if (element is UIBoard board)
             {
@@ -33,7 +34,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
         private class Pieces
         {
-            public void Draw(Graphics g, List<UIPiece> uiPieces)
+            public void Draw(IGraphics g, List<UIPiece> uiPieces)
             {
                 if (uiPieces == null) return;
                 foreach (var uiPiece in uiPieces)
@@ -42,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 }
             }
 
-            private void DrawPiece(Graphics g, UIPiece uiPiece)
+            private void DrawPiece(IGraphics g, UIPiece uiPiece)
             {
                 Piece piece = uiPiece.PieceModel;
                 float centerX = UILayoutConstants.Board.Grid.Position.X + piece.X * UILayoutConstants.Board.Grid.CellSize;
@@ -57,26 +58,26 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 {
                     float glowRadius = radius + PieceSettings.GlowMargin;
                     Color glowColor = PieceSettings.GlowColor;
-                    using (SolidBrush glowBrush = new SolidBrush(glowColor))
+                    using (IBrush glowBrush = GraphicsBackend.Factory.CreateSolidBrush(glowColor))
                     {
                         g.FillEllipse(glowBrush, centerX - glowRadius, centerY - glowRadius, glowRadius * 2, glowRadius * 2);
                     }
                 }
 
                 // Draw main circle (fill color)
-                Brush fillBrush = isRed ? PieceSettings.RedBackgroundBrush : PieceSettings.BlackBackgroundBrush;
+                IBrush fillBrush = isRed ? PieceSettings.RedBackgroundBrush : PieceSettings.BlackBackgroundBrush;
                 g.FillEllipse(fillBrush, centerX - radius, centerY - radius, radius * 2, radius * 2);
 
                 // Draw border circle (outline color)
-                Pen outlinePen = new Pen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
+                using IPen outlinePen = GraphicsBackend.Factory.CreatePen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
                                          isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth);
                 g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
 
                 // Draw text (label)
                 string label = PieceConstants.GetPieceText(piece.Type, piece.Color);
-                Font font = PieceSettings.Font;
+                IFont font = PieceSettings.Font;
                 SizeF textSize = g.MeasureString(label, font);
-                Brush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;
+                IBrush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;
                 g.DrawString(label, font, textBrush, centerX - textSize.Width / 2, centerY - textSize.Height / 2);
             }
         }

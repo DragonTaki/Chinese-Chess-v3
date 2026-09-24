@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Engine.Platform;
 using StarAnimation.Models;
 
 namespace StarAnimation.Renderers
@@ -52,11 +53,11 @@ namespace StarAnimation.Renderers
         /// <summary>
         /// Clear canvas and render all visible stars.
         /// </summary>
-        public void Draw(Graphics g, List<Star> stars)
+        public void Draw(IGraphics g, List<Star> stars)
         {
             foreach (var star in stars)
             {
-                using (Brush brush = new SolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color.Current)))
+                using (IBrush brush = GraphicsBackend.Factory.CreateSolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color.Current)))
                 {
                     g.FillEllipse(brush, star.Position.Current.X, star.Position.Current.Y, star.Size, star.Size);
                 }

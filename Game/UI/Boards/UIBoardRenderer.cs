@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/31
-// Version: v1.2
+// Update Date: 2026/09/24
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -15,6 +15,7 @@ using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.GraphicsUtils;
 using Engine.Mathematics;
+using Engine.Platform;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Boards
@@ -40,17 +41,17 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
         }
 
-        public override void OnRender(Graphics g, UIBoard element)
+        public override void OnRender(IGraphics g, UIBoard element)
         {
             _composite.Render(g, element);
         }
 
         private class ClassicBoard : UIRenderer<UIBoard, UIBoardHandler, UIBoardRenderer>
         {
-            private Pen _boardPen = new Pen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
+            private IPen _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
 
             // Draw whole board
-            public override void OnRender(Graphics g, UIBoard element)
+            public override void OnRender(IGraphics g, UIBoard element)
             {
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
@@ -60,7 +61,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                     new Vector2F(element.Size.Width, element.Size.Height)
                 );
 
-                using (Brush backgroundBrush = UIBoardStyles.CreateBoardBackgroundBrush(fullArea))
+                using (IBrush backgroundBrush = UIBoardStyles.CreateBoardBackgroundBrush(fullArea))
                 {
                     g.FillRectangle(backgroundBrush, fullArea);
                 }
@@ -118,7 +119,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
 
             // Drow palace's diagonal line ("X" shape)
-            private void DrawPalaces(Graphics g, Pen pen)
+            private void DrawPalaces(IGraphics g, IPen pen)
             {
                 // Calculated from the origin point
                 // Black side palace (top)
@@ -141,7 +142,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
 
             // Draw cannon's and soldier's anchor point ("L" shape)
-            private void DrawPositioningPoints(Graphics g, Pen pen)
+            private void DrawPositioningPoints(IGraphics g, IPen pen)
             {
                 // Solider's anchor coordinate
                 int[] soldierCols = { 0, 2, 4, 6, 8 };
@@ -161,7 +162,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
 
             // Draw a small "L" shape near each point
-            void DrawCorner(Graphics g, int x, int y, Pen pen)
+            void DrawCorner(IGraphics g, int x, int y, IPen pen)
             {
                 // Calculated from the origin point
                 float cx = UILayoutConstants.Board.Grid.Position.X + x * UILayoutConstants.Board.Grid.CellSize;
@@ -203,7 +204,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
 
             // Draw board border ("=" line)
-            private void DrawOuterFrame(Graphics g, Pen pen)
+            private void DrawOuterFrame(IGraphics g, IPen pen)
             {
                 // Gap between grid line and frame line
                 float gap1 = 0.0f;

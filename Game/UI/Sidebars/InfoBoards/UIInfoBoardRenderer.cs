@@ -3,18 +3,18 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2025/10/31
-// Version: v1.1
+// Update Date: 2026/09/24
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 using Chinese_Chess_v3.Game.Core.Players;
 
 using Engine.Geometry;
 using Engine.GraphicsUtils;
 using Engine.GraphicsUtils.GraphicsPaths;
+using Engine.Platform;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
@@ -27,7 +27,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         protected CompositeRenderer<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer> _composite = new();
 
         public UIInfoBoardRenderer() { }
-        
+
         protected override void AfterInit()
         {
             SetupRendererChildren();
@@ -42,7 +42,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             }
         }
 
-        public override void OnRender(Graphics g, UIInfoBoard element)
+        public override void OnRender(IGraphics g, UIInfoBoard element)
         {
             _composite.Render(g, element);
         }
@@ -51,8 +51,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         {
             private UIInfoBoardHandler _handler;
             private LayoutF Layout;
-            protected readonly Font _nameFont;
-            protected readonly Font _timerFont;
+            protected readonly IFont _nameFont;
+            protected readonly IFont _timerFont;
 
             public ClassicInfoBoard()
             {
@@ -60,7 +60,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 _timerFont = UIInfoBoardSettings.TimerFont;
             }
 
-            public override void OnRender(Graphics g, UIInfoBoard element)
+            public override void OnRender(IGraphics g, UIInfoBoard element)
             {
                 if (_handler == null)
                 {
@@ -69,14 +69,12 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 }
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
-                using var bgBrush = new SolidBrush(Color.Red);
-
                 DrawShieldBackground(g, element);
 
                 DrawPlayers(g, element);
             }
 
-            private void DrawShieldBackground(Graphics g, UIInfoBoard element)
+            private void DrawShieldBackground(IGraphics g, UIInfoBoard element)
             {
                 float baseX = Layout.X;
                 float baseY = Layout.Y;
@@ -85,53 +83,63 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 int inset = 4;
 
                 // 外層盾牌
-                using GraphicsPath fullShield = ShieldPath.Create(width, height);
-                fullShield.Transform(new Matrix(1, 0, 0, 1, baseX, baseY));
+                using IGraphicsPath fullShield = ShieldPath.Create(width, height);
+                using (var translate = GraphicsBackend.Factory.CreateMatrix())
+                {
+                    translate.Translate(baseX, baseY);
+                    fullShield.Transform(translate);
+                }
 
                 PlayerSide currentTurn = element.GameManager.CurrentTurn;
 
                 // 左半背景
-                using Region leftRegion = new Region(fullShield);
+                using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
-                using SolidBrush leftBrush = new SolidBrush(currentTurn == PlayerSide.Black ? Color.Gold : Color.Gray);
+                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Black ? Color.Gold : Color.Gray);
                 g.FillRegion(leftBrush, leftRegion);
 
                 // 右半背景
-                using Region rightRegion = new Region(fullShield);
+                using IRegion rightRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
-                using SolidBrush rightBrush = new SolidBrush(currentTurn == PlayerSide.Red ? Color.Gold : Color.LightCoral);
+                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Red ? Color.Gold : Color.LightCoral);
                 g.FillRegion(rightBrush, rightRegion);
 
                 // 內層盾牌
-                using GraphicsPath innerShield = ShieldPath.Create(width - 2 * inset, height - 2 * inset);
+                using IGraphicsPath innerShield = ShieldPath.Create(width - 2 * inset, height - 2 * inset);
                 // 移到內層位置
-                innerShield.Transform(new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, baseX + inset, baseY + inset));
+                using (var innerTranslate = GraphicsBackend.Factory.CreateMatrix())
+                {
+                    innerTranslate.Translate(baseX + inset, baseY + inset);
+                    innerShield.Transform(innerTranslate);
+                }
 
                 // 左半內層遮罩
-                using Region leftOverlay = new Region(innerShield);
+                using IRegion leftOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Black ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
-                g.FillRegion(Brushes.Black, leftOverlay);
+                using IBrush blackOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.Black);
+                g.FillRegion(blackOverlayBrush, leftOverlay);
 
                 // 右半內層遮罩
-                using Region rightOverlay = new Region(innerShield);
+                using IRegion rightOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float rightX = (element.GameManager.CurrentTurn == PlayerSide.Red ? baseX + width / 2f + inset : baseX + width / 2f);
                 float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Red ? width / 2f - inset : width / 2f);
                 rightOverlay.Intersect(new RectangleF(rightX, baseY + inset, rightWidth, height - 2*inset));
-                g.FillRegion(Brushes.DarkRed, rightOverlay);
-                
+                using IBrush darkRedOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DarkRed);
+                g.FillRegion(darkRedOverlayBrush, rightOverlay);
+
                 float centerX = baseX + width / 2f + inset / 2f;
                 float startY = baseY;
                 float endY = baseY + height - inset * 2;
 
-                using (Pen centerLinePen = new Pen(Color.Gold, 4))
+                using (IPen centerLinePen = GraphicsBackend.Factory.CreatePen(Color.Gold, 4))
                 {
-                    centerLinePen.Alignment = PenAlignment.Center;
+                    centerLinePen.Alignment = PenLineAlignment.Center;
                     g.DrawLine(centerLinePen, centerX, startY, centerX, endY);
                 }
             }
 
-            private void DrawPlayers(Graphics g, UIInfoBoard element)
+            private void DrawPlayers(IGraphics g, UIInfoBoard element)
             {
                 float baseX = Layout.X;
                 float baseY = Layout.Y;
@@ -151,40 +159,43 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                     element.GameManager.CurrentTurn == PlayerSide.Red);
             }
 
-            private void DrawPlayerSection(Graphics g, float x, float y, float width, float height,
+            private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height,
                 string playerName, string totalTimeString, string stepTimeString, bool isActive)
             {
                 // Timer background
                 RectangleF totalTimerRect = new RectangleF(x + 20.0f, y + 50.0f, width - 40.0f, 40.0f);
-                using (SolidBrush timerBgBrush = new SolidBrush(Color.DimGray))
+                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
                     g.FillRectangle(timerBgBrush, totalTimerRect);
 
                 // Timer text
-                using (SolidBrush timerTextBrush = new SolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
-                using (StringFormat timerFormat = new StringFormat
-                { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                using (IBrush timerTextBrush = GraphicsBackend.Factory.CreateSolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
+                using (IStringFormat timerFormat = GraphicsBackend.Factory.CreateStringFormat())
                 {
+                    timerFormat.Alignment = TextAlign.Center;
+                    timerFormat.LineAlignment = TextAlign.Center;
                     g.DrawString(totalTimeString, _timerFont, timerTextBrush, totalTimerRect, timerFormat);
                 }
 
                 // Timer background
                 RectangleF stepTimerRect = new RectangleF(x + 20.0f, y + 95.0f, width - 40.0f, 40.0f);
-                using (SolidBrush timerBgBrush = new SolidBrush(Color.DimGray))
+                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
                     g.FillRectangle(timerBgBrush, stepTimerRect);
 
                 // Timer text
-                using (SolidBrush timerTextBrush = new SolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
-                using (StringFormat timerFormat = new StringFormat
-                { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                using (IBrush timerTextBrush = GraphicsBackend.Factory.CreateSolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
+                using (IStringFormat timerFormat = GraphicsBackend.Factory.CreateStringFormat())
                 {
+                    timerFormat.Alignment = TextAlign.Center;
+                    timerFormat.LineAlignment = TextAlign.Center;
                     g.DrawString(stepTimeString, _timerFont, timerTextBrush, stepTimerRect, timerFormat);
                 }
 
                 // Player name
-                using (SolidBrush nameBrush = new SolidBrush(Color.White))
-                using (StringFormat nameFormat = new StringFormat
-                { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near })
+                using (IBrush nameBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.White))
+                using (IStringFormat nameFormat = GraphicsBackend.Factory.CreateStringFormat())
                 {
+                    nameFormat.Alignment = TextAlign.Center;
+                    nameFormat.LineAlignment = TextAlign.Near;
                     g.DrawString(playerName, _nameFont, nameBrush, new RectangleF(x, y + 10.0f, width, 30.0f), nameFormat);
                 }
             }

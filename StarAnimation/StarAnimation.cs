@@ -7,10 +7,9 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System.Drawing;
-
 using StarAnimation.Controllers;
 
+using Engine.Platform;
 using Engine.Timing;
 
 namespace StarAnimation
@@ -55,7 +54,7 @@ namespace StarAnimation
         /// <summary>
         /// Optional: Expose a render function if drawing is handled here.
         /// </summary>
-        public void Render(Graphics g)
+        public void Render(IGraphics g)
         {
             _controller?.Render(g);
         }
