@@ -9,13 +9,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 
 using Engine.Network;
+using Engine.Platform;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
@@ -141,7 +141,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         /// </summary>
         public static void ExitApplication()
         {
-            Application.Exit();
+            AppControl.ExitCallback?.Invoke();
         }
 
         public Dictionary<UIMainMenuType, UIElement> Submenus => _submenus;

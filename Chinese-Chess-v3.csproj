@@ -1,11 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFrameworks>net9.0-windows;net9.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>Chinese_Chess_v3</RootNamespace>
-    <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
+
+  <!-- WinForms is only meaningful (and only available) on the Windows build. -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <!-- Let the cross-platform build run against whichever .NET major version
+       the host actually has installed (e.g. a machine with only the .NET 10
+       runtime), instead of failing to launch over a runtime version that
+       isn't present. Only needed on the non-Windows TFM: the Windows build
+       here is compile-checked only, never run, on this machine. -->
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net9.0-windows'">
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,5 +30,25 @@
     <Content Include="Assets\Font\NotoSerifCJKtc-Medium.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <!-- Windows entry point + GDI+/WinForms backend: Windows build only. -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net9.0-windows'">
+    <Compile Remove="Launcher\**\*.cs" />
+    <Compile Remove="Engine\Platform\WinForms\**\*.cs" />
+    <Compile Remove="Engine\Timing\TimerManager.cs" />
+  </ItemGroup>
+
+  <!-- Cross-platform entry point + SkiaSharp/Silk.NET backend: non-Windows build only. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
+    <Compile Remove="Launcher.Cross\**\*.cs" />
+    <Compile Remove="Engine\Platform\Skia\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net9.0-windows'">
+    <PackageReference Include="SkiaSharp" Version="4.152.1" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
+    <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
   </ItemGroup>
 </Project>
