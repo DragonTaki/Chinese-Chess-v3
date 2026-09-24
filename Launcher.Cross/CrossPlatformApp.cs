@@ -65,13 +65,21 @@ namespace Launcher.Cross
             _window.Load += OnLoad;
             _window.Update += OnUpdate;
             _window.Render += OnRender;
+            _window.FramebufferResize += OnFramebufferResize;
             _window.Closing += OnClosing;
         }
 
         private void OnLoad()
         {
-            FontManager.LoadFonts();
-            GlobalWindow.UpdateSize(_window.Size.X, _window.Size.Y);
+            // GlobalWindow drives layout/bounds for things like the
+            // StarAnimation background, and must be sized in the same pixel
+            // space OnRender actually draws into — the physical framebuffer,
+            // not the window's logical (point) size. On a HiDPI/Retina
+            // display those differ by the display's scale factor; using the
+            // wrong one here squeezes/misaligns everything relative to what
+            // the GPU surface (sized from FramebufferSize in OnRender) shows.
+            var fbSize = _window.FramebufferSize;
+            GlobalWindow.UpdateSize(fbSize.X, fbSize.Y);
 
             _gl = GL.GetApi(_window);
             _grGlInterface = GRGlInterface.Create();
@@ -86,9 +94,10 @@ namespace Launcher.Cross
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
 
             _inputContext = _window.CreateInput();
-            _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0]);
+            _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0], _window);
 
             _bgStar = new StarAnimationApp();
+            _bgStar.Resize(fbSize.X, fbSize.Y);
 
             GlobalTime.Timer = _timer;
             _timer.OnAnimationFrame += () =>
@@ -102,6 +111,12 @@ namespace Launcher.Cross
         }
 
         private void OnUpdate(double deltaSeconds) => _timer.Tick((float)deltaSeconds);
+
+        private void OnFramebufferResize(Silk.NET.Maths.Vector2D<int> newSize)
+        {
+            GlobalWindow.UpdateSize(newSize.X, newSize.Y);
+            _bgStar?.Resize(newSize.X, newSize.Y);
+        }
 
         private void OnRender(double deltaSeconds)
         {

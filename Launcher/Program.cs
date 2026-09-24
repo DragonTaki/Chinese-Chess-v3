@@ -61,6 +61,16 @@ namespace Launcher
             GraphicsBackend.Factory = new WinFormsGraphicsFactory();
             AppControl.ExitCallback = Application.Exit;
 
+            // Must run before any static class touches a custom font key
+            // (e.g. DefaultStyles.DefaultButtonStyle below, which triggers
+            // UILayoutStyles's static constructor) — otherwise FontManager
+            // hasn't registered "NotoSerif"/"MoeLI" yet and StyleHelper.GetFont
+            // silently falls back to a *system* font of that same name instead
+            // (see FontManager.LoadFonts's caller in Launcher.Cross.Program for
+            // the full explanation — this was previously called from
+            // MainForm's constructor, which runs too late).
+            FontManager.LoadFonts();
+
             // Push Game-level config into Engine (Engine must not read
             // Game.Configs directly — see Engine/Logging/AppLogger.cs).
             AppLogger.EnableDebug = Settings.EnableDebugMode;
