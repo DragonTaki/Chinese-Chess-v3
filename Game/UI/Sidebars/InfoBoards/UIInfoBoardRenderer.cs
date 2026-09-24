@@ -95,13 +95,13 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 // 左半背景
                 using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
-                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Black ? Color.Gold : Color.Gray);
+                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player2 ? Color.Gold : Color.Gray);
                 g.FillRegion(leftBrush, leftRegion);
 
                 // 右半背景
                 using IRegion rightRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
-                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Red ? Color.Gold : Color.LightCoral);
+                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player1 ? Color.Gold : Color.LightCoral);
                 g.FillRegion(rightBrush, rightRegion);
 
                 // 內層盾牌
@@ -115,15 +115,15 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
                 // 左半內層遮罩
                 using IRegion leftOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
-                float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Black ? (width / 2f - inset) : width / 2f);
+                float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Player2 ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
                 using IBrush blackOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.Black);
                 g.FillRegion(blackOverlayBrush, leftOverlay);
 
                 // 右半內層遮罩
                 using IRegion rightOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
-                float rightX = (element.GameManager.CurrentTurn == PlayerSide.Red ? baseX + width / 2f + inset : baseX + width / 2f);
-                float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Red ? width / 2f - inset : width / 2f);
+                float rightX = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? baseX + width / 2f + inset : baseX + width / 2f);
+                float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? width / 2f - inset : width / 2f);
                 rightOverlay.Intersect(new RectangleF(rightX, baseY + inset, rightWidth, height - 2*inset));
                 using IBrush darkRedOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DarkRed);
                 g.FillRegion(darkRedOverlayBrush, rightOverlay);
@@ -147,16 +147,16 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float height = Layout.Height;
 
                 DrawPlayerSection(g, baseX, baseY, width / 2.0f, height,
-                    element.BlackPlayerName,
-                    element.GameManager.Black.Timer.GetTotalTimeString(),
-                    element.GameManager.Black.Timer.GetStepTimeString(),
-                    element.GameManager.CurrentTurn == PlayerSide.Black);
+                    element.Player2Name,
+                    element.GameManager.Player2.Timer.GetTotalTimeString(),
+                    element.GameManager.Player2.Timer.GetStepTimeString(),
+                    element.GameManager.CurrentTurn == PlayerSide.Player2);
 
                 DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height,
-                    element.RedPlayerName,
-                    element.GameManager.Red.Timer.GetTotalTimeString(),
-                    element.GameManager.Red.Timer.GetStepTimeString(),
-                    element.GameManager.CurrentTurn == PlayerSide.Red);
+                    element.Player1Name,
+                    element.GameManager.Player1.Timer.GetTotalTimeString(),
+                    element.GameManager.Player1.Timer.GetStepTimeString(),
+                    element.GameManager.CurrentTurn == PlayerSide.Player1);
             }
 
             private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height,

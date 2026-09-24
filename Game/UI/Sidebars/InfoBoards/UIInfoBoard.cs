@@ -17,8 +17,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 {
     public class UIInfoBoard : UIContainer<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>, IResettable
     {
-        public string BlackPlayerName { get; set; } = "黑方玩家";
-        public string RedPlayerName { get; set; } = "紅方玩家";
+        public string Player2Name { get; set; } = "黑方玩家";
+        public string Player1Name { get; set; } = "紅方玩家";
         public GameManager GameManager;
 
         public UIInfoBoard() { }
