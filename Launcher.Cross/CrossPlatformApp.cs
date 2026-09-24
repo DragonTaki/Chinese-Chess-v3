@@ -65,6 +65,7 @@ namespace Launcher.Cross
             _window.Load += OnLoad;
             _window.Update += OnUpdate;
             _window.Render += OnRender;
+            _window.Resize += OnResize;
             _window.FramebufferResize += OnFramebufferResize;
             _window.Closing += OnClosing;
         }
@@ -80,6 +81,16 @@ namespace Launcher.Cross
             // the GPU surface (sized from FramebufferSize in OnRender) shows.
             var fbSize = _window.FramebufferSize;
             GlobalWindow.UpdateSize(fbSize.X, fbSize.Y);
+
+            // The UI content itself (MainMenu/Board/Sidebar/dialogs — but
+            // NOT the full-bleed StarAnimation background above, which keeps
+            // using GlobalWindow directly) is authored in its own fixed
+            // DesignSize coordinate space. GlobalViewport maps that onto
+            // whatever the actual window size is, uniformly (no stretch) and
+            // letterboxed — see OnRender/SilkInputAdapter for the two halves
+            // (drawing and hit-testing) of applying that mapping.
+            GlobalViewport.DesignSize = UILayoutConstants.DesignSize;
+            GlobalViewport.Recalculate(fbSize.X, fbSize.Y);
 
             _gl = GL.GetApi(_window);
             _grGlInterface = GRGlInterface.Create();
@@ -115,7 +126,28 @@ namespace Launcher.Cross
         private void OnFramebufferResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             GlobalWindow.UpdateSize(newSize.X, newSize.Y);
+            GlobalViewport.Recalculate(newSize.X, newSize.Y);
             _bgStar?.Resize(newSize.X, newSize.Y);
+        }
+
+        /// <summary>
+        /// Clamps the OS window to <see cref="UILayoutConstants.MinimumWindowSize"/>.
+        /// Silk.NET/GLFW has no built-in "minimum size" constraint to set
+        /// once, so this enforces it manually on every resize; the
+        /// re-assignment below is idempotent once clamped, so it doesn't
+        /// loop (Resize firing again with the already-clamped size is a
+        /// no-op here).
+        /// </summary>
+        private void OnResize(Silk.NET.Maths.Vector2D<int> newSize)
+        {
+            int minWidth = (int)UILayoutConstants.MinimumWindowSize.X;
+            int minHeight = (int)UILayoutConstants.MinimumWindowSize.Y;
+
+            int clampedWidth = System.Math.Max(newSize.X, minWidth);
+            int clampedHeight = System.Math.Max(newSize.Y, minHeight);
+
+            if (clampedWidth != newSize.X || clampedHeight != newSize.Y)
+                _window.Size = new Silk.NET.Maths.Vector2D<int>(clampedWidth, clampedHeight);
         }
 
         private void OnRender(double deltaSeconds)
@@ -129,8 +161,14 @@ namespace Launcher.Cross
             using var surface = SKSurface.Create(_grContext, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
             using IGraphics g = new SkiaGraphics(surface.Canvas);
 
+            // Background renders full-bleed in actual window pixels; UI
+            // content renders inside the letterboxed/scaled viewport — see
+            // GlobalViewport's doc comment for why these differ.
             _bgStar?.Render(g);
+
+            g.PushTransform(GlobalViewport.Scale, GlobalViewport.Offset.X, GlobalViewport.Offset.Y);
             _rootCanvas?.Draw(g);
+            g.PopTransform();
 
             surface.Canvas.Flush();
             _grContext.Flush();

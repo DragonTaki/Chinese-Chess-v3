@@ -235,3 +235,65 @@ DI 註冊,只差 `GraphicsBackend.Factory = new SkiaGraphicsFactory()` 跟
 異常訊號)。這一步之後需要在一般的 macOS 使用者工作階段(不是這個受限的
 沙盒)實際跑一次 `dotnet run --project Chinese-Chess-v3.csproj -f net9.0`
 才能真正確認畫面渲染正確、滑鼠互動正常。
+
+### 已修正:實機測試後發現的三個 bug
+
+你在自己機器上實際跑起來後回報:中文變方框、背景/物理動畫完全不會動、
+畫面解析度沒跟著視窗大小走。三個都是真的 bug,根因與修法：
+
+1. **中文方框**——`UILayoutStyles`／`PieceSettings`／`UIInfoBoardSettings`
+   這些靜態類別的欄位會呼叫 `StyleHelper.GetFont("NotoSerif"/"MoeLI", ...)`，
+   但它們的靜態建構子被 `Program.Main()` 裡的
+   `DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;`
+   提早觸發，那時候 `FontManager.LoadFonts()` 根本還沒跑（原本放在
+   `MainForm`/`CrossPlatformApp.OnLoad` 裡，時機太晚）。結果每個 CJK 字型
+   key 都 fallback 成「找一個叫這個名字的系統字型」，Skia 的 fallback
+   對未知字型名稱沒有中文字。這個 bug 在 Windows 上其實也存在，只是
+   Windows 的字型連結機制運氣好幫忙補上了中文字型。修法：把
+   `FontManager.LoadFonts()` 移到兩個進入點 `Main()` 最前面。
+2. **物理/背景不會動 + 解析度沒跟視窗**——同一個根因：Retina 螢幕上
+   `CrossPlatformApp` 用實際 GPU surface 的 `FramebufferSize`（物理像素）
+   畫圖，但 `GlobalWindow`（背景動畫的邊界依據）只在啟動時設成 `Size`
+   （邏輯像素）且從沒更新過，兩者差了螢幕縮放倍率，且視窗大小變化時
+   完全沒有同步。修法：全部改用 `FramebufferSize`，並在
+   `FramebufferResize` 事件時同步更新，滑鼠座標也换算成物理像素。
+
+三項都已 build 驗證（兩個 TFM 都 0 error，警告數不變）並 commit + push
+（`8b487ee`）。
+
+### 已完成:畫面解析度縮放系統（`GlobalViewport`）
+
+延續上面的討論，進一步處理「視窗可以任意縮放，但畫面內容比例要維持
+不變」這個需求。設計:
+
+- `Engine/Globals/GlobalViewport.cs`（新增）——把 UI 內容自己的原生尺寸
+  （`DesignSize`，即 `UILayoutConstants.DesignSize` = MainMenu + Board +
+  Sidebar 三者尺寸加總，目前是 1500×840，跟原本設計完全一樣，沒有重新
+  設計任何版面）對應到實際視窗大小：`Scale` 取寬高縮放比例中較小值（等比例
+  縮放，內容絕不變形），`Offset` 讓內容置中，兩軸不滿的部分留白（letterbox
+  /pillarbox）。跟 `GlobalWindow`（仍然回報實際視窗像素）刻意分開——背景
+  StarAnimation 繼續讀 `GlobalWindow`，滿版鋪到視窗邊緣（含留白區域也蓋到），
+  UI 內容（選單/棋盤/對話框）改讀 `GlobalViewport`，永遠在自己的 1500×840
+  座標系裡。
+- `IGraphics.PushTransform(scale, offsetX, offsetY)` / `PopTransform()`（新增
+  介面方法，兩個後端都已實作）——在畫 UI 內容前推入一個「平移＋等比例縮放」
+  的繪圖狀態，畫完再還原，這樣所有現有的版面程式碼完全不用改，一行都沒動。
+- 滑鼠座標比照辦理：Skia 後端在 `SilkInputAdapter` 內把「邏輯座標→實體
+  framebuffer 像素→內容座標」兩段轉換串起來；WinForms 後端因為沒有實體
+  framebuffer 這層，`WinFormsMouseEvent` 直接做「視窗像素→內容座標」一段
+  轉換。
+- 視窗預設啟動大小改成 1920×1080（`UILayoutConstants.DefaultWindowSize`，
+  一般桌機的標準解析度），內容照樣用 1500×840 設計、放大鋪滿；最小視窗
+  大小鎖定 960×540（`UILayoutConstants.MinimumWindowSize`，同比例的一半，
+  防止縮到內容看不清楚）——WinForms 用 `Form.MinimumSize` 原生鎖定，Silk.NET
+  沒有對應的原生 API，改成在 `Resize` 事件裡手動夾住。
+
+WinForms（`MainForm.cs`）跟 Skia（`CrossPlatformApp.cs`）兩邊都用同一套
+機制、對稱實作，不是只做了 Mac 那邊。
+
+**驗證結果**:兩個 TFM 都 0 error；Windows 警告 135→151（+16，全部是新增
+的 `PushTransform`/`PopTransform` 與 `WinFormsMouseEvent` 內 `GlobalViewport`
+呼叫點的預期 `CA1416` 警告，不是回歸訊號）；非 Windows 警告數不變（8）。
+`dotnet run` 再次確認 0 crash、無例外堆疊。畫面實際縮放/置中效果是否正確
+（尤其是把視窗拖成很寬或很窄時的留白表現）一樣需要你在自己機器上肉眼
+確認。
