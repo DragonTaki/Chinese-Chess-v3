@@ -52,10 +52,9 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             Children.Clear();
             var root = this.GetRoot();
 
-            var gTmp = Graphics.FromHwnd(IntPtr.Zero);   // 只用來量字
+            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
             var textSize = gTmp.MeasureString(message, UILayoutStyles.MainMenu.Button.Font,
                             (int)_maxDialogWidth - (int)PaddingH * 2);
-            gTmp.Dispose();
 
             float dlgW = MathF.Min(textSize.Width + PaddingH * 2, _maxDialogWidth);
             float dlgH = textSize.Height + PaddingV * 2 + 70;

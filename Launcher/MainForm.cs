@@ -18,6 +18,8 @@ using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.Globals;
 using Engine.Physics;
+using Engine.Platform;
+using Engine.Platform.WinForms;
 using Engine.Styles;
 using Engine.Timing;
 using Engine.UI.Core.Elements;
@@ -111,8 +113,9 @@ namespace Launcher
         {
             base.OnPaint(e);
 
-            _bgStar?.Render(e.Graphics);
-            _rootCanvas?.Draw(e.Graphics);
+            using IGraphics g = new WinFormsGraphics(e.Graphics, ownsNative: false);
+            _bgStar?.Render(g);
+            _rootCanvas?.Draw(g);
         }
     }
 }
