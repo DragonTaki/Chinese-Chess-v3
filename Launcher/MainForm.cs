@@ -67,7 +67,10 @@ namespace Launcher
 
         private void InitComponents()
         {
-            FontManager.LoadFonts();
+            // FontManager.LoadFonts() now runs in Program.Main(), before
+            // DefaultStyles.DefaultButtonStyle touches UILayoutStyles's
+            // static constructor — see the comment there. Calling it again
+            // here would just reload the same font files from disk.
         }
 
         private void InitWindow()
