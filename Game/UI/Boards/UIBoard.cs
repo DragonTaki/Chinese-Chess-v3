@@ -8,7 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
-using System.Windows.Forms;
+using Engine.Platform;
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
@@ -45,7 +45,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             Size = UILayoutConstants.Board.Size;
         }
         
-        public override bool OnMouseDown(MouseEventArgs e)
+        public override bool OnMouseDown(IMouseEvent e)
         {
             var board = _gameManager.Board;
 

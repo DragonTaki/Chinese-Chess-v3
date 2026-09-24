@@ -2,15 +2,17 @@
 // Program.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
-// Create Date: 2025/05/06
-// Update Date: 2025/05/06
+// Create Date: 2026/09/24
+// Update Date: 2026/09/24
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
 using System;
-using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using Silk.NET.Maths;
+using Silk.NET.Windowing;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
@@ -33,54 +35,46 @@ using Engine.Randomization;
 using Engine.Network;
 using Engine.Logging;
 using Engine.Platform;
-using Engine.Platform.WinForms;
+using Engine.Platform.Skia;
 using Engine.Styles;
 
-namespace Launcher
+namespace Launcher.Cross
 {
     /// <summary>
-    /// Main entry point for the Chinese Chess application.
-    /// <para>
-    /// Responsible for setting up dependency injection (DI), initializing WinForms,
-    /// and launching the main form.
-    /// </para>
+    /// Cross-platform entry point for the Chinese Chess application — same
+    /// DI wiring as <c>Launcher.Program</c>, backed by SkiaSharp (rendering)
+    /// and Silk.NET (windowing/input) instead of GDI+/WinForms, so it also
+    /// runs on macOS/Linux.
     /// </summary>
     static class Program
     {
-        /// <summary>
-        /// Application entry point. Configures services, builds the service provider,
-        /// and runs the main WinForms form.
-        /// </summary>
-        [STAThread]
         static void Main()
         {
-            // Must be set before anything else — every style/font/brush
-            // constant in Engine.Styles and Game.UI.Constants is created via
-            // GraphicsBackend.Factory in its own static initializer, and
-            // those can run as soon as the first line below touches them.
-            GraphicsBackend.Factory = new WinFormsGraphicsFactory();
-            AppControl.ExitCallback = Application.Exit;
+            // Must be set before anything else — see Launcher.Program.Main.
+            GraphicsBackend.Factory = new SkiaGraphicsFactory();
 
-            // Push Game-level config into Engine (Engine must not read
-            // Game.Configs directly — see Engine/Logging/AppLogger.cs).
+            var options = WindowOptions.Default with
+            {
+                Title = "Chinese Chess v3 - created by @DragonTaki",
+                Size = new Vector2D<int>(
+                    (int)(UILayoutConstants.MainMenu.Size.X + UILayoutConstants.Board.Size.X + UILayoutConstants.Sidebar.Size.X),
+                    (int)UILayoutConstants.MainMenu.Size.Y),
+            };
+            var window = Window.Create(options);
+
+            AppControl.ExitCallback = window.Close;
+
             AppLogger.EnableDebug = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
 
-            // Create service collection for DI
             var services = new ServiceCollection();
 
-            // Register core UI services and factories
             services.AddSingleton<IUiFactory, UiFactory>();
             services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
 
-            // Register main WinForms form
-            services.AddSingleton<MainForm>();
-
-            // Register utility services
             services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
 
-            // Register managers and core systems
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<UIRootNode>();
             services.AddSingleton(_ => new DialogManager<UIConfirmDialog>(
@@ -88,42 +82,30 @@ namespace Launcher
             services.AddSingleton<NetworkManager>();
             services.AddSingleton<GameManager>();
 
-            // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
             services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
             services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
 
-            // Register transient UI modules with handlers and renderers
             services.AddTransientUiModule<UIBoard,     UIBoardHandler,     UIBoardRenderer>();
             services.AddTransientUiModule<UISidebar,   UISidebarHandler,   UISidebarRenderer>();
             services.AddTransientUiModule<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
             services.AddTransientUiModule<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();
 
-            // Build the service provider
             var sp = services.BuildServiceProvider();
 
-            // Initialize WinForms configuration
-            ApplicationConfiguration.Initialize();
-
-            // Run the main form resolved from DI
-            Application.Run(sp.GetRequiredService<MainForm>());
+            using var app = new CrossPlatformApp(sp, window);
+            window.Run();
         }
     }
-    
+
     /// <summary>
-    /// Extension methods for IServiceCollection to simplify UI module registration.
+    /// Cross-platform counterpart to <c>Launcher.ServiceCollectionExtensions</c>
+    /// (identical logic — kept as a separate copy for the same reason as
+    /// <see cref="UIInitializer"/>).
     /// </summary>
     public static class ServiceCollectionExtensions
     {
-        /// <summary>
-        /// Registers a UI module along with its corresponding handler and renderer as singletons.
-        /// </summary>
-        /// <typeparam name="TModule">The UI module type (screen or component).</typeparam>
-        /// <typeparam name="THandler">The handler type associated with the UI module.</typeparam>
-        /// <typeparam name="TRenderer">The renderer type associated with the UI module.</typeparam>
-        /// <param name="services">The service collection to add the services to.</param>
-        /// <returns>The updated <see cref="IServiceCollection"/> to allow chaining.</returns>
         public static IServiceCollection AddSingletonUiModule<TModule, THandler, TRenderer>(this IServiceCollection services)
             where TModule : class
             where THandler : class
@@ -135,14 +117,6 @@ namespace Launcher
             return services;
         }
 
-        /// <summary>
-        /// Registers a UI module along with its corresponding handler and renderer as transients.
-        /// </summary>
-        /// <typeparam name="TModule">The UI module type (screen or component).</typeparam>
-        /// <typeparam name="THandler">The handler type associated with the UI module.</typeparam>
-        /// <typeparam name="TRenderer">The renderer type associated with the UI module.</typeparam>
-        /// <param name="services">The service collection to add the services to.</param>
-        /// <returns>The updated <see cref="IServiceCollection"/> to allow chaining.</returns>
         public static IServiceCollection AddTransientUiModule<TModule, THandler, TRenderer>(this IServiceCollection services)
             where TModule : class
             where THandler : class
