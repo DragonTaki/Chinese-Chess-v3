@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Engine.Platform;
 using StarAnimation.Models;
 using StarAnimation.Renderers;
 using StarAnimation.Utils.Area;
@@ -100,7 +101,7 @@ namespace StarAnimation.Controllers
         /// Draws all currently active debug frames.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
-        public void Draw(Graphics g)
+        public void Draw(IGraphics g)
         {
             _renderer.Draw(g, _activeFrames);
         }

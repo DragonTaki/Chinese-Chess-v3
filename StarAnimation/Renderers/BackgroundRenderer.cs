@@ -3,12 +3,14 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/09
-// Update Date: 2025/05/09
-// Version: v1.0
+// Update Date: 2026/09/24
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Drawing;
+
+using Engine.Platform;
 
 namespace StarAnimation.Renderers
 {
@@ -48,7 +50,7 @@ namespace StarAnimation.Renderers
         /// <summary>
         /// Background brush used for rendering. Default is solid black.
         /// </summary>
-        public Brush BackgroundBrush { get; set; } = Brushes.Black;
+        public IBrush BackgroundBrush { get; set; } = GraphicsBackend.Factory.CreateSolidBrush(Color.Black);
 
         #endregion
 
@@ -78,7 +80,7 @@ namespace StarAnimation.Renderers
         /// Draws the background onto the specified Graphics surface.
         /// </summary>
         /// <param name="g">The Graphics object used for rendering.</param>
-        public void Draw(Graphics g)
+        public void Draw(IGraphics g)
         {
             g.FillRectangle(BackgroundBrush, 0, 0, Width, Height);
         }

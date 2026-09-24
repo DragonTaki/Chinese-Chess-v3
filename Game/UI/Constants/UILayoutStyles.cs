@@ -3,13 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2025/05/13
-// Version: v1.0
+// Update Date: 2026/09/24
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
+using Engine.Platform;
 using Engine.Styles;
 
 namespace Chinese_Chess_v3.Game.UI.Constants
@@ -45,8 +45,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 };
                 public static class Button
                 {
-                    public static readonly Font Font = StyleHelper.GetFont("NotoSerif", 24, FontStyle.Bold);
-                    public static readonly Brush TextBrush = StyleHelper.GetBrush("#000000", 1.0f);  // #000000
+                    public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 24, FontStyleFlags.Bold);
+                    public static readonly IBrush TextBrush = StyleHelper.GetBrush("#000000", 1.0f);  // #000000
                     public static class Border
                     {
                         public const float CornerRadius = 8.0f;
@@ -80,8 +80,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         {
             public static class Button
             {
-                public static readonly Font Font = StyleHelper.GetFont("NotoSerif", 36, FontStyle.Bold);
-                public static readonly Brush TextBrush = StyleHelper.GetBrush("#FCFAF2", 1.0f);  // #FCFAF2
+                public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 36, FontStyleFlags.Bold);
+                public static readonly IBrush TextBrush = StyleHelper.GetBrush("#FCFAF2", 1.0f);  // #FCFAF2
                 public static class Border
                 {
                     public const float Margin = 4.0f;
@@ -104,7 +104,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     public static readonly Color TopColor = StyleHelper.GetColor("#FFFFFF", 0.25f);  // #FFFFFF
                     public static readonly Color BottomColor = StyleHelper.GetColor("#F0F0F0", 0.25f);  // #F0F0F0
                     public static IBrushFactory BrushFactory =>
-                        new LinearGradientBrushFactory(TopColor, BottomColor, LinearGradientMode.Vertical);
+                        new LinearGradientBrushFactory(TopColor, BottomColor, GradientDirection.Vertical);
                 }
 
                 public static IButtonDrawStyle Style = new DoubleBorderRoundedStyle

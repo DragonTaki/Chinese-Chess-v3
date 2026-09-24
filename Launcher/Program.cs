@@ -32,6 +32,8 @@ using Engine.UI.Input;
 using Engine.Randomization;
 using Engine.Network;
 using Engine.Logging;
+using Engine.Platform;
+using Engine.Platform.WinForms;
 using Engine.Styles;
 
 namespace Launcher
@@ -52,6 +54,12 @@ namespace Launcher
         [STAThread]
         static void Main()
         {
+            // Must be set before anything else — every style/font/brush
+            // constant in Engine.Styles and Game.UI.Constants is created via
+            // GraphicsBackend.Factory in its own static initializer, and
+            // those can run as soon as the first line below touches them.
+            GraphicsBackend.Factory = new WinFormsGraphicsFactory();
+
             // Push Game-level config into Engine (Engine must not read
             // Game.Configs directly — see Engine/Logging/AppLogger.cs).
             AppLogger.EnableDebug = Settings.EnableDebugMode;

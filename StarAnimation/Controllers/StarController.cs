@@ -17,8 +17,9 @@ using StarAnimation.Models;
 using StarAnimation.Renderers;
 
 using Engine.Mathematics;
-using Engine.Randomization;
 using Engine.Physics;
+using Engine.Platform;
+using Engine.Randomization;
 
 namespace StarAnimation.Controllers
 {
@@ -202,7 +203,7 @@ namespace StarAnimation.Controllers
         /// Clear canvas and render all visible _stars.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
-        public void Draw(Graphics g)
+        public void Draw(IGraphics g)
         {
             _renderer.Draw(g, _stars);
         }

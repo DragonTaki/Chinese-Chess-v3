@@ -9,13 +9,14 @@
 
 using System.Drawing;
 
+using Engine.Platform;
 using Engine.Styles;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
 {
     public static class UILoggerBoxSettings
     {
-        public static readonly Font Font = StyleHelper.GetFont("Consolas", 12);
+        public static readonly IFont Font = StyleHelper.GetFont("Consolas", 12);
         public static readonly Color BackgroundColor = StyleHelper.GetColor("#1C1C1C");  // #1C1C1C
         public static readonly Color TextColor = StyleHelper.GetColor(Color.White);
         

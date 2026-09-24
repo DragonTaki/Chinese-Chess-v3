@@ -9,8 +9,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
+using Engine.Platform;
 using StarAnimation.Models;
 
 namespace StarAnimation.Renderers
@@ -57,11 +57,11 @@ namespace StarAnimation.Renderers
         /// Draws all currently active debug frames.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
-        public void Draw(Graphics g, List<Frame> activeFrames)
+        public void Draw(IGraphics g, List<Frame> activeFrames)
         {
             foreach (var frame in activeFrames)
             {
-                using Pen pen = new Pen(frame.Color, frame.Thickness);
+                using IPen pen = GraphicsBackend.Factory.CreatePen(frame.Color, frame.Thickness);
                 g.DrawRectangle(pen, frame.Rect);
             }
         }

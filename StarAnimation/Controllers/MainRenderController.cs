@@ -7,9 +7,8 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System.Drawing;
-
 using Engine.Globals;
+using Engine.Platform;
 using Engine.Timing;
 
 namespace StarAnimation.Controllers
@@ -76,7 +75,7 @@ namespace StarAnimation.Controllers
         /// Renders all visual layers onto the provided Graphics context.
         /// </summary>
         /// <param name="g">The Graphics object to draw onto.</param>
-        public void Render(Graphics g)
+        public void Render(IGraphics g)
         {
             if (g == null) return;
 
