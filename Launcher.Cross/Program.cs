@@ -63,12 +63,16 @@ namespace Launcher.Cross
             // with no CJK glyphs — Chinese text renders as tofu boxes.
             FontManager.LoadFonts();
 
+            // The window opens at a normal desktop size (1080p) rather than
+            // the UI's own (smaller) DesignSize — content is scaled up to
+            // fill it via GlobalViewport, same as any later resize. See
+            // UILayoutConstants.DefaultWindowSize/MinimumWindowSize.
             var options = WindowOptions.Default with
             {
                 Title = "Chinese Chess v3 - created by @DragonTaki",
                 Size = new Vector2D<int>(
-                    (int)(UILayoutConstants.MainMenu.Size.X + UILayoutConstants.Board.Size.X + UILayoutConstants.Sidebar.Size.X),
-                    (int)UILayoutConstants.MainMenu.Size.Y),
+                    (int)UILayoutConstants.DefaultWindowSize.X,
+                    (int)UILayoutConstants.DefaultWindowSize.Y),
             };
             var window = Window.Create(options);
 

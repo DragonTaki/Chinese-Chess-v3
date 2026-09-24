@@ -81,12 +81,33 @@ namespace Launcher
                 ControlStyles.OptimizedDoubleBuffer, true);
 
             this.Text = "Chinese Chess v3 - created by @DragonTaki";
+
+            // The window opens at a normal desktop size (1080p) rather than
+            // the UI's own (smaller) DesignSize — content is scaled up to
+            // fill it via GlobalViewport, same as any later resize. See
+            // UILayoutConstants.DefaultWindowSize/MinimumWindowSize.
             this.ClientSize = new Size(
-                (int)(UILayoutConstants.MainMenu.Size.X + UILayoutConstants.Board.Size.X + UILayoutConstants.Sidebar.Size.X),
-                (int)UILayoutConstants.MainMenu.Size.Y);
+                (int)UILayoutConstants.DefaultWindowSize.X,
+                (int)UILayoutConstants.DefaultWindowSize.Y);
+            this.MinimumSize = new Size(
+                (int)UILayoutConstants.MinimumWindowSize.X,
+                (int)UILayoutConstants.MinimumWindowSize.Y);
             this.StartPosition = FormStartPosition.CenterScreen;
 
             GlobalWindow.UpdateSize(Width, Height);
+
+            // UI content (MainMenu/Board/Sidebar/dialogs) is authored in its
+            // own fixed DesignSize coordinate space; GlobalViewport maps
+            // that onto whatever the actual window size is, uniformly (no
+            // stretch) and letterboxed.
+            GlobalViewport.DesignSize = UILayoutConstants.DesignSize;
+            GlobalViewport.Recalculate(Width, Height);
+            this.Resize += (_, _) =>
+            {
+                GlobalWindow.UpdateSize(Width, Height);
+                GlobalViewport.Recalculate(Width, Height);
+                _bgStar?.Resize(Width, Height);
+            };
         }
 
         private void WireInputEvents()
@@ -118,8 +139,15 @@ namespace Launcher
             base.OnPaint(e);
 
             using IGraphics g = new WinFormsGraphics(e.Graphics, ownsNative: false);
+
+            // Background renders full-bleed in actual window pixels; UI
+            // content renders inside the letterboxed/scaled viewport — see
+            // GlobalViewport's doc comment for why these differ.
             _bgStar?.Render(g);
+
+            g.PushTransform(GlobalViewport.Scale, GlobalViewport.Offset.X, GlobalViewport.Offset.Y);
             _rootCanvas?.Draw(g);
+            g.PopTransform();
         }
     }
 }
