@@ -9,14 +9,60 @@
   有真正的 `IsValidMoveFull` / `GetLegalMovesFull` 邏輯，並會實際讀取
   `board.GameRules` 的旗標（`CanGeneralSeeGeneral`、`CanElephantEyeBlockd`、
   `CanHorseLegHobbled` 都真的有被檢查）。
-- **HalfCenter（8×4，明棋／暗棋）與 HalfCross（9×5，三國模式）** — 僅有骨架。
-  盤面尺寸已在 `BoardConstants.cs` 定義，但每個棋子的
-  `GetLegalMovesHalfCenter` / `GetLegalMovesHalfCross` 都還沒實作
-  （`// Not implement yet`），完全沒有走法邏輯。
+  - **已修**：`Elephant.GetLegalMovesFull` 原本呼叫
+    `MovePatterns.GetDiagonalLShape`（馬走的 L 型方向表），而不是
+    `IsValidMoveFull` 正確使用的 `GetDiagonalTwoStep`（象走的兩步斜線）。
+    因為 `IsElephantEyeBlocked` 對輸入座標有防呆檢查
+    （`Math.Abs(dx)!=2 || Math.Abs(dy)!=2` 就丟例外），L 型座標必定觸發，
+    等於**只要呼叫 `piece.GetLegalMoves()` 選到大盤的象，一定會丟未處理例外
+    直接當掉**。目前這個方法在整個專案裡沒有任何呼叫點（見下面「僅有骨架」
+    的說明也是同樣狀況），所以還沒被玩家實際觸發過，但只要之後接上「顯示
+    可走位置」這種功能就會立刻炸。已修正为呼叫 `GetDiagonalTwoStep`，並寫了
+    一次性的 scratch 測試確認不再丟例外。
+- **HalfCenter（8×4，明棋／暗棋）** — 走法／吃子規則已實作。所有棋子預設
+  都是上下左右走一格；`Rules.CanChariotRush` 開啟時俥／車恢復大盤直線衝殺，
+  `Rules.IsHorseMoveDiagonally` 開啟時馬改成斜走一格；包永遠可以直線滑動，
+  依 `Rules.IsCannonMustJumpToCapture`（預設開啟）決定吃子要不要跳一顆
+  「炮架」。吃子合法性統一由新的 `Piece.CanCaptureAtHalfCenter` 判斷：不能
+  吃己方；不能吃明棋裡比自己弱的（依 `Rules.PieceRankings` 排名）；預設
+  （`CanCaptureHiddenPiece = false`）完全不能吃暗子。
+  - **還沒做**：`CanCaptureHiddenPiece` 開啟後「吃到比自己強的暗子等於同歸
+    於盡」（`IsCaptureHiddenPieceStrongerSuiside`）這個雙方棋子都要死的狀態
+    變化，只判斷了「能不能嘗試」，實際执行後的雙亡邏輯要在 `Board`/
+    `GameManager` 執行移動的地方另外接。
+  - **還沒做**：開局隨機洗牌＋翻面設定（暗棋要洗牌，明棋不用）、`GameManager`
+    真的依選單選擇建立 `BoardType.HalfCenter` 的 `Board`（目前
+    `GameManager.cs:80` 永遠是 `new Board()`，也就是永遠是大盤，
+    `UINewGameMenuOptions.cs` 裡「暗棋半盤」「明棋半盤」兩個按鈕目前點了沒
+    有實際效果）。
+  - `IsValidMoveHalfCenter` 原本（連同 `HalfCross`）完全沒被覆寫，基底類別
+    預設回傳 `true` ——**代表這兩種盤面之前任何棋子可以移動到任何位置，
+    完全沒有規則限制**，比原本文件寫的「僅有骨架／沒有走法提示」更嚴重。
+    HalfCenter 這次已經補上真正的合法性判斷，HalfCross 因為牽涉三方陣營、
+    要先跟你確認規則細節，還沒動。
+- **HalfCross（9×5，三國模式）** — 僅有骨架，同上，未實作，原因見
+  `docs/PLAN.md`。
+- **揭棋（大盤變體，`Rules.IsJieqi`）** — 棋子的「移動規則」判斷已實作：
+  暗子（`IsFaceUp == false`）的第一步會依照
+  `PieceConstants.GetClassicPieceTypeAt(x, y)` 查出的「這格古典佈局上原本
+  該放哪種棋子」，暫時借用該棋子類型的大盤規則來判斷合不合法（做法是建立
+  一個那個類型的臨時 `Piece` 實例，直接呼叫它未修改過的 `IsValidMoveFull`,
+  不去改動 7 個棋子各自的邏輯本身）；一旦翻開（`IsFaceUp == true`）就恢復
+  用自己真正的類型判斷。另外照查到的規則實作了「翻開後的仕／相可以無視
+  九宮／過河限制，自由走動」這個揭棋特有的規則。已寫 scratch 測試驗證：
+  暗子在車的起始位置第一步走直線合法、走馬步不合法；翻開後（假設真身是
+  馬）換成走馬步合法、走直線不合法；翻開的相可以過河，一般大盤的相不行。
+  - **還沒做**：翻開（`IsFaceUp` 從 false 變 true）這個狀態轉換本身——目前
+    只有判斷邏輯，沒有「移動成功後自動翻面」的執行步驟，這要接在
+    `Board.MovePiece`／`GameManager` 實際執行移動的地方。
+  - **還沒做**：開局洗牌設定（除了雙方將帥維持原位明棋，其餘 14 顆棋子要
+    隨機打亂、蓋牌放到自己那一側的起始位置）、`GameManager` 真的依選單
+    （`UINewGameMenuOptions.cs` 已經有「揭棋大盤」按鈕）建立
+    `Rules.IsJieqi = true` 的對局。
 - **規則變化旗標**（`IsHiddenChess`、`CanCaptureHiddenPiece`、
-  `IsAllowChainCapture`、`CanChariotRush`、`IsHorseMoveDiagonally`、
-  `IsCannonMustJumpToCapture`、`CanCaptureOwnPiece`、`CanSuiside`）— 未實作。
-  在 `Rules.cs` 裡定義了，但整個程式碼裡沒有任何地方讀取。
+  `IsAllowChainCapture`、`CanCaptureOwnPiece`、`CanSuiside`）— 仍未實作
+  （`CanChariotRush`／`IsHorseMoveDiagonally`／`IsCannonMustJumpToCapture`
+  這三個這次已經接進 HalfCenter 了，其餘的還是定義了但沒有任何地方讀取）。
 - **多陣營系統**（魏／蜀／吳、旗／火等特殊棋子）— 未實作。`PieceType` 只有
   標準的 7 種棋子加 `Shadow`；`HalfCrossTeamSetup` 也只設定了紅／黑兩方，
   完全沒有陣營概念。

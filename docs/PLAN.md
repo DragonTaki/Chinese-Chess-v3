@@ -37,13 +37,25 @@
 
 ## 階段 2 — Game（含它自己的 Rules 底層）
 
-- **HalfCenter（8×4）與 HalfCross（9×5）走法規則未實作**——
-  `Game/Core/Pieces/PieceTypes/*.cs` 每個棋子的
-  `GetLegalMovesHalfCenter` / `GetLegalMovesHalfCross` 都是空的。這是
-  Game/Core 規則底層裡最大的洞，優先處理。
+- [x] `Game/Core/Movements/` 讀過一輪，沒發現問題——`MoveDirections`／
+  `MoveMatrix`／`MovePatterns` 三個檔案邏輯正確（180° 旋轉矩陣對稱方向表
+  是 no-op 這件事只是觀察，不是 bug）。
+- [x] **修了一個大盤（已標記完成）裡的真實 bug**：`Elephant.GetLegalMovesFull`
+  用錯方向表，呼叫 `piece.GetLegalMoves()` 選到象必定丟例外——細節見
+  `docs/STATUS.md`。
+- [x] **HalfCenter（8×4，明棋／暗棋）走法規則**——已實作，見
+  `docs/STATUS.md`。還缺：吃到比自己強的暗子「同歸於盡」的執行、開局洗牌、
+  `GameManager`/選單真的建立這種盤面。
+- [x] **揭棋（大盤變體）走法規則**——已實作（暗子借用原始位置棋子類型的
+  規則、翻開後仕／相解除區域限制），見 `docs/STATUS.md`。還缺：翻面狀態
+  轉換的執行時機、開局洗牌、`GameManager`/選單真的建立這種對局。
+- **HalfCross（9×5，三國模式）走法規則未實作**——牽涉三個陣營、其中一個
+  陣營（`HalfCrossTeamSetup[3]`）同時擁有紅黑雙方的將／兵，规则本身在
+  `Rules.cs` 裡沒有寫清楚（例如：這個盤面有沒有九宮／河界？陣營之間怎麼
+  互相攻擊？），需要先跟你確認設計意圖才能動手，先不猜。
 - **決定 `Game/Core/Rules.cs` 裡沒被用到的規則旗標**要不要留（暗棋、連吃、
-  車衝、馬走斜、包必須跳吃、可吃己方棋子、自殺移動）。要嘛接進
-  `PieceTypes/*.cs` 的走法判斷，要嘛刪掉。
+  可吃己方棋子、自殺移動——`車衝`／`馬走斜`／`包必須跳吃` 這三個已經接進
+  HalfCenter 了）。要嘛接進 `PieceTypes/*.cs` 的走法判斷，要嘛刪掉。
 - **棋譜／回放系統**：把 `GameManager.cs` 目前純文字 log 的紀錄方式，換成
   結構化的移動清單（標準記譜法），才能支援悔棋跟回放。
 - 確認 `Game/Core/` 沒有 `using` 到 `Engine.UI` 或 `Game.UI`——規則邏輯要能
