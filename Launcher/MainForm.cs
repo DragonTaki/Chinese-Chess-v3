@@ -50,7 +50,7 @@ namespace Launcher
             InitWindow();
 
             _rootCanvas = UIInitializer.Initialize(_sp);
-            _rootCanvas.MainForm = this;
+            _rootCanvas.MainWindow = new WinFormsWindow(this);
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _navigationManager.Init(_rootCanvas);
@@ -88,11 +88,12 @@ namespace Launcher
 
         private void WireInputEvents()
         {
-            MouseDown  += _inputMgr.ProcessMouseDown;
-            MouseMove  += _inputMgr.ProcessMouseMove;
-            MouseUp    += _inputMgr.ProcessMouseUp;
-            MouseWheel += _inputMgr.ProcessMouseWheel;
-            MouseClick += _inputMgr.ProcessMouseClick;
+            var adapter = new WinFormsInputAdapter(_inputMgr);
+            MouseDown  += adapter.ProcessMouseDown;
+            MouseMove  += adapter.ProcessMouseMove;
+            MouseUp    += adapter.ProcessMouseUp;
+            MouseWheel += adapter.ProcessMouseWheel;
+            MouseClick += adapter.ProcessMouseClick;
         }
 
         private void InitTimer()

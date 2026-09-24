@@ -1,9 +1,17 @@
 # 跨平台現況
 
+> **更新**：下面「能編譯、不能執行」這句已經不是最新狀態了。專案現在是
+> `net9.0-windows;net9.0` 雙目標，非 Windows 那個目標透過
+> `Engine/Platform/Skia/` + `Launcher.Cross/`（SkiaSharp + Silk.NET 後端）
+> 在 macOS 上**真的能跑**，見 [`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)
+> 最後兩節。下面關於 WinForms 目標本身的分析（哪些檔案卡在 Windows-only
+> API）仍然正確，保留當作轉換層那次改動的查證依據。
+
 這台開發機是 macOS,裝了 .NET SDK,但這個專案是 `net9.0-windows` +
 WinForms + `System.Drawing.Common`——.NET 6 之後這兩個套件的實際繪圖 API
 （`Graphics`／`Pen`／`Brush`／`Font` 等)都限定只能在 Windows 上執行。macOS
-上**能編譯、不能執行**。
+上**能編譯、不能執行**。(這是指 `net9.0-windows` 這個 TFM 本身——非
+Windows 的 `net9.0` TFM 現在有自己的、真的能跑的後端,見上面的更新。)
 
 ## 能編譯驗證的方式
 
@@ -58,7 +66,7 @@ dotnet build Chinese-Chess-v3.csproj -p:EnableWindowsTargeting=true
 可以被最佳化掉的實作細節。所以「換成 Avalonia 之類的跨平台框架」這個選項
 **已經排除**,不管它理論上能不能解決 Mac 執行的問題。
 
-## 實際可行的兩條路
+## 實際可行的兩條路（歷史記錄——後來選了第三條）
 
 1. **維持現狀**：純邏輯模組(上面「已經乾淨」那份清單)本來就能在 Mac 上
    build/寫單元測試,不用碰任何 UI 相關程式碼。
@@ -67,5 +75,10 @@ dotnet build Chinese-Chess-v3.csproj -p:EnableWindowsTargeting=true
    WinForms 專案一起編譯。工程量中等,不影響任何視覺行為,UI/引擎本身完全
    不動。
 
-目前討論還在確認要走哪條路,這份文件只記錄查證結果,還沒有對應的
-`PLAN.md` 項目。
+實際採用的是第三條、當時還沒列出來的路：**把上面「卡在 Windows-only API
+的檔案」清單裡每一個直接呼叫點,改成呼叫 `Engine/Platform/` 底下的自訂
+介面**（ports-and-adapters），WinForms 變成其中一種後端實作，另外補一份
+SkiaSharp + Silk.NET 的後端給非 Windows 平台用。自製 UI 系統本身（元件樹、
+Renderer、MVVM/MVC 遊戲邏輯）完全沒變——變的只是最底層畫圖/視窗/滑鼠事件
+呼叫的是介面而不是 GDI+/WinForms 的具體型別。細節見
+[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)。

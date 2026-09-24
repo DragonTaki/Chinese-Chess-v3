@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
+using Engine.Platform;
 
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -120,10 +120,10 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
 
     public class UIConfirmDialogHandler : UIHandler
     {
-        internal override bool HandleMouseDown(MouseEventArgs e) => true;
-        internal override bool HandleMouseMove(MouseEventArgs e) => true;
-        internal override bool HandleMouseUp(MouseEventArgs e) => true;
-        internal override bool HandleMouseWheel(MouseEventArgs e) => true;
-        internal override bool HandleMouseClick(MouseEventArgs e) => true;
+        internal override bool HandleMouseDown(IMouseEvent e) => true;
+        internal override bool HandleMouseMove(IMouseEvent e) => true;
+        internal override bool HandleMouseUp(IMouseEvent e) => true;
+        internal override bool HandleMouseWheel(IMouseEvent e) => true;
+        internal override bool HandleMouseClick(IMouseEvent e) => true;
     }
 }

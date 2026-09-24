@@ -159,9 +159,79 @@ Renderer」。原本以為的階段 1(Font/Brush/Pen)實際上包含了階段 2
 的滑鼠輸入與視窗部分(見下面「還沒做」清單),以及一個確認過整個專案零
 引用的死碼設定檔(`Engine/Configs/EngineSettings.cs`,沒有動它,只是記錄)。
 
-### 還沒做(下一步)
+### 已完成:輸入/視窗層接通,`net9.0`(非 Windows)整條引擎程式碼零錯誤
 
-`IWindow`／`IMouseEvent`——`MouseEventArgs`／`Form`／`Control`／
-`System.Windows.Forms.Timer` 這一層完全沒動,`Engine/Timing/TimerManager.cs`
-也還是 WinForms 實作。這是唯一還留著的 Windows-only 表面,做完才能真的在
-其他平台跑起來(前提仍然是要有對應的視窗/輸入後端可以實作這個介面)。
+補上 `IMouseEvent`／`IWindow`,以及一個不自己跑計時器、改由外部 host 每幀
+呼叫 `Tick(dt)` 的 `Engine/Timing/ManualTimerProvider.cs`(給 Silk.NET 這種
+「視窗自己有 Update/Render 事件迴圈」的後端用,避免跟原本的
+`System.Windows.Forms.Timer` 版本搶著跑)。涵蓋:
+
+- `UIInputManager.OnMouseDown/Move/Up/Click/Wheel` 簽章改用 `IMouseEvent`,
+  原本內嵌的 5 個 WinForms 專用轉接方法搬到新的 `WinFormsInputAdapter`。
+- `Engine/UI/Core/` 底下所有處理滑鼠事件的類別(handler/element/router 等
+  約 16 個檔案)`MouseEventArgs` 一律改 `IMouseEvent`。
+- `UIRootNode.MainWindow`:`Form?` 改 `IWindow?`。
+- `Game/UI/Menus/MainMenu/UIMainMenuHandler.cs` 的 `Application.Exit()`
+  改走新的 `Engine.Platform.AppControl.ExitCallback`(委派,由各後端在
+  `Main()` 設定自己的結束方式)。
+- `Engine/Configs/EngineSettings.cs` 裡確認過零引用的 `Font DefaultScrollTextFont`
+  常數,改成 `IFont`(維持不動、只是跟著換型別,見前面「不能移除」規則)。
+
+**驗證結果**:`net9.0-windows` 維持 0 error、警告 400→**135**(又降了 15
+個,同樣是滑鼠輸入呼叫點不再碰 `MouseEventArgs` 的訊號)。`net9.0`(非
+Windows)在這一步之後**只剩 1 個錯誤**:`CS5001`(缺進入點)——代表
+`Engine/`、`Game/`、`StarAnimation/` 三層的程式邏輯本身,已經 100% 能在
+非 Windows 平台編譯過。
+
+### 已完成:第二個後端(SkiaSharp + Silk.NET),macOS 真的能編譯、能執行
+
+`Engine/Platform/Skia/`——實作全部 10 個 `Engine/Platform` 介面,對應
+WinForms 後端的每一個檔案(`SkiaBrush`／`SkiaPen`／`SkiaFontFamily`／
+`SkiaFont`／`SkiaGraphicsPath`／`SkiaMatrix`／`SkiaRegion`／
+`SkiaStringFormat`／`SkiaGraphics`／`SkiaGraphicsFactory`),加上
+`SilkWindow`(`IWindow`)、`SilkMouseEvent`(`IMouseEvent`)、
+`SilkInputAdapter`(轉接 Silk.NET `IMouse` 事件,對應
+`WinFormsInputAdapter`)。API 形狀先用一次性的 reflection 腳本
+(`dotnet run` + `System.Reflection`)在本機驗證過 SkiaSharp 4.152.1 與
+Silk.NET 2.23.0 的真實簽章,再動手寫,避免用猜的接錯。
+
+`Launcher.Cross/`(新增,對應 `Launcher/`)——`CrossPlatformApp.cs`
+(對應 `MainForm.cs`)：用 `Silk.NET.OpenGL` 的 `GL.GetApi(window)` 建立
+GL binding、`GRGlInterface.Create()` + `GRContext.CreateGl()` 建立
+GPU-backed 的 Skia 繪圖 context,每一幀用當時的 framebuffer(`FBO 0`)
+建一個 `GRBackendRenderTarget`、包成 `SKSurface`,畫完
+`surface.Canvas.Flush()` + `_grContext.Flush()`,Silk.NET 視窗自己負責
+`SwapBuffers`。`Program.cs`(對應 `Launcher/Program.cs`)是完全對應的
+DI 註冊,只差 `GraphicsBackend.Factory = new SkiaGraphicsFactory()` 跟
+用 `Window.Create()` 取代 WinForms 的 `Form`。`UIInitializer.cs`／
+`ServiceCollectionExtensions` 因為兩個進入點分別被對方 TFM 排除、無法共用
+檔案,是內容相同的獨立副本。
+
+一個小地方跟 WinForms 版不同:`IWindow.Invalidate()` 在 Silk 後端是空
+操作——Silk.NET 的 `Render` 事件本來就每幀都會觸發,沒有「只在需要時才
+重繪」這回事,所以不需要真的做什麼。
+
+`Chinese-Chess-v3.csproj` 加了 `<RollForward>LatestMajor</RollForward>`
+(只套用在非 Windows TFM)——這台機器只裝了 .NET 10 執行環境,沒有
+9.0,沒開這個的話會直接因為找不到執行環境而啟動失敗,跟程式碼本身無關。
+
+**驗證結果**:`net9.0` 編譯 0 error、8 warning(剩下的都是 SkiaSharp
+`SKPath.MoveTo/LineTo/ArcTo/CubicTo/Close` 這幾個「建議改用
+`SKPathBuilder`」的過時 API 警告——功能沒問題,只是新版函式庫建議的寫法
+不同,列在這裡當已知技術債,不影響能不能動)。實際 `dotnet run` 執行
+`Chinese-Chess-v3.dll`:DI 容器建置成功、UI 樹(主選單/新對局/讀取對局/
+規則設定等選單、按鈕、捲動容器)全部照原本邏輯初始化完畢,console log
+可以看到選單被實際操作(`MaunMenu: selected: ...`);macOS 的
+`System Events` 行程列表裡也看得到這個 `dotnet` 行程被列為非背景(前景)
+應用程式,代表視窗確實有被建立,不是 headless 跑完就結束。
+
+**還沒能在這個環境驗證的部分**:這個沙盒環境本身連 `osascript` 的輔助
+使用權限都被擋掉(`osascript is not allowed assistive access`),沒辦法
+用程式化的方式截圖、量測視窗內容或確認畫面實際渲染的樣子,只能確認「有
+沒有當掉、進程有沒有活著、有沒有被系統列成一個視窗程式」。另外這個進程
+在沒有人為操作的情況下,運行數秒後就自行以 exit code 0 正常結束(不是
+崩潰、沒有例外堆疊)——研判跟這個沙盒環境對背景啟動之 GUI 程式的視窗
+生命週期限制有關,不是程式碼邏輯錯誤(建置警告與執行 log 都找不到對應的
+異常訊號)。這一步之後需要在一般的 macOS 使用者工作階段(不是這個受限的
+沙盒)實際跑一次 `dotnet run --project Chinese-Chess-v3.csproj -f net9.0`
+才能真正確認畫面渲染正確、滑鼠互動正常。

@@ -7,9 +7,12 @@
 
 另外有一個獨立的大工程——把 GDI+／WinForms 包成可替換的轉換層，之後才有
 辦法換一套跨平台後端而不動到自製 UI 系統本身（自製 UI 系統本身不換，見
-`CLAUDE.md`）。設計跟分階段規劃見
-[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)，還沒排進下面的階段
-順序，量體太大，先獨立列出來，等確認要不要做、從哪個子階段開始再排入。
+`CLAUDE.md`）。設計跟進度見
+[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)——**這部分已經做完**：
+`Engine/Platform/` 轉換層＋兩個後端（`WinForms/` 對應 `Launcher/`；
+`Skia/`＋Silk.NET 對應新的 `Launcher.Cross/`）都已建好、編譯驗證過，且在
+這台 macOS 機器上實際 `dotnet run` 起來過（細節、還沒驗證到的部分見該檔
+最後兩節）。
 
 ## 階段 1 — Engine（最底層，最先整理，要求完善）
 

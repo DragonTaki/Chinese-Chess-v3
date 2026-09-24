@@ -69,11 +69,21 @@
 
 ## 平台轉換層（`Engine/Platform/`）
 
-已完成:`IGraphics`／`IBrush`／`IPen`／`IFont`／`IGraphicsPath` 等介面 +
-WinForms 後端，已經完整接通到 `Engine/UI`、`Engine/Styles`、`Game/UI`、
-`StarAnimation` 整條繪圖鏈——不再有任何 Renderer 或樣式檔案直接碰
-`System.Drawing` 的 GDI+ 型別。細節、涵蓋清單、剩下的滑鼠輸入/視窗部分見
-[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md)。
+已完成:`IGraphics`／`IBrush`／`IPen`／`IFont`／`IGraphicsPath`／`IWindow`／
+`IMouseEvent` 等介面，已經完整接通到 `Engine/UI`、`Engine/Styles`、
+`Game/UI`、`StarAnimation` 整條繪圖與輸入鏈——不再有任何 Renderer、樣式
+檔案或輸入處理類別直接碰 `System.Drawing`／`System.Windows.Forms` 的型別。
+
+兩個後端都已建好並驗證過:
+
+- `Engine/Platform/WinForms/`（`Launcher/`）—— GDI+/WinForms，`net9.0-windows`
+  build，0 error。
+- `Engine/Platform/Skia/`（`Launcher.Cross/`）—— SkiaSharp（繪圖）+
+  Silk.NET（視窗/輸入/OpenGL），`net9.0` build，0 error，且在這台 macOS
+  機器上 `dotnet run` 起來過（DI／UI 樹初始化成功，選單可操作）。
+
+細節、涵蓋清單、還沒能在這個沙盒環境驗證到的部分（視覺畫面本身）見
+[`PLATFORM-ABSTRACTION.md`](PLATFORM-ABSTRACTION.md) 最後兩節。
 
 ## 死碼
 
