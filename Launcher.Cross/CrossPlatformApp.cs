@@ -81,6 +81,7 @@ namespace Launcher.Cross
             // the GPU surface (sized from FramebufferSize in OnRender) shows.
             var fbSize = _window.FramebufferSize;
             GlobalWindow.UpdateSize(fbSize.X, fbSize.Y);
+            UpdatePixelScale(fbSize);
 
             // The UI content itself (MainMenu/Board/Sidebar/dialogs — but
             // NOT the full-bleed StarAnimation background above, which keeps
@@ -108,7 +109,7 @@ namespace Launcher.Cross
             _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0], _window);
 
             _bgStar = new StarAnimationApp();
-            _bgStar.Resize(fbSize.X, fbSize.Y);
+            _bgStar.Resize(GlobalWindow.LogicalWidth, GlobalWindow.LogicalHeight);
 
             GlobalTime.Timer = _timer;
             _timer.OnAnimationFrame += () =>
@@ -126,8 +127,9 @@ namespace Launcher.Cross
         private void OnFramebufferResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             GlobalWindow.UpdateSize(newSize.X, newSize.Y);
+            UpdatePixelScale(newSize);
             GlobalViewport.Recalculate(newSize.X, newSize.Y);
-            _bgStar?.Resize(newSize.X, newSize.Y);
+            _bgStar?.Resize(GlobalWindow.LogicalWidth, GlobalWindow.LogicalHeight);
         }
 
         /// <summary>
@@ -138,6 +140,16 @@ namespace Launcher.Cross
         /// loop (Resize firing again with the already-clamped size is a
         /// no-op here).
         /// </summary>
+        /// <summary>
+        /// Framebuffer pixels per logical window unit (2 on Retina, 1 otherwise).
+        /// </summary>
+        private void UpdatePixelScale(Silk.NET.Maths.Vector2D<int> framebufferSize)
+        {
+            var logicalSize = _window.Size;
+            if (logicalSize.X > 0)
+                GlobalWindow.UpdatePixelScale(framebufferSize.X / (float)logicalSize.X);
+        }
+
         private void OnResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             int minWidth = (int)UILayoutConstants.MinimumWindowSize.X;
@@ -161,10 +173,14 @@ namespace Launcher.Cross
             using var surface = SKSurface.Create(_grContext, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
             using IGraphics g = new SkiaGraphics(surface.Canvas);
 
-            // Background renders full-bleed in actual window pixels; UI
-            // content renders inside the letterboxed/scaled viewport — see
-            // GlobalViewport's doc comment for why these differ.
+            // Background renders full-bleed in logical units (scaled up to the
+            // physical framebuffer by PixelScale, so star sizes/speeds/radii look
+            // the same on Retina and non-Retina displays); UI content renders
+            // inside the letterboxed/scaled viewport — see GlobalViewport's doc
+            // comment for why these differ.
+            g.PushTransform(GlobalWindow.PixelScale, 0f, 0f);
             _bgStar?.Render(g);
+            g.PopTransform();
 
             g.PushTransform(GlobalViewport.Scale, GlobalViewport.Offset.X, GlobalViewport.Offset.Y);
             _rootCanvas?.Draw(g);

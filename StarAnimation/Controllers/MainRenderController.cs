@@ -47,8 +47,9 @@ namespace StarAnimation.Controllers
         /// <param name="height">Height of the rendering canvas.</param>
         public MainRenderController()
         {
-            int width = GlobalWindow.Width;
-            int height = GlobalWindow.Height;
+            // Logical units: the host draws this background under a PixelScale transform.
+            int width = GlobalWindow.LogicalWidth;
+            int height = GlobalWindow.LogicalHeight;
 
             _timer = GlobalTime.Timer;
 
