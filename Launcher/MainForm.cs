@@ -32,7 +32,7 @@ namespace Launcher
 {
     public class MainForm : Form
     {
-        private readonly TimerManager _timerMgr = new TimerManager();
+        private readonly WinFormsTimerProvider _timerMgr = new WinFormsTimerProvider();
         private readonly IServiceProvider _sp;
         private readonly UIInputManager _inputMgr;
         private readonly UIRootNode _rootCanvas;
