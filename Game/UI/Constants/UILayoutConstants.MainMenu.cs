@@ -52,7 +52,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 public static Vector2F Position => Layout.Position;
                 public static Vector2F Size => Layout.Size;
                 public static readonly LayoutF Layout = new LayoutF(
-                    new Vector2F(0.0f, Margin),
+                    new Vector2F(0.0f, 0.0f),  // The scroll container is already inset by the margin
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
                 public const float Spacing = 40.0f;
             }
