@@ -69,6 +69,16 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
             pieceMap.Remove(piece);
             UIPieces.Remove(uiPiece);
+            // Pieces are the short-lived UI elements: released when they leave the board.
+            uiPiece.Dispose();
+        }
+
+        private void DisposeAllUIPieces()
+        {
+            foreach (var uiPiece in UIPieces)
+                uiPiece.Dispose();
+            pieceMap.Clear();
+            UIPieces.Clear();
         }
 
         #region Event Handlers (marshal to UI thread)
@@ -114,8 +124,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         private void OnBoardReset() => PostToUI(() =>
         {
             // Clear existing UI pieces and recreate
-            pieceMap.Clear();
-            UIPieces.Clear();
+            DisposeAllUIPieces();
             foreach (var p in _gameManager.GetCurrentPieces())
                 AddUIPieceFor(p);
         });
@@ -138,8 +147,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             _gameManager.PieceRemoved -= OnPieceRemoved;
             _gameManager.BoardReset -= OnBoardReset;
 
-            pieceMap.Clear();
-            UIPieces.Clear();
+            DisposeAllUIPieces();
         }
 
         public List<UIPiece> GetUIPieces()
