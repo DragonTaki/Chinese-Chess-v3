@@ -36,7 +36,6 @@
   <ItemGroup Condition="'$(TargetFramework)' != 'net9.0-windows'">
     <Compile Remove="Launcher\**\*.cs" />
     <Compile Remove="Engine\Platform\WinForms\**\*.cs" />
-    <Compile Remove="Engine\Timing\TimerManager.cs" />
   </ItemGroup>
 
   <!-- Cross-platform entry point + SkiaSharp/Silk.NET backend: non-Windows build only. -->
