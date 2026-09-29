@@ -68,6 +68,7 @@ namespace Launcher.Cross
             _window.Resize += OnResize;
             _window.FramebufferResize += OnFramebufferResize;
             _window.Closing += OnClosing;
+            _window.FocusChanged += OnFocusChanged;
         }
 
         private void OnLoad()
@@ -188,6 +189,13 @@ namespace Launcher.Cross
 
             surface.Canvas.Flush();
             _grContext.Flush();
+        }
+
+        // Losing focus mid-drag (e.g. Cmd-Tab) means the MouseUp never arrives.
+        private void OnFocusChanged(bool focused)
+        {
+            if (!focused)
+                _inputMgr?.CancelInput();
         }
 
         private void OnClosing()
