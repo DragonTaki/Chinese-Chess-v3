@@ -154,5 +154,12 @@ namespace Launcher
             _rootCanvas?.Draw(g);
             g.PopTransform();
         }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            // Stop frame ticks before the form's resources go away, and release the timer.
+            _timerMgr.Dispose();
+            base.OnFormClosed(e);
+        }
     }
 }
