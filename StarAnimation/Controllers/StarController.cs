@@ -44,15 +44,26 @@ namespace StarAnimation.Controllers
         private const float ResizeCleanupDelaySeconds = 1.0f;
         private const float OutsideCanvasMargin = 40.0f;
 
+        // _starCount is the star count for this reference area; the actual count
+        // scales with the canvas area so density stays constant across sizes.
+        private const float ReferenceArea = 1920f * 1080f;
+        private const int MinDimension = 10;
+
+        // Current area-scaled target count, and the fractional star carried
+        // between resize events (a drag-resize grows a few pixels at a time).
+        private int _targetCount;
+        private float _spawnRemainder = 0f;
+
         // Countdown timers for effects
         private int _directionChangeCountdown;
         private int _speedChangeCountdown;
 
         public StarController(int _width, int _height, int _starCount = 250)
         {
-            this._width = _width;
-            this._height = _height;
+            this._width = Math.Max(_width, MinDimension);
+            this._height = Math.Max(_height, MinDimension);
             this._starCount = _starCount;
+            _targetCount = TargetCountFor(this._width, this._height);
 
             _minVisibleCount = _starCount - Settings.StarCountRange;
             _maxVisibleCount = _starCount + Settings.StarCountRange;
@@ -66,7 +77,7 @@ namespace StarAnimation.Controllers
             _stars.Clear();
             _waitingPool.Clear();
 
-            for (int i = 0; i < _starCount; i++)
+            for (int i = 0; i < _targetCount; i++)
             {
                 _stars.Add(new Star(_width, _height));
             }
@@ -143,7 +154,7 @@ namespace StarAnimation.Controllers
         /// </summary>
         private int CalculateStarsToRelease()
         {
-            int targetStars = _starCount;
+            int targetStars = _targetCount;
             int _starsInScene = _stars.Count;
             float normalized = (float)Math.Exp(-0.5 * Math.Pow((_starsInScene - targetStars) / 25.0, 2));
             return Math.Max(_minVisibleCount, Math.Min(_maxVisibleCount, (int)(normalized * (_maxVisibleCount - _minVisibleCount))));
@@ -177,27 +188,65 @@ namespace StarAnimation.Controllers
         /// <summary>
         /// Handles resizing of the _renderer and adjusts star count accordingly.
         /// </summary>
+        /// <remarks>
+        /// Keeps star density constant. Stars that end up outside a shrunk canvas are
+        /// dropped right away: left in place, UpdateStarPositions would recycle them
+        /// through the waiting pool back *inside* the smaller canvas (a sudden density
+        /// jump), and a later grow would then add more on top. When growing, only the
+        /// newly exposed area gets new stars, at the same density as everywhere else.
+        /// </remarks>
         public void Resize(int newWidth, int newHeight)
         {
-            const int MinDimension = 10;
             newWidth = Math.Max(newWidth, MinDimension);
             newHeight = Math.Max(newHeight, MinDimension);
 
-            if (newWidth > _width || newHeight > _height)
+            int oldWidth = _width;
+            int oldHeight = _height;
+
+            if (newWidth < oldWidth || newHeight < oldHeight)
             {
-                int added = (int)((newWidth * newHeight - _width * _height) / (1920f * 1080f) * _starCount);
-                for (int i = 0; i < added; i++)
-                    _stars.Add(new Star(newWidth, newHeight));
-            }
-            else
-            {
+                _stars.RemoveAll(star => star.Position.Current.X > newWidth || star.Position.Current.Y > newHeight);
+
+                // The delayed sweep stays as a safety net for anything outside after the resize settles.
                 _lastResizeTime = DateTime.Now;
                 _pendingShrinkCleanup = true;
             }
 
+            if (newWidth > oldWidth || newHeight > oldHeight)
+            {
+                int keptWidth = Math.Min(oldWidth, newWidth);
+                int keptHeight = Math.Min(oldHeight, newHeight);
+
+                // Newly exposed region = right strip (full new height) + bottom strip (kept width).
+                float rightArea = (float)(newWidth - keptWidth) * newHeight;
+                float bottomArea = (float)keptWidth * (newHeight - keptHeight);
+
+                float toSpawn = (rightArea + bottomArea) * _starCount / ReferenceArea + _spawnRemainder;
+                int added = (int)toSpawn;
+                _spawnRemainder = toSpawn - added;
+
+                for (int i = 0; i < added; i++)
+                {
+                    var star = new Star(newWidth, newHeight);
+                    bool inRightStrip = Rand.NextFloat(rightArea + bottomArea) < rightArea;
+                    star.Position.Current = inRightStrip
+                        ? new Vector2F(keptWidth + Rand.NextFloat(newWidth - keptWidth), Rand.NextFloat(newHeight))
+                        : new Vector2F(Rand.NextFloat(keptWidth), keptHeight + Rand.NextFloat(newHeight - keptHeight));
+                    _stars.Add(star);
+                }
+            }
+
             _width = newWidth;
             _height = newHeight;
+            _targetCount = TargetCountFor(newWidth, newHeight);
+
+            // Recycled stars waiting to respawn count toward the total too.
+            while (_waitingPool.Count > 0 && _stars.Count + _waitingPool.Count > _targetCount)
+                _waitingPool.Dequeue();
         }
+
+        private int TargetCountFor(int width, int height) =>
+            Math.Max(1, (int)MathF.Round(_starCount * ((float)width * height) / ReferenceArea));
 
         /// <summary>
         /// Clear canvas and render all visible _stars.
