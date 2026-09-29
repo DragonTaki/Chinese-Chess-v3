@@ -18,13 +18,15 @@ using Engine.Globals;
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
+using Engine.UI.Core.Interfaces;
+using Engine.UI.Core.Renderers;
 using Engine.UI.Dialogs;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
     public class UIConfirmDialog : UIElement, IUIDialog
     {
-        private readonly UILabel _messageLabel = new();
+        private readonly UILabel _messageLabel;
         private readonly List<UIButton<ConfirmDialogResult>> _buttons = new();
         private readonly UIConfirmDialogRenderer _renderer;
         private float _maxDialogWidth;
@@ -36,28 +38,65 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         public Action<ConfirmDialogResult>? _onResult;
 #nullable disable
 
-        public UIConfirmDialog(UIConfirmDialogRenderer _renderer)
+        /// <param name="factory">
+        /// Used to create the dialog's buttons. The dialog is constructed directly (not via
+        /// UiFactory.Create*), so nothing else would ever set _factory - without it every
+        /// Show() threw a NullReferenceException in AddButtons.
+        /// </param>
+        public UIConfirmDialog(UIConfirmDialogRenderer _renderer, IUiFactory factory)
         {
             this._renderer = _renderer;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _maxDialogWidth = GlobalViewport.Size.X * 2f / 3f;
+
+            // Created through the factory so it has a renderer (a bare `new UILabel()` has
+            // none and drew nothing). Same font Show() measures the message with.
+            _messageLabel = _factory.CreateElement<UILabel, UILabelHandler, UILabelRenderer>();
+            _messageLabel.Font = MessageFont;
+            _messageLabel.ForeColor = Color.Black;
+            _messageLabel.TextAlign = ContentAlign.MiddleCenter;
+            _messageLabel.WordWrap = true;
 
             IsVisible = false;
             IsEnabled = false;
         }
 
+        private static IFont MessageFont => UILayoutStyles.MainMenu.Button.Font;
+
+        private const float ButtonHeight = 40f;
+        private const float ButtonAreaHeight = 70f;
+
+        /// <summary>
+        /// Draws the dialog box and its buttons (UIConfirmDialogRenderer), then the children
+        /// (the message label). The renderer was held but never called, so the dialog drew
+        /// nothing at all.
+        /// </summary>
+        public override void Draw(IGraphics g)
+        {
+            if (DisableRender || IsDisposed)
+                return;
+
+            _renderer.Draw(g, this);
+            base.Draw(g);
+        }
+
         public void Show(string message, ConfirmDialogType type, Action<ConfirmDialogResult> resultCallback)
         {
             _onResult = resultCallback;
+
+            // Release the previous buttons (Children.Clear() only dropped the list,
+            // leaving them undisposed and still parented to this dialog).
+            foreach (var old in _buttons)
+                old.Dispose();
             _buttons.Clear();
-            Children.Clear();
-            var root = this.GetRoot();
+            RemoveAllChild(includePersistent: true);
 
             using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
-            var textSize = gTmp.MeasureString(message, UILayoutStyles.MainMenu.Button.Font,
+            var textSize = gTmp.MeasureString(message, MessageFont,
                             (int)_maxDialogWidth - (int)PaddingH * 2);
 
             float dlgW = MathF.Min(textSize.Width + PaddingH * 2, _maxDialogWidth);
-            float dlgH = textSize.Height + PaddingV * 2 + 70;
+            float dlgH = textSize.Height + PaddingV * 2 + ButtonAreaHeight;
 
             Size = new Vector2F(dlgW, dlgH);
             LocalPosition = GlobalViewport.Center - Size / 2f;  // Center the window
@@ -67,7 +106,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             _messageLabel.Size = new Vector2F(dlgW - PaddingH * 2, textSize.Height);
             AddChild(_messageLabel);
 
-            AddButtons(type);
+            AddButtons(type, buttonY: PaddingV + textSize.Height + (ButtonAreaHeight - ButtonHeight) / 2f);
             IsVisible = true;
             IsEnabled = true;
         }
@@ -84,7 +123,11 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         /// </summary>
         public void Cancel() => _onResult?.Invoke(ConfirmDialogResult.Cancel);
 
-        private void AddButtons(ConfirmDialogType type)
+        /// <param name="buttonY">
+        /// Row position, centered in the button area below the message. It was a fixed 110,
+        /// which put the buttons below the bottom of a dialog with a one-line message.
+        /// </param>
+        private void AddButtons(ConfirmDialogType type, float buttonY)
         {
             var entries = ConfirmDialogOptions.Create(type, result =>
             {
@@ -103,8 +146,8 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 button.Text = result.Label;
                 button.Handler.Action = () => _onResult?.Invoke(result.Type);
 
-                button.Size = new Vector2F(80, 40);
-                button.LocalPosition = new Vector2F(startX + i * 90, 110);
+                button.Size = new Vector2F(80, ButtonHeight);
+                button.LocalPosition = new Vector2F(startX + i * 90, buttonY);
                 var originalAction = button.Handler.Action;
                 button.Handler.Action = () =>
                 {
