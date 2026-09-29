@@ -120,6 +120,9 @@ namespace Launcher
             MouseUp    += adapter.ProcessMouseUp;
             MouseWheel += adapter.ProcessMouseWheel;
             MouseClick += adapter.ProcessMouseClick;
+
+            // Losing focus mid-drag (e.g. Alt-Tab) means the MouseUp never arrives.
+            Deactivate += (_, _) => _inputMgr?.CancelInput();
         }
 
         private void InitTimer()
