@@ -94,19 +94,21 @@ namespace Launcher
                 (int)UILayoutConstants.MinimumWindowSize.Y);
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            GlobalWindow.UpdateSize(Width, Height);
+            // ClientSize, not Width/Height: those include the title bar and borders,
+            // while painting and mouse coordinates are client-area based.
+            GlobalWindow.UpdateSize(ClientSize.Width, ClientSize.Height);
 
             // UI content (MainMenu/Board/Sidebar/dialogs) is authored in its
             // own fixed DesignSize coordinate space; GlobalViewport maps
             // that onto whatever the actual window size is, uniformly (no
             // stretch) and letterboxed.
             GlobalViewport.DesignSize = UILayoutConstants.DesignSize;
-            GlobalViewport.Recalculate(Width, Height);
+            GlobalViewport.Recalculate(ClientSize.Width, ClientSize.Height);
             this.Resize += (_, _) =>
             {
-                GlobalWindow.UpdateSize(Width, Height);
-                GlobalViewport.Recalculate(Width, Height);
-                _bgStar?.Resize(Width, Height);
+                GlobalWindow.UpdateSize(ClientSize.Width, ClientSize.Height);
+                GlobalViewport.Recalculate(ClientSize.Width, ClientSize.Height);
+                _bgStar?.Resize(ClientSize.Width, ClientSize.Height);
             };
         }
 
