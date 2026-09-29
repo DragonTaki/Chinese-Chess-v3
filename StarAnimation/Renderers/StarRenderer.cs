@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Engine.Globals;
 using Engine.Platform;
 using StarAnimation.Models;
 
@@ -59,7 +60,9 @@ namespace StarAnimation.Renderers
             {
                 using (IBrush brush = GraphicsBackend.Factory.CreateSolidBrush(Color.FromArgb((int)(star.Opacity * 255), star.Color.Current)))
                 {
-                    g.FillEllipse(brush, star.Position.Current.X, star.Position.Current.Y, star.Size, star.Size);
+                    // Star.Size is in logical points; the canvas is in physical pixels.
+                    float size = star.Size * GlobalWindow.PixelScale;
+                    g.FillEllipse(brush, star.Position.Current.X, star.Position.Current.Y, size, size);
                 }
             }
         }
