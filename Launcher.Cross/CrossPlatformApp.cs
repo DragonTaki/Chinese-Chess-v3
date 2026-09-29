@@ -81,6 +81,7 @@ namespace Launcher.Cross
             // the GPU surface (sized from FramebufferSize in OnRender) shows.
             var fbSize = _window.FramebufferSize;
             GlobalWindow.UpdateSize(fbSize.X, fbSize.Y);
+            UpdatePixelScale(fbSize);
 
             // The UI content itself (MainMenu/Board/Sidebar/dialogs — but
             // NOT the full-bleed StarAnimation background above, which keeps
@@ -126,6 +127,7 @@ namespace Launcher.Cross
         private void OnFramebufferResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             GlobalWindow.UpdateSize(newSize.X, newSize.Y);
+            UpdatePixelScale(newSize);
             GlobalViewport.Recalculate(newSize.X, newSize.Y);
             _bgStar?.Resize(newSize.X, newSize.Y);
         }
@@ -138,6 +140,16 @@ namespace Launcher.Cross
         /// loop (Resize firing again with the already-clamped size is a
         /// no-op here).
         /// </summary>
+        /// <summary>
+        /// Framebuffer pixels per logical window point (2 on Retina, 1 otherwise).
+        /// </summary>
+        private void UpdatePixelScale(Silk.NET.Maths.Vector2D<int> framebufferSize)
+        {
+            var logicalSize = _window.Size;
+            if (logicalSize.X > 0)
+                GlobalWindow.UpdatePixelScale(framebufferSize.X / (float)logicalSize.X);
+        }
+
         private void OnResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             int minWidth = (int)UILayoutConstants.MinimumWindowSize.X;
