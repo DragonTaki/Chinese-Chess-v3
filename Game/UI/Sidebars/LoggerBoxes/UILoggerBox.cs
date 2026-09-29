@@ -22,6 +22,11 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
         {
             Layout = UILayoutConstants.Sidebar.LoggerBox.Layout;
             ScrollContainer.Layout = UILayoutConstants.Sidebar.LoggerBox.ScrollContainer.Layout;
+
+            // The logger's own style settings (defined but never applied before).
+            BackgroundColor = UILoggerBoxSettings.BackgroundColor;
+            TextColor = UILoggerBoxSettings.TextColor;
+            Font = UILoggerBoxSettings.Font;
         }
 
         protected override void OnReset()
