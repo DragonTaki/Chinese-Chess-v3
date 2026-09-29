@@ -16,7 +16,6 @@ using StarAnimation.Core.Effect;
 using StarAnimation.Models;
 using StarAnimation.Renderers;
 
-using Engine.Globals;
 using Engine.Mathematics;
 using Engine.Physics;
 using Engine.Platform;
@@ -222,7 +221,7 @@ namespace StarAnimation.Controllers
                 float rightArea = (float)(newWidth - keptWidth) * newHeight;
                 float bottomArea = (float)keptWidth * (newHeight - keptHeight);
 
-                float toSpawn = LogicalArea(rightArea + bottomArea) * _starCount / ReferenceArea + _spawnRemainder;
+                float toSpawn = (rightArea + bottomArea) * _starCount / ReferenceArea + _spawnRemainder;
                 int added = (int)toSpawn;
                 _spawnRemainder = toSpawn - added;
 
@@ -246,13 +245,8 @@ namespace StarAnimation.Controllers
                 _waitingPool.Dequeue();
         }
 
-        // Density is per logical area: the canvas is in physical pixels, so divide by
-        // PixelScale^2 or a Retina display would get 4x the stars per on-screen inch.
-        private static float LogicalArea(float pixelArea) =>
-            pixelArea / (GlobalWindow.PixelScale * GlobalWindow.PixelScale);
-
         private int TargetCountFor(int width, int height) =>
-            Math.Max(1, (int)MathF.Round(_starCount * LogicalArea((float)width * height) / ReferenceArea));
+            Math.Max(1, (int)MathF.Round(_starCount * ((float)width * height) / ReferenceArea));
 
         /// <summary>
         /// Clear canvas and render all visible _stars.
