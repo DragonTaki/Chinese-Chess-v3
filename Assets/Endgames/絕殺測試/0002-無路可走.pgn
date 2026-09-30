@@ -1,0 +1,10 @@
+[Game "Chinese Chess"]
+[Title "無路可走"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "3k5/8R/9/9/9/6R2/9/9/9/5K3 w"]
+[Format "ICCS"]
+[Description "不必將軍：封住將的最後一條路，黑方無子可動即判負（困斃）。"]
+[Source "絕殺測試（自製）"]
+
+1. g4e4 {困斃} 1-0
