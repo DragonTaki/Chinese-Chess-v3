@@ -25,6 +25,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         {
             public static Vector2F Position => Layout.Position;
             public static Vector2F Size => Layout.Size;
+            // Right of the main menu's panel (submenus are children of the screen-sized
+            // main menu, so this is also their position on screen).
             public static readonly LayoutF Layout = new LayoutF(
                 new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                 new Vector2F(840.0f, MainMenu.Size.Y));
