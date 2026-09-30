@@ -86,11 +86,12 @@ namespace Launcher.Cross
 
             // The UI content itself (MainMenu/Board/Sidebar/dialogs — but
             // NOT the full-bleed StarAnimation background above, which keeps
-            // using GlobalWindow directly) is authored in its own fixed
-            // DesignSize coordinate space. GlobalViewport maps that onto
-            // whatever the actual window size is, uniformly (no stretch) and
-            // letterboxed — see OnRender/SilkInputAdapter for the two halves
-            // (drawing and hit-testing) of applying that mapping.
+            // using GlobalWindow directly) is authored in its own
+            // DesignSize coordinate space. GlobalViewport scales that
+            // uniformly (no stretch) to the actual window size, and the UI
+            // area covers the whole window (no letterbox) — see
+            // OnRender/SilkInputAdapter for the two halves (drawing and
+            // hit-testing) of applying that mapping.
             GlobalViewport.DesignSize = UILayoutConstants.DesignSize;
             GlobalViewport.Recalculate(fbSize.X, fbSize.Y);
 
@@ -177,8 +178,9 @@ namespace Launcher.Cross
             // Background renders full-bleed in logical units (scaled up to the
             // physical framebuffer by PixelScale, so star sizes/speeds/radii look
             // the same on Retina and non-Retina displays); UI content renders
-            // inside the letterboxed/scaled viewport — see GlobalViewport's doc
-            // comment for why these differ.
+            // in design units scaled by GlobalViewport.Scale (Offset is zero:
+            // the UI area covers the whole window too) — see GlobalViewport's
+            // doc comment.
             g.PushTransform(GlobalWindow.PixelScale, 0f, 0f);
             _bgStar?.Render(g);
             g.PopTransform();

@@ -99,9 +99,10 @@ namespace Launcher
             GlobalWindow.UpdateSize(ClientSize.Width, ClientSize.Height);
 
             // UI content (MainMenu/Board/Sidebar/dialogs) is authored in its
-            // own fixed DesignSize coordinate space; GlobalViewport maps
-            // that onto whatever the actual window size is, uniformly (no
-            // stretch) and letterboxed.
+            // own DesignSize coordinate space; GlobalViewport scales that
+            // uniformly (no stretch) to the actual window size, and the UI
+            // area covers the whole window (no letterbox - the layout
+            // distributes the extra width/height).
             GlobalViewport.DesignSize = UILayoutConstants.DesignSize;
             GlobalViewport.Recalculate(ClientSize.Width, ClientSize.Height);
             this.Resize += (_, _) =>
@@ -146,8 +147,9 @@ namespace Launcher
             using IGraphics g = new WinFormsGraphics(e.Graphics, ownsNative: false);
 
             // Background renders full-bleed in actual window pixels; UI
-            // content renders inside the letterboxed/scaled viewport — see
-            // GlobalViewport's doc comment for why these differ.
+            // content renders in design units scaled by GlobalViewport.Scale
+            // (Offset is zero: the UI area covers the whole window too) — see
+            // GlobalViewport's doc comment.
             _bgStar?.Render(g);
 
             g.PushTransform(GlobalViewport.Scale, GlobalViewport.Offset.X, GlobalViewport.Offset.Y);
