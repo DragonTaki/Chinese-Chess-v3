@@ -94,7 +94,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 public const float RedOutlineWidth = 3.0f;
                 public const float BlackOutlineWidth = 2.0f;
 
-                // Selection glow: extends this far past the radius
+                // Selection glow ring: extends this far past the radius. The board hint
+                // rings (legal moves, hanging pieces) use the same ring.
                 public const float GlowMargin = 6.0f;
 
                 // Label font size

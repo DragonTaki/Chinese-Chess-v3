@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/09/30
-// Version: v2.2
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         {
             if (element is UIBoard board)
             {
-                _pieces.Draw(g, board, board.PieceBinder.UIPieces);
+                _pieces.Draw(g, board, board.PieceBinder.UIPieces, board.PieceBinder.LegalMoveTargets);
             }
         }
 
@@ -39,15 +39,57 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
             private IFont _font = PieceSettings.Font;
             private float _fontScale = 1f;
 
-            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces)
+            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces, IReadOnlyList<(int x, int y)> legalMoveTargets)
             {
                 if (uiPieces == null) return;
                 float scale = board.DetailScale;
                 IFont font = GetFont(scale);
+
+                // Rings first, pieces after: a ring lies just outside a piece's radius and
+                // must never cover a piece (not even a neighbour's edge). Where rings share a
+                // square the later one wins: hanging < legal move < selected.
+                foreach (var uiPiece in uiPieces)
+                {
+                    if (uiPiece.IsHanging)
+                    {
+                        var piece = uiPiece.PieceModel;
+                        Color color = piece.Color == PieceColor.Red ? PieceSettings.HangingRedRingColor : PieceSettings.HangingBlackRingColor;
+                        DrawRing(g, board, piece.X, piece.Y, scale, color);
+                    }
+                }
+                if (legalMoveTargets != null)
+                {
+                    foreach (var (x, y) in legalMoveTargets)
+                        DrawRing(g, board, x, y, scale, PieceSettings.LegalMoveRingColor);
+                }
+                foreach (var uiPiece in uiPieces)
+                {
+                    if (uiPiece.IsSelected)
+                        DrawRing(g, board, uiPiece.PieceModel.X, uiPiece.PieceModel.Y, scale, PieceSettings.GlowColor);
+                }
+
                 foreach (var uiPiece in uiPieces)
                 {
                     DrawPiece(g, board, uiPiece, scale, font);
                 }
+            }
+
+            /// <summary>
+            /// The ring around grid point (x, y) used for the selection glow and the board
+            /// hints: from the piece radius out to <c>GlowMargin</c> past it, so it surrounds
+            /// a piece standing there without covering it.
+            /// </summary>
+            private static void DrawRing(IGraphics g, UIBoard board, int x, int y, float scale, Color color)
+            {
+                var center = board.GridToPixel(x, y);
+                float radius = UILayoutConstants.Board.Piece.Radius * scale;
+                float width = UILayoutConstants.Board.Piece.GlowMargin * scale;
+                if (width <= 0f)
+                    return;
+                // A pen is centered on its path: the path at the middle of the ring.
+                float ringRadius = radius + width / 2f;
+                using IPen pen = GraphicsBackend.Factory.CreatePen(color, width);
+                g.DrawEllipse(pen, center.X - ringRadius, center.Y - ringRadius, ringRadius * 2, ringRadius * 2);
             }
 
             private IFont GetFont(float scale)
@@ -85,15 +127,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 // must render as Red, not as whatever Player1 looks like.
                 bool isRed = piece.Color == PieceColor.Red;
 
-                if (uiPiece.IsSelected)
-                {
-                    float glowRadius = radius + UILayoutConstants.Board.Piece.GlowMargin * scale;
-                    Color glowColor = PieceSettings.GlowColor;
-                    using (IBrush glowBrush = GraphicsBackend.Factory.CreateSolidBrush(glowColor))
-                    {
-                        g.FillEllipse(glowBrush, centerX - glowRadius, centerY - glowRadius, glowRadius * 2, glowRadius * 2);
-                    }
-                }
+                // The selection glow ring is drawn in Draw's ring pass, before all pieces.
 
                 // Draw main circle (fill color)
                 IBrush fillBrush = isRed ? PieceSettings.RedBackgroundBrush : PieceSettings.BlackBackgroundBrush;

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/23
-// Update Date: 2025/10/23
-// Version: v1.0
+// Update Date: 2026/09/30
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -28,6 +28,15 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         private readonly GameManager _gameManager;
         private readonly IUiContainer uiHost; // used for invoking on UI thread
         public List<UIPiece> UIPieces { get; } = new();
+
+        /// <summary>
+        /// Legal destinations of the selected piece, for the move-hint rings; empty when
+        /// nothing is selected. Taken from <see cref="GameManager.SelectedPieceLegalMoves"/>
+        /// once per selection.
+        /// </summary>
+        public IReadOnlyList<(int x, int y)> LegalMoveTargets { get; private set; } = Array.Empty<(int x, int y)>();
+        // The piece LegalMoveTargets belongs to (null when empty).
+        private Piece _legalMovesOwner;
         private readonly List<(Piece piece, UIPiece uiPiece)> _bindings = new();
 
         // Mapping from Piece model to UIPiece
@@ -46,10 +55,12 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             _gameManager.PieceAdded += OnPieceAdded;
             _gameManager.PieceRemoved += OnPieceRemoved;
             _gameManager.BoardReset += OnBoardReset;
+            _gameManager.HangingPiecesChanged += OnHangingPiecesChanged;
 
             // create initial set from current board
             foreach (var p in _gameManager.GetCurrentPieces())
                 AddUIPieceFor(p);
+            ApplyHanging(new HashSet<Piece>(_gameManager.HangingPieces));
         }
 
         private void AddUIPieceFor(Piece piece)
@@ -81,16 +92,45 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             UIPieces.Clear();
         }
 
-        #region Event Handlers (marshal to UI thread)
-        private void OnPieceSelected(Piece piece) => PostToUI(() =>
+        private void ApplyHanging(HashSet<Piece> hanging)
         {
-            if (pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
-        });
+            foreach (var uiPiece in UIPieces)
+                uiPiece.IsHanging = hanging.Contains(uiPiece.PieceModel);
+        }
+
+        private void ClearLegalMoveTargets()
+        {
+            LegalMoveTargets = Array.Empty<(int x, int y)>();
+            _legalMovesOwner = null;
+        }
+
+        #region Event Handlers (marshal to UI thread)
+        private void OnPieceSelected(Piece piece)
+        {
+            // Computed now (the selection's position), applied on the UI thread.
+            var moves = _gameManager.SelectedPiece == piece
+                ? _gameManager.SelectedPieceLegalMoves
+                : piece.GetLegalMoves(_gameManager.Board);
+            PostToUI(() =>
+            {
+                if (pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
+                LegalMoveTargets = moves;
+                _legalMovesOwner = piece;
+            });
+        }
 
         private void OnPieceUnselected(Piece piece) => PostToUI(() =>
         {
             if (pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = false;
+            if (_legalMovesOwner == piece) ClearLegalMoveTargets();
         });
+
+        private void OnHangingPiecesChanged(IReadOnlyList<Piece> hanging)
+        {
+            // Snapshot now; the GameManager replaces the list on the next move.
+            var set = new HashSet<Piece>(hanging);
+            PostToUI(() => ApplyHanging(set));
+        }
 
         private void OnPieceMoved(Piece piece, int toX, int toY) => PostToUI(() =>
         {
@@ -123,7 +163,8 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
         private void OnBoardReset() => PostToUI(() =>
         {
-            // Clear existing UI pieces and recreate
+            // Clear existing UI pieces and recreate (a reset raises no PieceUnselected)
+            ClearLegalMoveTargets();
             DisposeAllUIPieces();
             foreach (var p in _gameManager.GetCurrentPieces())
                 AddUIPieceFor(p);
@@ -146,7 +187,9 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             _gameManager.PieceAdded -= OnPieceAdded;
             _gameManager.PieceRemoved -= OnPieceRemoved;
             _gameManager.BoardReset -= OnBoardReset;
+            _gameManager.HangingPiecesChanged -= OnHangingPiecesChanged;
 
+            ClearLegalMoveTargets();
             DisposeAllUIPieces();
         }
 
