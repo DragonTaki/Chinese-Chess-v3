@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/25
-// Version: v2.0
+// Update Date: 2026/09/30
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -34,6 +34,12 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             // Space between the edge of the form and the Board
             public const float Margin = 60.0f;
 
+            // Board details (line width, piece radius and font, marks, frame) scale with
+            // the board by its grid scale, rounded to this step: a board a fraction of a
+            // pixel off its authored size (pixel snapping) keeps its authored details
+            // exactly, and scaled fonts/pens are only rebuilt when the step changes.
+            public const float DetailScaleStep = 0.01f;
+
             /// <summary>
             /// Encapsulates Board:Grid related setting values.
             /// </summary>
@@ -58,6 +64,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
                 // Board line width
                 public const float LineWidth = 2.0f;
+
+                // Cannon/soldier position marks ("L" shapes): arm length, and the gap
+                // between each mark and its grid intersection
+                public const float MarkLength = 6.0f;
+                public const float MarkGap = 4.0f;
 
                 /// <summary>
                 /// The pixel size of the grid area calculated from board constants.

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/09/30
-// Version: v2.1
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -33,26 +33,50 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
         private class Pieces
         {
+            // Piece font at the current detail scale: PieceSettings.Font itself at scale 1,
+            // otherwise a scaled copy owned here, rebuilt (and the old one disposed) only
+            // when the scale changes - never per frame.
+            private IFont _font = PieceSettings.Font;
+            private float _fontScale = 1f;
+
             public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces)
             {
                 if (uiPieces == null) return;
+                float scale = board.DetailScale;
+                IFont font = GetFont(scale);
                 foreach (var uiPiece in uiPieces)
                 {
-                    DrawPiece(g, board, uiPiece);
+                    DrawPiece(g, board, uiPiece, scale, font);
                 }
             }
 
-            private void DrawPiece(IGraphics g, UIBoard board, UIPiece uiPiece)
+            private IFont GetFont(float scale)
+            {
+                if (scale == _fontScale)
+                    return _font;
+
+                if (_font != PieceSettings.Font)
+                    _font.Dispose();
+
+                var baseFont = PieceSettings.Font;
+                _font = scale == 1f
+                    ? baseFont
+                    : GraphicsBackend.Factory.CreateFont(baseFont.FontFamily, baseFont.Size * scale, baseFont.Style);
+                _fontScale = scale;
+                return _font;
+            }
+
+            private void DrawPiece(IGraphics g, UIBoard board, UIPiece uiPiece, float scale, IFont font)
             {
                 Piece piece = uiPiece.PieceModel;
-                // Grid point from the board's resolved rectangle, like the grid lines.
-                // (Piece radius and font are not scaled with the board yet.)
+                // Grid point from the board's resolved rectangle, like the grid lines; sizes
+                // scaled with the board by its detail scale (exactly 1 at the authored size).
                 var center = board.GridToPixel(piece.X, piece.Y);
                 float centerX = center.X;
                 float centerY = center.Y;
 
-                float radius = PieceSettings.Radius;
-                float outerRadius = radius - PieceSettings.OuterMargin;
+                float radius = PieceSettings.Radius * scale;
+                float outerRadius = radius - PieceSettings.OuterMargin * scale;
 
                 // Visual color is piece.Color, not piece.Side — they're
                 // deliberately decoupled (see PieceInfo.Color's doc
@@ -63,7 +87,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
                 if (uiPiece.IsSelected)
                 {
-                    float glowRadius = radius + PieceSettings.GlowMargin;
+                    float glowRadius = radius + PieceSettings.GlowMargin * scale;
                     Color glowColor = PieceSettings.GlowColor;
                     using (IBrush glowBrush = GraphicsBackend.Factory.CreateSolidBrush(glowColor))
                     {
@@ -77,12 +101,11 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
                 // Draw border circle (outline color)
                 using IPen outlinePen = GraphicsBackend.Factory.CreatePen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
-                                         isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth);
+                                         (isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth) * scale);
                 g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
 
                 // Draw text (label)
                 string label = PieceConstants.GetPieceText(piece.Type, piece.Color);
-                IFont font = PieceSettings.Font;
                 SizeF textSize = g.MeasureString(label, font);
                 IBrush textBrush = isRed ? PieceSettings.RedTextBrush : PieceSettings.BlackTextBrush;
                 g.DrawString(label, font, textBrush, centerX - textSize.Width / 2, centerY - textSize.Height / 2);
