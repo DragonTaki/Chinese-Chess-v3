@@ -78,6 +78,28 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     (BoardConstants.Full.Rows - 1) * CellSize
                 );
             }
+
+            /// <summary>
+            /// Encapsulates Board:Piece related setting values: the sizes a piece is drawn
+            /// at, at the board's authored size (scaled by <c>UIBoard.DetailScale</c>).
+            /// Colors and the font face are in <see cref="PieceSettings"/>.
+            /// </summary>
+            public class Piece
+            {
+                // Radius of the filled circle
+                public const float Radius = 35.0f;
+
+                // Outline circle: inset from the edge by OuterMargin, drawn this wide
+                public const float OuterMargin = 6.0f;
+                public const float RedOutlineWidth = 3.0f;
+                public const float BlackOutlineWidth = 2.0f;
+
+                // Selection glow: extends this far past the radius
+                public const float GlowMargin = 6.0f;
+
+                // Label font size
+                public const float FontSize = 30.0f;
+            }
         }
     }
 }
