@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/09/24
-// Version: v2.0
+// Update Date: 2026/09/30
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -63,10 +63,13 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             public override void OnRender(IGraphics g, UIInfoBoard element)
             {
                 if (_handler == null)
-                {
                     _handler = element.Handler;
-                    Layout = element.Layout;
-                }
+
+                // Absolute bounds, every frame. It cached element.Layout - the parent-relative
+                // position - once and drew there, which only matched the screen because the
+                // info board's constant already contained the sidebar's own position; laid
+                // out relative to the sidebar it would have been drawn at the window corner.
+                Layout = element.GetCurrentAbsoluteBounds();
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
                 DrawShieldBackground(g, element);
