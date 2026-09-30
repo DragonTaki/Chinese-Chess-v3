@@ -54,17 +54,18 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
             // Declared size (pre-layout fallback), then the layout rules.
             Layout = UILayoutConstants.Sidebar.Layout;
 
-            // Fixed-width column, full parent height. Placed by its Left inset rather than
-            // pinned to the right edge: its parent is the 360-wide game menu, whose right
-            // edge isn't the window's (see docs/LAYOUT.md, Phase 2 progress).
+            // Fixed-width column pinned to the right edge of the screen-sized game menu,
+            // full parent height.
             var rules = LayoutRules;
             rules.PositionMode = PositionMode.Absolute;
-            rules.Left = UILayoutConstants.Sidebar.Position.X;
+            rules.Right = 0f;
             rules.Top = UILayoutConstants.Sidebar.Position.Y;
             rules.Width = LayoutSize.Fixed(UILayoutConstants.Sidebar.Size.X);
             rules.Height = LayoutSize.Stretch;
 
             // Info board at the top, logger box at the bottom, both inset by the margin.
+            // (The logger keeps its fixed height: growing it into the remaining height
+            // would make today's 200-tall box 600 tall.)
             rules.Padding = new PaddingF(UILayoutConstants.Sidebar.Margin);
             rules.Container = LayoutContainer.Flex;
             rules.FlexDirection = FlexDirection.Column;
