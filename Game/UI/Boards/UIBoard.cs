@@ -48,13 +48,16 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             LocalPosition = UILayoutConstants.Board.Position;
             Size = UILayoutConstants.Board.Size;
 
-            // The middle area (between the menu column and the sidebar), full height, with
-            // the board kept at its authored aspect ratio, centered in that area.
+            // The middle area of the screen-sized game menu (between the menu column and
+            // the sidebar), full height, with the board kept at its authored aspect ratio,
+            // centered in that area.
             var rules = LayoutRules;
             rules.PositionMode = PositionMode.Absolute;
-            rules.Left = UILayoutConstants.Board.Position.X;
+            rules.Left = UILayoutConstants.GameMenu.Size.X;
+            rules.Right = UILayoutConstants.Sidebar.Size.X;
             rules.Top = UILayoutConstants.Board.Position.Y;
-            rules.Width = LayoutSize.Fixed(UILayoutConstants.Board.Size.X);
+            rules.Bottom = 0f;
+            rules.Width = LayoutSize.Stretch;
             rules.Height = LayoutSize.Stretch;
             rules.AspectRatio = UILayoutConstants.Board.Size.X / UILayoutConstants.Board.Size.Y;
             rules.AspectFit = AspectFit.Contain;
