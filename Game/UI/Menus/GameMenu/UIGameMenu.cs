@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/09/30
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -38,9 +38,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             Layout = UILayoutConstants.GameMenu.Layout;
             ScrollContainer.Layout = UILayoutConstants.GameMenu.ScrollContainer.Layout;
 
-            MenuLayout.ApplyPanel(this, UILayoutConstants.GameMenu.Layout);
+            // The menu covers the whole root; its panel (outline, buttons) is the left
+            // GameMenu.Size.X-wide column.
+            MenuLayout.ApplyScreen(this, UILayoutConstants.GameMenu.Size.X);
             MenuLayout.ApplyScrollContainer(ScrollContainer,
-                UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Button.Spacing);
+                UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Button.Spacing,
+                UILayoutConstants.GameMenu.Size.X);
         }
 
         protected override void BuildButtons()
