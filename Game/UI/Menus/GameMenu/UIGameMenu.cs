@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2025/10/22
-// Version: v1.1
+// Update Date: 2026/09/30
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -33,8 +33,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
         protected override void OnInit(IUiFactory factory)
         {
+            // Declared sizes (also the pre-layout fallback), then the layout rules that
+            // actually place the panel, its scroll container and its buttons.
             Layout = UILayoutConstants.GameMenu.Layout;
             ScrollContainer.Layout = UILayoutConstants.GameMenu.ScrollContainer.Layout;
+
+            MenuLayout.ApplyPanel(this, UILayoutConstants.GameMenu.Layout);
+            MenuLayout.ApplyScrollContainer(ScrollContainer,
+                UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Button.Spacing);
         }
 
         protected override void BuildButtons()
@@ -49,9 +55,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 button.Text = entry.Label;
                 button.Handler.Action = () => Handler.UIGameMenuAction(entry.Type);
 
-                button.LocalPosition = UILayoutConstants.GameMenu.Button.Position +
-                    new Vector2F(0.0f, (UILayoutConstants.GameMenu.Button.Size.Y + ButtonSpacing) * i);
+                // Stacked by the scroll container's flex column (Gap = Button.Spacing).
                 button.Size = UILayoutConstants.GameMenu.Button.Size;
+                MenuLayout.ApplyButton(button, UILayoutConstants.GameMenu.Button.Size.Y);
 
                 ScrollContainer.AddChild(button);
                 Buttons.Add(button);
