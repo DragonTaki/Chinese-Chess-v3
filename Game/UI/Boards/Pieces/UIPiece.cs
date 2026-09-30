@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/23
-// Update Date: 2025/10/23
-// Version: v1.0
+// Update Date: 2026/09/30
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core.Pieces;
@@ -37,6 +37,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         public bool IsHighlighted { get; set; } = false;
 
         public bool IsCaptured { get; set; } = false;
+
+        /// <summary>
+        /// Whether the piece is hanging (無根子可被吃, see <c>GameManager.HangingPieces</c>):
+        /// drawn with a hint ring. Set by <c>UIPieceBinder</c> after each move/reset.
+        /// </summary>
+        public bool IsHanging { get; set; } = false;
 
         // screen target position (for animation) - board coordinates
         public int TargetX { get; set; }
@@ -72,6 +78,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
             IsSelected = false;
             IsHighlighted = false;
             IsCaptured = false;
+            IsHanging = false;
             SyncTargetToModel();
         }
     }
