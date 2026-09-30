@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/19
-// Update Date: 2025/05/19
-// Version: v1.0
+// Update Date: 2026/09/30
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -16,11 +16,13 @@ using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Globals;
 using Engine.Mathematics;
+using Engine.UI.Constants.Core;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Renderers;
 using Engine.UI.Dialogs;
+using Engine.UI.Models;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
@@ -59,6 +61,14 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
 
             IsVisible = false;
             IsEnabled = false;
+
+            // Sized from its content (MeasureIntrinsicSize) and centered in the overlay
+            // layer, which spans the whole viewport.
+            LayoutRules.PositionMode = PositionMode.Absolute;
+            LayoutRules.Width = LayoutSize.Auto;
+            LayoutRules.Height = LayoutSize.Auto;
+            LayoutRules.AlignX = Alignment.Center;
+            LayoutRules.AlignY = Alignment.Center;
         }
 
         private static IFont MessageFont => UILayoutStyles.MainMenu.Button.Font;
@@ -80,6 +90,26 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             base.Draw(g);
         }
 
+        private string _message = string.Empty;
+
+        /// <summary>
+        /// The dialog's content size: the message wrapped to the maximum dialog width, plus
+        /// padding and the button area.
+        /// </summary>
+        private Vector2F MeasureDialog(string message, out SizeF textSize)
+        {
+            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
+            textSize = gTmp.MeasureString(message ?? string.Empty, MessageFont,
+                            (int)_maxDialogWidth - (int)PaddingH * 2);
+
+            float dlgW = MathF.Min(textSize.Width + PaddingH * 2, _maxDialogWidth);
+            float dlgH = textSize.Height + PaddingV * 2 + ButtonAreaHeight;
+            return new Vector2F(dlgW, dlgH);
+        }
+
+        /// <summary>Auto size: measured from the current message (see <see cref="MeasureDialog"/>).</summary>
+        public override Vector2F MeasureIntrinsicSize(Vector2F available) => MeasureDialog(_message, out _);
+
         public void Show(string message, ConfirmDialogType type, Action<ConfirmDialogResult> resultCallback)
         {
             _onResult = resultCallback;
@@ -91,14 +121,13 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             _buttons.Clear();
             RemoveAllChild(includePersistent: true);
 
-            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
-            var textSize = gTmp.MeasureString(message, MessageFont,
-                            (int)_maxDialogWidth - (int)PaddingH * 2);
+            _message = message;
+            var dialogSize = MeasureDialog(message, out var textSize);
+            float dlgW = dialogSize.X;
 
-            float dlgW = MathF.Min(textSize.Width + PaddingH * 2, _maxDialogWidth);
-            float dlgH = textSize.Height + PaddingV * 2 + ButtonAreaHeight;
-
-            Size = new Vector2F(dlgW, dlgH);
+            // Declared size and position: the pre-layout fallback. The layout (Auto size =
+            // MeasureIntrinsicSize, centered in the overlay) resolves to the same rect.
+            Size = dialogSize;
             LocalPosition = GlobalViewport.Center - Size / 2f;  // Center the window
 
             _messageLabel.Text = message;
