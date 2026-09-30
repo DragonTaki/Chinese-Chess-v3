@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/09/30
-// Version: v2.1
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -48,14 +48,17 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         private class ClassicBoard : UIRenderer<UIBoard, UIBoardHandler, UIBoardRenderer>
         {
-            private IPen _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, UILayoutConstants.Board.Grid.LineWidth);
+            // Grid pen, rebuilt (and the old one disposed) only when the detail scale changes.
+            private IPen _boardPen;
+            private float _boardPenScale = float.NaN;
 
             // Grid geometry for this frame, from the board's resolved rectangle (see
             // UIBoard's Grid Geometry region) - not the authored constants, so the lines
             // follow the board when the layout resizes or moves it.
             private Vector2F _origin;
             private float _cell;
-            private float _scale = 1f;
+            private float _scale = 1f;       // detail scale (UIBoard.DetailScale)
+            private float _lineWidth = UILayoutConstants.Board.Grid.LineWidth;
 
             // Draw whole board
             public override void OnRender(IGraphics g, UIBoard element)
@@ -64,7 +67,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
                 _origin = element.GridOrigin;
                 _cell = element.GridCellSize;
-                _scale = element.GridScale;
+                _scale = element.DetailScale;
+                _lineWidth = UILayoutConstants.Board.Grid.LineWidth * _scale;
+                UpdateBoardPen();
 
                 // Step 1: Draw the background (absolute bounds: LocalPosition was used, which
                 // only matched while the board's parent sat at the origin)
@@ -127,6 +132,15 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 DrawOuterFrame(g, _boardPen);
             }
 
+            private void UpdateBoardPen()
+            {
+                if (_boardPen != null && _boardPenScale == _scale)
+                    return;
+                _boardPen?.Dispose();
+                _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, _lineWidth);
+                _boardPenScale = _scale;
+            }
+
             // Drow palace's diagonal line ("X" shape)
             private void DrawPalaces(IGraphics g, IPen pen)
             {
@@ -177,8 +191,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 float cx = _origin.X + x * _cell;
                 float cy = _origin.Y + y * _cell;
 
-                float cornerLength = 6.0f * _scale;
-                float gap = 4.0f * _scale;
+                float cornerLength = UILayoutConstants.Board.Grid.MarkLength * _scale;
+                float gap = UILayoutConstants.Board.Grid.MarkGap * _scale;
 
                 bool leftEdge = x == 0;
                 bool rightEdge = x == BoardConstants.Full.Columns - 1;
@@ -217,23 +231,23 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             {
                 // Gap between grid line and frame line
                 float gap1 = 0.0f;
-                float gap2 = UILayoutConstants.Board.Grid.LineWidth * 2;
+                float gap2 = _lineWidth * 2;
                 float boardWidthPx = (BoardConstants.Full.Columns - 1) * _cell;
                 float boardHeightPx = (BoardConstants.Full.Rows - 1) * _cell;
 
                 // Padding is calculated from the origin point, subtracting gap to move outward
                 RectangleF outerRect1 = new RectangleF(
-                    _origin.X - gap1 - UILayoutConstants.Board.Grid.LineWidth / 2,
-                    _origin.Y - gap1 - UILayoutConstants.Board.Grid.LineWidth / 2,
-                    boardWidthPx + 2 * gap1 + UILayoutConstants.Board.Grid.LineWidth,
-                    boardHeightPx + 2 * gap1 + UILayoutConstants.Board.Grid.LineWidth
+                    _origin.X - gap1 - _lineWidth / 2,
+                    _origin.Y - gap1 - _lineWidth / 2,
+                    boardWidthPx + 2 * gap1 + _lineWidth,
+                    boardHeightPx + 2 * gap1 + _lineWidth
                 );
 
                 RectangleF outerRect2 = new RectangleF(
-                    _origin.X - gap2 - UILayoutConstants.Board.Grid.LineWidth / 2,
-                    _origin.Y - gap2 - UILayoutConstants.Board.Grid.LineWidth / 2,
-                    boardWidthPx + 2 * gap2 + UILayoutConstants.Board.Grid.LineWidth,
-                    boardHeightPx + 2 * gap2 + UILayoutConstants.Board.Grid.LineWidth
+                    _origin.X - gap2 - _lineWidth / 2,
+                    _origin.Y - gap2 - _lineWidth / 2,
+                    boardWidthPx + 2 * gap2 + _lineWidth,
+                    boardHeightPx + 2 * gap2 + _lineWidth
                 );
 
                 g.DrawRectangle(pen, outerRect1);

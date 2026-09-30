@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
 // Update Date: 2026/09/30
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -83,6 +83,26 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 if (authored.X <= 0f || authored.Y <= 0f || Size.X <= 0f || Size.Y <= 0f)
                     return 1f;
                 return System.Math.Min(Size.X / authored.X, Size.Y / authored.Y);
+            }
+        }
+
+        /// <summary>
+        /// Scale for the board's details (line width, piece radius and font, marks, frame):
+        /// <see cref="GridScale"/> rounded to <c>UILayoutConstants.Board.DetailScaleStep</c>,
+        /// so it is exactly 1 at (and within half a step of) the authored size.
+        /// </summary>
+        public float DetailScale
+        {
+            get
+            {
+                float step = UILayoutConstants.Board.DetailScaleStep;
+                float scale = GridScale;
+                if (step <= 0f)
+                    return scale;
+                // Steps per unit, so the authored size gives exactly 1 (100 / 100, not 100 * 0.01f).
+                float stepsPerUnit = System.MathF.Round(1f / step);
+                float rounded = System.MathF.Round(scale * stepsPerUnit) / stepsPerUnit;
+                return rounded > 0f ? rounded : 1f / stepsPerUnit;
             }
         }
 
