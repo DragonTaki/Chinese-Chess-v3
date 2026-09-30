@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "黑車錯殺"]
+[Category "絕殺測試"]
+[Difficulty "2"]
+[Goal "黑先勝"]
+[FEN "3k5/9/2P3P2/9/8r/9/9/r8/4K4/9 b"]
+[Format "ICCS"]
+[Description "「雙車錯殺」的黑先版本（盤面旋轉 180 度、紅黑互換），用來測試黑方先走。"]
+[Source "絕殺測試（自製）"]
+
+1... i5i1 2. e1e0 a2a0 {雙車錯殺} 0-1

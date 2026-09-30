@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "炮打死車"]
+[Category "絕殺測試"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "rp1k5/p8/9/9/9/2C6/9/9/9/5K3 w"]
+[Format "ICCS"]
+[Description "黑車被自己的卒困在角落，炮隔卒瞄準，黑方怎麼應都救不了車。"]
+[Source "絕殺測試（自製）"]
+
+1. c4a4 {打死車} d9d8 2. a4a9 {吃車} *

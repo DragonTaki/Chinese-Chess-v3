@@ -1,0 +1,13 @@
+[Game "Chinese Chess"]
+[Title "雙車錯殺"]
+[Category "絕殺測試"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "9/4k4/8R/9/9/R8/9/2p3p2/9/5K3 w"]
+[Format "ICCS"]
+[Description "兩俥輪流在相鄰兩條橫線將軍，黑將無處可逃。"]
+[Source "絕殺測試（自製）"]
+
+{先用下面的俥把將趕回底線}
+1. a4a8 e8e9 {將只能退回底線}
+2. i7i9 {雙車錯殺} (2. i7i8 {這樣沒有將軍，黑將還能喘息}) 1-0

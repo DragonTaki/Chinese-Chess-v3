@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "馬踏抽車"]
+[Category "絕殺測試"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "3aka3/9/9/1r7/4N4/9/9/9/9/3K5 w"]
+[Format "ICCS"]
+[Description "馬一步將軍又捉車，黑方只能應將，紅方下一步吃車。"]
+[Source "絕殺測試（自製）"]
+
+1. e5d7 {抽車} e9e8 2. d7b6 {吃車} *

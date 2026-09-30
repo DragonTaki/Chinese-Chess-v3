@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "閃將絕殺"]
+[Category "絕殺測試"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "3k5/2P5R/2N6/9/9/9/4R4/9/9/5K3 w"]
+[Format "ICCS"]
+[Description "兵讓開馬腿，由馬將軍（閃將）；兩俥已封住將的退路。"]
+[Source "絕殺測試（自製）"]
+
+1. c8b8 {閃將絕殺} 1-0

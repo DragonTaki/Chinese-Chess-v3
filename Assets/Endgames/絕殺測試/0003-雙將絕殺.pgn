@@ -1,0 +1,10 @@
+[Game "Chinese Chess"]
+[Title "雙將絕殺"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "3aka3/9/7c1/r8/4N4/9/9/4R4/9/3K5 w"]
+[Format "ICCS"]
+[Description "馬離開中路自己將軍，同時讓出俥的直線，雙將無法同時解。"]
+[Source "絕殺測試（自製）"]
+
+1. e5d7 {雙將絕殺} 1-0

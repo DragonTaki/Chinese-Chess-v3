@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "馬踩雙子"]
+[Category "絕殺測試"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "3k5/9/9/2r6/9/6c2/3N5/9/9/4K4 w"]
+[Format "ICCS"]
+[Description "馬一步同時捉住沒有保護的車與炮（捉雙），黑方只能救一個。"]
+[Source "絕殺測試（自製）"]
+
+1. d3e5 {捉雙} c6c9 {救車} 2. e5g4 {吃炮} *
