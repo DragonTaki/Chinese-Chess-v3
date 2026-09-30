@@ -121,7 +121,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         /// <summary>
         /// Converts an absolute point to the nearest grid point. Same rules as
-        /// <c>Board.IsWithinBoard</c>/<c>PixelToGrid</c> (which use the authored constants):
+        /// <see cref="BoardPixelExtensions"/> (which use the authored constants):
         /// inside when within Columns x Rows cells from the grid origin, rounded to the
         /// nearest intersection and clamped to the board.
         /// </summary>
