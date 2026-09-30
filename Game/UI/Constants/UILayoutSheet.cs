@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/09/30
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -27,7 +27,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
     /// </para>
     /// <para>
     /// Positions are relative to the element's parent, like everything in
-    /// <see cref="UILayoutConstants"/>. The root is still the letterboxed design size.
+    /// <see cref="UILayoutConstants"/>. The root is the whole window in design units (no
+    /// letterbox): at least <c>UILayoutConstants.DesignSize</c>, larger on one axis when the
+    /// window's aspect ratio differs, so the full-height/full-width rules stretch.
     /// </para>
     /// </summary>
     public static class UILayoutSheet
@@ -189,8 +191,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>
             /// <c>UISidebar</c>: fixed-width column pinned to the right edge, full height; a
-            /// flex column with the info board at the top and the logger box at the bottom,
-            /// both inset by the margin.
+            /// flex column inset by the margin, with the fixed info board at the top and the
+            /// logger box growing into the rest, one margin apart.
             /// </summary>
             public static readonly UILayoutStyle Sidebar = new()
             {
@@ -202,8 +204,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 Padding = new PaddingF(UILayoutConstants.Sidebar.Margin),
                 Container = LayoutContainer.Flex,
                 FlexDirection = FlexDirection.Column,
-                JustifyContent = JustifyContent.SpaceBetween,
+                JustifyContent = JustifyContent.Start,
                 AlignItems = FlexAlign.Stretch,
+                RowGap = UILayoutConstants.Sidebar.Margin,
             };
 
             /// <summary><c>UIInfoBoard</c>: flex item of the sidebar column, full width, fixed height.</summary>
@@ -216,15 +219,16 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             };
 
             /// <summary>
-            /// <c>UILoggerBox</c>: flex item of the sidebar column, full width, today's fixed
-            /// height (placed at the bottom by the sidebar's SpaceBetween). Growing into the
-            /// remaining height is for the full-window switch - it would change today's 200px box.
+            /// <c>UILoggerBox</c>: flex item of the sidebar column, full width, growing into
+            /// the sidebar height the info board leaves (below it, one margin apart). Its
+            /// authored height is the flex basis and, since it doesn't shrink, the minimum.
             /// </summary>
             public static readonly UILayoutStyle LoggerBox = new()
             {
                 PositionMode = PositionMode.Flow,
                 Width = LayoutSize.Stretch,
                 Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.LoggerBox.Size.Y),
+                FlexGrow = 1f,
                 FlexShrink = 0f,
             };
 
