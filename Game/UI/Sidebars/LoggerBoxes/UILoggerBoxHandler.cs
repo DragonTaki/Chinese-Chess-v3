@@ -7,11 +7,17 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Core;
+
 using Engine.UI.Core.Handlers;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
 {
-    public class UILoggerBoxHandler : UITextBoxHandler<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>
+    /// <summary>
+    /// Logger box handler; also the <see cref="IGameLog"/> sink GameManager writes to
+    /// (AddMessage(string) is inherited from UITextBoxHandler).
+    /// </summary>
+    public class UILoggerBoxHandler : UITextBoxHandler<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>, IGameLog
     {
         public UILoggerBoxHandler() { }
     }
