@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/25
-// Version: v2.0
+// Update Date: 2026/09/30
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -46,8 +46,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 public static Vector2F Position => Layout.Position;
                 // Size
                 public static Vector2F Size => Layout.Size;
+                // Relative to the sidebar, like every other position here (this used to be
+                // Sidebar.Position + Margin, an absolute position the info board renderer
+                // happened to draw at).
                 public static readonly LayoutF Layout = new LayoutF(
-                    Sidebar.Position + Margin,
+                    new Vector2F(Margin, Margin),
                     new Vector2F(Sidebar.Size.X - Margin * 2.0f, 200.0f));
             }
 
