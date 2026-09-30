@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/19
 // Update Date: 2026/09/30
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -29,7 +29,6 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         private readonly UILabel _messageLabel;
         private readonly List<UIButton<ConfirmDialogResult>> _buttons = new();
         private readonly UIConfirmDialogRenderer _renderer;
-        private float _maxDialogWidth;
         public float PaddingH { get; set; } = 24.0f;
         public float PaddingV { get; set; } = 16.0f;
         public bool ShowMaskEffect { get; set; } = true;
@@ -47,7 +46,6 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         {
             this._renderer = _renderer;
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _maxDialogWidth = GlobalViewport.Size.X * 2f / 3f;
 
             // Created through the factory so it has a renderer (a bare `new UILabel()` has
             // none and drew nothing). Same font Show() measures the message with.
@@ -70,6 +68,24 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         private const float ButtonHeight = 40f;
         private const float ButtonAreaHeight = 70f;
 
+        /// <summary>The dialog is at most this fraction of the available width.</summary>
+        private const float MaxWidthFraction = 2f / 3f;
+
+        /// <summary>
+        /// The maximum dialog width for <paramref name="availableWidth"/> (the overlay's width
+        /// when the layout measures). Computed at measure time: it was computed once in the
+        /// constructor from the viewport size, so it never followed the window once the UI
+        /// area stopped being the fixed design size. Falls back to the UI area's width when
+        /// the available width isn't known (the pre-layout measure in <see cref="Show"/>).
+        /// </summary>
+        private static float MaxDialogWidth(float availableWidth)
+        {
+            float width = float.IsFinite(availableWidth) && availableWidth > 0f
+                ? availableWidth
+                : GlobalViewport.Size.X;
+            return width * MaxWidthFraction;
+        }
+
         /// <summary>
         /// Draws the dialog box and its buttons (UIConfirmDialogRenderer), then the children
         /// (the message label). The renderer was held but never called, so the dialog drew
@@ -87,22 +103,23 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         private string _message = string.Empty;
 
         /// <summary>
-        /// The dialog's content size: the message wrapped to the maximum dialog width, plus
-        /// padding and the button area.
+        /// The dialog's content size: the message wrapped to the maximum dialog width for
+        /// <paramref name="availableWidth"/>, plus padding and the button area.
         /// </summary>
-        private Vector2F MeasureDialog(string message, out SizeF textSize)
+        private Vector2F MeasureDialog(string message, float availableWidth, out SizeF textSize)
         {
+            float maxDialogWidth = MaxDialogWidth(availableWidth);
             using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
             textSize = gTmp.MeasureString(message ?? string.Empty, MessageFont,
-                            (int)_maxDialogWidth - (int)PaddingH * 2);
+                            (int)maxDialogWidth - (int)PaddingH * 2);
 
-            float dlgW = MathF.Min(textSize.Width + PaddingH * 2, _maxDialogWidth);
+            float dlgW = MathF.Min(textSize.Width + PaddingH * 2, maxDialogWidth);
             float dlgH = textSize.Height + PaddingV * 2 + ButtonAreaHeight;
             return new Vector2F(dlgW, dlgH);
         }
 
         /// <summary>Auto size: measured from the current message (see <see cref="MeasureDialog"/>).</summary>
-        public override Vector2F MeasureIntrinsicSize(Vector2F available) => MeasureDialog(_message, out _);
+        public override Vector2F MeasureIntrinsicSize(Vector2F available) => MeasureDialog(_message, available.X, out _);
 
         public void Show(string message, ConfirmDialogType type, Action<ConfirmDialogResult> resultCallback)
         {
@@ -116,11 +133,13 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             RemoveAllChild(includePersistent: true);
 
             _message = message;
-            var dialogSize = MeasureDialog(message, out var textSize);
+            // Measured against the whole UI area (the overlay covers it), like the layout does.
+            var dialogSize = MeasureDialog(message, GlobalViewport.Size.X, out var textSize);
             float dlgW = dialogSize.X;
 
             // Declared size and position: the pre-layout fallback. The layout (Auto size =
-            // MeasureIntrinsicSize, centered in the overlay) resolves to the same rect.
+            // MeasureIntrinsicSize, centered in the overlay, which covers the whole UI area)
+            // resolves to the same rect - GlobalViewport.Center is the UI area's center.
             Size = dialogSize;
             LocalPosition = GlobalViewport.Center - Size / 2f;  // Center the window
 
