@@ -75,8 +75,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 float centerX = center.X;
                 float centerY = center.Y;
 
-                float radius = PieceSettings.Radius * scale;
-                float outerRadius = radius - PieceSettings.OuterMargin * scale;
+                float radius = UILayoutConstants.Board.Piece.Radius * scale;
+                float outerRadius = radius - UILayoutConstants.Board.Piece.OuterMargin * scale;
 
                 // Visual color is piece.Color, not piece.Side — they're
                 // deliberately decoupled (see PieceInfo.Color's doc
@@ -87,7 +87,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
                 if (uiPiece.IsSelected)
                 {
-                    float glowRadius = radius + PieceSettings.GlowMargin * scale;
+                    float glowRadius = radius + UILayoutConstants.Board.Piece.GlowMargin * scale;
                     Color glowColor = PieceSettings.GlowColor;
                     using (IBrush glowBrush = GraphicsBackend.Factory.CreateSolidBrush(glowColor))
                     {
@@ -101,7 +101,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
                 // Draw border circle (outline color)
                 using IPen outlinePen = GraphicsBackend.Factory.CreatePen(isRed ? PieceSettings.RedOutlineColor : PieceSettings.BlackOutlineColor,
-                                         (isRed ? PieceSettings.RedOutlineWidth : PieceSettings.BlackOutlineWidth) * scale);
+                                         (isRed ? UILayoutConstants.Board.Piece.RedOutlineWidth : UILayoutConstants.Board.Piece.BlackOutlineWidth) * scale);
                 g.DrawEllipse(outlinePen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
 
                 // Draw text (label)

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/24
-// Version: v2.0
+// Update Date: 2026/09/30
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -12,19 +12,19 @@ using System.Drawing;
 using Engine.Platform;
 using Engine.Styles;
 
-namespace Chinese_Chess_v3.Game.Core.Pieces
+namespace Chinese_Chess_v3.Game.UI.Constants
 {
+    /// <summary>
+    /// How pieces are drawn: font and colors. Presentation only - nothing in
+    /// <c>Game/Core</c> reads it (it used to live in <c>Game/Core/Pieces</c>, which made the
+    /// rules layer depend on <c>Engine.Platform</c>/<c>Engine.Styles</c>). The sizes (radius,
+    /// margins, outline widths, font size) are layout numbers and live in
+    /// <see cref="UILayoutConstants.Board.Piece"/>.
+    /// </summary>
     public static class PieceSettings
     {
-        // Size
-        public const int Radius = 35;
-        public const int RedOutlineWidth = 3;
-        public const int BlackOutlineWidth = 2;
-        public const int OuterMargin = 6;
-        public const int GlowMargin = 6;
-
         // Font
-        public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 30, FontStyleFlags.Bold);
+        public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", UILayoutConstants.Board.Piece.FontSize, FontStyleFlags.Bold);
 
         // Red piece color
         public static readonly IBrush RedTextBrush = StyleHelper.GetBrush("#E83015");  // #E83015
