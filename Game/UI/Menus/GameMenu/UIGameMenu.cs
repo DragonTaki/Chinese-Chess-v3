@@ -39,11 +39,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             ScrollContainer.Layout = UILayoutConstants.GameMenu.ScrollContainer.Layout;
 
             // The menu covers the whole root; its panel (outline, buttons) is the left
-            // GameMenu.Size.X-wide column.
-            MenuLayout.ApplyScreen(this, UILayoutConstants.GameMenu.Size.X);
-            MenuLayout.ApplyScrollContainer(ScrollContainer,
-                UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Button.Spacing,
-                UILayoutConstants.GameMenu.Size.X);
+            // column (see UILayoutSheet.GameScreen).
+            LayoutRules.Apply(UILayoutSheet.GameScreen.Menu);
+            PanelWidth = UILayoutSheet.GameScreen.MenuPanelWidth;
+            ScrollContainer.LayoutRules.Apply(UILayoutSheet.GameScreen.MenuScrollContainer);
         }
 
         protected override void BuildButtons()
@@ -60,7 +59,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
                 // Stacked by the scroll container's flex column (Gap = Button.Spacing).
                 button.Size = UILayoutConstants.GameMenu.Button.Size;
-                MenuLayout.ApplyButton(button, UILayoutConstants.GameMenu.Button.Size.Y);
+                button.LayoutRules.Apply(UILayoutSheet.GameScreen.MenuButton);
 
                 ScrollContainer.AddChild(button);
                 Buttons.Add(button);

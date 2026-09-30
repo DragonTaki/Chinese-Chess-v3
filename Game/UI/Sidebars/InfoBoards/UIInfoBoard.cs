@@ -10,10 +10,8 @@
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.Core;
 
-using Engine.UI.Constants.Core;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Models;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 {
@@ -29,11 +27,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         {
             Layout = UILayoutConstants.Sidebar.Infoboard.Layout;
 
-            // Flex item of the sidebar column: full width, fixed height.
-            LayoutRules.PositionMode = PositionMode.Flow;
-            LayoutRules.Width = LayoutSize.Stretch;
-            LayoutRules.Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.Infoboard.Size.Y);
-            LayoutRules.FlexShrink = 0f;
+            // Flex item of the sidebar column (see UILayoutSheet.GameScreen.InfoBoard).
+            LayoutRules.Apply(UILayoutSheet.GameScreen.InfoBoard);
         }
     }
 }

@@ -16,13 +16,11 @@ using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Globals;
 using Engine.Mathematics;
-using Engine.UI.Constants.Core;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Renderers;
 using Engine.UI.Dialogs;
-using Engine.UI.Models;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
@@ -62,13 +60,9 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             IsVisible = false;
             IsEnabled = false;
 
-            // Sized from its content (MeasureIntrinsicSize) and centered in the overlay
-            // layer, which spans the whole viewport.
-            LayoutRules.PositionMode = PositionMode.Absolute;
-            LayoutRules.Width = LayoutSize.Auto;
-            LayoutRules.Height = LayoutSize.Auto;
-            LayoutRules.AlignX = Alignment.Center;
-            LayoutRules.AlignY = Alignment.Center;
+            // Sized from its content and centered in the overlay layer
+            // (see UILayoutSheet.Overlay.ConfirmDialog).
+            LayoutRules.Apply(UILayoutSheet.Overlay.ConfirmDialog);
         }
 
         private static IFont MessageFont => UILayoutStyles.MainMenu.Button.Font;

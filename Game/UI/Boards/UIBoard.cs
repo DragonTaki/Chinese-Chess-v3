@@ -16,10 +16,8 @@ using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Binders;
 
 using Engine.Mathematics;
-using Engine.UI.Constants.Core;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Elements;
-using Engine.UI.Models;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -48,21 +46,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             LocalPosition = UILayoutConstants.Board.Position;
             Size = UILayoutConstants.Board.Size;
 
-            // The middle area of the screen-sized game menu (between the menu column and
-            // the sidebar), full height, with the board kept at its authored aspect ratio,
-            // centered in that area.
-            var rules = LayoutRules;
-            rules.PositionMode = PositionMode.Absolute;
-            rules.Left = UILayoutConstants.GameMenu.Size.X;
-            rules.Right = UILayoutConstants.Sidebar.Size.X;
-            rules.Top = UILayoutConstants.Board.Position.Y;
-            rules.Bottom = 0f;
-            rules.Width = LayoutSize.Stretch;
-            rules.Height = LayoutSize.Stretch;
-            rules.AspectRatio = UILayoutConstants.Board.Size.X / UILayoutConstants.Board.Size.Y;
-            rules.AspectFit = AspectFit.Contain;
-            rules.AlignX = Alignment.Center;
-            rules.AlignY = Alignment.Center;
+            // The middle column of the game screen, at its authored aspect ratio
+            // (see UILayoutSheet.GameScreen.Board).
+            LayoutRules.Apply(UILayoutSheet.GameScreen.Board);
         }
 
         #region Grid Geometry
