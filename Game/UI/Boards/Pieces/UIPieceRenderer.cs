@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/24
-// Version: v2.0
+// Update Date: 2026/09/30
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -27,26 +27,29 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         {
             if (element is UIBoard board)
             {
-                _pieces.Draw(g, board.PieceBinder.UIPieces);
+                _pieces.Draw(g, board, board.PieceBinder.UIPieces);
             }
         }
 
         private class Pieces
         {
-            public void Draw(IGraphics g, List<UIPiece> uiPieces)
+            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces)
             {
                 if (uiPieces == null) return;
                 foreach (var uiPiece in uiPieces)
                 {
-                    DrawPiece(g, uiPiece);
+                    DrawPiece(g, board, uiPiece);
                 }
             }
 
-            private void DrawPiece(IGraphics g, UIPiece uiPiece)
+            private void DrawPiece(IGraphics g, UIBoard board, UIPiece uiPiece)
             {
                 Piece piece = uiPiece.PieceModel;
-                float centerX = UILayoutConstants.Board.Grid.Position.X + piece.X * UILayoutConstants.Board.Grid.CellSize;
-                float centerY = UILayoutConstants.Board.Grid.Position.Y + piece.Y * UILayoutConstants.Board.Grid.CellSize;
+                // Grid point from the board's resolved rectangle, like the grid lines.
+                // (Piece radius and font are not scaled with the board yet.)
+                var center = board.GridToPixel(piece.X, piece.Y);
+                float centerX = center.X;
+                float centerY = center.Y;
 
                 float radius = PieceSettings.Radius;
                 float outerRadius = radius - PieceSettings.OuterMargin;
