@@ -14,10 +14,8 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
-using Engine.UI.Constants.Core;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
-using Engine.UI.Models;
 
 using Microsoft.Extensions.DependencyInjection;
 using Chinese_Chess_v3.Game.Core.Players;
@@ -54,23 +52,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
             // Declared size (pre-layout fallback), then the layout rules.
             Layout = UILayoutConstants.Sidebar.Layout;
 
-            // Fixed-width column pinned to the right edge of the screen-sized game menu,
-            // full parent height.
-            var rules = LayoutRules;
-            rules.PositionMode = PositionMode.Absolute;
-            rules.Right = 0f;
-            rules.Top = UILayoutConstants.Sidebar.Position.Y;
-            rules.Width = LayoutSize.Fixed(UILayoutConstants.Sidebar.Size.X);
-            rules.Height = LayoutSize.Stretch;
-
-            // Info board at the top, logger box at the bottom, both inset by the margin.
-            // (The logger keeps its fixed height: growing it into the remaining height
-            // would make today's 200-tall box 600 tall.)
-            rules.Padding = new PaddingF(UILayoutConstants.Sidebar.Margin);
-            rules.Container = LayoutContainer.Flex;
-            rules.FlexDirection = FlexDirection.Column;
-            rules.JustifyContent = JustifyContent.SpaceBetween;
-            rules.AlignItems = FlexAlign.Stretch;
+            // Right column of the game screen: info board on top, logger box at the bottom
+            // (see UILayoutSheet.GameScreen.Sidebar).
+            LayoutRules.Apply(UILayoutSheet.GameScreen.Sidebar);
         }
 
         protected override void BuildUIObjects()
