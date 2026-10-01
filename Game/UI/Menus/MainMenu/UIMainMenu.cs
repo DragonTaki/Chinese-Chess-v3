@@ -41,9 +41,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         protected override void BuildButtons()
         {
-            // 建立按鈕
+            // Create the buttons
             var menuEntries = UIMainMenuOptions.Create(Handler.SwitchSubmenu);
-            Vector2F btnStartPos = UILayoutConstants.MainMenu.Button.Position; // 若未用可註解
+            Vector2F btnStartPos = UILayoutConstants.MainMenu.Button.Position; // TODO: btnStartPos is unused; remove it or use it
 
             for (int i = 0; i < menuEntries.Count; i++)
             {
