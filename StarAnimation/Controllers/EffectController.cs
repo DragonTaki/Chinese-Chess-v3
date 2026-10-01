@@ -34,18 +34,18 @@ namespace StarAnimation.Controllers
         private readonly FrameController _frameController;
         private readonly StarController _starController;
 
-        private readonly IRandomProvider Rand = GlobalRandom.Instance;
+        private readonly IRandomProvider _rand = GlobalRandom.Instance;
 
-        private readonly List<IEffectInstance> activeEffects = new();
-        private readonly Dictionary<EffectType, object> effectConfigs = new(EffectConfigRegistry.Configs);
-        private readonly List<EffectEntry> effectEntries = new();
+        private readonly List<IEffectInstance> _activeEffects = new();
+        private readonly Dictionary<EffectType, object> _effectConfigs = new(EffectConfigRegistry.Configs);
+        private readonly List<EffectEntry> _effectEntries = new();
 
         private bool EnableDebugFrame { get; set; } = false;
 
         /// <summary>
         /// Control which effects will be enabled.
         /// </summary>
-        private readonly Dictionary<EffectType, bool> enableEffect = new()
+        private readonly Dictionary<EffectType, bool> _enableEffect = new()
         {
             [EffectType.ColorShift] = true,
             [EffectType.Pulse] = true,
@@ -94,9 +94,9 @@ namespace StarAnimation.Controllers
         {
             foreach (EffectType type in Enum.GetValues(typeof(EffectType)))
             {
-                if (!enableEffect.TryGetValue(type, out var enabled) || !enabled)
+                if (!_enableEffect.TryGetValue(type, out var enabled) || !enabled)
                     continue;
-                effectEntries.Add(new EffectEntry
+                _effectEntries.Add(new EffectEntry
                 {
                     Name = type,
                     AreaSelector = type switch
@@ -119,7 +119,7 @@ namespace StarAnimation.Controllers
         {
             var stars = _starController.Stars;
             effect.ApplyTo(stars);
-            activeEffects.Add(effect);
+            _activeEffects.Add(effect);
         }
         private void AutoAddEffect()
         {
@@ -129,9 +129,9 @@ namespace StarAnimation.Controllers
                 return;
 
             // Attempt to trigger new effects
-            foreach (var entry in effectEntries)
+            foreach (var entry in _effectEntries)
             {
-                if (!effectConfigs.TryGetValue(entry.Name, out var config))
+                if (!_effectConfigs.TryGetValue(entry.Name, out var config))
                     continue;
 
                 entry.Countdown -= GlobalTime.Timer.DeltaTimeInSeconds;
@@ -139,19 +139,19 @@ namespace StarAnimation.Controllers
 
                 (float triggerChance, float countdown) = config switch
                 {
-                    ColorShiftParameter shift => (shift.TriggerChance, Rand.NextFloat(shift.CountdownRange.Min, shift.CountdownRange.Max)),
-                    PulseParameter pulse => (pulse.TriggerChance, Rand.NextFloat(pulse.CountdownRange.Min, pulse.CountdownRange.Max)),
-                    TwistParameter twist => (twist.TriggerChance, Rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
+                    ColorShiftParameter shift => (shift.TriggerChance, _rand.NextFloat(shift.CountdownRange.Min, shift.CountdownRange.Max)),
+                    PulseParameter pulse => (pulse.TriggerChance, _rand.NextFloat(pulse.CountdownRange.Min, pulse.CountdownRange.Max)),
+                    TwistParameter twist => (twist.TriggerChance, _rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
                     _ => (1.0f, 10.0f)  // Default values for unknown effect types
                 };
 
-                if (Rand.NextFloat() < triggerChance)
+                if (_rand.NextFloat() < triggerChance)
                 {
                     var area = entry.AreaSelector.GetArea(_width, _height);
                     var instance = entry.CreateInstance(area, config);
 
                     instance.ApplyTo(stars);
-                    activeEffects.Add(instance);
+                    _activeEffects.Add(instance);
 
                     if (EnableDebugFrame)
                         _frameController.ShowFrame(area, entry.DebugColor, 4);
@@ -164,13 +164,13 @@ namespace StarAnimation.Controllers
         public void Update()
         {
             // Update all active effects
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            for (int i = _activeEffects.Count - 1; i >= 0; i--)
             {
-                var effect = activeEffects[i];
+                var effect = _activeEffects[i];
                 effect.Update();
 
                 if (!effect.IsActive)
-                    activeEffects.RemoveAt(i);
+                    _activeEffects.RemoveAt(i);
             }
 
             AutoAddEffect();

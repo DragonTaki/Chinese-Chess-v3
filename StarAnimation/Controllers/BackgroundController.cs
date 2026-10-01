@@ -7,7 +7,6 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
-using System.Drawing;
 
 using Engine.Platform;
 using StarAnimation.Renderers;
@@ -18,18 +17,18 @@ namespace StarAnimation.Controllers
     {
         private readonly int _width;
         private readonly int _height;
-        private readonly BackgroundRenderer renderer;
+        private readonly BackgroundRenderer _renderer;
         public BackgroundController(int width, int height)
         {
             _width = width;
             _height = height;
             
-            renderer = new BackgroundRenderer(_width, _height);
+            _renderer = new BackgroundRenderer(_width, _height);
         }
 
         public void Resize(int width, int height)
         {
-            renderer.Resize(width, height);
+            _renderer.Resize(width, height);
         }
 
         public void Update()
@@ -39,7 +38,7 @@ namespace StarAnimation.Controllers
 
         public void Draw(IGraphics g)
         {
-            renderer.Draw(g);
+            _renderer.Draw(g);
         }
     }
 }
