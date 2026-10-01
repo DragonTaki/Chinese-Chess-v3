@@ -28,6 +28,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>回到主畫面 while the game is still in progress (yes = resign, then go back).</summary>
         public const string ResignAndReturnToMain = "是否放棄這局並回到主畫面？";
 
+        /// <summary>重新開始 while the game is in progress (a move was made and the game is not over).</summary>
+        public const string DiscardAndRestart = "是否放棄目前進度並重新開始？";
+
         // ----- Game log lines -----
 
         /// <summary>撤銷 with nothing to undo (a round needs both sides' last move above the undo floor).</summary>
