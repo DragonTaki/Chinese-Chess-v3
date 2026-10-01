@@ -77,11 +77,11 @@ namespace StarAnimation.Core.Effect.Instance
             {
                 if (Area.Contains(star.Position.Current) && !star.Pulse.HasPhase)
                 {
-                    if (Rand.NextFloat() < EffectAppliedChance)
+                    if (_rand.NextFloat() < EffectAppliedChance)
                     {
                         star.Pulse.HasPhase = true;
-                        star.Pulse.Delay = Rand.NextFloat() * 2.0f;
-                        star.Pulse.ShiningTimes = Rand.NextInt(1, 4);
+                        star.Pulse.Delay = _rand.NextFloat() * 2.0f;
+                        star.Pulse.ShiningTimes = _rand.NextInt(1, 4);
                         _affectedStars.Add(star);
                     }
                 }

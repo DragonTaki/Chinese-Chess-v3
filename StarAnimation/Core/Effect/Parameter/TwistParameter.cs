@@ -28,14 +28,14 @@ namespace StarAnimation.Core.Effect.Parameter
         public RangeF RadiusRange { get; set; }
         public RangeF StrengthRange { get; set; }
         public float ClockwiseChance { get; set; }
-        private readonly IRandomProvider Rand = GlobalRandom.Instance;
+        private readonly IRandomProvider _rand = GlobalRandom.Instance;
 
         public TwistInstance CreateRandomInstance(Vector2F center, IAreaShape area)
         {
             float duration = DurationRange.GetRandom();
             float radius = RadiusRange.GetRandom();
             float strength = StrengthRange.GetRandom();
-            float direction = Rand.NextDouble() < ClockwiseChance ? 1f : -1f;
+            float direction = _rand.NextDouble() < ClockwiseChance ? 1f : -1f;
 
             return new TwistInstance(center, area, duration, EffectAppliedChance, strength, radius, direction);
         }

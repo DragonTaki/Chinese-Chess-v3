@@ -31,7 +31,7 @@ namespace StarAnimation.Core.Effect.Instance
             public float InitialAngle;
             public float Distance;
         }
-        private readonly List<StarInfo> starInfos = new();
+        private readonly List<StarInfo> _starInfos = new();
         public float Strength { get; private set; }
         public float Radius { get; private set; }
         public float Direction { get; private set; }
@@ -81,7 +81,7 @@ namespace StarAnimation.Core.Effect.Instance
             float dx = star.Position.Current.X - Center.X;
             float dy = star.Position.Current.Y - Center.Y;
 
-            starInfos.Add(new StarInfo
+            _starInfos.Add(new StarInfo
             {
                 Star = star,
                 InitialAngle = (float)Math.Atan2(dy, dx),
@@ -91,13 +91,13 @@ namespace StarAnimation.Core.Effect.Instance
         protected override void OnApplyTo(IReadOnlyList<Star> stars)
         {
             _affectedStars.Clear();
-            starInfos.Clear();
+            _starInfos.Clear();
             
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position.Current))
                 {
-                    if (Rand.NextDouble() < EffectAppliedChance)
+                    if (_rand.NextDouble() < EffectAppliedChance)
                     {
                         InitializeStarInfo(star);
                         _affectedStars.Add(star);
