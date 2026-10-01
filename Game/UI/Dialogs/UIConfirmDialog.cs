@@ -216,8 +216,10 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 var originalAction = button.Handler.Action;
                 button.Handler.Action = () =>
                 {
-                    originalAction?.Invoke();
+                    // Hide first, then the callback (as a click outside does, UIOverlayMask):
+                    // a callback that shows another dialog must not have it hidden right away.
                     DialogManager.HideConfirm();
+                    originalAction?.Invoke();
                 };
 
                 AddChild(button);
