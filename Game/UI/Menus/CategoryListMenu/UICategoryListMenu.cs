@@ -39,6 +39,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
     /// (<c>Display = None</c>), nothing is rebuilt.
     /// </para>
     /// </summary>
+    /// <typeparam name="TMenu">The concrete menu type (curiously recurring).</typeparam>
+    /// <typeparam name="THandler">The menu's handler type.</typeparam>
+    /// <typeparam name="TRenderer">The menu's renderer type.</typeparam>
     /// <typeparam name="TItem">The kind of file listed.</typeparam>
     public abstract class UICategoryListMenu<TMenu, THandler, TRenderer, TItem> : UIMenu<TMenu, THandler, TRenderer>
         where TMenu : UICategoryListMenu<TMenu, THandler, TRenderer, TItem>
