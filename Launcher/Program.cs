@@ -24,6 +24,7 @@ using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 using Chinese_Chess_v3.Game.UI.Sidebars;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
@@ -122,6 +123,9 @@ namespace Launcher
             services.AddTransientUiModule<UISidebar,   UISidebarHandler,   UISidebarRenderer>();
             services.AddTransientUiModule<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
             services.AddTransientUiModule<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();
+            // Two settings submenus (遊戲設定, 規則設定 - each its own instance with its own
+            // Scope): transient, so each CreateDIElement gets a new element, handler and renderer.
+            services.AddTransientUiModule<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>();
 
             // Build the service provider
             var sp = services.BuildServiceProvider();
