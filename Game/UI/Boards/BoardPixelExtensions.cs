@@ -38,6 +38,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>
         /// Convert pixel coordinates within the board area to board coordinates
         /// </summary>
+        /// <param name="board">The board whose Columns/Rows bound the result</param>
         /// <param name="pixelX">Mouse X coordinate</param>
         /// <param name="pixelY">Mouse Y coordinate</param>
         /// <param name="gridX">Grid coordinate X</param>
