@@ -15,8 +15,8 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.UI.Core.Elements;
-using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
+using Engine.UI.Infrastructure;
 
 namespace Launcher
 {

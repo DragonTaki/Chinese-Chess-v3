@@ -9,7 +9,7 @@
 
 using System;
 
-using Engine.UI.Core.Infrastructure;
+using Engine.UI.Infrastructure;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {

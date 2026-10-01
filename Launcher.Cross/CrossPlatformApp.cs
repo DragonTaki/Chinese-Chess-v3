@@ -25,7 +25,7 @@ using Engine.Platform.Skia;
 using Engine.Styles;
 using Engine.Timing;
 using Engine.UI.Core.Elements;
-using Engine.UI.Core.Infrastructure;
+using Engine.UI.Infrastructure;
 using Engine.UI.Input;
 
 using StarAnimation;
