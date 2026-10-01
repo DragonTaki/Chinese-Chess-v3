@@ -31,7 +31,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                 new Vector2F(780.0f, MainMenu.Size.Y));
 
-            // Space between the edge of the form and the Board
+            // Margin around the board (currently unused: the layout rules place the board)
             public const float Margin = 60.0f;
 
             // Board details (line width, piece radius and font, marks, frame) scale with

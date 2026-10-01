@@ -27,7 +27,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static Vector2F Size => Layout.Size;
             public static readonly LayoutF Layout = MainMenu.Layout;
 
-            // Space between the edge of the form and the GameMenu object
+            // Inset of the scroll container from the menu panel's edges (same as MainMenu)
             public const float Margin = MainMenu.Margin;
 
             /// <summary>
