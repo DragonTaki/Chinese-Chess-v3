@@ -109,7 +109,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         private Vector2F MeasureDialog(string message, float availableWidth, out SizeF textSize)
         {
             float maxDialogWidth = MaxDialogWidth(availableWidth);
-            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // 只用來量字
+            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // only used to measure text
             textSize = gTmp.MeasureString(message ?? string.Empty, MessageFont,
                             (int)maxDialogWidth - (int)PaddingH * 2);
 
