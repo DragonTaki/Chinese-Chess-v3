@@ -13,8 +13,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-using Chinese_Chess_v3.Game.Core.Players;
-
 using Engine.Configs;
 using Engine.Logging;
 
