@@ -4,33 +4,27 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/01
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Endgames;
-using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
-
-using Engine.Logging;
-using Engine.UI.Core.Handlers;
-using Engine.UI.Core.Interfaces;
+using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
 {
     /// <summary>
-    /// Loads the endgame puzzles when the submenu is shown, keeps the category filter and
-    /// starts a puzzle when its button is clicked. <see cref="IScreen"/>: the main menu calls
-    /// <see cref="OnEnter"/>/<see cref="OnExit"/> when it opens/closes this submenu.
+    /// The endgame submenu's logic (shared part:
+    /// <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>): loads the
+    /// puzzles with <see cref="EndgameLoader.LoadAll"/> and starts one with
+    /// <see cref="GameManager.StartEndgame"/>.
     /// </summary>
-    public class UIEndgameMenuHandler : UIMenuHandler<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>, IScreen
+    public class UIEndgameMenuHandler : UICategoryListMenuHandler<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer, EndgamePuzzle>
     {
         /// <summary>Folder name of the game under the per-user application data folder (<see cref="SystemSettings.AppDataFolderName"/>).</summary>
         public const string AppDataFolderName = SystemSettings.AppDataFolderName;
@@ -44,88 +38,27 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
         /// <see cref="SystemSettings.DefaultUserEndgameFolder"/>, <c>Endgames</c> in the
         /// game's per-user data folder). Created by <see cref="EndgameLoader.LoadAll"/> when missing.
         /// </summary>
-        public string UserFolder =>
+        public override string UserFolder =>
             (_factory?.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults).ResolvedEndgameUserFolder;
 
-        /// <summary>Categories the player switched off (all on by default; kept while the game runs).</summary>
-        private readonly HashSet<string> _hiddenCategories = new(StringComparer.Ordinal);
-
-        /// <summary>The puzzles last loaded, in display order.</summary>
-        public IReadOnlyList<EndgamePuzzle> Puzzles { get; private set; } = Array.Empty<EndgamePuzzle>();
+        /// <summary>The puzzles last loaded, in display order (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.Items"/>).</summary>
+        public IReadOnlyList<EndgamePuzzle> Puzzles => Items;
 
         public UIEndgameMenuHandler() { }
 
-        /// <summary>Submenu opened: reload the files, so puzzles added meanwhile appear.</summary>
-        public void OnEnter() => Reload();
+        protected override string LogLabel => "Endgame";
 
-        public void OnExit() { }
-
-        /// <summary>
-        /// Loads both folders and rebuilds the buttons. Sorted by category, then file name
-        /// (ordinal, as <see cref="EndgameLoader"/> sorts each folder), built-in before the
-        /// player's own on a tie: the loader returns the two folders one after the other,
-        /// so a category present in both would otherwise be split in two.
-        /// </summary>
-        public void Reload()
-        {
-            var warnings = new List<string>();
-            Puzzles = EndgameLoader.LoadAll(BuiltInFolder, UserFolder, warnings)
-                .OrderBy(p => p.Category ?? string.Empty, StringComparer.Ordinal)
-                .ThenBy(p => p.FileName, StringComparer.Ordinal)
-                .ThenBy(p => p.Origin)
-                .ToList();
-
-            AppLogger.Log($"(Endgame) Loaded {Puzzles.Count} puzzle(s), {warnings.Count} warning(s); user folder: {UserFolder}", LogLevel.DEBUG);
-
-            Element.ShowPuzzles(Puzzles, IsCategoryShown, EmptyMessageText);
-        }
-
-        private string EmptyMessageText =>
+        protected override string EmptyMessageText =>
             $"找不到殘局題目。\n可以把題目檔（.pgn）放到：\n{UserFolder}";
 
-        public bool IsCategoryShown(string category) => !_hiddenCategories.Contains(category ?? string.Empty);
+        protected override IEnumerable<EndgamePuzzle> LoadItems(List<string> warnings) =>
+            EndgameLoader.LoadAll(BuiltInFolder, UserFolder, warnings);
 
-        /// <summary>Category toggle clicked: hide its puzzles if shown, show them if hidden.</summary>
-        public void ToggleCategory(string category)
-        {
-            category ??= string.Empty;
-            bool show = !IsCategoryShown(category);
-            if (show)
-                _hiddenCategories.Remove(category);
-            else
-                _hiddenCategories.Add(category);
+        /// <summary>The puzzle's position, with the side to move from its FEN; the solution is not played.</summary>
+        protected override void StartOnBoard(GameManager gameManager, EndgamePuzzle puzzle) =>
+            gameManager.StartEndgame(puzzle);
 
-            Element.SetCategoryShown(category, show);
-        }
-
-        /// <summary>
-        /// Puzzle clicked: switch to the game screen the same way a new game does (reset the
-        /// game UI), then set the puzzle's position up.
-        /// <para>
-        /// The board is drawn as for any game (red at the bottom); turning it so the side to
-        /// move is at the bottom is phase C (docs/PLAN.md).
-        /// </para>
-        /// </summary>
-        public void StartPuzzle(EndgamePuzzle puzzle)
-        {
-            Console.WriteLine($"EndgameMenu: selected: {puzzle}");
-
-            var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
-            var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-
-            // Reset first (clears the log, resets the board to the default position), then the
-            // puzzle's position - StartEndgame's own log line stays.
-            gameMenu.ResetGameUI();
-
-            try
-            {
-                gameManager.StartEndgame(puzzle);
-            }
-            catch (FormatException ex)
-            {
-                // Puzzles from EndgameLoader were already validated; keep the default board.
-                AppLogger.Log($"(Endgame) cannot start {puzzle.FileName}: {ex.Message}", LogLevel.ERROR);
-            }
-        }
+        /// <summary>Puzzle clicked (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.StartItem"/>).</summary>
+        public void StartPuzzle(EndgamePuzzle puzzle) => StartItem(puzzle);
     }
 }

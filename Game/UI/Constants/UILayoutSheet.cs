@@ -150,27 +150,27 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The endgame challenge submenu (<c>UIEndgameMenu</c>): a submenu panel whose scroll
-        /// container stacks the category filter row and the puzzle grid. Both are flex rows
-        /// that wrap (<c>UILayoutConstants.EndgameMenu.Columns</c> equal-width buttons per
+        /// The category list submenus (<c>UICategoryListMenu</c>: 殘局闖關, 開局練習): a submenu
+        /// panel whose scroll container stacks the category filter row and the item grid.
+        /// Both are flex rows that wrap (<c>UILayoutConstants.CategoryListMenu.Columns</c> equal-width buttons per
         /// line, column and row gaps) and take their height from their buttons, so the scroll
         /// container's automatic content size covers every row.
         /// </summary>
-        public static class EndgameMenu
+        public static class CategoryListMenu
         {
             /// <summary>The submenu: same place and size as the other submenus.</summary>
             public static readonly UILayoutStyle Panel = Submenu.Panel;
 
             /// <summary>
             /// The submenu's scroll container: inset like the other submenus, a flex column
-            /// with the section gap between the category row and the puzzle grid.
+            /// with the section gap between the category row and the item grid.
             /// </summary>
             public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
                 UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
-                UILayoutConstants.EndgameMenu.SectionGap);
+                UILayoutConstants.CategoryListMenu.SectionGap);
 
             /// <summary>
-            /// A row of buttons inside the scroll column (the category row, the puzzle grid):
+            /// A row of buttons inside the scroll column (the category row, the item grid):
             /// full width, height from its content (never shrunk - overflow is scrolled to),
             /// a flex row that wraps, lines packed at the top.
             /// </summary>
@@ -186,33 +186,33 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 JustifyContent = JustifyContent.Start,
                 AlignItems = FlexAlign.Start,
                 AlignContent = AlignContent.Start,
-                ColumnGap = UILayoutConstants.EndgameMenu.ColumnGap,
-                RowGap = UILayoutConstants.EndgameMenu.RowGap,
+                ColumnGap = UILayoutConstants.CategoryListMenu.ColumnGap,
+                RowGap = UILayoutConstants.CategoryListMenu.RowGap,
             };
 
-            /// <summary>The category filter row (<c>UIEndgameMenu.CategoryRow</c>).</summary>
+            /// <summary>The category filter row (<c>UICategoryListMenu.CategoryRow</c>).</summary>
             public static readonly UILayoutStyle CategoryRow = ButtonRows;
 
-            /// <summary>The puzzle grid (<c>UIEndgameMenu.PuzzleGrid</c>).</summary>
-            public static readonly UILayoutStyle PuzzleGrid = ButtonRows;
+            /// <summary>The item grid (<c>UICategoryListMenu.ItemGrid</c>).</summary>
+            public static readonly UILayoutStyle ItemGrid = ButtonRows;
 
             /// <summary>A button of a row: fixed column width and height, not shrinkable.</summary>
             private static UILayoutStyle RowButton(float height) => new()
             {
                 PositionMode = PositionMode.Flow,
-                Width = LayoutSize.Fixed(UILayoutConstants.EndgameMenu.ButtonWidth),
+                Width = LayoutSize.Fixed(UILayoutConstants.CategoryListMenu.ButtonWidth),
                 Height = LayoutSize.Fixed(height),
                 FlexShrink = 0f,
             };
 
             /// <summary>Each category toggle button.</summary>
-            public static readonly UILayoutStyle CategoryButton = RowButton(UILayoutConstants.EndgameMenu.CategoryButtonHeight);
+            public static readonly UILayoutStyle CategoryButton = RowButton(UILayoutConstants.CategoryListMenu.CategoryButtonHeight);
 
-            /// <summary>Each puzzle button.</summary>
-            public static readonly UILayoutStyle PuzzleButton = RowButton(UILayoutConstants.EndgameMenu.PuzzleButtonHeight);
+            /// <summary>Each item button (puzzle, opening).</summary>
+            public static readonly UILayoutStyle ItemButton = RowButton(UILayoutConstants.CategoryListMenu.ItemButtonHeight);
 
             /// <summary>
-            /// The "no puzzles" message (a child of the submenu, over the scroll area): as wide
+            /// The "nothing found" message (a child of the submenu, over the scroll area): as wide
             /// as the scroll container, height from its text, vertically centered in the panel.
             /// </summary>
             public static readonly UILayoutStyle EmptyMessage = new()

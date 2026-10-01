@@ -121,10 +121,12 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The endgame challenge submenu (<c>UIEndgameMenu</c>). Its buttons are a quarter of
-        /// the submenu width (<c>UILayoutConstants.EndgameMenu.ButtonWidth</c>, about 154), so
-        /// they use a smaller font than the main menu's 36 and put the difficulty stars on a
-        /// second line. Box look (borders, background) as the main menu buttons.
+        /// The category list submenus (<c>UICategoryListMenu</c>: 殘局闖關, 開局練習). Their
+        /// buttons are a quarter of the submenu width
+        /// (<c>UILayoutConstants.CategoryListMenu.ButtonWidth</c>, about 154), so they use a
+        /// smaller font than the main menu's 36, wrap long names after
+        /// <see cref="CategoryListMenu.TitleLineLength"/> characters and put the difficulty
+        /// stars on their own line. Box look (borders, background) as the main menu buttons.
         /// <para>
         /// Glyphs: <see cref="StarFilled"/>/<see cref="StarEmpty"/> (U+2605/U+2606) and
         /// <see cref="CategoryOnMark"/>/<see cref="CategoryOffMark"/> (U+25CF/U+25CB) were
@@ -132,26 +134,32 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// (and <c>MoeLI.ttf</c>): all present, no fallback font needed.
         /// </para>
         /// </summary>
-        public static class EndgameMenu
+        public static class CategoryListMenu
         {
-            /// <summary>Puzzle and category buttons; at this size about 5 CJK characters fit on a line.</summary>
+            /// <summary>Item and category buttons; at this size about 5 CJK characters fit on a line.</summary>
             public static readonly IFont ButtonFont = StyleHelper.GetFont("NotoSerif", 18, FontStyleFlags.Bold);
+
+            /// <summary>
+            /// Characters per line of an item's name (about what fits in a button at
+            /// <see cref="ButtonFont"/>); a longer name is broken into lines of this length.
+            /// </summary>
+            public const int TitleLineLength = 5;
 
             /// <summary>Difficulty stars: one filled star per level, empty ones up to <see cref="MaxDifficulty"/>.</summary>
             public const string StarFilled = "★";
             public const string StarEmpty = "☆";
 
-            /// <summary>Difficulty is 1 to 5 (docs/ENDGAMES.md); the stars show it out of this many.</summary>
+            /// <summary>Difficulty is 1 to 5 (docs/ENDGAMES.md, docs/OPENINGS.md); the stars show it out of this many.</summary>
             public const int MaxDifficulty = 5;
 
             /// <summary>Category toggle labels: mark + category name.</summary>
             public const string CategoryOnMark = "●";
             public const string CategoryOffMark = "○";
 
-            /// <summary>Shown for puzzles without a category (empty <c>EndgamePuzzle.Category</c>).</summary>
+            /// <summary>Shown for items without a category (empty <c>PgnGameFile.Category</c>).</summary>
             public const string UncategorizedName = "未分類";
 
-            /// <summary>A puzzle button, and a category toggle that is on.</summary>
+            /// <summary>An item button, and a category toggle that is on.</summary>
             public static IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
             {
                 Font = ButtonFont,
@@ -192,7 +200,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 };
             }
 
-            /// <summary>The message shown when no puzzle was found.</summary>
+            /// <summary>The message shown when nothing was found.</summary>
             public static class EmptyMessage
             {
                 public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
