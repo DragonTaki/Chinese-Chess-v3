@@ -80,11 +80,11 @@ namespace StarAnimation.Core.Effect.Instance
                 // Start transition
                 if (!star.ColorShift.HasPhase)
                 {
-                    if (Rand.NextFloat() < EffectAppliedChance)
+                    if (_rand.NextFloat() < EffectAppliedChance)
                     {
                         star.ColorShift.HasPhase = true;
-                        star.ColorShift.Delay = Rand.NextFloat() * 2.0f;
-                        star.ColorShift.BiasDirection = Rand.NextFloat() < 0.5 ? -1f : 1f;
+                        star.ColorShift.Delay = _rand.NextFloat() * 2.0f;
+                        star.ColorShift.BiasDirection = _rand.NextFloat() < 0.5 ? -1f : 1f;
                         star.Color.Base = star.ColorShift.BiasDirection < 0
                             ? Color.FromArgb(255, 0, 0) // Red
                             : Color.FromArgb(0, 0, 255); // Blue

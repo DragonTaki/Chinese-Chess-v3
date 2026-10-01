@@ -30,16 +30,15 @@ namespace StarAnimation.Core.Effect
         public float Duration { get; protected set; }
         public float EffectAppliedChance { get; protected set; }
         public float TimeProgress { get; protected set; }
-        protected IRandomProvider Rand = GlobalRandom.Instance;
-
+        protected IRandomProvider _rand = GlobalRandom.Instance;
 
         private static readonly ConcurrentDictionary<Guid, byte> _activeIds = new();
         public static void Register(Guid id) => _activeIds.TryAdd(id, 0);
         public static void Unregister(Guid id) => _activeIds.TryRemove(id, out _);
         public static HashSet<Guid> GetAllActiveEffectIds() => _activeIds.Keys.ToHashSet();
         private readonly List<Physics2D> _affectedPhysics = new();
-        
-        protected List<Star> CreateNewAffectedStars = new();
+
+        protected List<Star> _createNewAffectedStars = new();
 
         /// <summary>
         /// Longest per-star start delay among the stars this instance still drives;
@@ -62,17 +61,17 @@ namespace StarAnimation.Core.Effect
         public virtual void ApplyTo(IReadOnlyList<Star> stars)
         {
             Register(InstanceId);
-            CreateNewAffectedStars.Clear();
+            _createNewAffectedStars.Clear();
             _affectedPhysics.Clear();
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position.Current))
                 {
-                    CreateNewAffectedStars.Add(star);
+                    _createNewAffectedStars.Add(star);
                     _affectedPhysics.Add(star.Physics);
                 }
             }
-            OnApplyTo(CreateNewAffectedStars);
+            OnApplyTo(_createNewAffectedStars);
         }
         protected abstract void OnApplyTo(IReadOnlyList<Star> stars);
 
