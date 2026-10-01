@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-using StarAnimation.Core.Effect;
 using StarAnimation.Core.Effect.Instance;
 using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
@@ -19,7 +18,7 @@ using StarAnimation.Utils.Area;
 
 using Engine.Mathematics;
 
-namespace StarAnimation.Core
+namespace StarAnimation.Core.Effect
 {
     /// <summary>
     /// Central registry for effect parameter presets and factory methods.
