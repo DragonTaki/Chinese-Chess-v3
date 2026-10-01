@@ -288,6 +288,32 @@ namespace Chinese_Chess_v3.Game.Configs
             return TryWrite(path, doc, Warn);
         }
 
+        /// <summary>
+        /// Copies every setting of <paramref name="from"/> into <paramref name="to"/> (through
+        /// the key table, so a newly added key is covered automatically). A value that would
+        /// not be valid in the file (e.g. a name over its length limit) is left unchanged in
+        /// <paramref name="to"/>.
+        /// </summary>
+        public static void Copy(PlayerSettings from, PlayerSettings to)
+        {
+            ArgumentNullException.ThrowIfNull(from);
+            ArgumentNullException.ThrowIfNull(to);
+            foreach (var key in Keys)
+                key.TryApply(key.Format(from), to);
+        }
+
+        /// <summary>A new <see cref="PlayerSettings"/> with the same values as <paramref name="settings"/> (see <see cref="Copy"/>).</summary>
+        public static PlayerSettings Clone(PlayerSettings settings)
+        {
+            var clone = PlayerSettings.Defaults;
+            Copy(settings, clone);
+            return clone;
+        }
+
+        /// <summary>Whether two settings hold the same value for every key (as they would be written to the file).</summary>
+        public static bool AreEqual(PlayerSettings a, PlayerSettings b) =>
+            Keys.All(key => key.Format(a) == key.Format(b));
+
         /// <summary>The full text of a fresh settings file holding <paramref name="settings"/>, every key commented.</summary>
         public static string Generate(PlayerSettings settings) => CreateDocument(settings).ToString();
 
