@@ -164,7 +164,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         protected override void DisposeUI()
         {
-            _pendingActions.Clear();
+            PendingActions.Clear();
             PieceBinder?.Dispose();
             PieceBinder = null;
         }
