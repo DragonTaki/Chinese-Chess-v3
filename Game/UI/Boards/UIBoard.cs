@@ -233,8 +233,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>
         /// Restarts the game being played (<see cref="GameManager.Restart"/>, the one restart
         /// path - also behind the game menu's 重新開始): the standard start, a new shuffled
-        /// HalfCenter game of the same variant, the same endgame / opening, or a saved game's
-        /// start. A caller that starts a specific game (new-game menu, endgame / opening /
+        /// HalfCenter game of the same variant, the same endgame / opening, or a loaded saved
+        /// game loaded again exactly as it was when loaded. A caller that starts a specific game (new-game menu, endgame / opening /
         /// saved-game lists) sets it up after this.
         /// </summary>
         /// <exception cref="NotSupportedException">The board type cannot be played yet (HalfCross).</exception>
