@@ -50,8 +50,14 @@ namespace StarAnimation.Utils.Area
                 radius = (limitedRadius == effectiveRadius)
                     ? limitedRadius
                     : Rand.NextFloat(effectiveRadius, limitedRadius);
-                cx = Rand.NextFloat(radius, canvasRadius - radius);
-                cy = Rand.NextFloat(radius, canvasRadius - radius);
+                // Keep the circle inside the canvas on each axis; if it is wider than the
+                // canvas on an axis, center it there instead.
+                cx = (radius * 2 >= canvasWidth)
+                    ? canvasWidth / 2
+                    : Rand.NextFloat(radius, canvasWidth - radius);
+                cy = (radius * 2 >= canvasHeight)
+                    ? canvasHeight / 2
+                    : Rand.NextFloat(radius, canvasHeight - radius);
             }
 
             return new CircleAreaShape(new PointF(cx, cy), radius);
