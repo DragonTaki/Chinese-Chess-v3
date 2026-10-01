@@ -26,7 +26,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
     public class UIPieceBinder : IDisposable
     {
         private readonly GameManager _gameManager;
-        private readonly IUiContainer uiHost; // used for invoking on UI thread
+        private readonly IUiContainer _uiHost; // used for invoking on UI thread
         public List<UIPiece> UIPieces { get; } = new();
 
         /// <summary>
@@ -40,12 +40,12 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         private readonly List<(Piece piece, UIPiece uiPiece)> _bindings = new();
 
         // Mapping from Piece model to UIPiece
-        private readonly Dictionary<Piece, UIPiece> pieceMap = new();
+        private readonly Dictionary<Piece, UIPiece> _pieceMap = new();
 
         public UIPieceBinder(GameManager gameManager, IUiContainer parentElement)
         {
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
-            uiHost = parentElement ?? throw new ArgumentNullException(nameof(parentElement));
+            _uiHost = parentElement ?? throw new ArgumentNullException(nameof(parentElement));
 
             // subscribe
             _gameManager.PieceSelected += OnPieceSelected;
@@ -66,19 +66,19 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         private void AddUIPieceFor(Piece piece)
         {
             if (piece == null) return;
-            if (pieceMap.ContainsKey(piece)) return;
+            if (_pieceMap.ContainsKey(piece)) return;
 
             var uiPiece = new UIPiece(piece);
-            pieceMap[piece] = uiPiece;
+            _pieceMap[piece] = uiPiece;
             UIPieces.Add(uiPiece);
         }
 
         private void RemoveUIPieceFor(Piece piece)
         {
             if (piece == null) return;
-            if (!pieceMap.TryGetValue(piece, out var uiPiece)) return;
+            if (!_pieceMap.TryGetValue(piece, out var uiPiece)) return;
 
-            pieceMap.Remove(piece);
+            _pieceMap.Remove(piece);
             UIPieces.Remove(uiPiece);
             // Pieces are the short-lived UI elements: released when they leave the board.
             uiPiece.Dispose();
@@ -88,7 +88,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         {
             foreach (var uiPiece in UIPieces)
                 uiPiece.Dispose();
-            pieceMap.Clear();
+            _pieceMap.Clear();
             UIPieces.Clear();
         }
 
@@ -113,7 +113,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
                 : piece.GetLegalMoves(_gameManager.Board);
             PostToUI(() =>
             {
-                if (pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
+                if (_pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
                 LegalMoveTargets = moves;
                 _legalMovesOwner = piece;
             });
@@ -121,7 +121,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
         private void OnPieceUnselected(Piece piece) => PostToUI(() =>
         {
-            if (pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = false;
+            if (_pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = false;
             if (_legalMovesOwner == piece) ClearLegalMoveTargets();
         });
 
@@ -134,7 +134,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
         private void OnPieceMoved(Piece piece, int toX, int toY) => PostToUI(() =>
         {
-            if (pieceMap.TryGetValue(piece, out var ui))
+            if (_pieceMap.TryGetValue(piece, out var ui))
             {
                 ui.TargetX = toX;
                 ui.TargetY = toY;
@@ -144,7 +144,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
         private void OnPieceCaptured(Piece piece) => PostToUI(() =>
         {
-            if (pieceMap.TryGetValue(piece, out var ui))
+            if (_pieceMap.TryGetValue(piece, out var ui))
             {
                 ui.IsCaptured = true;
                 // Optionally mark hidden or trigger captured animation
@@ -173,8 +173,8 @@ namespace Chinese_Chess_v3.Game.UI.Binders
 
         private void PostToUI(Action action)
         {
-            if (uiHost.IsDisposed) return;
-            uiHost.Post(action);
+            if (_uiHost.IsDisposed) return;
+            _uiHost.Post(action);
         }
 
         // Must be called when the screen is unloaded or switched, to avoid memory / event leaks.
