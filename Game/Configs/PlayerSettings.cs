@@ -78,6 +78,31 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #endregion
 
+        #region [dark_chess]
+
+        /// <summary>暗棋 mode. Default: from <see cref="Rules.IsHiddenChess"/> (true)</summary>
+        public bool IsHiddenChess { get; set; } = RuleDefaults.IsHiddenChess;
+
+        /// <summary>暗吃. Default: from <see cref="Rules.CanCaptureHiddenPiece"/> (false)</summary>
+        public bool CanCaptureHiddenPiece { get; set; } = RuleDefaults.CanCaptureHiddenPiece;
+
+        /// <summary>a 暗吃 revealing a stronger target kills the attacker (false: it returns alive). Default: from <see cref="Rules.IsCaptureHiddenPieceStrongerSuicide"/> (true)</summary>
+        public bool IsCaptureHiddenPieceStrongerSuicide { get; set; } = RuleDefaults.IsCaptureHiddenPieceStrongerSuicide;
+
+        /// <summary>連吃. Default: from <see cref="Rules.IsAllowChainCapture"/> (false)</summary>
+        public bool IsAllowChainCapture { get; set; } = RuleDefaults.IsAllowChainCapture;
+
+        /// <summary>車衝. Default: from <see cref="Rules.CanChariotRush"/> (false)</summary>
+        public bool CanChariotRush { get; set; } = RuleDefaults.CanChariotRush;
+
+        /// <summary>馬斜. Default: from <see cref="Rules.IsHorseMoveDiagonally"/> (false)</summary>
+        public bool IsHorseMoveDiagonally { get; set; } = RuleDefaults.IsHorseMoveDiagonally;
+
+        /// <summary>包跳吃子. Default: from <see cref="Rules.IsCannonMustJumpToCapture"/> (true)</summary>
+        public bool IsCannonMustJumpToCapture { get; set; } = RuleDefaults.IsCannonMustJumpToCapture;
+
+        #endregion
+
         #region [hints]
 
         /// <summary>Rings on the selected piece's legal destinations. Default: true</summary>
@@ -157,6 +182,13 @@ namespace Chinese_Chess_v3.Game.Configs
             CanAdvisorLeavePalace = CanAdvisorLeavePalace,
             CanElephantEyeBlocked = ElephantEyeCanBeBlocked,
             CanHorseLegHobbled = HorseLegCanBeHobbled,
+            IsHiddenChess = IsHiddenChess,
+            CanCaptureHiddenPiece = CanCaptureHiddenPiece,
+            IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide,
+            IsAllowChainCapture = IsAllowChainCapture,
+            CanChariotRush = CanChariotRush,
+            IsHorseMoveDiagonally = IsHorseMoveDiagonally,
+            IsCannonMustJumpToCapture = IsCannonMustJumpToCapture,
         };
     }
 }
