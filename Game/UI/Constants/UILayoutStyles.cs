@@ -121,6 +121,43 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
+        /// The settings submenu (<c>UISettingsMenu</c>). Box look as the main menu buttons;
+        /// fonts and the dimmed section header are placeholders for the author to tune.
+        /// </summary>
+        public static class SettingsMenu
+        {
+            /// <summary>Setting buttons and the save / back buttons.</summary>
+            public static readonly IFont ButtonFont = StyleHelper.GetFont("NotoSerif", 24, FontStyleFlags.Bold);
+
+            /// <summary>Section headers.</summary>
+            public static readonly IFont HeaderFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
+
+            /// <summary>A setting's button, and the save / back buttons.</summary>
+            public static IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
+            {
+                Font = ButtonFont,
+                TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = MainMenu.Button.Border.Outer,
+                InnerBorder = MainMenu.Button.Border.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>A section header: a button box with dimmed borders and a smaller font (it does nothing when clicked).</summary>
+            public static IButtonDrawStyle HeaderStyle = new DoubleBorderRoundedStyle
+            {
+                Font = HeaderFont,
+                TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = CategoryListMenu.CategoryOff.Outer,
+                InnerBorder = CategoryListMenu.CategoryOff.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+        }
+
+        /// <summary>
         /// The category list submenus (<c>UICategoryListMenu</c>: 殘局闖關, 開局練習). Their
         /// buttons are a quarter of the submenu width
         /// (<c>UILayoutConstants.CategoryListMenu.ButtonWidth</c>, about 154), so they use a

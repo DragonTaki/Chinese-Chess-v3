@@ -73,5 +73,53 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>Ends a saved game's name cut to one line.</summary>
         public const string Ellipsis = "…";
+
+        // ----- Settings menu (遊戲設定 / 規則設定) -----
+
+        /// <summary>Leaving the settings menu (back, or opening another entry) with unsaved changes.</summary>
+        public const string DiscardUnsavedSettings = "設定尚未儲存，是否捨棄變更？";
+
+        /// <summary>The save failed (details are in the log).</summary>
+        public const string SettingsSaveFailed = "設定檔寫入失敗，請查看紀錄。";
+
+        public const string SettingsSaveAndBack = "儲存並返回";
+        public const string SettingsBack = "返回";
+
+        /// <summary>A setting's button text: name, then its value.</summary>
+        public static string SettingText(string name, string value) => $"{name}：{value}";
+
+        public const string On = "開";
+        public const string Off = "關";
+
+        public const string SectionRules = "── 規則（下一局開始生效）──";
+        public const string SectionDarkChess = "── 暗棋規則（下一局開始生效）──";
+        public const string SectionTimer = "── 計時（下一局開始生效）──";
+        public const string SectionHints = "── 提示（立即生效）──";
+        public const string SectionOther = "── 其他 ──";
+
+        public const string GeneralCanSeeGeneral = "王見王";
+        public const string GeneralCanLeavePalace = "將帥出宮";
+        public const string AdvisorCanLeavePalace = "士出宮";
+        public const string ElephantEyeBlocks = "塞象眼";
+        public const string HorseLegBlocks = "蹩馬腳";
+
+        public const string HiddenChess = "暗棋（蓋子）";
+        public const string CanCaptureHiddenPiece = "暗吃";
+        public const string CaptureHiddenStrongerSuicide = "暗吃到更大的子時吃方被吃";
+        public const string AllowChainCapture = "連吃";
+        public const string ChariotRush = "車衝";
+        public const string HorseMoveDiagonally = "馬斜";
+        public const string CannonMustJump = "包跳吃子";
+
+        public const string StepTimer = "限制步時";
+        public const string LoseOnTimeUp = "超時判負";
+        public const string TimerMode = "計時方式";
+        public const string TimerModeCountDown = "倒數";
+        public const string TimerModeCountUp = "正數";
+
+        public const string LegalMoveHints = "可走位置提示";
+        public const string HangingPieceHints = "無根子提示";
+
+        public const string DebugLog = "顯示 DEBUG 紀錄";
     }
 }
