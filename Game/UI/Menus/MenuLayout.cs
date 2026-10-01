@@ -52,6 +52,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus
         /// Insets the menu's scroll container by the margins and makes it a top-aligned
         /// flex column with <paramref name="buttonSpacing"/> between buttons.
         /// </summary>
+        /// <param name="scroll">The menu's scroll container.</param>
+        /// <param name="marginX">Left inset (and right inset, when there is no <paramref name="panelWidth"/>).</param>
+        /// <param name="marginY">Top and bottom inset.</param>
+        /// <param name="buttonSpacing">Row gap between the buttons.</param>
         /// <param name="panelWidth">
         /// The panel width of a screen menu (see <see cref="ApplyScreen"/>): the container is
         /// then the panel's width minus both side margins, from the left margin, instead of
