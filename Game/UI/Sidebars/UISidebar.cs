@@ -23,8 +23,9 @@ using Chinese_Chess_v3.Game.Core.Players;
 namespace Chinese_Chess_v3.Game.UI.Sidebars
 {
     /// <summary>
-    /// Represents the logical data structure of the sidebar UI,
-    /// storing both players' names, remaining time, and current turn.
+    /// The sidebar (right column of the game screen): a container that holds the info
+    /// board (<see cref="UIInfoBoard"/>) and the logger box (<see cref="UILoggerBox"/>),
+    /// and stores the current turn and whether to highlight it.
     /// </summary>
     public class UISidebar : UIContainer<UISidebar, UISidebarHandler, UISidebarRenderer>, IResettable
     {
@@ -33,7 +34,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
 
         /// <summary>
         /// Indicates which side's turn it currently is.
-        /// Accepts "Red" or "Black".
+        /// <see cref="PlayerSide.Player1"/> (red) or <see cref="PlayerSide.Player2"/> (black).
         /// </summary>
         public PlayerSide CurrentTurn { get; set; } = PlayerSide.Player1;
 
@@ -43,7 +44,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
         public bool HighlightTurn { get; set; } = true;
 
         /// <summary>
-        /// Creates a new Sidebar with default player names and timers.
+        /// Creates a new Sidebar; its children (info board, logger box) are created in
+        /// <c>BuildUIObjects</c>.
         /// </summary>
         public UISidebar() { }
 

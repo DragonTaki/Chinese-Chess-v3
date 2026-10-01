@@ -85,7 +85,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float height = Layout.Height;
                 int inset = 4;
 
-                // 外層盾牌
+                // Outer shield
                 using IGraphicsPath fullShield = ShieldPath.Create(width, height);
                 using (var translate = GraphicsBackend.Factory.CreateMatrix())
                 {
@@ -95,35 +95,35 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
                 PlayerSide currentTurn = element.GameManager.CurrentTurn;
 
-                // 左半背景
+                // Left-half background
                 using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
                 using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player2 ? Color.Gold : Color.Gray);
                 g.FillRegion(leftBrush, leftRegion);
 
-                // 右半背景
+                // Right-half background
                 using IRegion rightRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
                 using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player1 ? Color.Gold : Color.LightCoral);
                 g.FillRegion(rightBrush, rightRegion);
 
-                // 內層盾牌
+                // Inner shield
                 using IGraphicsPath innerShield = ShieldPath.Create(width - 2 * inset, height - 2 * inset);
-                // 移到內層位置
+                // Move to the inner position
                 using (var innerTranslate = GraphicsBackend.Factory.CreateMatrix())
                 {
                     innerTranslate.Translate(baseX + inset, baseY + inset);
                     innerShield.Transform(innerTranslate);
                 }
 
-                // 左半內層遮罩
+                // Left-half inner overlay
                 using IRegion leftOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Player2 ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
                 using IBrush blackOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.Black);
                 g.FillRegion(blackOverlayBrush, leftOverlay);
 
-                // 右半內層遮罩
+                // Right-half inner overlay
                 using IRegion rightOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float rightX = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? baseX + width / 2f + inset : baseX + width / 2f);
                 float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? width / 2f - inset : width / 2f);
@@ -165,12 +165,12 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height,
                 string playerName, string totalTimeString, string stepTimeString, bool isActive)
             {
-                // Timer background
+                // Total timer background
                 RectangleF totalTimerRect = new RectangleF(x + 20.0f, y + 50.0f, width - 40.0f, 40.0f);
                 using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
                     g.FillRectangle(timerBgBrush, totalTimerRect);
 
-                // Timer text
+                // Total timer text
                 using (IBrush timerTextBrush = GraphicsBackend.Factory.CreateSolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
                 using (IStringFormat timerFormat = GraphicsBackend.Factory.CreateStringFormat())
                 {
@@ -179,12 +179,12 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                     g.DrawString(totalTimeString, _timerFont, timerTextBrush, totalTimerRect, timerFormat);
                 }
 
-                // Timer background
+                // Step timer background
                 RectangleF stepTimerRect = new RectangleF(x + 20.0f, y + 95.0f, width - 40.0f, 40.0f);
                 using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
                     g.FillRectangle(timerBgBrush, stepTimerRect);
 
-                // Timer text
+                // Step timer text
                 using (IBrush timerTextBrush = GraphicsBackend.Factory.CreateSolidBrush(isActive ? Color.Gold : Color.DeepSkyBlue))
                 using (IStringFormat timerFormat = GraphicsBackend.Factory.CreateStringFormat())
                 {

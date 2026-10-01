@@ -12,8 +12,8 @@ using Engine.UI.Core.Handlers;
 namespace Chinese_Chess_v3.Game.UI.Sidebars
 {
     /// <summary>
-    /// Handles runtime logic for the Sidebar,
-    /// such as time countdown, turn switching, and state synchronization.
+    /// Handler of the Sidebar. It adds no logic of its own yet: the clocks and the turn
+    /// live in <c>GameManager</c>, which the info board reads when it draws.
     /// </summary>
     public class UISidebarHandler : UIContainerHandler<UISidebar, UISidebarHandler, UISidebarRenderer>
     {
