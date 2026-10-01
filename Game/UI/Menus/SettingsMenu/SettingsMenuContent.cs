@@ -81,6 +81,20 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         private static SettingsMenuItem Toggle(string name, Func<PlayerSettings, bool> get, Action<PlayerSettings, bool> set) =>
             new(name, s => get(s) ? GameMenuTexts.On : GameMenuTexts.Off, s => set(s, !get(s)));
 
+        /// <summary>
+        /// A <see cref="Toggle"/> that only means something with countdown clocks (a time limit or
+        /// what happens at it): with count-up clocks (正數, only measuring time) it shows
+        /// <see cref="GameMenuTexts.NotWithCountUp"/> and a click changes nothing.
+        /// </summary>
+        private static SettingsMenuItem CountDownToggle(string name, Func<PlayerSettings, bool> get, Action<PlayerSettings, bool> set) =>
+            new(name,
+                s => s.TimerMode == TimerMode.CountUp ? GameMenuTexts.NotWithCountUp : (get(s) ? GameMenuTexts.On : GameMenuTexts.Off),
+                s =>
+                {
+                    if (s.TimerMode != TimerMode.CountUp)
+                        set(s, !get(s));
+                });
+
         /// <summary>All sections, in menu order.</summary>
         public static IReadOnlyList<SettingsMenuSection> Sections { get; } = new[]
         {
@@ -106,8 +120,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
             new SettingsMenuSection(GameMenuTexts.SectionTimer, new[]
             {
-                Toggle(GameMenuTexts.StepTimer, s => s.StepTimerEnabled, (s, v) => s.StepTimerEnabled = v),
-                Toggle(GameMenuTexts.LoseOnTimeUp, s => s.EndGameWhenTimesUp, (s, v) => s.EndGameWhenTimesUp = v),
+                CountDownToggle(GameMenuTexts.StepTimer, s => s.StepTimerEnabled, (s, v) => s.StepTimerEnabled = v),
+                CountDownToggle(GameMenuTexts.LoseOnTimeUp, s => s.EndGameWhenTimesUp, (s, v) => s.EndGameWhenTimesUp = v),
                 new SettingsMenuItem(GameMenuTexts.TimerMode,
                     s => s.TimerMode == TimerMode.CountDown ? GameMenuTexts.TimerModeCountDown : GameMenuTexts.TimerModeCountUp,
                     s => s.TimerMode = s.TimerMode == TimerMode.CountDown ? TimerMode.CountUp : TimerMode.CountDown),

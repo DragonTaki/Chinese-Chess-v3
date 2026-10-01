@@ -39,22 +39,22 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #region [timer]
 
-        /// <summary>Each side's total time, in whole minutes (1-600). Default: from <see cref="Rules.TotalTimeLimit"/> (30)</summary>
+        /// <summary>Each side's total time, in whole minutes (1-600); countdown only, count-up has no limit. Default: from <see cref="Rules.TotalTimeLimit"/> (30)</summary>
         public int TotalTimeMinutes { get; set; } = (int)RuleDefaults.TotalTimeLimit.TotalMinutes;
 
-        /// <summary>Time per move, in whole seconds (1-3600). Default: from <see cref="Rules.StepTimeLimit"/> (300)</summary>
+        /// <summary>Time per move, in whole seconds (1-3600); countdown only. Default: from <see cref="Rules.StepTimeLimit"/> (300)</summary>
         public int StepTimeSeconds { get; set; } = (int)RuleDefaults.StepTimeLimit.TotalSeconds;
 
         /// <summary>Seconds added to a side's total after each of its moves (0-600); only applies to countdown clocks, count-up ignores it. Default: from <see cref="Rules.IncrementPerMove"/> (0)</summary>
         public int IncrementSeconds { get; set; } = (int)RuleDefaults.IncrementPerMove.TotalSeconds;
 
-        /// <summary>Whether the per-move limit applies. Default: from <see cref="Rules.EnableStepTimer"/> (true)</summary>
+        /// <summary>Whether the per-move limit applies; countdown only (count-up always measures the step, without a limit). Default: from <see cref="Rules.EnableStepTimer"/> (true)</summary>
         public bool StepTimerEnabled { get; set; } = RuleDefaults.EnableStepTimer;
 
-        /// <summary>Clocks count down to the limits or up from zero. Default: from <see cref="Rules.TimerMode"/> (CountDown)</summary>
+        /// <summary>Clocks count down to the limits or up from zero (count-up only measures: the limit, increment and time-up settings are ignored). Default: from <see cref="Rules.TimerMode"/> (CountDown)</summary>
         public TimerMode TimerMode { get; set; } = RuleDefaults.TimerMode;
 
-        /// <summary>Whether a side whose clock runs out loses. Default: from <see cref="Rules.EndGameWhenTimesUp"/> (true)</summary>
+        /// <summary>Whether a side whose clock runs out loses; countdown only (a count-up clock never runs out). Default: from <see cref="Rules.EndGameWhenTimesUp"/> (true)</summary>
         public bool EndGameWhenTimesUp { get; set; } = RuleDefaults.EndGameWhenTimesUp;
 
         #endregion
