@@ -227,20 +227,48 @@ namespace Chinese_Chess_v3.Game.Configs
         }
 
         /// <summary>
-        /// Writes <paramref name="settings"/> to <paramref name="path"/> (for the future
-        /// settings screen): an existing parsable file keeps its comments and layout with
-        /// only the values updated (missing keys added); otherwise a fresh file is written.
-        /// Returns false (logged) when the file cannot be written.
+        /// Writes <paramref name="settings"/> to <paramref name="path"/> (for the settings
+        /// screen). A missing file is created fresh. A parsable file keeps every line it has
+        /// (comments, layout, unknown keys) with only the values updated and any missing key
+        /// added to its section. A malformed file is first backed up (<c>.bak</c> rotation,
+        /// as in <see cref="Load(string, ICollection{string})"/>) and then replaced by a
+        /// fresh one. The write goes through a temp file, so a crash never leaves half a
+        /// file. Returns false (logged) when the file cannot be read, backed up or written;
+        /// the existing file is then left as it was.
         /// </summary>
         public static bool Save(PlayerSettings settings, string path)
         {
+            void Warn(string message) => AppLogger.Log($"(Settings) {message}", LogLevel.WARN);
+
             IniDocument doc = null;
-            try
+            if (File.Exists(path))
             {
-                if (File.Exists(path) && IniDocument.TryParse(File.ReadAllText(path), out var existing, out _))
+                string text;
+                try
+                {
+                    text = File.ReadAllText(path);
+                }
+                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+                {
+                    Warn($"cannot read {path} ({ex.Message}): not saved, file left as is");
+                    return false;
+                }
+
+                if (IniDocument.TryParse(text, out var existing, out string error))
+                {
                     doc = existing;
+                }
+                else
+                {
+                    string backup = TryBackup(path, Warn);
+                    if (backup == null)
+                    {
+                        Warn($"{path} is malformed ({error}) and could not be backed up: not saved, file left as is");
+                        return false;
+                    }
+                    Warn($"{path} is malformed ({error}): backed up to {backup}, replaced with the saved settings");
+                }
             }
-            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException) { }
 
             if (doc == null)
             {
@@ -257,7 +285,7 @@ namespace Chinese_Chess_v3.Game.Configs
                 }
             }
 
-            return TryWrite(path, doc, m => AppLogger.Log($"(Settings) {m}", LogLevel.WARN));
+            return TryWrite(path, doc, Warn);
         }
 
         /// <summary>The full text of a fresh settings file holding <paramref name="settings"/>, every key commented.</summary>
