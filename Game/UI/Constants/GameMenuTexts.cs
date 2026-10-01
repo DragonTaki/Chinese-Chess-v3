@@ -74,6 +74,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>Ends a saved game's name cut to one line.</summary>
         public const string Ellipsis = "…";
 
+        // ----- New-game menu -----
+
+        /// <summary>A new-game mode whose game cannot be started yet (揭棋大盤, 三國半盤); <paramref name="mode"/> = its button text.</summary>
+        public static string NewGameModeUnavailable(string mode) => $"「{mode}」尚未完成，目前無法開始。";
+
         // ----- Settings menu (遊戲設定 / 規則設定) -----
 
         /// <summary>Leaving the settings menu (back, or opening another entry) with unsaved changes.</summary>
