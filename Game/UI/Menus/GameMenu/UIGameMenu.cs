@@ -78,7 +78,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 AddChild(Sidebar);
         }
         public void ResetGameUI() => Reset();
-        
+
         protected override void OnAfterReset()
         {
             Renderer?.Invalidate();

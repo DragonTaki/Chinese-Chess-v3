@@ -71,7 +71,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         /// </summary>
         public void SwitchSubmenu(UIMainMenuType selectedMenu)
         {
-            Console.WriteLine($"MaunMenu: selected: {selectedMenu}");
+            Console.WriteLine($"MainMenu: selected: {selectedMenu}");
 
             // Leaving an open settings submenu (for another entry, or collapsing it by its own
             // entry) with unsaved changes asks first; on yes the changes are discarded and the
@@ -125,7 +125,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     break;
 
                 default:
-                    Console.WriteLine($"MaunMenu: selected: 'Not defined'");
+                    Console.WriteLine($"MainMenu: selected: 'Not defined'");
                     break;
             }
         }
@@ -175,7 +175,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     }
                     else if (result == ConfirmDialogResult.No)
                     {
-                        //
+                        // Stay in the game: the dialog has already closed.
                     }
                 }
             );
