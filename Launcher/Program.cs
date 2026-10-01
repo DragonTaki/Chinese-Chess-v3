@@ -29,8 +29,8 @@ using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
 using Engine.UI.Core.Elements;
-using Engine.UI.Core.Infrastructure;
 using Engine.UI.Core.Interfaces;
+using Engine.UI.Infrastructure;
 using Engine.UI.Input;
 using Engine.Randomization;
 using Engine.Network;
