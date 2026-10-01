@@ -25,7 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Chinese_Chess_v3.Game.UI.Boards
 {
     /// <summary>
-    /// 棋盤元件，作為 GameMenu 的子元件
+    /// The board component (棋盤), a child component of GameMenu
     /// </summary>
     public class UIBoard : UIContainer<UIBoard, UIBoardHandler, UIBoardRenderer>, IResettable
     {
@@ -38,7 +38,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>The player settings (board hints); the code defaults when none are registered.</summary>
         public PlayerSettings PlayerSettings { get; private set; } = PlayerSettings.Defaults;
         
-        // IUiContainer 實作
+        // IUiContainer implementation
 
         public UIBoard() { }
         protected override void OnInit(IUiFactory factory)

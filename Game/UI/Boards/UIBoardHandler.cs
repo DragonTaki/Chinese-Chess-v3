@@ -12,7 +12,7 @@ using Engine.UI.Core.Handlers;
 namespace Chinese_Chess_v3.Game.UI.Boards
 {
     /// <summary>
-    /// 處理棋盤互動邏輯，例如滑鼠點擊選取棋子
+    /// Handles board interaction logic, e.g. a mouse click selecting a piece
     /// </summary>
     public class UIBoardHandler : UIContainerHandler<UIBoard, UIBoardHandler, UIBoardRenderer>
     {

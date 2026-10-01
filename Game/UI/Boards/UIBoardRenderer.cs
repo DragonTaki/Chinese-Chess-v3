@@ -122,7 +122,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                     );
                 }
 
-                // Step 5: Drow palace's diagonal line ("X" shape)
+                // Step 5: Draw palace's diagonal line ("X" shape)
                 DrawPalaces(g, _boardPen);
 
                 // Step 6: Draw cannon's and soldier's anchor point ("L" shape)
@@ -141,7 +141,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 _boardPenScale = _scale;
             }
 
-            // Drow palace's diagonal line ("X" shape)
+            // Draw palace's diagonal line ("X" shape)
             private void DrawPalaces(IGraphics g, IPen pen)
             {
                 // Calculated from the origin point
@@ -160,14 +160,14 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 float x4 = _origin.X + BoardConstants.Full.PalaceXRange.MaxX * _cell;
                 float y4 = _origin.Y + BoardConstants.Full.RedPalaceYRange.MaxY * _cell;
 
-                g.DrawLine(pen, x3, y3, x4, y4);  // Left-bottom to right-top
-                g.DrawLine(pen, x4, y3, x3, y4);  // Right-bottom to left-top
+                g.DrawLine(pen, x3, y3, x4, y4);  // Left-top to right-bottom
+                g.DrawLine(pen, x4, y3, x3, y4);  // Right-top to left-bottom
             }
 
             // Draw cannon's and soldier's anchor point ("L" shape)
             private void DrawPositioningPoints(IGraphics g, IPen pen)
             {
-                // Solider's anchor coordinate
+                // Soldier's anchor coordinate
                 int[] soldierCols = { 0, 2, 4, 6, 8 };
                 foreach (int col in soldierCols)
                 {

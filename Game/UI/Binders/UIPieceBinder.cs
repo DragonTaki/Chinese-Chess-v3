@@ -177,7 +177,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             uiHost.Post(action);
         }
 
-        // 一定要在畫面卸載或切換時呼叫，避免記憶體 / 事件洩漏。
+        // Must be called when the screen is unloaded or switched, to avoid memory / event leaks.
         public void Dispose()
         {
             _gameManager.PieceSelected -= OnPieceSelected;
@@ -211,7 +211,7 @@ namespace Chinese_Chess_v3.Game.UI.Binders
         {
             foreach (var (piece, uiPiece) in _bindings)
             {
-                // 可選：移除事件監聽或重置UI狀態
+                // Optional: remove event listeners or reset the UI state
                 uiPiece.IsSelected = false;
                 uiPiece.IsHighlighted = false;
             }
