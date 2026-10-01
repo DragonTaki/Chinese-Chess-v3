@@ -70,8 +70,8 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>士出宮 allowed. Default: from <see cref="Rules.CanAdvisorLeavePalace"/> (false)</summary>
         public bool CanAdvisorLeavePalace { get; set; } = RuleDefaults.CanAdvisorLeavePalace;
 
-        /// <summary>塞象眼 applies. Default: from <see cref="Rules.CanElephantEyeBlockd"/> (true)</summary>
-        public bool ElephantEyeCanBeBlocked { get; set; } = RuleDefaults.CanElephantEyeBlockd;
+        /// <summary>塞象眼 applies. Default: from <see cref="Rules.CanElephantEyeBlocked"/> (true)</summary>
+        public bool ElephantEyeCanBeBlocked { get; set; } = RuleDefaults.CanElephantEyeBlocked;
 
         /// <summary>蹩馬腳 applies. Default: from <see cref="Rules.CanHorseLegHobbled"/> (true)</summary>
         public bool HorseLegCanBeHobbled { get; set; } = RuleDefaults.CanHorseLegHobbled;
@@ -155,7 +155,7 @@ namespace Chinese_Chess_v3.Game.Configs
             CanGeneralSeeGeneral = CanGeneralSeeGeneral,
             CanGeneralLeavePalace = CanGeneralLeavePalace,
             CanAdvisorLeavePalace = CanAdvisorLeavePalace,
-            CanElephantEyeBlockd = ElephantEyeCanBeBlocked,
+            CanElephantEyeBlocked = ElephantEyeCanBeBlocked,
             CanHorseLegHobbled = HorseLegCanBeHobbled,
         };
     }
