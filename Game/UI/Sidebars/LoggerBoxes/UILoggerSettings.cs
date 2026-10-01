@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// UILoggerBoxSettings.cs
+// UILoggerSettings.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
