@@ -32,7 +32,7 @@ namespace StarAnimation.Models
         public ColorShiftEffect ColorShift { get; set; } = new ColorShiftEffect();
         public PulseEffect Pulse { get; set; } = new PulseEffect();
         public TwistEffect Twist { get; set; } = new TwistEffect();
-        private readonly IRandomProvider Rand = GlobalRandom.Instance;
+        private readonly IRandomProvider _rand = GlobalRandom.Instance;
 
         /// <summary>
         /// Convenient access to PointF from Position.
@@ -47,10 +47,10 @@ namespace StarAnimation.Models
         /// <param name="height">The height of the starfield area in which the star will be placed.</param>
         public Star(int width, int height)
         {
-            Position.Current = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
+            Position.Current = new Vector2F(_rand.NextFloat(width), _rand.NextFloat(height));
 
             // Star size is a random integer, 1 or 2 (the upper bound of NextInt is exclusive)
-            Size = Rand.NextInt(1, 3);
+            Size = _rand.NextInt(1, 3);
             
             // Random base physical value
             //RandomizeTargetPosition(width, height);
@@ -65,7 +65,7 @@ namespace StarAnimation.Models
         /// <param name="height">Height of the area in which the target is chosen.</param>
         public void RandomizeTargetPosition(int width, int height)
         {
-            Position.Target = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
+            Position.Target = new Vector2F(_rand.NextFloat(width), _rand.NextFloat(height));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace StarAnimation.Models
         public void RandomizeBaseSpeed()
         {
             // Pick a random base velocity; current velocity starts from it.
-            Velocity.Base = new Vector2F(Rand.NextFloat(-0.5f, 0.5f), Rand.NextFloat(-0.5f, 0.5f));
+            Velocity.Base = new Vector2F(_rand.NextFloat(-0.5f, 0.5f), _rand.NextFloat(-0.5f, 0.5f));
             Velocity.Current = Velocity.Base;
         }
         /// <summary>
@@ -84,7 +84,7 @@ namespace StarAnimation.Models
         public void RandomizeAcceleration()
         {
             // Pick a random target acceleration.
-            Acceleration.Target = new Vector2F(Rand.NextFloat(-0.5f, 0.5f), Rand.NextFloat(-0.5f, 0.5f));
+            Acceleration.Target = new Vector2F(_rand.NextFloat(-0.5f, 0.5f), _rand.NextFloat(-0.5f, 0.5f));
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace StarAnimation.Models
         /// </summary>
         private void RandomizeColor()
         {
-            int red = Rand.NextInt(0, 256);    // Red component (0-255)
-            int green = Rand.NextInt(0, 256);  // Green component (0-255)
-            int blue = Rand.NextInt(0, 256);   // Blue component (0-255)
+            int red = _rand.NextInt(0, 256);    // Red component (0-255)
+            int green = _rand.NextInt(0, 256);  // Green component (0-255)
+            int blue = _rand.NextInt(0, 256);   // Blue component (0-255)
             Color.SetColor(red, green, blue);  // Set the star's color
         }
     }
