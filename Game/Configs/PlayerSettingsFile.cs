@@ -65,7 +65,7 @@ namespace Chinese_Chess_v3.Game.Configs
             Int("timer", "step_seconds", s => s.StepTimeSeconds, (s, v) => s.StepTimeSeconds = v, 1, 3600,
                 "每步的步時（秒，1～3600）；step_timer = false 時不使用。"),
             Int("timer", "increment_seconds", s => s.IncrementSeconds, (s, v) => s.IncrementSeconds = v, 0, 600,
-                "每走一步加回局時的秒數（0～600，0 表示不加秒）。"),
+                "每走一步加回局時的秒數（0～600，0 表示不加秒）；僅倒數計時會加秒，正數計時不加。"),
             Bool("timer", "step_timer", s => s.StepTimerEnabled, (s, v) => s.StepTimerEnabled = v,
                 "是否限制步時（true／false）。"),
             Enum("timer", "mode", s => s.TimerMode, (s, v) => s.TimerMode = v,

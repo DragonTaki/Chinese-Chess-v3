@@ -45,7 +45,7 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>Time per move, in whole seconds (1-3600). Default: from <see cref="Rules.StepTimeLimit"/> (300)</summary>
         public int StepTimeSeconds { get; set; } = (int)RuleDefaults.StepTimeLimit.TotalSeconds;
 
-        /// <summary>Seconds added to a side's total after each of its moves (0-600). Default: from <see cref="Rules.IncrementPerMove"/> (0)</summary>
+        /// <summary>Seconds added to a side's total after each of its moves (0-600); only applies to countdown clocks, count-up ignores it. Default: from <see cref="Rules.IncrementPerMove"/> (0)</summary>
         public int IncrementSeconds { get; set; } = (int)RuleDefaults.IncrementPerMove.TotalSeconds;
 
         /// <summary>Whether the per-move limit applies. Default: from <see cref="Rules.EnableStepTimer"/> (true)</summary>
