@@ -92,7 +92,8 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Update all _stars' movement and handle dynamic effects.
+        /// Per-frame update: clears stale physics effects, recycles out-of-bounds stars,
+        /// releases waiting stars, and runs the post-resize cleanup.
         /// </summary>
         public void Update()
         {
@@ -173,7 +174,9 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Handles normal effects (direction and speed).
+        /// Handles normal effects. Only the periodic speed (acceleration) change exists,
+        /// and it is currently disabled by the "false &&" guard; the direction-change
+        /// countdown is initialized but unused.
         /// </summary>
         private void UpdateEffects()
         {
@@ -249,7 +252,7 @@ namespace StarAnimation.Controllers
             Math.Max(1, (int)MathF.Round(_starCount * ((float)width * height) / ReferenceArea));
 
         /// <summary>
-        /// Clear canvas and render all visible _stars.
+        /// Render all visible _stars (the canvas is not cleared here).
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
         public void Draw(IGraphics g)
@@ -265,7 +268,9 @@ namespace StarAnimation.Controllers
         /// <summary>
         /// Dynamically adjusts the number of visible _stars using a bell curve-like behavior.
         /// </summary>
-        /// [DEPRECATED] Replaced by Gaussian-based dynamic control using ReleaseStars()
+        /// <remarks>
+        /// [DEPRECATED] Replaced by Gaussian-based dynamic control using ReleaseStars().
+        /// </remarks>
         private void AdjustStarCount()
         {
             if (_stars.Count < _maxVisibleCount && Rand.NextDouble() < 0.2)

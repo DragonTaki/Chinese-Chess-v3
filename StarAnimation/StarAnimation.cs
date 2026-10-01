@@ -21,7 +21,7 @@ namespace StarAnimation
 
         /// <summary>
         /// Initialize the StarAnimation module.
-        /// Must be called once before Update().
+        /// Construct once before calling Update().
         /// </summary>
         public StarAnimationApp()
         {
@@ -36,7 +36,8 @@ namespace StarAnimation
 
         /// <summary>
         /// Updates the internal animation state.
-        /// Will be called automatically by timer.
+        /// Must be driven by the host each frame (the timer subscription in the
+        /// constructor is currently commented out).
         /// </summary>
         public void Update()
         {
