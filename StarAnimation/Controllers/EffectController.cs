@@ -71,7 +71,7 @@ namespace StarAnimation.Controllers
             _starController = starController;
 
             _frameController = new FrameController(width, height);
-            RegistEffect();
+            RegisterEffects();
         }
 
         /// <summary>
@@ -89,8 +89,8 @@ namespace StarAnimation.Controllers
             _height = Math.Max(height, 1);
         }
 
-        // Register effect entries
-        public void RegistEffect()
+        // Register effect entries (one per enabled EffectType; calling it again adds duplicates)
+        public void RegisterEffects()
         {
             foreach (EffectType type in Enum.GetValues(typeof(EffectType)))
             {
