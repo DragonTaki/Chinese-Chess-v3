@@ -18,6 +18,6 @@ namespace Engine.UI.Core.Bases
         public bool IsVisible { get; set; }
 
         public IEnumerable<UIRenderContext> Children { get; set; } = [];
-        public UIElementBase SourceElement { get; set; }  // 可追溯來源
+        public UIElementBase SourceElement { get; set; }  // Traceable source element
     }
 }

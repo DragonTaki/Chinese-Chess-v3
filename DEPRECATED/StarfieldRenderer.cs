@@ -17,7 +17,7 @@ namespace Chinese_Chess_v3.Interface.Renderers
     public class StarfieldRenderer
     {
         public List<LocalEffect> Effects { get; private set; } = new List<LocalEffect>();
-        // 用於儲存框線區域
+        // Stores the frame (border) areas of spawned effects
         public List<RectangleF> Areas { get; private set; } = new List<RectangleF>();
         #region Settings
 
@@ -52,7 +52,7 @@ namespace Chinese_Chess_v3.Interface.Renderers
                 Rand = rand;
                 X = rand.Next(width);
                 Y = rand.Next(height);
-                Size = rand.Next(1, 3);  // Star size is a random value between 1 and 3.
+                Size = rand.Next(1, 3);  // Star size is a random integer, 1 or 2 (the upper bound of Random.Next is exclusive).
                 BaseSpeed = (float)(0.5 + rand.NextDouble() * 1.5);  // Random base speed between 0.5 and 2.0.
                 Speed = BaseSpeed;
                 RandomizeDirection(rand);
@@ -120,7 +120,7 @@ namespace Chinese_Chess_v3.Interface.Renderers
             /// Initializes a new local effect with a specified area, duration, type, strength, and optional target color.
             /// </summary>
             /// <param name="area">The area within which the effect will be applied.</param>
-            /// <param name="duration">The duration for which the effect will last, in seconds.</param>
+            /// <param name="duration">The duration for which the effect will last, in Update ticks (TimeLeft is decremented by 1 per Update call).</param>
             /// <param name="type">The type of effect ("twist", "pulse", or "colorShift").</param>
             /// <param name="strength">The strength of the effect (affects intensity).</param>
             /// <param name="color">Optional target color for the effect (only used for "colorShift").</param>
@@ -408,13 +408,13 @@ namespace Chinese_Chess_v3.Interface.Renderers
         /// </summary>
         private void ApplyTwistEffect(LocalEffect effect)
         {
-            float angle = DateTime.Now.Millisecond / 1000.0f * 2 * (float)Math.PI; // 時間與角度的關係
-            float radius = 100 + effect.Strength * 100; // 根據強度決定偏移範圍
+            float angle = DateTime.Now.Millisecond / 1000.0f * 2 * (float)Math.PI; // Angle derived from the current time
+            float radius = 100 + effect.Strength * 100; // Offset range depends on the strength
             float offsetX = radius * (float)Math.Cos(angle);
             float offsetY = radius * (float)Math.Sin(angle);
 
-            effect.AffectedStar.X += offsetX;  // 偏移X
-            effect.AffectedStar.Y += offsetY;  // 偏移Y
+            effect.AffectedStar.X += offsetX;  // Offset X
+            effect.AffectedStar.Y += offsetY;  // Offset Y
             // Twist effect: currently only supports updating of simple distortion effects over time
             // Distortion strength decreases over time
             effect.Strength *= 0.98f;  // Reduce strength
