@@ -26,8 +26,8 @@ namespace Chinese_Chess_v3.Game.Configs
     /// <para>
     /// Load rule - the file wins over the code defaults:
     /// missing file: created from the defaults;
-    /// malformed (unparsable) file: copied to <c>settings.ini.bak</c> (never overwriting an
-    /// older backup), then recreated from the defaults;
+    /// malformed (unparsable) file: copied to <c>settings.ini.bak</c> (older backups rotate:
+    /// .bak -> .bak2 -> .bak3 ..., so .bak is always the newest), then recreated from the defaults;
     /// a key missing or with an invalid value: that key uses its default, a warning is
     /// logged, and the file is written back with the key added / the value reset - every
     /// other line (the player's valid values, comments, unknown keys) is kept as it was.
@@ -288,17 +288,25 @@ namespace Chinese_Chess_v3.Game.Configs
         }
 
         /// <summary>
-        /// Copies <paramref name="path"/> to <c>&lt;path&gt;.bak</c>, or <c>.bak2</c>,
-        /// <c>.bak3</c>, ... when older backups exist (never overwrites one). Returns the
-        /// backup path, or null when the copy failed.
+        /// Copies <paramref name="path"/> to <c>&lt;path&gt;.bak</c>, which is always the newest
+        /// backup: existing ones rotate first (logrotate style) - .bakN -> .bak(N+1) from the
+        /// highest down, then .bak -> .bak2 - so no backup is ever lost or overwritten.
+        /// Returns the backup path, or null when rotating or copying failed.
         /// </summary>
         private static string TryBackup(string path, Action<string> warn)
         {
             string backup = path + ".bak";
-            for (int n = 2; File.Exists(backup); n++)
-                backup = path + ".bak" + n;
             try
             {
+                string Numbered(int n) => n == 1 ? backup : backup + n;
+
+                int highest = 0;
+                while (File.Exists(Numbered(highest + 1)))
+                    highest++;
+
+                for (int n = highest; n >= 1; n--)
+                    File.Move(Numbered(n), Numbered(n + 1));
+
                 File.Copy(path, backup, overwrite: false);
                 return backup;
             }
