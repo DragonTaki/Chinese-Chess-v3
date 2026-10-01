@@ -3,12 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/09/30
-// Version: v2.1
+// Update Date: 2026/10/01
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
 
+using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 
 using Engine.Geometry;
@@ -94,17 +95,21 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 }
 
                 PlayerSide currentTurn = element.GameManager.CurrentTurn;
+                // Each half is coloured by the colour its player plays (fixed on the Full
+                // board; on the dark-chess board decided by the first flip, neutral before).
+                PieceColor leftColor = element.GameManager.ColorOf(PlayerSide.Player2);
+                PieceColor rightColor = element.GameManager.ColorOf(PlayerSide.Player1);
 
                 // Left-half background
                 using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
-                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player2 ? Color.Gold : Color.Gray);
+                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player2 ? Color.Gold : IdleColor(leftColor));
                 g.FillRegion(leftBrush, leftRegion);
 
                 // Right-half background
                 using IRegion rightRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
-                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player1 ? Color.Gold : Color.LightCoral);
+                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player1 ? Color.Gold : IdleColor(rightColor));
                 g.FillRegion(rightBrush, rightRegion);
 
                 // Inner shield
@@ -120,16 +125,16 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 using IRegion leftOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Player2 ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
-                using IBrush blackOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.Black);
-                g.FillRegion(blackOverlayBrush, leftOverlay);
+                using IBrush leftOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(OverlayColor(leftColor));
+                g.FillRegion(leftOverlayBrush, leftOverlay);
 
                 // Right-half inner overlay
                 using IRegion rightOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
                 float rightX = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? baseX + width / 2f + inset : baseX + width / 2f);
                 float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? width / 2f - inset : width / 2f);
                 rightOverlay.Intersect(new RectangleF(rightX, baseY + inset, rightWidth, height - 2*inset));
-                using IBrush darkRedOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DarkRed);
-                g.FillRegion(darkRedOverlayBrush, rightOverlay);
+                using IBrush rightOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(OverlayColor(rightColor));
+                g.FillRegion(rightOverlayBrush, rightOverlay);
 
                 float centerX = baseX + width / 2f + inset / 2f;
                 float startY = baseY;
@@ -142,6 +147,21 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 }
             }
 
+            /// <summary>
+            /// The inner fill of a player's half: dark red / black by the colour the player
+            /// plays (the colours the board always used: Player1 red, Player2 black); a
+            /// neutral grey while a dark-chess game has not decided it yet.
+            /// </summary>
+            private static Color OverlayColor(PieceColor color) => color switch
+            {
+                PieceColor.Red => Color.DarkRed,
+                PieceColor.Black => Color.Black,
+                _ => Color.DimGray,
+            };
+
+            /// <summary>The outer rim of a player's half while it is not that player's turn (the active one is gold).</summary>
+            private static Color IdleColor(PieceColor color) => color == PieceColor.Red ? Color.LightCoral : Color.Gray;
+
             private void DrawPlayers(IGraphics g, UIInfoBoard element)
             {
                 float baseX = Layout.X;
@@ -150,13 +170,13 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float height = Layout.Height;
 
                 DrawPlayerSection(g, baseX, baseY, width / 2.0f, height,
-                    element.Player2Name,
+                    element.GetPlayerName(PlayerSide.Player2),
                     element.GameManager.Player2.Timer.GetTotalTimeString(),
                     element.GameManager.Player2.Timer.GetStepTimeString(),
                     element.GameManager.CurrentTurn == PlayerSide.Player2);
 
                 DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height,
-                    element.Player1Name,
+                    element.GetPlayerName(PlayerSide.Player1),
                     element.GameManager.Player1.Timer.GetTotalTimeString(),
                     element.GameManager.Player1.Timer.GetStepTimeString(),
                     element.GameManager.CurrentTurn == PlayerSide.Player1);
