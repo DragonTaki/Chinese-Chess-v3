@@ -62,8 +62,10 @@ namespace StarAnimation.Core.Effect
             foreach (var star in stars)
             {
                 if (Area.Contains(star.Position.Current))
+                {
                     CreateNewAffectedStars.Add(star);
                     _affectedPhysics.Add(star.Physics);
+                }
             }
             OnApplyTo(CreateNewAffectedStars);
         }
