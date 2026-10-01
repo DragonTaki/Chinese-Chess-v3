@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-using StarAnimation.Core;
 using StarAnimation.Core.Effect;
 using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
