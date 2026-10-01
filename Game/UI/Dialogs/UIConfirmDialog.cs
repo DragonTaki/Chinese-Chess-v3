@@ -68,6 +68,24 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
 
         private const float ButtonHeight = 40f;
         private const float ButtonAreaHeight = 70f;
+        private const float ButtonGap = 10f;
+
+        /// <summary>Button width: wide enough for the longest label (4 or more characters get the wide width).</summary>
+        private const float ButtonWidth = 80f;
+        private const float WideButtonWidth = 110f;
+
+        /// <summary>The width of the current buttons in a row (set by <see cref="Show"/>); the dialog is at least this wide.</summary>
+        private float _buttonRowWidth = 0f;
+
+        private static float ButtonWidthFor(IReadOnlyList<Engine.UI.Widgets.ButtonEntry<ConfirmDialogResult>> entries)
+        {
+            foreach (var entry in entries)
+            {
+                if (entry.Label.Length > 3)
+                    return WideButtonWidth;
+            }
+            return ButtonWidth;
+        }
 
         /// <summary>The dialog is at most this fraction of the available width.</summary>
         private const float MaxWidthFraction = 2f / 3f;
@@ -114,7 +132,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             textSize = gTmp.MeasureString(message ?? string.Empty, MessageFont,
                             (int)maxDialogWidth - (int)PaddingH * 2);
 
-            float dlgW = MathF.Min(textSize.Width + PaddingH * 2, maxDialogWidth);
+            float dlgW = MathF.Min(MathF.Max(textSize.Width + PaddingH * 2, _buttonRowWidth + PaddingH * 2), maxDialogWidth);
             float dlgH = textSize.Height + PaddingV * 2 + ButtonAreaHeight;
             return new Vector2F(dlgW, dlgH);
         }
@@ -134,6 +152,8 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
             RemoveAllChild(includePersistent: true);
 
             _message = message;
+            var entries = ConfirmDialogOptions.Create(type, _ => { });
+            _buttonRowWidth = entries.Count * ButtonWidthFor(entries) + (entries.Count - 1) * ButtonGap;
             // Measured against the whole UI area (the overlay covers it), like the layout does.
             var dialogSize = MeasureDialog(message, GlobalViewport.Size.X, out var textSize);
             float dlgW = dialogSize.X;
@@ -178,7 +198,8 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 _onResult?.Invoke(result);
             });
 
-            float totalWidth = entries.Count * 80 + (entries.Count - 1) * 10;
+            float buttonWidth = ButtonWidthFor(entries);
+            float totalWidth = entries.Count * buttonWidth + (entries.Count - 1) * ButtonGap;
             float startX = (Size.X - totalWidth) / 2;
 
             for (int i = 0; i < entries.Count; i++)
@@ -190,8 +211,8 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 button.Text = result.Label;
                 button.Handler.Action = () => _onResult?.Invoke(result.Type);
 
-                button.Size = new Vector2F(80, ButtonHeight);
-                button.LocalPosition = new Vector2F(startX + i * 90, buttonY);
+                button.Size = new Vector2F(buttonWidth, ButtonHeight);
+                button.LocalPosition = new Vector2F(startX + i * (buttonWidth + ButtonGap), buttonY);
                 var originalAction = button.Handler.Action;
                 button.Handler.Action = () =>
                 {

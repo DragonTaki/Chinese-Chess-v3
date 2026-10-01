@@ -15,7 +15,9 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         Ok,
         OkCancel,
         YesNo,
-        YesNoCancel
+        YesNoCancel,
+        /// <summary>The game-over dialog: 重新開始 / 回到主畫面 / 關閉.</summary>
+        GameOver
     }
 
     public enum ConfirmDialogResult
@@ -24,6 +26,12 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         Ok,
         Cancel,
         Yes,
-        No
+        No,
+        /// <summary>重新開始 (the game-over dialog).</summary>
+        Restart,
+        /// <summary>回到主畫面 (the game-over dialog).</summary>
+        ReturnToMain,
+        /// <summary>關閉 (the game-over dialog): keeps the final board visible.</summary>
+        Close
     }
 }

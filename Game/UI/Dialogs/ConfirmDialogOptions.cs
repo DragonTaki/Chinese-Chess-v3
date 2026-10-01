@@ -25,6 +25,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 { ConfirmDialogType.OkCancel,      new[] { ConfirmDialogResult.Ok, ConfirmDialogResult.Cancel } },
                 { ConfirmDialogType.YesNo,         new[] { ConfirmDialogResult.Yes, ConfirmDialogResult.No } },
                 { ConfirmDialogType.YesNoCancel,   new[] { ConfirmDialogResult.Yes, ConfirmDialogResult.No, ConfirmDialogResult.Cancel } },
+                { ConfirmDialogType.GameOver,      new[] { ConfirmDialogResult.Restart, ConfirmDialogResult.ReturnToMain, ConfirmDialogResult.Close } },
             };
 
         private static readonly Dictionary<ConfirmDialogResult, string> LabelMap =
@@ -34,7 +35,10 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 { ConfirmDialogResult.Ok,     "確認" },
                 { ConfirmDialogResult.Cancel, "取消" },
                 { ConfirmDialogResult.Yes,    "是" },
-                { ConfirmDialogResult.No,     "否" }
+                { ConfirmDialogResult.No,     "否" },
+                { ConfirmDialogResult.Restart,      "重新開始" },
+                { ConfirmDialogResult.ReturnToMain, "回到主畫面" },
+                { ConfirmDialogResult.Close,        "關閉" }
             };
 
         /// <summary>
