@@ -41,7 +41,6 @@ namespace Launcher
 
         private StarAnimationApp _bgStar;
 
-
         public MainForm(IServiceProvider sp)
         {
             _sp = sp ?? throw new ArgumentNullException(nameof(sp));

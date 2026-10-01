@@ -42,27 +42,27 @@ namespace Launcher
         public static UIRootNode Initialize(IServiceProvider sp)
         {
             // Resolve the root UI node
-            var _root = sp.GetRequiredService<UIRootNode>();
+            var root = sp.GetRequiredService<UIRootNode>();
 
             // Resolve managers for dialogs and navigation
-            var _dialogManager = sp.GetRequiredService<DialogManager<UIConfirmDialog>>();
-            var _navigationManager = sp.GetRequiredService<NavigationManager>();
+            var dialogManager = sp.GetRequiredService<DialogManager<UIConfirmDialog>>();
+            var navigationManager = sp.GetRequiredService<NavigationManager>();
 
             // Initialize managers with the root node
-            _dialogManager.Init(_root);
-            _navigationManager.Init(_root);
+            dialogManager.Init(root);
+            navigationManager.Init(root);
 
             // Resolve the UI factory used for creating screens
-            var _factory = sp.GetRequiredService<IUiFactory>();
+            var factory = sp.GetRequiredService<IUiFactory>();
 
             // Create and register the main menu screen
-            UIMainMenu _mainMenu = _factory.CreateDIElement<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
-            _navigationManager.RegisterScreen(_mainMenu);
+            UIMainMenu mainMenu = factory.CreateDIElement<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
+            navigationManager.RegisterScreen(mainMenu);
 
             // Show the initial screen (MainMenu)
-            _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
+            navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
 
-            return _root; // Return the fully initialized root UI node
+            return root; // Return the fully initialized root UI node
         }
     }
 }
