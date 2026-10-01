@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 {
                     public const float CornerRadius = 12.0f;
 
-                    public static BorderStyle BorderStyle = new BorderStyle
+                    public static readonly BorderStyle BorderStyle = new BorderStyle
                     {
                         Width = 4.0f,
                         Color = StyleHelper.GetColor("#554236", 1.0f)  // #554236
@@ -37,7 +37,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                         new SolidBrushFactory(Color);
                 }
 
-                public static IBoxDrawStyle Style = new InwardCornerDialogStyle
+                public static readonly IBoxDrawStyle Style = new InwardCornerDialogStyle
                 {
                     BackgroundBrushFactory = Background.BrushFactory,
                     BorderStyle = Border.BorderStyle,
@@ -51,7 +51,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     {
                         public const float CornerRadius = 8.0f;
 
-                        public static BorderStyle BorderStyle = new BorderStyle
+                        public static readonly BorderStyle BorderStyle = new BorderStyle
                         {
                             Width = 4.0f,
                             Color = StyleHelper.GetColor("#707C74", 1.0f)  // #707C74
@@ -64,7 +64,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                             new SolidBrushFactory(Color);
                     }
 
-                    public static IButtonDrawStyle Style = new SingleBorderRoundedStyle
+                    public static readonly IButtonDrawStyle Style = new SingleBorderRoundedStyle
                     {
                         Font = Font,
                         TextBrush = TextBrush,
@@ -87,13 +87,13 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     public const float Margin = 4.0f;
                     public const float CornerRadius = 6.0f;
 
-                    public static BorderStyle Outer = new BorderStyle
+                    public static readonly BorderStyle Outer = new BorderStyle
                     {
                         Width = 4.0f,
                         Color = StyleHelper.GetColor("#F9BF45", 0.85f)  // #F9BF45
                     };
 
-                    public static BorderStyle Inner = new BorderStyle
+                    public static readonly BorderStyle Inner = new BorderStyle
                     {
                         Width = 2.0f,
                         Color = StyleHelper.GetColor("#F9BF45", 0.9f)  // #F9BF45
@@ -107,7 +107,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                         new LinearGradientBrushFactory(TopColor, BottomColor, GradientDirection.Vertical);
                 }
 
-                public static IButtonDrawStyle Style = new DoubleBorderRoundedStyle
+                public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
                 {
                     Font = Font,
                     TextBrush = TextBrush,
@@ -133,7 +133,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static readonly IFont HeaderFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
 
             /// <summary>A setting's button, and the save / back buttons.</summary>
-            public static IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
+            public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
             {
                 Font = ButtonFont,
                 TextBrush = MainMenu.Button.TextBrush,
@@ -145,7 +145,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             };
 
             /// <summary>A section header: a button box with dimmed borders and a smaller font (it does nothing when clicked).</summary>
-            public static IButtonDrawStyle HeaderStyle = new DoubleBorderRoundedStyle
+            public static readonly IButtonDrawStyle HeaderStyle = new DoubleBorderRoundedStyle
             {
                 Font = HeaderFont,
                 TextBrush = MainMenu.Button.TextBrush,
@@ -197,7 +197,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public const string UncategorizedName = "未分類";
 
             /// <summary>An item button, and a category toggle that is on.</summary>
-            public static IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
+            public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
             {
                 Font = ButtonFont,
                 TextBrush = MainMenu.Button.TextBrush,
@@ -213,19 +213,19 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 public static readonly IBrush TextBrush = StyleHelper.GetBrush("#FCFAF2", 0.45f);  // #FCFAF2
 
-                public static BorderStyle Outer = new BorderStyle
+                public static readonly BorderStyle Outer = new BorderStyle
                 {
                     Width = 4.0f,
                     Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
                 };
 
-                public static BorderStyle Inner = new BorderStyle
+                public static readonly BorderStyle Inner = new BorderStyle
                 {
                     Width = 2.0f,
                     Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
                 };
 
-                public static IButtonDrawStyle Style = new DoubleBorderRoundedStyle
+                public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
                 {
                     Font = ButtonFont,
                     TextBrush = TextBrush,
