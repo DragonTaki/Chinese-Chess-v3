@@ -39,11 +39,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
         public static string BuiltInFolder => SystemSettings.BuiltInEndgameFolder;
 
         /// <summary>
-        /// The player's own puzzles (<see cref="SystemSettings.DefaultUserEndgameFolder"/>:
-        /// <c>Endgames</c> in the game's per-user data folder). Created by
-        /// <see cref="EndgameLoader.LoadAll"/> when missing.
+        /// The player's own puzzles: <see cref="PlayerSettings.ResolvedEndgameUserFolder"/>
+        /// (<c>[endgame] user_folder</c> in settings.ini; empty there means
+        /// <see cref="SystemSettings.DefaultUserEndgameFolder"/>, <c>Endgames</c> in the
+        /// game's per-user data folder). Created by <see cref="EndgameLoader.LoadAll"/> when missing.
         /// </summary>
-        public static string UserFolder => SystemSettings.DefaultUserEndgameFolder;
+        public string UserFolder =>
+            (_factory?.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults).ResolvedEndgameUserFolder;
 
         /// <summary>Categories the player switched off (all on by default; kept while the game runs).</summary>
         private readonly HashSet<string> _hiddenCategories = new(StringComparer.Ordinal);
