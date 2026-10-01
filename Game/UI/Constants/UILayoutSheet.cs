@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/01
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -264,6 +264,25 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 AspectFit = AspectFit.Contain,
                 AlignX = Alignment.Center,
                 AlignY = Alignment.Center,
+            };
+
+            /// <summary>
+            /// <c>UISavedGameMenu</c> (載入佈局: the saved-game list, a category list submenu):
+            /// applied over <see cref="CategoryListMenu.Panel"/>, it takes the board's area
+            /// instead of the main menu's submenu place (which is wider than the board and would
+            /// cover part of the sidebar): between the menu column and the sidebar, full height.
+            /// The board is hidden while the list is shown. At the design width the area is
+            /// narrower than a main-menu submenu, so the rows wrap after 3 buttons instead of 4.
+            /// </summary>
+            public static readonly UILayoutStyle SavedGameList = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.GameMenu.Size.X,
+                Right = UILayoutConstants.Sidebar.Size.X,
+                Top = 0f,
+                Bottom = 0f,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Stretch,
             };
 
             /// <summary>

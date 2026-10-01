@@ -63,6 +63,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         /// <exception cref="FormatException">The item cannot be set up.</exception>
         protected abstract void StartOnBoard(GameManager gameManager, TItem item);
 
+        /// <summary>
+        /// Called at the end of <see cref="StartItem"/> (also when the item could not be set
+        /// up), e.g. for a submenu on the game screen to close itself. Nothing by default.
+        /// </summary>
+        protected virtual void OnItemStarted(TItem item) { }
+
         /// <summary>Submenu opened: reload the files, so items added meanwhile appear.</summary>
         public void OnEnter() => Reload();
 
@@ -105,7 +111,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
 
         /// <summary>
         /// Item clicked: switch to the game screen the same way a new game does (reset the
-        /// game UI), then set the item up (<see cref="StartOnBoard"/>).
+        /// game UI; already there for a submenu on the game screen), then set the item up
+        /// (<see cref="StartOnBoard"/>), then <see cref="OnItemStarted"/>.
         /// <para>
         /// The board is drawn as for any game (red at the bottom); turning it so the side to
         /// move is at the bottom is phase C (docs/PLAN.md).
@@ -131,6 +138,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                 // Items from the loaders were already validated; keep the default board.
                 AppLogger.Log($"({LogLabel}) cannot start {item.FileName}: {ex.Message}", LogLevel.ERROR);
             }
+
+            OnItemStarted(item);
         }
     }
 }

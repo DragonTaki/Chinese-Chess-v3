@@ -23,6 +23,7 @@ using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
+using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Sidebars;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
@@ -113,6 +114,7 @@ namespace Launcher
             services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
             services.AddSingletonUiModule<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>();
             services.AddSingletonUiModule<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>();
+            services.AddSingletonUiModule<UISavedGameMenu, UISavedGameMenuHandler, UISavedGameMenuRenderer>();
             services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
