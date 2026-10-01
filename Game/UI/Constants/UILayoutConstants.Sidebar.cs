@@ -34,7 +34,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 new Vector2F(Board.Position.X + Board.Size.X, MainMenu.Position.Y),
                 new Vector2F(360.0f, Board.Size.Y));
 
-            // Space between the edge of the form and the sidebar object
+            // Inset of the info board and logger box from the sidebar's edges (also the gap between them)
             public const float Margin = 20.0f;
 
             /// <summary>
@@ -67,7 +67,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     new Vector2F(Sidebar.Margin, Sidebar.Size.Y - 200.0f - Sidebar.Margin),
                     new Vector2F(Sidebar.Size.X - Sidebar.Margin * 2.0f, 200.0f));
 
-                // Space between the edge of the form and the MainMenu object
+                // Inset of the scroll container from the logger box's edges
                 public const float Margin = 8.0f;
 
                 /// <summary>
@@ -84,7 +84,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             }
 
             // Color
-            public static readonly Color BackgroundColor = StyleHelper.GetColor("#716c6cff");  // #0A0A0A
+            public static readonly Color BackgroundColor = StyleHelper.GetColor("#716c6cff");  // #716c6cff (the previous #0A0A0A is in the line below)
             //public static readonly Color BackgroundColor = StyleHelper.GetColor("#0A0A0A");  // #0A0A0A
         }
     }

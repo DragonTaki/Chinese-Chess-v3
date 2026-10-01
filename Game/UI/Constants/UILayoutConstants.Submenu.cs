@@ -31,7 +31,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 new Vector2F(MainMenu.Size.X, MainMenu.Position.Y),
                 new Vector2F(840.0f, MainMenu.Size.Y));
 
-            // Space between the edge of the form and the MainMenu object
+            // Inset of the scroll container from the submenu panel's edges
             public const float MarginX = 80.0f;
             public const float MarginY = 40.0f;
 
