@@ -125,8 +125,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
 
-            // Reset first (clears the log, resets the board to the default position), then the
-            // item's position - the start's own log lines stay.
+            // Reset first (clears the log, restarts the game being played - UIBoard.OnReset ->
+            // GameManager.Restart), then the item's position - the start's own log lines stay.
             gameMenu.ResetGameUI();
 
             try
@@ -135,7 +135,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             }
             catch (FormatException ex)
             {
-                // Items from the loaders were already validated; keep the default board.
+                // Items from the loaders were already validated; the restarted previous game stays on the board.
                 AppLogger.Log($"({LogLabel}) cannot start {item.FileName}: {ex.Message}", LogLevel.ERROR);
             }
 
