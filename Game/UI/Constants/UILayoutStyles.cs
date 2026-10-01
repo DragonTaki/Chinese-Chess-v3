@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2026/10/01
-// Version: v2.1
+// Update Date: 2026/10/02
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -149,6 +149,39 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = HeaderFont,
                 TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = CategoryListMenu.CategoryOff.Outer,
+                InnerBorder = CategoryListMenu.CategoryOff.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+        }
+
+        /// <summary>
+        /// The main menu's saved-game list (<c>UILoadSavedGameMenu</c>, 讀取存檔): the settings
+        /// submenu's looks (button and section header), plus a dimmed row for 沒有存檔.
+        /// Placeholders for the author to tune.
+        /// </summary>
+        public static class LoadSavedGameMenu
+        {
+            /// <summary>
+            /// Characters of a save's name shown on its button (about what fits next to the
+            /// date and time at <see cref="SettingsMenu.ButtonFont"/>); a longer one is cut with
+            /// <c>GameMenuTexts.Ellipsis</c>.
+            /// </summary>
+            public const int NameLength = 14;
+
+            /// <summary>A save's button.</summary>
+            public static readonly IButtonDrawStyle ButtonStyle = SettingsMenu.ButtonStyle;
+
+            /// <summary>A category header (it does nothing when clicked).</summary>
+            public static readonly IButtonDrawStyle HeaderStyle = SettingsMenu.HeaderStyle;
+
+            /// <summary>The 沒有存檔 row: a save's box with dimmed text and borders, like a category toggle that is off (it does nothing when clicked).</summary>
+            public static readonly IButtonDrawStyle EmptyRowStyle = new DoubleBorderRoundedStyle
+            {
+                Font = SettingsMenu.ButtonFont,
+                TextBrush = CategoryListMenu.CategoryOff.TextBrush,
                 BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
                 OuterBorder = CategoryListMenu.CategoryOff.Outer,
                 InnerBorder = CategoryListMenu.CategoryOff.Inner,

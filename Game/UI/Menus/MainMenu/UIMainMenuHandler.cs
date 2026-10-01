@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/01
-// Version: v2.1
+// Update Date: 2026/10/02
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
@@ -40,7 +41,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         {
             // Initialize _submenus
             _submenus[UIMainMenuType.NewGame] = CreateSubMenu(() => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>());
-            _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
+            // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
+            _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>());
             _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
             _submenus[UIMainMenuType.OpeningPractice] = CreateSubMenu(() => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>());
             _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsMenuScope.Rules));
