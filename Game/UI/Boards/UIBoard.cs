@@ -223,26 +223,16 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         }
 
         /// <summary>
-        /// Restarts the mode being played: a Full-board game goes back to the standard start
-        /// position, a HalfCenter game becomes a new shuffled HalfCenter game of the same
-        /// variant (暗棋 or 明棋, the current game's <c>Rules.IsHiddenChess</c>). A caller that
-        /// starts a specific game (new-game menu, endgame / opening / saved-game lists) sets it
-        /// up after this.
+        /// Restarts the game being played (<see cref="GameManager.Restart"/>, the one restart
+        /// path - also behind the game menu's 重新開始): the standard start, a new shuffled
+        /// HalfCenter game of the same variant, the same endgame / opening, or a saved game's
+        /// start. A caller that starts a specific game (new-game menu, endgame / opening /
+        /// saved-game lists) sets it up after this.
         /// </summary>
         /// <exception cref="NotSupportedException">The board type cannot be played yet (HalfCross).</exception>
         protected override void OnReset()
         {
-            switch (GameManager.Board.Type)
-            {
-                case BoardType.Full:
-                    GameManager.ResetBoardToDefault();
-                    break;
-                case BoardType.HalfCenter:
-                    GameManager.StartHalfCenter(hiddenChess: GameManager.Rules.IsHiddenChess);
-                    break;
-                default:
-                    throw new NotSupportedException($"Cannot restart a {GameManager.Board.Type} game yet");
-            }
+            GameManager.Restart();
         }
     }
 }
