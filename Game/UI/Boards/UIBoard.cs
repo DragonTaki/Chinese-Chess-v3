@@ -8,16 +8,16 @@
 /* ----- ----- ----- ----- */
 
 using System;
-using Engine.Platform;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Binders;
+using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Mathematics;
+using Engine.Platform;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Elements;
 
@@ -44,7 +44,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         /// <summary>The type of the board being played (<c>GameManager.Board</c> is replaced when a game changes it).</summary>
         public BoardType BoardType => _gameManager?.Board.Type ?? BoardType.Full;
-        
+
         // IUiContainer implementation
 
         public UIBoard() { }

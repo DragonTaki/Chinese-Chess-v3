@@ -10,17 +10,18 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Engine.Platform;
 
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Globals;
 using Engine.Mathematics;
+using Engine.Platform;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Renderers;
 using Engine.UI.Dialogs;
+using Engine.UI.Widgets;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs
 {
@@ -78,7 +79,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         /// <summary>The width of the current buttons in a row (set by <see cref="Show"/>); the dialog is at least this wide.</summary>
         private float _buttonRowWidth = 0f;
 
-        private static float ButtonWidthFor(IReadOnlyList<Engine.UI.Widgets.ButtonEntry<ConfirmDialogResult>> entries)
+        private static float ButtonWidthFor(IReadOnlyList<ButtonEntry<ConfirmDialogResult>> entries)
         {
             foreach (var entry in entries)
             {
@@ -129,7 +130,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         private Vector2F MeasureDialog(string message, float availableWidth, out SizeF textSize)
         {
             float maxDialogWidth = MaxDialogWidth(availableWidth);
-            using var gTmp = Engine.Platform.GraphicsBackend.Factory.CreateMeasurementContext();   // only used to measure text
+            using var gTmp = GraphicsBackend.Factory.CreateMeasurementContext();   // only used to measure text
             textSize = gTmp.MeasureString(message ?? string.Empty, MessageFont,
                             (int)maxDialogWidth - (int)PaddingH * 2);
 
