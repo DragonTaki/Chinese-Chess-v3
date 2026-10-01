@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
@@ -80,7 +81,7 @@ namespace Launcher
                 ControlStyles.UserPaint |
                 ControlStyles.OptimizedDoubleBuffer, true);
 
-            this.Text = "Chinese Chess v3 - created by @DragonTaki";
+            this.Text = SystemSettings.WindowTitle;
 
             // The window opens at a normal desktop size (1080p) rather than
             // the UI's own (smaller) DesignSize — content is scaled up to

@@ -70,7 +70,7 @@ namespace Launcher.Cross
             // UILayoutConstants.DefaultWindowSize/MinimumWindowSize.
             var options = WindowOptions.Default with
             {
-                Title = "Chinese Chess v3 - created by @DragonTaki",
+                Title = SystemSettings.WindowTitle,
                 Size = new Vector2D<int>(
                     (int)UILayoutConstants.DefaultWindowSize.X,
                     (int)UILayoutConstants.DefaultWindowSize.Y),
@@ -88,7 +88,7 @@ namespace Launcher.Cross
             services.AddSingleton<IUiFactory, UiFactory>();
             services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
 
-            services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
+            services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
 
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<UIRootNode>();
