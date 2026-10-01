@@ -19,6 +19,7 @@ using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 
 using Engine.Logging;
+using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Handlers;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,59 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         /// <summary>The saved-game list; created the first time 載入 opens it.</summary>
         private UISavedGameMenu _savedGameMenu;
 
+        /// <summary>
+        /// Set while 回到主畫面 resigns the game itself: that ending is not announced (the
+        /// screen is being left).
+        /// </summary>
+        private bool _suppressGameOverDialog = false;
+
         public UIGameMenuHandler() { }
+
+        /// <summary>
+        /// Subscribes to the game's end once: the screen (and this handler) is a single
+        /// long-lived instance, like the <see cref="GameManager"/> it listens to.
+        /// </summary>
+        protected override void OnInit(IUiFactory factory)
+        {
+            Game.GameOver += OnGameOver;
+        }
+
+        /// <summary>
+        /// The game just ended (checkmate, stalemate, time-up, resignation, no pieces left): shows
+        /// who won and why, with 重新開始 / 回到主畫面 / 關閉. Not announced for a saved game's old
+        /// ending coming back while it loads, nor while the game screen is not shown. 關閉 (or a
+        /// click outside the dialog) keeps the final board on screen.
+        /// </summary>
+        private void OnGameOver(GameOverInfo info)
+        {
+            var game = Game;
+            if (_suppressGameOverDialog || game.IsReplaying)
+                return;
+
+            // The GameOver event may come from the clock update or a board click: show the
+            // dialog on the UI thread, once the game state has settled.
+            Element.Post(() =>
+            {
+                if (!Element.IsVisible || !game.IsGameOver)
+                    return;
+
+                DialogManager.ShowConfirm(
+                    GameMenuTexts.GameOverMessage(info.Winner, game.ColorOf(info.Winner), info.Reason, game.Board.Type),
+                    ConfirmDialogType.GameOver,
+                    result =>
+                    {
+                        switch (result)
+                        {
+                            case ConfirmDialogResult.Restart:
+                                RestartNow();
+                                break;
+                            case ConfirmDialogResult.ReturnToMain:
+                                ShowMainMenu();
+                                break;
+                        }
+                    });
+            });
+        }
 
         private GameManager Game => _factory.ServiceProvider.GetRequiredService<GameManager>();
 
@@ -246,7 +299,15 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 {
                     if (result != ConfirmDialogResult.Yes)
                         return;
-                    ResignSideToMove();
+                    _suppressGameOverDialog = true;
+                    try
+                    {
+                        ResignSideToMove();
+                    }
+                    finally
+                    {
+                        _suppressGameOverDialog = false;
+                    }
                     ShowMainMenu();
                 });
         }

@@ -7,6 +7,8 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 
@@ -30,6 +32,31 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>重新開始 while the game is in progress (a move was made and the game is not over).</summary>
         public const string DiscardAndRestart = "是否放棄目前進度並重新開始？";
+
+        // ----- Game-over dialog -----
+
+        /// <summary>
+        /// The game-over dialog's message: the winner (by the colour it plays) and why, two lines.
+        /// </summary>
+        /// <param name="winner">The winning side; <c>None</c> is a draw (no rule ends a game in a draw yet).</param>
+        /// <param name="winnerColor">The colour <paramref name="winner"/> plays (<c>GameManager.ColorOf</c>).</param>
+        /// <param name="reason">How the game ended.</param>
+        /// <param name="boardType">The board played on (a stalemate is worded differently on the dark-chess board).</param>
+        public static string GameOverMessage(PlayerSide winner, PieceColor winnerColor, GameOverReason reason, BoardType boardType) =>
+            winner == PlayerSide.None
+                ? $"和棋\n{GameOverReasonText(reason, boardType)}"
+                : $"{SideName(winner, winnerColor)}獲勝\n{GameOverReasonText(reason, boardType)}";
+
+        /// <summary>The reason line of the game-over dialog.</summary>
+        public static string GameOverReasonText(GameOverReason reason, BoardType boardType) => reason switch
+        {
+            GameOverReason.Checkmate => "將死",
+            GameOverReason.Stalemate => boardType == BoardType.HalfCenter ? "對方無法行動" : "困斃（對方無子可走）",
+            GameOverReason.TimeUp => "對方超時",
+            GameOverReason.Resign => "對方認輸",
+            GameOverReason.NoPiecesLeft => "對方棋子被吃光",
+            _ => reason.ToString(),
+        };
 
         // ----- Game log lines -----
 
