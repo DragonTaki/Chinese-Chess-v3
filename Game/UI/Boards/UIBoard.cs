@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/10/01
-// Version: v1.2
+// Update Date: 2026/10/02
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -18,6 +18,7 @@ using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Mathematics;
 using Engine.Platform;
+using Engine.UI.Constants.Core;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Elements;
 
@@ -174,35 +175,38 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         }
 
         /// <summary>
-        /// Converts an absolute point to a board square. Full: same rules as
-        /// <see cref="BoardPixelExtensions"/> (which use the authored constants) - inside
-        /// when within half a cell of the grid's outermost crossings, rounded to the nearest
-        /// intersection. HalfCenter: inside when on the grid area (Columns x Rows cells),
-        /// the cell under the point.
+        /// The radius pieces are drawn at (<c>UILayoutConstants.Board.Piece.Radius</c> at
+        /// <see cref="DetailScale"/>); the clickable area also reaches this far past the
+        /// outermost piece centres (<see cref="TryPixelToGrid"/>).
         /// </summary>
-        /// <returns>False when the point is outside the board.</returns>
+        public float PieceRadius => UILayoutConstants.Board.Piece.Radius * DetailScale;
+
+        /// <summary>
+        /// The per-edge adjustment of the clickable area for <see cref="BoardType"/>
+        /// (<c>UILayoutConstants.Board.ClickArea</c> / <c>Board.HalfCenter.ClickArea</c>), in
+        /// design-space units, not scaled with the board.
+        /// </summary>
+        /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+        public PaddingF ClickAreaEdgeAdjust => BoardType switch
+        {
+            BoardType.Full => UILayoutConstants.Board.ClickArea.EdgeAdjust,
+            BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.ClickArea.EdgeAdjust,
+            _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
+        };
+
+        /// <summary>
+        /// Converts an absolute point to a board square, from the drawing geometry
+        /// (<see cref="BoardHitTest"/>): inside when within the drawn extent - the outermost
+        /// piece centres (<see cref="GridToPixel"/>: crossings on Full, cell centres on
+        /// HalfCenter) out by <see cref="PieceRadius"/>, adjusted per edge by
+        /// <see cref="ClickAreaEdgeAdjust"/> - then the square whose piece centre is nearest.
+        /// </summary>
+        /// <returns>False when the point is outside the clickable area.</returns>
         public bool TryPixelToGrid(float pixelX, float pixelY, out int gridX, out int gridY)
         {
             var board = _gameManager.Board;
-            var origin = GridOrigin;
-            float cell = GridCellSize;
-            gridX = gridY = 0;
-
-            // Full: the area within half a cell of the outermost crossings, on every side
-            // (it used to start at the crossings themselves and reach a whole cell past the
-            // far ones, so the left half of a column-0 piece and the top half of a row-0
-            // piece took no click). HalfCenter: the cells themselves.
-            float round = board.Type == BoardType.HalfCenter ? 0f : 0.5f;
-            if (cell <= 0f
-                || pixelX < origin.X - round * cell || pixelX > origin.X + (board.Columns - round) * cell
-                || pixelY < origin.Y - round * cell || pixelY > origin.Y + (board.Rows - round) * cell)
-                return false;
-
-            // Full rounds to the nearest crossing; HalfCenter takes the cell (the far edge,
-            // exactly on the border, clamps into the last cell).
-            gridX = Math.Clamp((int)((pixelX - origin.X) / cell + round), 0, board.Columns - 1);
-            gridY = Math.Clamp((int)((pixelY - origin.Y) / cell + round), 0, board.Rows - 1);
-            return true;
+            return BoardHitTest.TryPixelToGrid(GridToPixel(0, 0), GridCellSize, board.Columns, board.Rows,
+                PieceRadius, ClickAreaEdgeAdjust, pixelX, pixelY, out gridX, out gridY);
         }
 
         #endregion

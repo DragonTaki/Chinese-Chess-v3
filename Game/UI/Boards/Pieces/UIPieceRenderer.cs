@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/01
-// Version: v2.4
+// Update Date: 2026/10/02
+// Version: v2.5
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -88,7 +88,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
             private static void DrawRing(IGraphics g, UIBoard board, int x, int y, float scale, Color color)
             {
                 var center = board.GridToPixel(x, y);
-                float radius = UILayoutConstants.Board.Piece.Radius * scale;
+                float radius = board.PieceRadius;
                 float width = UILayoutConstants.Board.Piece.GlowMargin * scale;
                 if (width <= 0f)
                     return;
@@ -123,7 +123,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 float centerX = center.X;
                 float centerY = center.Y;
 
-                float radius = UILayoutConstants.Board.Piece.Radius * scale;
+                float radius = board.PieceRadius;
                 float outerRadius = radius - UILayoutConstants.Board.Piece.OuterMargin * scale;
 
                 // Face down (暗棋, 揭棋): only the piece's back - the same disc and border for
