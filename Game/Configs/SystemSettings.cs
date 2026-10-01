@@ -11,6 +11,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -137,6 +138,31 @@ namespace Chinese_Chess_v3.Game.Configs
         /// </summary>
         public static string SaveFileName(GameMode mode, string name, DateTime time) =>
             $"{SaveModeName(mode)}_{SanitizeFileNamePart(name)}_{time.ToString(SaveTimestampFormat, CultureInfo.InvariantCulture)}.pgn";
+
+        private static readonly Regex SaveFileNamePattern = new(
+            @"^(?<mode>[^_]+)_(?<name>.+)_(?<time>\d{8}-\d{6})(?:_\d+)?$", RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Splits a save file name made by <see cref="SaveFileName"/> (with or without
+        /// <c>.pgn</c>, also with the <c>_2</c>, <c>_3</c>, ... of a second save in the same
+        /// second) into its name part and time stamp, e.g. <c>對局_大盤_20261001-153000</c> ->
+        /// <c>大盤</c>, 2026-10-01 15:30:00. False for any other name (e.g. a renamed file).
+        /// </summary>
+        public static bool TryParseSaveFileName(string fileName, out string name, out DateTime time)
+        {
+            name = null;
+            time = default;
+            if (string.IsNullOrEmpty(fileName))
+                return false;
+            if (fileName.EndsWith(".pgn", StringComparison.OrdinalIgnoreCase))
+                fileName = fileName.Substring(0, fileName.Length - 4);
+
+            var m = SaveFileNamePattern.Match(fileName);
+            if (!m.Success || !DateTime.TryParseExact(m.Groups["time"].Value, SaveTimestampFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
+                return false;
+            name = m.Groups["name"].Value;
+            return true;
+        }
 
         /// <summary>
         /// The name part of <paramref name="game"/>'s save file: the board type
