@@ -58,12 +58,12 @@ namespace StarAnimation.Controllers
         private int _directionChangeCountdown;
         private int _speedChangeCountdown;
 
-        public StarController(int _width, int _height, int _starCount = 250)
+        public StarController(int width, int height, int starCount = 250)
         {
-            this._width = Math.Max(_width, MinDimension);
-            this._height = Math.Max(_height, MinDimension);
-            this._starCount = _starCount;
-            _targetCount = TargetCountFor(this._width, this._height);
+            _width = Math.Max(width, MinDimension);
+            _height = Math.Max(height, MinDimension);
+            _starCount = starCount;
+            _targetCount = TargetCountFor(_width, _height);
 
             _minVisibleCount = _starCount - Settings.StarCountRange;
             _maxVisibleCount = _starCount + Settings.StarCountRange;
