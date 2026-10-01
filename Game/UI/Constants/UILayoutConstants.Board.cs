@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/30
-// Version: v2.1
+// Update Date: 2026/10/01
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -93,6 +93,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 public const float OuterMargin = 6.0f;
                 public const float RedOutlineWidth = 3.0f;
                 public const float BlackOutlineWidth = 2.0f;
+                // Face-down piece's outline (placeholder, for the author to tune)
+                public const float FaceDownOutlineWidth = 2.0f;
 
                 // Selection glow ring: extends this far past the radius. The board hint
                 // rings (legal moves, hanging pieces) use the same ring.
