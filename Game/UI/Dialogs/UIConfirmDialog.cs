@@ -33,8 +33,9 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         public float PaddingV { get; set; } = 16.0f;
         public bool ShowMaskEffect { get; set; } = true;
 
+        /// <summary>The callback of the dialog being shown (set by <see cref="Show"/>; the result of a button or a click outside).</summary>
 #nullable enable
-        public Action<ConfirmDialogResult>? _onResult;
+        private Action<ConfirmDialogResult>? _onResult;
 #nullable disable
 
         /// <param name="_renderer">Draws the dialog box and its buttons.</param>
