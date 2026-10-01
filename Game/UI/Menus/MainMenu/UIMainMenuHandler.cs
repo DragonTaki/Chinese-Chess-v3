@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2025/10/24
-// Version: v2.0
+// Update Date: 2026/10/01
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.UI.Dialogs;
+using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 
@@ -38,7 +39,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             // Initialize _submenus
             _submenus[UIMainMenuType.NewGame] = CreateSubMenu(() => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>());
             _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
-            _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
+            _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
             _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
@@ -81,6 +82,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                         var submenu = _submenus[_currentSubmenu.Value];
                         submenu.IsVisible = true;
                         Element.AddChild(submenu);
+                        AsScreen(submenu)?.OnEnter();
                     }
                     break;
 
@@ -114,8 +116,18 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 var submenu = _submenus[_currentSubmenu.Value];
                 submenu.IsVisible = false;
                 Element.RemoveChild(submenu);
+                AsScreen(submenu)?.OnExit();
             }
         }
+
+        /// <summary>
+        /// A submenu's <see cref="IScreen"/> implementation (the element itself or its
+        /// handler, as NavigationManager looks it up for screens): submenus that refresh
+        /// their content when opened (e.g. the endgame menu reloading its files) get
+        /// OnEnter/OnExit as they are shown/closed.
+        /// </summary>
+        private static IScreen AsScreen(UIElement submenu) =>
+            submenu as IScreen ?? submenu.HandlerBase as IScreen;
 
         private void ClickExitAction()
         {

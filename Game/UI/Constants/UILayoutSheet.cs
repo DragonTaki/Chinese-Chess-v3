@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
-// Update Date: 2026/09/30
-// Version: v1.1
+// Update Date: 2026/10/01
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -147,6 +147,83 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>Each submenu button.</summary>
             public static readonly UILayoutStyle Button = Menus.Button(UILayoutConstants.Submenu.Button.Size.Y);
+        }
+
+        /// <summary>
+        /// The endgame challenge submenu (<c>UIEndgameMenu</c>): a submenu panel whose scroll
+        /// container stacks the category filter row and the puzzle grid. Both are flex rows
+        /// that wrap (<c>UILayoutConstants.EndgameMenu.Columns</c> equal-width buttons per
+        /// line, column and row gaps) and take their height from their buttons, so the scroll
+        /// container's automatic content size covers every row.
+        /// </summary>
+        public static class EndgameMenu
+        {
+            /// <summary>The submenu: same place and size as the other submenus.</summary>
+            public static readonly UILayoutStyle Panel = Submenu.Panel;
+
+            /// <summary>
+            /// The submenu's scroll container: inset like the other submenus, a flex column
+            /// with the section gap between the category row and the puzzle grid.
+            /// </summary>
+            public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
+                UILayoutConstants.EndgameMenu.SectionGap);
+
+            /// <summary>
+            /// A row of buttons inside the scroll column (the category row, the puzzle grid):
+            /// full width, height from its content (never shrunk - overflow is scrolled to),
+            /// a flex row that wraps, lines packed at the top.
+            /// </summary>
+            public static readonly UILayoutStyle ButtonRows = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Row,
+                FlexWrap = FlexWrap.Wrap,
+                JustifyContent = JustifyContent.Start,
+                AlignItems = FlexAlign.Start,
+                AlignContent = AlignContent.Start,
+                ColumnGap = UILayoutConstants.EndgameMenu.ColumnGap,
+                RowGap = UILayoutConstants.EndgameMenu.RowGap,
+            };
+
+            /// <summary>The category filter row (<c>UIEndgameMenu.CategoryRow</c>).</summary>
+            public static readonly UILayoutStyle CategoryRow = ButtonRows;
+
+            /// <summary>The puzzle grid (<c>UIEndgameMenu.PuzzleGrid</c>).</summary>
+            public static readonly UILayoutStyle PuzzleGrid = ButtonRows;
+
+            /// <summary>A button of a row: fixed column width and height, not shrinkable.</summary>
+            private static UILayoutStyle RowButton(float height) => new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.EndgameMenu.ButtonWidth),
+                Height = LayoutSize.Fixed(height),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>Each category toggle button.</summary>
+            public static readonly UILayoutStyle CategoryButton = RowButton(UILayoutConstants.EndgameMenu.CategoryButtonHeight);
+
+            /// <summary>Each puzzle button.</summary>
+            public static readonly UILayoutStyle PuzzleButton = RowButton(UILayoutConstants.EndgameMenu.PuzzleButtonHeight);
+
+            /// <summary>
+            /// The "no puzzles" message (a child of the submenu, over the scroll area): as wide
+            /// as the scroll container, height from its text, vertically centered in the panel.
+            /// </summary>
+            public static readonly UILayoutStyle EmptyMessage = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.Submenu.MarginX,
+                Right = UILayoutConstants.Submenu.MarginX,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                AlignY = Alignment.Center,
+            };
         }
 
         /// <summary>

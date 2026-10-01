@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2026/09/24
-// Version: v2.0
+// Update Date: 2026/10/01
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -117,6 +117,86 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     Margin = Border.Margin,
                     CornerRadius = Border.CornerRadius
                 };
+            }
+        }
+
+        /// <summary>
+        /// The endgame challenge submenu (<c>UIEndgameMenu</c>). Its buttons are a quarter of
+        /// the submenu width (<c>UILayoutConstants.EndgameMenu.ButtonWidth</c>, about 154), so
+        /// they use a smaller font than the main menu's 36 and put the difficulty stars on a
+        /// second line. Box look (borders, background) as the main menu buttons.
+        /// <para>
+        /// Glyphs: <see cref="StarFilled"/>/<see cref="StarEmpty"/> (U+2605/U+2606) and
+        /// <see cref="CategoryOnMark"/>/<see cref="CategoryOffMark"/> (U+25CF/U+25CB) were
+        /// checked in the cmap of the bundled <c>Assets/Font/NotoSerifCJKtc-Medium.otf</c>
+        /// (and <c>MoeLI.ttf</c>): all present, no fallback font needed.
+        /// </para>
+        /// </summary>
+        public static class EndgameMenu
+        {
+            /// <summary>Puzzle and category buttons; at this size about 5 CJK characters fit on a line.</summary>
+            public static readonly IFont ButtonFont = StyleHelper.GetFont("NotoSerif", 18, FontStyleFlags.Bold);
+
+            /// <summary>Difficulty stars: one filled star per level, empty ones up to <see cref="MaxDifficulty"/>.</summary>
+            public const string StarFilled = "★";
+            public const string StarEmpty = "☆";
+
+            /// <summary>Difficulty is 1 to 5 (docs/ENDGAMES.md); the stars show it out of this many.</summary>
+            public const int MaxDifficulty = 5;
+
+            /// <summary>Category toggle labels: mark + category name.</summary>
+            public const string CategoryOnMark = "●";
+            public const string CategoryOffMark = "○";
+
+            /// <summary>Shown for puzzles without a category (empty <c>EndgamePuzzle.Category</c>).</summary>
+            public const string UncategorizedName = "未分類";
+
+            /// <summary>A puzzle button, and a category toggle that is on.</summary>
+            public static IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
+            {
+                Font = ButtonFont,
+                TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = MainMenu.Button.Border.Outer,
+                InnerBorder = MainMenu.Button.Border.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>A category toggle that is off: same box, dimmed text and borders.</summary>
+            public static class CategoryOff
+            {
+                public static readonly IBrush TextBrush = StyleHelper.GetBrush("#FCFAF2", 0.45f);  // #FCFAF2
+
+                public static BorderStyle Outer = new BorderStyle
+                {
+                    Width = 4.0f,
+                    Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
+                };
+
+                public static BorderStyle Inner = new BorderStyle
+                {
+                    Width = 2.0f,
+                    Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
+                };
+
+                public static IButtonDrawStyle Style = new DoubleBorderRoundedStyle
+                {
+                    Font = ButtonFont,
+                    TextBrush = TextBrush,
+                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    OuterBorder = Outer,
+                    InnerBorder = Inner,
+                    Margin = MainMenu.Button.Border.Margin,
+                    CornerRadius = MainMenu.Button.Border.CornerRadius
+                };
+            }
+
+            /// <summary>The message shown when no puzzle was found.</summary>
+            public static class EmptyMessage
+            {
+                public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
+                public static readonly Color Color = StyleHelper.GetColor("#FCFAF2", 1.0f);  // #FCFAF2
             }
         }
     }
