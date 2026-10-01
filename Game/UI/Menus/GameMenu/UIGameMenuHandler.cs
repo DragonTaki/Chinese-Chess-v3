@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/01
-// Version: v2.0
+// Update Date: 2026/10/02
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -30,8 +30,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
     /// Handles logic and interactions for the UIGameMenu: the game screen's left menu
     /// (docs/PLAN.md in-game menu). 撤銷上步 = round undo, 儲存遊戲 = save, 載入佈局 = the
     /// saved-game list, 放棄對局 = the side to move resigns, 回到主畫面 = back to the main
-    /// menu (asks first while the game is in progress). 重新開始 = the current game again
-    /// from its start (asks first while a move has been made and the game is not over).
+    /// menu (asks first while the game is in progress). 重新開始 = the current game restarted
+    /// in its mode (<see cref="GameManager.Restart"/>; a loaded saved game comes back exactly
+    /// as it was when loaded) (asks first while a move has been made and the game is not over).
     /// <para>
     /// Local hot-seat play: one person plays both sides, so 放棄 always resigns for the side
     /// to move (<see cref="GameManager.CurrentTurn"/>).
@@ -137,8 +138,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         }
 
         /// <summary>
-        /// 重新開始: restarts the current game in its current mode from its start position
-        /// (<see cref="GameManager.Restart"/>, through the game UI's reset so the log, board and
+        /// 重新開始: restarts the current game in its current mode - from its start position, or
+        /// a loaded saved game exactly as it was when loaded (<see cref="GameManager.Restart"/>, through the game UI's reset so the log, board and
         /// sidebar start clean, like a new game). While a move has been made and the game is
         /// not over it asks first; an ended game or an untouched start restarts directly.
         /// </summary>
