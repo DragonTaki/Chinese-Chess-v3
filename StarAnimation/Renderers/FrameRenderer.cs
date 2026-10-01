@@ -17,7 +17,7 @@ namespace StarAnimation.Renderers
 {
     /// <summary>
     /// Renders temporary visual frames for debugging effect areas.
-    /// Each frame appears for a specified duration before fading out.
+    /// Frame lifetime is managed by FrameController; this class only draws the outlines.
     /// </summary>
     public class FrameRenderer
     {
@@ -57,6 +57,7 @@ namespace StarAnimation.Renderers
         /// Draws all currently active debug frames.
         /// </summary>
         /// <param name="g">The graphics context to draw to.</param>
+        /// <param name="activeFrames">The frames to draw as rectangle outlines.</param>
         public void Draw(IGraphics g, List<Frame> activeFrames)
         {
             foreach (var frame in activeFrames)

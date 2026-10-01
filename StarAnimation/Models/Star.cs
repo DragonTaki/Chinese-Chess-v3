@@ -41,16 +41,15 @@ namespace StarAnimation.Models
 
         /// <summary>
         /// Initializes a new star at a random position within the given width and height.
-        /// Also sets a random speed and direction for the star's movement.
+        /// Also sets a random base velocity and target acceleration for the star's movement.
         /// </summary>
-        /// <param name="rand">A random number generator used for randomizing star properties.</param>
         /// <param name="width">The width of the starfield area in which the star will be placed.</param>
         /// <param name="height">The height of the starfield area in which the star will be placed.</param>
         public Star(int width, int height)
         {
             Position.Current = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
 
-            // Star size is a random value between 1 and 3
+            // Star size is a random integer, 1 or 2 (the upper bound of NextInt is exclusive)
             Size = Rand.NextInt(1, 3);
             
             // Random base physical value
@@ -60,29 +59,31 @@ namespace StarAnimation.Models
         }
 
         /// <summary>
-        /// Randomizes the star's movement by setting a new target position in a random direction.
+        /// Sets a new target position at a random point within the given width and height.
         /// </summary>
-        /// <param name="distance">The distance from the current position to set the new target.</param>
+        /// <param name="width">Width of the area in which the target is chosen.</param>
+        /// <param name="height">Height of the area in which the target is chosen.</param>
         public void RandomizeTargetPosition(int width, int height)
         {
             Position.Target = new Vector2F(Rand.NextFloat(width), Rand.NextFloat(height));
         }
 
         /// <summary>
-        /// Randomizes the speed of the star based on its base speed.
+        /// Assigns a new random base velocity (each axis in [-0.5, 0.5)) and resets the
+        /// current velocity to it.
         /// </summary>
         public void RandomizeBaseSpeed()
         {
-            // Randomize speed within a factor of the base speed.
+            // Pick a random base velocity; current velocity starts from it.
             Velocity.Base = new Vector2F(Rand.NextFloat(-0.5f, 0.5f), Rand.NextFloat(-0.5f, 0.5f));
             Velocity.Current = Velocity.Base;
         }
         /// <summary>
-        /// Randomizes the speed of the star based on its base speed.
+        /// Assigns a new random target acceleration (each axis in [-0.5, 0.5)).
         /// </summary>
         public void RandomizeAcceleration()
         {
-            // Randomize speed within a factor of the base speed.
+            // Pick a random target acceleration.
             Acceleration.Target = new Vector2F(Rand.NextFloat(-0.5f, 0.5f), Rand.NextFloat(-0.5f, 0.5f));
         }
 
