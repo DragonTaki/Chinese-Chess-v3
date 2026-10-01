@@ -24,7 +24,7 @@ public class ScrollTextBox : UIElement
     private LayoutF _bounds;
     private float _viewHeight;
 
-    // 可動態設定
+    // Can be changed at runtime
     public Font Font { get; set; } = SystemFonts.DefaultFont;
     public float LineHeight { get; set; } = 18f;
     public Color BackgroundColor { get; set; } = Color.Black;
@@ -60,11 +60,11 @@ public class ScrollTextBox : UIElement
     {
         var bounds = GetCurrentAbsoluteBounds();
 
-        // 背景
+        // Background
         using var bgBrush = new SolidBrush(BackgroundColor);
         g.FillRectangle(bgBrush, bounds);
 
-        // 文字
+        // Text
         g.SetClip(bounds.ToRectangleF());
         float y = bounds.Y - _scrollOffsetY;
 
