@@ -25,15 +25,18 @@ namespace Chinese_Chess_v3.Game.UI.Boards
     public static class BoardPixelExtensions
     {
         /// <summary>
-        /// Determine whether the pixel coordinates are within the board range
+        /// Determine whether the pixel coordinates are within the board range: within half a
+        /// cell of the outermost grid points on every side (the area <see cref="PixelToGrid"/>
+        /// rounds onto a grid point without clamping).
         /// </summary>
         public static bool IsWithinBoard(this Board board, float x, float y)
         {
             float boardX = UILayoutConstants.Board.Grid.Position.X;
             float boardY = UILayoutConstants.Board.Grid.Position.Y;
             float gridSize = UILayoutConstants.Board.Grid.CellSize;
-            return x >= boardX && x <= boardX + board.Columns * gridSize &&
-                   y >= boardY && y <= boardY + board.Rows * gridSize;
+            float half = gridSize / 2f;
+            return x >= boardX - half && x <= boardX + board.Columns * gridSize - half &&
+                   y >= boardY - half && y <= boardY + board.Rows * gridSize - half;
         }
 
         /// <summary>
