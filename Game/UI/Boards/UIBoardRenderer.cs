@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/30
+// Update Date: 2026/10/01
 // Version: v2.2
 /* ----- ----- ----- ----- */
 
@@ -35,8 +35,10 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         {
             if (_composite.ListCount == 0)
             {
+                // One board drawing per board type (each draws only for its own type).
                 _composite
                     .Add(new ClassicBoard())
+                    .Add(new HalfCenterBoard())
                     .Add(new UIPieceRenderer());
             }
         }
@@ -63,6 +65,10 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             // Draw whole board
             public override void OnRender(IGraphics g, UIBoard element)
             {
+                // The Full board (9x10, pieces on the crossings) only.
+                if (element.BoardType != BoardType.Full)
+                    return;
+
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
                 _origin = element.GridOrigin;
@@ -252,6 +258,75 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
                 g.DrawRectangle(pen, outerRect1);
                 g.DrawRectangle(pen, outerRect2);
+            }
+        }
+
+        /// <summary>
+        /// The HalfCenter board (台灣暗棋半盤, 8x4): the same background and line style as the
+        /// Full board, a grid of Columns x Rows cells (pieces stand in the cells, so there is
+        /// no palace, river or position mark) and the same double outer frame around it.
+        /// </summary>
+        private class HalfCenterBoard : UIRenderer<UIBoard, UIBoardHandler, UIBoardRenderer>
+        {
+            // Grid pen, rebuilt (and the old one disposed) only when the detail scale changes.
+            private IPen _boardPen;
+            private float _boardPenScale = float.NaN;
+
+            public override void OnRender(IGraphics g, UIBoard element)
+            {
+                if (element.BoardType != BoardType.HalfCenter)
+                    return;
+
+                GraphicsHelper.ApplyHighQualitySettings(g);
+
+                // Grid geometry from the board's resolved rectangle (see UIBoard's Grid Geometry).
+                Vector2F origin = element.GridOrigin;
+                float cell = element.GridCellSize;
+                float scale = element.DetailScale;
+                float lineWidth = UILayoutConstants.Board.Grid.LineWidth * scale;
+                UpdateBoardPen(scale, lineWidth);
+
+                RectangleF fullArea = element.GetCurrentAbsoluteBounds();
+                using (IBrush backgroundBrush = UIBoardStyles.CreateBoardBackgroundBrush(fullArea))
+                {
+                    g.FillRectangle(backgroundBrush, fullArea);
+                }
+
+                int columns = BoardConstants.HalfCenter.Columns;
+                int rows = BoardConstants.HalfCenter.Rows;
+                float width = columns * cell;
+                float height = rows * cell;
+
+                // Inner cell borders (the outermost ones are the frame below).
+                for (int i = 1; i < columns; i++)
+                {
+                    float x = origin.X + i * cell;
+                    g.DrawLine(_boardPen, x, origin.Y, x, origin.Y + height);
+                }
+                for (int j = 1; j < rows; j++)
+                {
+                    float y = origin.Y + j * cell;
+                    g.DrawLine(_boardPen, origin.X, y, origin.X + width, y);
+                }
+
+                // Double outer frame, like the Full board's: on the grid's edge, and a line
+                // width * 2 further out.
+                float gap = lineWidth * 2;
+                g.DrawRectangle(_boardPen, new RectangleF(
+                    origin.X - lineWidth / 2, origin.Y - lineWidth / 2,
+                    width + lineWidth, height + lineWidth));
+                g.DrawRectangle(_boardPen, new RectangleF(
+                    origin.X - gap - lineWidth / 2, origin.Y - gap - lineWidth / 2,
+                    width + 2 * gap + lineWidth, height + 2 * gap + lineWidth));
+            }
+
+            private void UpdateBoardPen(float scale, float lineWidth)
+            {
+                if (_boardPen != null && _boardPenScale == scale)
+                    return;
+                _boardPen?.Dispose();
+                _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, lineWidth);
+                _boardPenScale = scale;
             }
         }
     }

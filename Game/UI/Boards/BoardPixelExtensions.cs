@@ -19,7 +19,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards
     /// (<c>UILayoutConstants.Board.Grid</c>). Moved here from <c>Board</c> so Game/Core
     /// does not depend on UI layout constants. The live hit test is
     /// <see cref="UIBoard.TryPixelToGrid"/>, which uses the resolved board rectangle
-    /// instead; these keep the authored-layout variant available.
+    /// instead; these keep the authored-layout variant available. Full board only: the
+    /// HalfCenter board's cell geometry is only in <see cref="UIBoard.TryPixelToGrid"/>.
     /// </summary>
     public static class BoardPixelExtensions
     {

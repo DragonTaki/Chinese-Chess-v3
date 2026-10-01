@@ -7,6 +7,10 @@
 // Version: v1.3
 /* ----- ----- ----- ----- */
 
+using System;
+
+using Chinese_Chess_v3.Game.Core.Boards;
+
 using Engine.Geometry;
 using Engine.UI.Constants.Core;
 using Engine.UI.Models;
@@ -303,6 +307,36 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 AspectFit = AspectFit.Contain,
                 AlignX = Alignment.Center,
                 AlignY = Alignment.Center,
+            };
+
+            /// <summary>
+            /// <c>UIBoard</c> while a HalfCenter game (8×4) is shown: the same area as
+            /// <see cref="Board"/>, at the HalfCenter board's own aspect ratio
+            /// (<c>UILayoutConstants.Board.HalfCenter.Size</c>), so it fills the area's width and
+            /// is centered vertically.
+            /// </summary>
+            public static readonly UILayoutStyle HalfCenterBoard = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.GameMenu.Size.X,
+                Right = UILayoutConstants.Sidebar.Size.X,
+                Top = UILayoutConstants.Board.Position.Y,
+                Bottom = 0f,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Stretch,
+                AspectRatio = UILayoutConstants.Board.HalfCenter.Size.X / UILayoutConstants.Board.HalfCenter.Size.Y,
+                AspectFit = AspectFit.Contain,
+                AlignX = Alignment.Center,
+                AlignY = Alignment.Center,
+            };
+
+            /// <summary>The <c>UIBoard</c> style for a game on <paramref name="type"/>.</summary>
+            /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+            public static UILayoutStyle BoardFor(BoardType type) => type switch
+            {
+                BoardType.Full => Board,
+                BoardType.HalfCenter => HalfCenterBoard,
+                _ => throw new NotSupportedException($"No board layout for {type} yet"),
             };
 
             /// <summary>
