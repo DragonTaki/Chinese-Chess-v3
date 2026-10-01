@@ -33,7 +33,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
         public void StartNewGame(UINewGameMenuType selectedGamemode)
         {
-            Console.WriteLine($"NewgameMenu: selected: {selectedGamemode}");
+            Console.WriteLine($"NewGameMenu: selected: {selectedGamemode}");
 
             // The game set-up per mode; null for a mode that cannot be played yet.
             Action<GameManager> start = selectedGamemode switch
