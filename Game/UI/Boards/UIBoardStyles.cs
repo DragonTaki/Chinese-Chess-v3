@@ -12,7 +12,7 @@ using System.Drawing;
 using Engine.Platform;
 using Engine.Styles;
 
-namespace Chinese_Chess_v3.Game.Core.Boards
+namespace Chinese_Chess_v3.Game.UI.Boards
 {
     public static class UIBoardStyles
     {
