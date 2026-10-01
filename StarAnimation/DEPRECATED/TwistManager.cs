@@ -26,7 +26,9 @@ namespace StarAnimation.Core.Effect
         public TwistParameterRange ParameterRange { get; set; } = new();
 
         /// <summary>
-        /// Applies a new twist effect in a specified area.
+        /// Picks a random center inside the area (up to 100 attempts) and registers a new
+        /// TwistInstance there, with probability EffectAppliedChance. The stars list is not
+        /// used here; this method does not apply the effect to any star itself.
         /// </summary>
         public void Apply(List<Star> stars, IAreaShape area, Random rand)
         {
@@ -49,6 +51,7 @@ namespace StarAnimation.Core.Effect
 
         /// <summary>
         /// Updates all active twist effects, removing completed ones.
+        /// The stars list is not used here.
         /// </summary>
         public void Update(List<Star> stars, float deltaTimeInSeconds)
         {
