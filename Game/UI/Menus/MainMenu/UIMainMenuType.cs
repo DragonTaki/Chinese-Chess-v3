@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2025/05/16
+// Update Date: 2026/10/01
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -15,6 +15,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         NewGame,           // 開新一局
         LoadGame,          // 讀取存檔
         EndgameChallenge,  // 殘局闖關
+        OpeningPractice,   // 開局練習
         RuleSettings,      // 規則設定
         Multiplayer,       // 多人連線
         Help,              // 教學／幫助
