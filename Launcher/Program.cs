@@ -89,7 +89,7 @@ namespace Launcher
             services.AddSingleton<MainForm>();
 
             // Register utility services
-            services.AddSingleton<RandomTable>(new RandomTable(size: 10000, seed: 12345));
+            services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
 
             // Register managers and core systems
             services.AddSingleton<NavigationManager>();

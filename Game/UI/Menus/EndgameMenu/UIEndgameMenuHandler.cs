@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Endgames;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
@@ -31,20 +32,18 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
     /// </summary>
     public class UIEndgameMenuHandler : UIMenuHandler<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>, IScreen
     {
-        /// <summary>Folder name of the game under the per-user application data folder.</summary>
-        public const string AppDataFolderName = "Chinese-Chess-v3";
+        /// <summary>Folder name of the game under the per-user application data folder (<see cref="SystemSettings.AppDataFolderName"/>).</summary>
+        public const string AppDataFolderName = SystemSettings.AppDataFolderName;
 
-        /// <summary>The built-in puzzles: <c>Assets/Endgames</c> next to the game (copied there by the build).</summary>
-        public static string BuiltInFolder =>
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Endgames");
+        /// <summary>The built-in puzzles (<see cref="SystemSettings.BuiltInEndgameFolder"/>).</summary>
+        public static string BuiltInFolder => SystemSettings.BuiltInEndgameFolder;
 
         /// <summary>
-        /// The player's own puzzles: <c>Endgames</c> in the game's per-user application data
-        /// folder (Windows: <c>%APPDATA%\Chinese-Chess-v3\Endgames</c>; macOS/Linux: under
-        /// <c>~/.config</c>). Created by <see cref="EndgameLoader.LoadAll"/> when missing.
+        /// The player's own puzzles (<see cref="SystemSettings.DefaultUserEndgameFolder"/>:
+        /// <c>Endgames</c> in the game's per-user data folder). Created by
+        /// <see cref="EndgameLoader.LoadAll"/> when missing.
         /// </summary>
-        public static string UserFolder =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDataFolderName, "Endgames");
+        public static string UserFolder => SystemSettings.DefaultUserEndgameFolder;
 
         /// <summary>Categories the player switched off (all on by default; kept while the game runs).</summary>
         private readonly HashSet<string> _hiddenCategories = new(StringComparer.Ordinal);
