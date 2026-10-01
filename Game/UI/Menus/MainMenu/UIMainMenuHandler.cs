@@ -164,6 +164,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         public void OnExit()
         {
             CancelCurrentSubmenu();
+
+            // Forget it too: otherwise, back on the main menu, the first click on the same
+            // submenu's button counted as "clicked again" and collapsed the (already
+            // closed) submenu instead of opening it.
+            _currentSubmenu = null;
         }
     }
 }
