@@ -169,26 +169,41 @@ namespace Chinese_Chess_v3.Game.Configs
         /// The rule set a new <see cref="GameManager"/> plays by: the default
         /// <see cref="Rules"/> with this player's clock and rule choices applied.
         /// </summary>
-        public Rules CreateRules() => new Rules
+        public Rules CreateRules()
         {
-            TotalTimeLimit = TimeSpan.FromMinutes(TotalTimeMinutes),
-            StepTimeLimit = TimeSpan.FromSeconds(StepTimeSeconds),
-            IncrementPerMove = TimeSpan.FromSeconds(IncrementSeconds),
-            EnableStepTimer = StepTimerEnabled,
-            TimerMode = TimerMode,
-            EndGameWhenTimesUp = EndGameWhenTimesUp,
-            CanGeneralSeeGeneral = CanGeneralSeeGeneral,
-            CanGeneralLeavePalace = CanGeneralLeavePalace,
-            CanAdvisorLeavePalace = CanAdvisorLeavePalace,
-            CanElephantEyeBlocked = ElephantEyeCanBeBlocked,
-            CanHorseLegHobbled = HorseLegCanBeHobbled,
-            IsHiddenChess = IsHiddenChess,
-            CanCaptureHiddenPiece = CanCaptureHiddenPiece,
-            IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide,
-            IsAllowChainCapture = IsAllowChainCapture,
-            CanChariotRush = CanChariotRush,
-            IsHorseMoveDiagonally = IsHorseMoveDiagonally,
-            IsCannonMustJumpToCapture = IsCannonMustJumpToCapture,
-        };
+            var rules = new Rules();
+            ApplyTo(rules);
+            return rules;
+        }
+
+        /// <summary>
+        /// Sets <paramref name="rules"/>' clock and rule properties from this player's choices
+        /// (every property <see cref="CreateRules"/> sets; the rest are left alone). Lets the
+        /// settings screen update the rules new games start with (<c>GameManager.DefaultRules</c>)
+        /// without replacing the object.
+        /// </summary>
+        public void ApplyTo(Rules rules)
+        {
+            ArgumentNullException.ThrowIfNull(rules);
+
+            rules.TotalTimeLimit = TimeSpan.FromMinutes(TotalTimeMinutes);
+            rules.StepTimeLimit = TimeSpan.FromSeconds(StepTimeSeconds);
+            rules.IncrementPerMove = TimeSpan.FromSeconds(IncrementSeconds);
+            rules.EnableStepTimer = StepTimerEnabled;
+            rules.TimerMode = TimerMode;
+            rules.EndGameWhenTimesUp = EndGameWhenTimesUp;
+            rules.CanGeneralSeeGeneral = CanGeneralSeeGeneral;
+            rules.CanGeneralLeavePalace = CanGeneralLeavePalace;
+            rules.CanAdvisorLeavePalace = CanAdvisorLeavePalace;
+            rules.CanElephantEyeBlocked = ElephantEyeCanBeBlocked;
+            rules.CanHorseLegHobbled = HorseLegCanBeHobbled;
+            rules.IsHiddenChess = IsHiddenChess;
+            rules.CanCaptureHiddenPiece = CanCaptureHiddenPiece;
+            rules.IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide;
+            rules.IsAllowChainCapture = IsAllowChainCapture;
+            rules.CanChariotRush = CanChariotRush;
+            rules.IsHorseMoveDiagonally = IsHorseMoveDiagonally;
+            rules.IsCannonMustJumpToCapture = IsCannonMustJumpToCapture;
+        }
     }
 }
