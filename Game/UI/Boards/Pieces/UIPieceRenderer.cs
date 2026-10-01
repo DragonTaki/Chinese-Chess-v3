@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/30
-// Version: v2.3
+// Update Date: 2026/10/01
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -54,7 +54,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 // square the later one wins: hanging < legal move < selected.
                 foreach (var uiPiece in uiPieces)
                 {
-                    if (showHanging && uiPiece.IsHanging)
+                    // A face-down piece's ring would show its colour; the Core never reports
+                    // one as hanging anyway (BoardAnalysis), this only makes sure.
+                    if (showHanging && uiPiece.IsHanging && uiPiece.PieceModel.CurrentInfo.IsFaceUp)
                     {
                         var piece = uiPiece.PieceModel;
                         Color color = piece.Color == PieceColor.Red ? PieceSettings.HangingRedRingColor : PieceSettings.HangingBlackRingColor;
@@ -123,6 +125,17 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
 
                 float radius = UILayoutConstants.Board.Piece.Radius * scale;
                 float outerRadius = radius - UILayoutConstants.Board.Piece.OuterMargin * scale;
+
+                // Face down (暗棋, 揭棋): only the piece's back - the same disc and border for
+                // every piece, no character - so neither its type nor its colour shows.
+                if (!piece.CurrentInfo.IsFaceUp)
+                {
+                    g.FillEllipse(PieceSettings.FaceDownBackgroundBrush, centerX - radius, centerY - radius, radius * 2, radius * 2);
+                    using IPen backPen = GraphicsBackend.Factory.CreatePen(PieceSettings.FaceDownOutlineColor,
+                        UILayoutConstants.Board.Piece.FaceDownOutlineWidth * scale);
+                    g.DrawEllipse(backPen, centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2);
+                    return;
+                }
 
                 // Visual color is piece.Color, not piece.Side — they're
                 // deliberately decoupled (see PieceInfo.Color's doc
