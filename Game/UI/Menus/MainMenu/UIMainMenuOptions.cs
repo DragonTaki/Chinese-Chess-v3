@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2025/05/14
+// Update Date: 2026/10/01
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -23,6 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 new ButtonEntry<UIMainMenuType>("開新一局",   UIMainMenuType.NewGame,          () => switchSubmenu(UIMainMenuType.NewGame)),
                 new ButtonEntry<UIMainMenuType>("讀取存檔",   UIMainMenuType.LoadGame,         () => switchSubmenu(UIMainMenuType.LoadGame)),
                 new ButtonEntry<UIMainMenuType>("殘局闖關",   UIMainMenuType.EndgameChallenge, () => switchSubmenu(UIMainMenuType.EndgameChallenge)),
+                new ButtonEntry<UIMainMenuType>("開局練習",   UIMainMenuType.OpeningPractice,  () => switchSubmenu(UIMainMenuType.OpeningPractice)),
                 new ButtonEntry<UIMainMenuType>("規則設定",   UIMainMenuType.RuleSettings,     () => switchSubmenu(UIMainMenuType.RuleSettings)),
                 new ButtonEntry<UIMainMenuType>("多人連線",   UIMainMenuType.Multiplayer,      () => switchSubmenu(UIMainMenuType.Multiplayer)),
                 new ButtonEntry<UIMainMenuType>("教學／幫助", UIMainMenuType.Help,             () => switchSubmenu(UIMainMenuType.Help)),

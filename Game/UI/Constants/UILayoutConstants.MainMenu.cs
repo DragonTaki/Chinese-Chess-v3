@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/25
-// Version: v2.0
+// Update Date: 2026/10/01
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -54,7 +54,12 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 public static readonly LayoutF Layout = new LayoutF(
                     new Vector2F(0.0f, 0.0f),  // The scroll container is already inset by the margin
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
-                public const float Spacing = 40.0f;
+
+                /// <summary>
+                /// Gap between two buttons. 25 (was 40) so the nine buttons fit the scroll
+                /// container without scrolling: 9 * 60 + 8 * 25 = 740 &lt;= 760 (840 - 2 * 40).
+                /// </summary>
+                public const float Spacing = 25.0f;
             }
         }
     }

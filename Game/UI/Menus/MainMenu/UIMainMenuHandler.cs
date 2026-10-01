@@ -14,6 +14,7 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 
 using Engine.Network;
 using Engine.Platform;
@@ -40,6 +41,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             _submenus[UIMainMenuType.NewGame] = CreateSubMenu(() => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>());
             _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
+            _submenus[UIMainMenuType.OpeningPractice] = CreateSubMenu(() => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>());
             _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
@@ -69,6 +71,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 case UIMainMenuType.NewGame:
                 case UIMainMenuType.LoadGame:
                 case UIMainMenuType.EndgameChallenge:
+                case UIMainMenuType.OpeningPractice:
                 case UIMainMenuType.RuleSettings:
                 case UIMainMenuType.Help:
                 case UIMainMenuType.Settings:
