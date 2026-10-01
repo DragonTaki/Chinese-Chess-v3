@@ -10,6 +10,7 @@
 using System;
 using Engine.Platform;
 
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -33,6 +34,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         private GameManager _gameManager;
         public GameManager GameManager => _gameManager;
         public Piece SelectedPiece => _gameManager.SelectedPiece;
+
+        /// <summary>The player settings (board hints); the code defaults when none are registered.</summary>
+        public PlayerSettings PlayerSettings { get; private set; } = PlayerSettings.Defaults;
         
         // IUiContainer 實作
 
@@ -40,6 +44,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         protected override void OnInit(IUiFactory factory)
         {
             _gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
+            PlayerSettings = _factory.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults;
             PieceBinder = new UIPieceBinder(_gameManager, this /* or boardPanel */);
 
             // Declared size (pre-layout fallback), then the layout rules.

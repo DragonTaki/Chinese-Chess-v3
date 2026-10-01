@@ -79,6 +79,12 @@ namespace Launcher.Cross
 
             AppControl.ExitCallback = window.Close;
 
+            // Player settings (docs/SETTINGS.md): loaded once at startup from settings.ini
+            // in the per-user data folder (created / repaired there as needed) and
+            // registered in DI below for the screens that read them.
+            var playerSettings = PlayerSettingsFile.Load();
+            Settings.EnableDebugMode = playerSettings.ShowDebugLog;
+            Settings.CurrentUser = playerSettings.PlayerName;
             AppLogger.EnableDebug = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
@@ -86,7 +92,8 @@ namespace Launcher.Cross
             var services = new ServiceCollection();
 
             services.AddSingleton<IUiFactory, UiFactory>();
-            services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
+            services.AddSingleton<IScrollInputHandler>(_ => new ScrollInputHandler { WheelStep = playerSettings.WheelScrollStep });
+            services.AddSingleton(playerSettings);
 
             services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
 
@@ -95,7 +102,7 @@ namespace Launcher.Cross
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<NetworkManager>();
-            services.AddSingleton<GameManager>();
+            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRules()));
 
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();

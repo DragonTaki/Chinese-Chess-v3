@@ -74,6 +74,12 @@ namespace Launcher
 
             // Push Game-level config into Engine (Engine must not read
             // Game.Configs directly — see Engine/Logging/AppLogger.cs).
+            // Player settings (docs/SETTINGS.md): loaded once at startup from settings.ini
+            // in the per-user data folder (created / repaired there as needed) and
+            // registered in DI below for the screens that read them.
+            var playerSettings = PlayerSettingsFile.Load();
+            Settings.EnableDebugMode = playerSettings.ShowDebugLog;
+            Settings.CurrentUser = playerSettings.PlayerName;
             AppLogger.EnableDebug = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
@@ -83,7 +89,8 @@ namespace Launcher
 
             // Register core UI services and factories
             services.AddSingleton<IUiFactory, UiFactory>();
-            services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
+            services.AddSingleton<IScrollInputHandler>(_ => new ScrollInputHandler { WheelStep = playerSettings.WheelScrollStep });
+            services.AddSingleton(playerSettings);
 
             // Register main WinForms form
             services.AddSingleton<MainForm>();
@@ -97,7 +104,7 @@ namespace Launcher
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<NetworkManager>();
-            services.AddSingleton<GameManager>();
+            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRules()));
 
             // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();

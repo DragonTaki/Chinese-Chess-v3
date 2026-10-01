@@ -27,7 +27,11 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         {
             if (element is UIBoard board)
             {
-                _pieces.Draw(g, board, board.PieceBinder.UIPieces, board.PieceBinder.LegalMoveTargets);
+                // Board hints follow the player settings ([hints] in settings.ini).
+                var settings = board.PlayerSettings;
+                _pieces.Draw(g, board, board.PieceBinder.UIPieces,
+                    settings.ShowLegalMoveHints ? board.PieceBinder.LegalMoveTargets : null,
+                    settings.ShowHangingPieceHints);
             }
         }
 
@@ -39,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
             private IFont _font = PieceSettings.Font;
             private float _fontScale = 1f;
 
-            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces, IReadOnlyList<(int x, int y)> legalMoveTargets)
+            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces, IReadOnlyList<(int x, int y)> legalMoveTargets, bool showHanging)
             {
                 if (uiPieces == null) return;
                 float scale = board.DetailScale;
@@ -50,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 // square the later one wins: hanging < legal move < selected.
                 foreach (var uiPiece in uiPieces)
                 {
-                    if (uiPiece.IsHanging)
+                    if (showHanging && uiPiece.IsHanging)
                     {
                         var piece = uiPiece.PieceModel;
                         Color color = piece.Color == PieceColor.Red ? PieceSettings.HangingRedRingColor : PieceSettings.HangingBlackRingColor;
