@@ -31,8 +31,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// game started after the click already plays by them. The settings as they were when the
     /// submenu opened (or last saved) are kept: <b>save</b> writes <c>settings.ini</c> and makes the
     /// current values the new baseline; leaving without saving asks to discard, and discarding
-    /// puts the baseline back (live instance and rules). A game already in progress when
-    /// opening the settings from the main menu is not expected: the game screen is left first.
+    /// puts the baseline back (live instance and rules). The settings are only opened from the
+    /// main menu, and a game in progress is never affected: every game plays by its own copy of
+    /// the rules, taken when it starts (<see cref="GameManager.Rules"/>).
     /// <see cref="IScreen"/>: the main menu calls <see cref="OnEnter"/>/<see cref="OnExit"/>
     /// when it opens/closes the submenu.
     /// </summary>
