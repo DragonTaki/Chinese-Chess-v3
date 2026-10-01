@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/01
-// Version: v2.2
+// Update Date: 2026/10/02
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core.Boards;
 
 using Engine.Geometry;
 using Engine.Mathematics;
+using Engine.UI.Constants.Core;
 
 namespace Chinese_Chess_v3.Game.UI.Constants
 {
@@ -80,6 +81,25 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             }
 
             /// <summary>
+            /// Encapsulates Board:ClickArea related setting values: the Full board's clickable
+            /// area (<c>UIBoard.TryPixelToGrid</c>, <c>BoardHitTest</c>) is the drawn extent -
+            /// the outermost piece centres (grid crossings) out by the drawn piece radius - moved
+            /// per edge by these, in design-space units at any board size (not scaled with the
+            /// board). Positive extends the area outward, negative pulls it in. 0 = exactly the
+            /// drawn extent; for the author to tune.
+            /// </summary>
+            public static class ClickArea
+            {
+                public const float Left = 0.0f;
+                public const float Top = 0.0f;
+                public const float Right = 0.0f;
+                public const float Bottom = 0.0f;
+
+                /// <summary>The four edges together.</summary>
+                public static readonly PaddingF EdgeAdjust = new PaddingF(Left, Top, Right, Bottom);
+            }
+
+            /// <summary>
             /// The HalfCenter board (台灣暗棋半盤, 8×4): pieces stand in the cells, not on the line
             /// crossings, so the grid area is Columns × Rows whole cells. Placeholder values for
             /// the author to tune. The board element takes this size's aspect ratio
@@ -103,6 +123,23 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                         BoardConstants.HalfCenter.Columns * CellSize,
                         BoardConstants.HalfCenter.Rows * CellSize
                     );
+                }
+
+                /// <summary>
+                /// Encapsulates Board:HalfCenter:ClickArea related setting values: as
+                /// <see cref="Board.ClickArea"/>, for the HalfCenter board (the outermost piece
+                /// centres are the outer cells' centres). 0 = exactly the drawn extent; for the
+                /// author to tune.
+                /// </summary>
+                public static class ClickArea
+                {
+                    public const float Left = 0.0f;
+                    public const float Top = 0.0f;
+                    public const float Right = 0.0f;
+                    public const float Bottom = 0.0f;
+
+                    /// <summary>The four edges together.</summary>
+                    public static readonly PaddingF EdgeAdjust = new PaddingF(Left, Top, Right, Bottom);
                 }
             }
 
