@@ -37,6 +37,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         public Action<ConfirmDialogResult>? _onResult;
 #nullable disable
 
+        /// <param name="_renderer">Draws the dialog box and its buttons.</param>
         /// <param name="factory">
         /// Used to create the dialog's buttons. The dialog is constructed directly (not via
         /// UiFactory.Create*), so nothing else would ever set _factory - without it every
@@ -165,6 +166,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         /// </summary>
         public void Cancel() => _onResult?.Invoke(ConfirmDialogResult.Cancel);
 
+        /// <param name="type">Which buttons to add (Ok, Yes/No, ...).</param>
         /// <param name="buttonY">
         /// Row position, centered in the button area below the message. It was a fixed 110,
         /// which put the buttons below the bottom of a dialog with a one-line message.
