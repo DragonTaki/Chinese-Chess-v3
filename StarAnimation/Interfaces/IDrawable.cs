@@ -9,7 +9,7 @@
 
 namespace StarAnimation.Interfaces
 {
-    public class IDrawable
+    public interface IDrawable
     {
         // No object need IDrawable for now
     }
