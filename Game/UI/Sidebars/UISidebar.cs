@@ -9,8 +9,9 @@
 
 using System;
 
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Players;
+using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
@@ -18,7 +19,6 @@ using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
-using Chinese_Chess_v3.Game.Core.Players;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars
 {

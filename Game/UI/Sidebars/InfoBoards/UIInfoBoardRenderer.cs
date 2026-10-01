@@ -10,8 +10,8 @@
 using System.Drawing;
 
 using Chinese_Chess_v3.Game.Core.Pieces;
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.Core.Players;
+using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Geometry;
 using Engine.GraphicsUtils;
@@ -54,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         private class ClassicInfoBoard : UIRenderer<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>
         {
             private UIInfoBoardHandler _handler;
-            private LayoutF Layout;
+            private LayoutF _layout;
             protected readonly IFont _nameFont;
             protected readonly IFont _timerFont;
 
@@ -73,7 +73,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 // position - once and drew there, which only matched the screen because the
                 // info board's constant already contained the sidebar's own position; laid
                 // out relative to the sidebar it would have been drawn at the window corner.
-                Layout = element.GetCurrentAbsoluteBounds();
+                _layout = element.GetCurrentAbsoluteBounds();
                 GraphicsHelper.ApplyHighQualitySettings(g);
 
                 DrawShieldBackground(g, element);
@@ -83,10 +83,10 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             private void DrawShieldBackground(IGraphics g, UIInfoBoard element)
             {
-                float baseX = Layout.X;
-                float baseY = Layout.Y;
-                float width = Layout.Width;
-                float height = Layout.Height;
+                float baseX = _layout.X;
+                float baseY = _layout.Y;
+                float width = _layout.Width;
+                float height = _layout.Height;
                 int inset = 4;
 
                 // Outer shield
@@ -178,10 +178,10 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             private void DrawPlayers(IGraphics g, UIInfoBoard element)
             {
-                float baseX = Layout.X;
-                float baseY = Layout.Y;
-                float width = Layout.Width;
-                float height = Layout.Height;
+                float baseX = _layout.X;
+                float baseY = _layout.Y;
+                float width = _layout.Width;
+                float height = _layout.Height;
 
                 DrawPlayerSection(g, baseX, baseY, width / 2.0f, height,
                     NameWithCheck(element, PlayerSide.Player2),

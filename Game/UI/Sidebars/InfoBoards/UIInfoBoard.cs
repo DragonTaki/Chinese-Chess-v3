@@ -7,10 +7,10 @@
 // Version: v2.2
 /* ----- ----- ----- ----- */
 
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
+using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
