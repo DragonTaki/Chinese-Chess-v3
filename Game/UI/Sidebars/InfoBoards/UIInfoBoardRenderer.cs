@@ -10,6 +10,7 @@
 using System.Drawing;
 
 using Chinese_Chess_v3.Game.Core.Pieces;
+using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.Core.Players;
 
 using Engine.Geometry;
@@ -162,6 +163,17 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             /// <summary>The outer rim of a player's half while it is not that player's turn (the active one is gold).</summary>
             private static Color IdleColor(PieceColor color) => color == PieceColor.Red ? Color.LightCoral : Color.Gray;
 
+            /// <summary>
+            /// The player's name, followed by 將軍 while that side is to move and in check
+            /// (<c>GameManager.IsInCheck</c>; false once the game is over and on boards without check).
+            /// </summary>
+            private static string NameWithCheck(UIInfoBoard element, PlayerSide side)
+            {
+                string name = element.GetPlayerName(side);
+                var game = element.GameManager;
+                return game.IsInCheck && game.CurrentTurn == side ? name + GameMenuTexts.InCheckSuffix : name;
+            }
+
             private void DrawPlayers(IGraphics g, UIInfoBoard element)
             {
                 float baseX = Layout.X;
@@ -170,13 +182,13 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float height = Layout.Height;
 
                 DrawPlayerSection(g, baseX, baseY, width / 2.0f, height,
-                    element.GetPlayerName(PlayerSide.Player2),
+                    NameWithCheck(element, PlayerSide.Player2),
                     element.GameManager.Player2.Timer.GetTotalTimeString(),
                     element.GameManager.Player2.Timer.GetStepTimeString(),
                     element.GameManager.CurrentTurn == PlayerSide.Player2);
 
                 DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height,
-                    element.GetPlayerName(PlayerSide.Player1),
+                    NameWithCheck(element, PlayerSide.Player1),
                     element.GameManager.Player1.Timer.GetTotalTimeString(),
                     element.GameManager.Player1.Timer.GetStepTimeString(),
                     element.GameManager.CurrentTurn == PlayerSide.Player1);
