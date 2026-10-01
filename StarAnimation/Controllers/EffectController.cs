@@ -29,8 +29,8 @@ namespace StarAnimation.Controllers
     /// </summary>
     public class EffectController
     {
-        private readonly int _width;
-        private readonly int _height;
+        private int _width;
+        private int _height;
         private readonly FrameController _frameController;
         private readonly StarController _starController;
 
@@ -74,9 +74,19 @@ namespace StarAnimation.Controllers
             RegistEffect();
         }
 
+        /// <summary>
+        /// Updates the canvas size new effect areas are picked from.
+        /// </summary>
+        /// <remarks>
+        /// Clamped to at least 1: the area selectors throw on a non-positive canvas
+        /// (e.g. a minimized window reporting 0x0).
+        /// </remarks>
+        /// <param name="width">New canvas width.</param>
+        /// <param name="height">New canvas height.</param>
         public void Resize(int width, int height)
         {
-
+            _width = Math.Max(width, 1);
+            _height = Math.Max(height, 1);
         }
 
         // Register effect entries
