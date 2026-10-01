@@ -27,8 +27,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         internal override void OnUpdate()
         {
-            var actions = Element._pendingActions.ToArray();
-            Element._pendingActions.Clear();
+            var actions = Element.PendingActions.ToArray();
+            Element.PendingActions.Clear();
             foreach (var a in actions) a();
 
             // Without a per-frame tick the clocks only advanced inside EndStep(),
