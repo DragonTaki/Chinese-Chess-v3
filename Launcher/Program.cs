@@ -137,7 +137,7 @@ namespace Launcher
             Application.Run(sp.GetRequiredService<MainForm>());
         }
     }
-    
+
     /// <summary>
     /// Extension methods for IServiceCollection to simplify UI module registration.
     /// </summary>
