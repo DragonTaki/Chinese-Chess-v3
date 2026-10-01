@@ -91,9 +91,11 @@ namespace StarAnimation.Core.Effect.Instance
         /// <summary>
         /// Updates the opacity of stars based on sinusoidal wave with start delay.
         /// Should be called every frame.
-        /// <param name="normalizedTime">
-        /// A float value between 0 and 1 representing the progression of the effect's lifecycle.
         /// </summary>
+        /// <param name="normalizedTime">
+        /// Elapsed time divided by Duration: 0 to 1 over the effect's lifecycle, and past 1
+        /// while stars with a start delay are still finishing.
+        /// </param>
         protected override void OnUpdate(float normalizedTime)
         {
             float elapsedTime = normalizedTime * Duration;
