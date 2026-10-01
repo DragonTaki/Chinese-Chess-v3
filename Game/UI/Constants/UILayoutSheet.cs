@@ -383,7 +383,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 PositionMode = PositionMode.Flow,
                 Width = LayoutSize.Stretch,
-                Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.Infoboard.Size.Y),
+                Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.InfoBoard.Size.Y),
                 FlexShrink = 0f,
             };
 

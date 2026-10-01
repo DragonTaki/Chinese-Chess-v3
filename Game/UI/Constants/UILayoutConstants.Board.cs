@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>
         /// Encapsulates Board related setting values.
         /// </summary>
-        public class Board
+        public static class Board
         {
             public static Vector2F Position => Layout.Position;
             public static Vector2F Size => Layout.Size;
@@ -43,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// Encapsulates Board:Grid related setting values.
             /// </summary>
-            public class Grid
+            public static class Grid
             {
                 // Location start point
                 /// <summary>
@@ -87,13 +87,13 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <see cref="Piece"/> sizes, so <see cref="Grid.CellSize"/> must leave room for a
             /// ring (2 × (Radius + GlowMargin)).
             /// </summary>
-            public class HalfCenter
+            public static class HalfCenter
             {
                 // Authored size of the board element (its aspect ratio): the grid plus a margin.
                 public static readonly Vector2F Size = new Vector2F(780.0f, 420.0f);
 
                 /// <summary>Encapsulates Board:HalfCenter:Grid related setting values.</summary>
-                public class Grid
+                public static class Grid
                 {
                     // Width (and height) of one cell
                     public const float CellSize = 90.0f;
@@ -111,7 +111,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// at, at the board's authored size (scaled by <c>UIBoard.DetailScale</c>).
             /// Colors and the font face are in <see cref="PieceSettings"/>.
             /// </summary>
-            public class Piece
+            public static class Piece
             {
                 // Radius of the filled circle
                 public const float Radius = 35.0f;

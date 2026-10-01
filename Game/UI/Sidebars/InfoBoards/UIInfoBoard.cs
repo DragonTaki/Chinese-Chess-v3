@@ -54,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
         protected override void OnInit(IUiFactory factory)
         {
-            Layout = UILayoutConstants.Sidebar.Infoboard.Layout;
+            Layout = UILayoutConstants.Sidebar.InfoBoard.Layout;
 
             // Flex item of the sidebar column (see UILayoutSheet.GameScreen.InfoBoard).
             LayoutRules.Apply(UILayoutSheet.GameScreen.InfoBoard);

@@ -38,9 +38,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public const float Margin = 20.0f;
 
             /// <summary>
-            /// Encapsulates Sidebar:Infoboard related setting values.
+            /// Encapsulates Sidebar:InfoBoard related setting values.
             /// </summary>
-            public class Infoboard
+            public static class InfoBoard
             {
                 // Location start point
                 public static Vector2F Position => Layout.Position;
@@ -57,7 +57,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// Encapsulates Sidebar:Logger related setting values.
             /// </summary>
-            public class LoggerBox
+            public static class LoggerBox
             {
                 // Location start point
                 public static Vector2F Position => Layout.Position;
@@ -73,7 +73,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 /// <summary>
                 /// Encapsulates LoggerBox:ScrollContainer related setting values.
                 /// </summary>
-                public class ScrollContainer
+                public static class ScrollContainer
                 {
                     public static Vector2F Position => Layout.Position;
                     public static Vector2F Size => Layout.Size;
