@@ -176,9 +176,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>
         /// Converts an absolute point to a board square. Full: same rules as
         /// <see cref="BoardPixelExtensions"/> (which use the authored constants) - inside
-        /// when within Columns x Rows cells from the grid origin, rounded to the nearest
-        /// intersection and clamped to the board. HalfCenter: inside when on the grid area
-        /// (Columns x Rows cells), the cell under the point.
+        /// when within half a cell of the grid's outermost crossings, rounded to the nearest
+        /// intersection. HalfCenter: inside when on the grid area (Columns x Rows cells),
+        /// the cell under the point.
         /// </summary>
         /// <returns>False when the point is outside the board.</returns>
         public bool TryPixelToGrid(float pixelX, float pixelY, out int gridX, out int gridY)
@@ -188,14 +188,18 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             float cell = GridCellSize;
             gridX = gridY = 0;
 
+            // Full: the area within half a cell of the outermost crossings, on every side
+            // (it used to start at the crossings themselves and reach a whole cell past the
+            // far ones, so the left half of a column-0 piece and the top half of a row-0
+            // piece took no click). HalfCenter: the cells themselves.
+            float round = board.Type == BoardType.HalfCenter ? 0f : 0.5f;
             if (cell <= 0f
-                || pixelX < origin.X || pixelX > origin.X + board.Columns * cell
-                || pixelY < origin.Y || pixelY > origin.Y + board.Rows * cell)
+                || pixelX < origin.X - round * cell || pixelX > origin.X + (board.Columns - round) * cell
+                || pixelY < origin.Y - round * cell || pixelY > origin.Y + (board.Rows - round) * cell)
                 return false;
 
             // Full rounds to the nearest crossing; HalfCenter takes the cell (the far edge,
             // exactly on the border, clamps into the last cell).
-            float round = board.Type == BoardType.HalfCenter ? 0f : 0.5f;
             gridX = Math.Clamp((int)((pixelX - origin.X) / cell + round), 0, board.Columns - 1);
             gridY = Math.Clamp((int)((pixelY - origin.Y) / cell + round), 0, board.Rows - 1);
             return true;
