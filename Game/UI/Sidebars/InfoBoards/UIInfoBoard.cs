@@ -24,7 +24,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
         /// <summary>Player1's name on the board; null (the default) for the name of the colour it plays (see <see cref="GetPlayerName"/>).</summary>
         public string Player1Name { get; set; } = null;
-        public GameManager GameManager;
+
+        /// <summary>The game shown (clocks, turn, check, colours); set by <see cref="UIInfoBoardHandler.SetGameManager"/>.</summary>
+        public GameManager GameManager { get; internal set; }
 
         public UIInfoBoard() { }
 
