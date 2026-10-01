@@ -16,7 +16,7 @@ using Engine.UI.Core.Renderers;
 namespace Chinese_Chess_v3.Game.UI.Boards
 {
     /// <summary>
-    /// 負責繪製棋盤與棋子
+    /// Responsible for drawing the board and its pieces.
     /// </summary>
     public class UIBoardRenderer : UIContainerRenderer<UIBoard, UIBoardHandler, UIBoardRenderer>
     {

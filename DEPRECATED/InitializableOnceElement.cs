@@ -16,8 +16,8 @@ namespace Engine.UI.Core.Base
 {
     /// <summary>
     /// Abstract UI element that can be initialized once with an argument.
-    /// Extends <see cref="UIElement"/> and implements <see cref="IInitializableOnce{TArg}"/> and <see cref="IDisposable"/>.
-    /// Ensures that initialization logic runs only once and provides a standard disposal mechanism.
+    /// Extends <see cref="UIElement"/> and implements <see cref="IInitializableOnce{TArg}"/>.
+    /// Ensures that initialization logic runs only once (this class itself adds no disposal logic).
     /// </summary>
     /// <typeparam name="TArg">The type of argument passed during initialization.</typeparam>
     public abstract class InitializableOnceElement<TArg> : UIElement, IInitializableOnce<TArg>
