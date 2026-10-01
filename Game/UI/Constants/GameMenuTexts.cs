@@ -157,6 +157,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string TimerModeCountDown = "倒數";
         public const string TimerModeCountUp = "正數";
 
+        /// <summary>The value of a time-limit setting while the clocks count up (正數 only measures time).</summary>
+        public const string NotWithCountUp = "正數不限時";
+
         public const string LegalMoveHints = "可走位置提示";
         public const string HangingPieceHints = "無根子提示";
 
