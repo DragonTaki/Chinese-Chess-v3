@@ -78,6 +78,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// A menu's scroll container: inset by the margins, a top-aligned flex column
             /// with <paramref name="buttonSpacing"/> between buttons.
             /// </summary>
+            /// <param name="marginX">Left inset (and right inset, when there is no <paramref name="panelWidth"/>).</param>
+            /// <param name="marginY">Top and bottom inset.</param>
+            /// <param name="buttonSpacing">Row gap between the buttons.</param>
             /// <param name="panelWidth">
             /// The panel width of a screen menu: the container is then the panel's width
             /// minus both side margins, from the left margin, instead of being inset from the
