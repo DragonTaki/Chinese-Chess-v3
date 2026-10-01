@@ -51,8 +51,10 @@ namespace StarAnimation.Renderers
         }
 
         /// <summary>
-        /// Clear canvas and render all visible stars.
+        /// Render all visible stars as filled ellipses (the canvas is not cleared here).
         /// </summary>
+        /// <param name="g">The graphics context to draw to.</param>
+        /// <param name="stars">The stars to draw.</param>
         public void Draw(IGraphics g, List<Star> stars)
         {
             foreach (var star in stars)

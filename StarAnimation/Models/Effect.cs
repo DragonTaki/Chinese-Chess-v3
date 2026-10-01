@@ -30,6 +30,7 @@ namespace StarAnimation.Models
         /// <param name="duration">The duration for which the effect will last, in seconds.</param>
         /// <param name="type">The type of effect ("twist", "pulse", or "colorShift").</param>
         /// <param name="strength">The strength of the effect (affects intensity).</param>
+        /// <param name="star">The star this effect is attached to.</param>
         /// <param name="color">Optional target color for the effect (only used for "colorShift").</param>
         public Effect(RectangleF area, float duration, string type, float strength, Star star, Color? color = null)
         {

@@ -20,7 +20,7 @@ namespace StarAnimation.Utils
     {
         /// <summary>
         /// The list of excluded screen-space rectangular areas.
-        /// Stars within these areas will be skipped or hidden.
+        /// Intended for callers to skip or hide stars inside these areas; this class only stores and tests them.
         /// </summary>
         private List<RectangleF> _excludedAreas = new();
 
@@ -36,8 +36,8 @@ namespace StarAnimation.Utils
         /// <summary>
         /// Determines if a given point is located inside any excluded area.
         /// </summary>
-        /// <param name="x">The x-coordinate to check (float).</param>
-        /// <param name="y">The y-coordinate to check (float).</param>
+        /// <param name="x">The x-coordinate to check (truncated to int before the test).</param>
+        /// <param name="y">The y-coordinate to check (truncated to int before the test).</param>
         /// <returns>True if the point is within an excluded region; otherwise false.</returns>
         public bool IsInExcludedArea(float x, float y)
         {
