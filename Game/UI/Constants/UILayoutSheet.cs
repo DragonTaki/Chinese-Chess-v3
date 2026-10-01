@@ -230,6 +230,42 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
+        /// The settings submenu (<c>UISettingsMenu</c>): a submenu panel whose scroll
+        /// container is a flex column of the save / back row, section headers and setting buttons.
+        /// </summary>
+        public static class SettingsMenu
+        {
+            /// <summary>The submenu: same place and size as the other submenus.</summary>
+            public static readonly UILayoutStyle Panel = Submenu.Panel;
+
+            /// <summary>The submenu's scroll container: inset like the other submenus, a flex column.</summary>
+            public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
+                UILayoutConstants.SettingsMenu.RowGap);
+
+            /// <summary>The row holding the save and back buttons (a flex row, height from its buttons).</summary>
+            public static readonly UILayoutStyle FooterRow = CategoryListMenu.ButtonRows with
+            {
+                ColumnGap = UILayoutConstants.SettingsMenu.FooterColumnGap,
+            };
+
+            /// <summary>The save and back buttons: two equal columns of the footer row.</summary>
+            public static readonly UILayoutStyle FooterButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.FooterButtonWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.FooterButtonHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>A section header: full width, shorter than a setting.</summary>
+            public static readonly UILayoutStyle Header = Menus.Button(UILayoutConstants.SettingsMenu.HeaderHeight);
+
+            /// <summary>A setting's button.</summary>
+            public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.SettingsMenu.ItemHeight);
+        }
+
+        /// <summary>
         /// The game screen: the game menu (<c>UIGameMenu</c>) covers the root, its left
         /// column is the menu, and the board and the sidebar (its children) take the
         /// middle and the right column.

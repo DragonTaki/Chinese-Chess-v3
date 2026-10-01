@@ -15,6 +15,7 @@ using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
+using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
 using Engine.Network;
 using Engine.Platform;
@@ -42,9 +43,17 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
             _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
             _submenus[UIMainMenuType.OpeningPractice] = CreateSubMenu(() => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>());
-            _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
+            _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsMenuScope.Rules));
             _submenus[UIMainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
-            _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
+            _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsMenuScope.All));
+        }
+
+        /// <summary>A settings submenu listing the settings of <paramref name="scope"/> (set before it is first shown, which is when its buttons are built).</summary>
+        private static UIElement CreateSettingsMenu(IUiFactory factory, SettingsMenuScope scope)
+        {
+            var menu = factory.CreateDIElement<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>();
+            menu.Scope = scope;
+            return menu;
         }
 
         /// <summary>
@@ -63,6 +72,18 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         public void SwitchSubmenu(UIMainMenuType selectedMenu)
         {
             Console.WriteLine($"MaunMenu: selected: {selectedMenu}");
+
+            // Leaving an open settings submenu (for another entry, or collapsing it by its own
+            // entry) with unsaved changes asks first; on yes the changes are discarded and the
+            // switch is redone.
+            if (IsSubmenuEntry(selectedMenu) && _currentSubmenu.HasValue
+                && _submenus[_currentSubmenu.Value] is UISettingsMenu settingsMenu
+                && settingsMenu.Handler.HasUnsavedChanges)
+            {
+                settingsMenu.Handler.ConfirmDiscard(() => SwitchSubmenu(selectedMenu));
+                return;
+            }
+
             switch (selectedMenu)
             {
                 case UIMainMenuType.Default:
@@ -108,6 +129,15 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     break;
             }
         }
+
+        /// <summary>Whether <paramref name="menu"/> opens or collapses a submenu (the entries handled together in <see cref="SwitchSubmenu"/>).</summary>
+        private static bool IsSubmenuEntry(UIMainMenuType menu) => menu switch
+        {
+            UIMainMenuType.NewGame or UIMainMenuType.LoadGame or UIMainMenuType.EndgameChallenge
+                or UIMainMenuType.OpeningPractice or UIMainMenuType.RuleSettings or UIMainMenuType.Help
+                or UIMainMenuType.Settings => true,
+            _ => false,
+        };
 
         /// <summary>
         /// Cancel and remove current submenu from the view.
