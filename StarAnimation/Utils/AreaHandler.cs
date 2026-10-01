@@ -36,14 +36,14 @@ namespace StarAnimation.Utils
         /// <summary>
         /// Determines if a given point is located inside any excluded area.
         /// </summary>
-        /// <param name="x">The x-coordinate to check (truncated to int before the test).</param>
-        /// <param name="y">The y-coordinate to check (truncated to int before the test).</param>
+        /// <param name="x">The x-coordinate to check.</param>
+        /// <param name="y">The y-coordinate to check.</param>
         /// <returns>True if the point is within an excluded region; otherwise false.</returns>
         public bool IsInExcludedArea(float x, float y)
         {
             foreach (var area in _excludedAreas)
             {
-                if (area.Contains((int)x, (int)y))
+                if (area.Contains(x, y))
                     return true;
             }
             return false;
