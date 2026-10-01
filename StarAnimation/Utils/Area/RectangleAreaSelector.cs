@@ -18,7 +18,7 @@ namespace StarAnimation.Utils.Area
     {
         private readonly float _minWidth, _minHeight;
         private readonly float _maxWidth, _maxHeight;
-        private readonly IRandomProvider Rand = GlobalRandom.Instance;
+        private readonly IRandomProvider _rand = GlobalRandom.Instance;
 
         public RectangleAreaSelector(float minWidth, float minHeight, float maxWidth, float maxHeight)
         {
@@ -50,8 +50,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinWidth = Math.Min(_minWidth, limitedMaxWidth);
                 width = (limitedMaxWidth == effectiveMinWidth)
                     ? limitedMaxWidth
-                    : Rand.NextFloat(effectiveMinWidth, limitedMaxWidth);
-                x = Rand.NextFloat(0, canvasWidth - width);
+                    : _rand.NextFloat(effectiveMinWidth, limitedMaxWidth);
+                x = _rand.NextFloat(0, canvasWidth - width);
             }
 
             // Handle height
@@ -66,8 +66,8 @@ namespace StarAnimation.Utils.Area
                 float effectiveMinHeight = Math.Min(_minHeight, limitedMaxHeight);
                 height = (limitedMaxHeight == effectiveMinHeight)
                     ? limitedMaxHeight
-                    : Rand.NextFloat(effectiveMinHeight, limitedMaxHeight);
-                y = Rand.NextFloat(0, canvasHeight - height);
+                    : _rand.NextFloat(effectiveMinHeight, limitedMaxHeight);
+                y = _rand.NextFloat(0, canvasHeight - height);
             }
 
             return new RectangleAreaShape(new RectangleF(x, y, width, height));

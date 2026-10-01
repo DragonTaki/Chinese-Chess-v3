@@ -17,7 +17,7 @@ namespace StarAnimation.Utils.Area
     public class CircleAreaSelector : IAreaSelector
     {
         private readonly float _minRadius, _maxRadius;
-        private readonly IRandomProvider Rand = GlobalRandom.Instance;
+        private readonly IRandomProvider _rand = GlobalRandom.Instance;
 
         public CircleAreaSelector(float minRadius, float maxRadius)
         {
@@ -49,15 +49,15 @@ namespace StarAnimation.Utils.Area
                 float effectiveRadius = Math.Min(_minRadius, limitedRadius);
                 radius = (limitedRadius == effectiveRadius)
                     ? limitedRadius
-                    : Rand.NextFloat(effectiveRadius, limitedRadius);
+                    : _rand.NextFloat(effectiveRadius, limitedRadius);
                 // Keep the circle inside the canvas on each axis; if it is wider than the
                 // canvas on an axis, center it there instead.
                 cx = (radius * 2 >= canvasWidth)
                     ? canvasWidth / 2
-                    : Rand.NextFloat(radius, canvasWidth - radius);
+                    : _rand.NextFloat(radius, canvasWidth - radius);
                 cy = (radius * 2 >= canvasHeight)
                     ? canvasHeight / 2
-                    : Rand.NextFloat(radius, canvasHeight - radius);
+                    : _rand.NextFloat(radius, canvasHeight - radius);
             }
 
             return new CircleAreaShape(new PointF(cx, cy), radius);
