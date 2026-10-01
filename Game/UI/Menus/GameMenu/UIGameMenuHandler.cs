@@ -75,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             // dialog on the UI thread, once the game state has settled.
             Element.Post(() =>
             {
-                if (!Element.IsVisible || !game.IsGameOver)
+                if (Element.Parent == null || !Element.IsVisible || !game.IsGameOver)
                     return;
 
                 DialogManager.ShowConfirm(
