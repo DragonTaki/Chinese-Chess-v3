@@ -115,9 +115,30 @@ namespace Chinese_Chess_v3.Game.Configs
         public string ResolvedEndgameUserFolder =>
             string.IsNullOrWhiteSpace(EndgameUserFolder)
                 ? SystemSettings.DefaultUserEndgameFolder
-                : System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(EndgameUserFolder.Trim()), SystemSettings.UserDataFolder);
+                : ResolveUserFolder(EndgameUserFolder);
 
         #endregion
+
+        #region [opening]
+
+        /// <summary>
+        /// Folder of the player's own openings (開局練習); empty for the default
+        /// (<see cref="SystemSettings.DefaultUserOpeningFolder"/>). A relative path is taken
+        /// relative to <see cref="SystemSettings.UserDataFolder"/>. Default: "" (empty)
+        /// </summary>
+        public string OpeningUserFolder { get; set; } = string.Empty;
+
+        /// <summary>The player's opening folder actually used: <see cref="OpeningUserFolder"/> resolved, or the default when empty.</summary>
+        public string ResolvedOpeningUserFolder =>
+            string.IsNullOrWhiteSpace(OpeningUserFolder)
+                ? SystemSettings.DefaultUserOpeningFolder
+                : ResolveUserFolder(OpeningUserFolder);
+
+        #endregion
+
+        /// <summary>A folder setting: environment variables expanded, relative to <see cref="SystemSettings.UserDataFolder"/>.</summary>
+        private static string ResolveUserFolder(string folder) =>
+            System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(folder.Trim()), SystemSettings.UserDataFolder);
 
         /// <summary>
         /// The rule set a new <see cref="GameManager"/> plays by: the default
