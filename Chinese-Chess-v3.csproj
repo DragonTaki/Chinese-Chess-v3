@@ -35,6 +35,10 @@
     <Content Include="Assets\Endgames\**\*.pgn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Built-in openings (docs/OPENINGS.md): every .pgn under Assets/Openings, likewise. -->
+    <Content Include="Assets\Openings\**\*.pgn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <!-- Windows entry point + GDI+/WinForms backend: Windows build only. -->

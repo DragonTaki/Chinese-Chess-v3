@@ -98,6 +98,10 @@ namespace Chinese_Chess_v3.Game.Configs
             Path("endgame", "user_folder", s => s.EndgameUserFolder, (s, v) => s.EndgameUserFolder = v,
                 "自己的殘局題目資料夾；留空 = 預設位置（這個設定檔旁邊的 Endgames 資料夾）。",
                 "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。"),
+
+            Path("opening", "user_folder", s => s.OpeningUserFolder, (s, v) => s.OpeningUserFolder = v,
+                "自己的開局練習資料夾；留空 = 預設位置（這個設定檔旁邊的 Openings 資料夾）。",
+                "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。"),
         };
 
         /// <summary>Every key of the file as (section, key), in file order.</summary>

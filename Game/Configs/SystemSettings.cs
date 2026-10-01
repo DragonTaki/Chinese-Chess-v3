@@ -64,6 +64,23 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #endregion
 
+        #region Openings
+
+        /// <summary>Folder name of the openings (開局練習), both built-in (under <c>Assets/</c>) and the player's own (under <see cref="UserDataFolder"/>).</summary>
+        public const string OpeningsFolderName = "Openings";
+
+        /// <summary>The built-in openings: <c>Assets/Openings</c> next to the game (copied there by the build).</summary>
+        public static string BuiltInOpeningFolder => Path.Combine(EnginePaths.AssetsFolder, OpeningsFolderName);
+
+        /// <summary>
+        /// The player's own openings when the settings do not override it
+        /// (<c>PlayerSettings.OpeningUserFolder</c> empty): <c>Openings</c> in
+        /// <see cref="UserDataFolder"/>.
+        /// </summary>
+        public static string DefaultUserOpeningFolder => Path.Combine(UserDataFolder, OpeningsFolderName);
+
+        #endregion
+
         #region Random table
 
         /// <summary>Size of the shared <c>RandomTable</c> registered by the launchers.</summary>
