@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Globalization;
@@ -52,7 +52,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
         /// <paramref name="text"/> cut to <paramref name="lineLength"/> characters (text
         /// elements) with <see cref="GameMenuTexts.Ellipsis"/> as the last one when longer.
         /// </summary>
-        private static string OneLine(string text, int lineLength)
+        internal static string OneLine(string text, int lineLength)
         {
             var info = new StringInfo(text ?? string.Empty);
             if (info.LengthInTextElements <= lineLength || lineLength < 2)

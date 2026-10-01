@@ -20,6 +20,7 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
@@ -113,6 +114,7 @@ namespace Launcher
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
             services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
+            services.AddSingletonUiModule<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>();
             services.AddSingletonUiModule<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>();
             services.AddSingletonUiModule<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>();
             services.AddSingletonUiModule<UISavedGameMenu, UISavedGameMenuHandler, UISavedGameMenuRenderer>();

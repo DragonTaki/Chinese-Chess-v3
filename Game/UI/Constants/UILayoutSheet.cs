@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
-// Update Date: 2026/10/01
-// Version: v1.3
+// Update Date: 2026/10/02
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -267,6 +267,28 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>A setting's button.</summary>
             public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.SettingsMenu.ItemHeight);
+        }
+
+        /// <summary>
+        /// The main menu's saved-game list (<c>UILoadSavedGameMenu</c>, 讀取存檔): a submenu
+        /// panel whose scroll container is a flex column of category headers and save buttons
+        /// (full width, never shrunk; the 沒有存檔 row is a save-sized row).
+        /// </summary>
+        public static class LoadSavedGameMenu
+        {
+            /// <summary>The submenu: same place and size as the other submenus.</summary>
+            public static readonly UILayoutStyle Panel = Submenu.Panel;
+
+            /// <summary>The submenu's scroll container: inset like the other submenus, a flex column.</summary>
+            public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
+                UILayoutConstants.LoadSavedGameMenu.RowGap);
+
+            /// <summary>A category header: full width, shorter than a save.</summary>
+            public static readonly UILayoutStyle Header = Menus.Button(UILayoutConstants.LoadSavedGameMenu.HeaderHeight);
+
+            /// <summary>A save's button, and the 沒有存檔 row.</summary>
+            public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.LoadSavedGameMenu.ItemHeight);
         }
 
         /// <summary>

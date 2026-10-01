@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core;
@@ -108,6 +108,15 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>Ends a saved game's name cut to one line.</summary>
         public const string Ellipsis = "…";
+
+        /// <summary>The main menu's saved-game list (讀取存檔): the disabled row shown when there is no save.</summary>
+        public const string NoSavedGamesRow = "沒有存檔";
+
+        /// <summary>
+        /// The main menu's saved-game list: a save's one-line button; {0} = name, {1} = date
+        /// (<see cref="SavedGameDateFormat"/>), {2} = time (<see cref="SavedGameTimeFormat"/>).
+        /// </summary>
+        public const string SavedGameRowFormat = "{0}　{1} {2}";
 
         // ----- New-game menu -----
 
