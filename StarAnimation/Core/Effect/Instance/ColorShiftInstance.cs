@@ -127,7 +127,7 @@ namespace StarAnimation.Core.Effect.Instance
             foreach (var star in _affectedStars)
             {
                 star.ColorShift.HasPhase = false;
-                star.Opacity = 1.0f;
+                star.Color.Current = Color.White;
             }
 
             _affectedStars.Clear();
