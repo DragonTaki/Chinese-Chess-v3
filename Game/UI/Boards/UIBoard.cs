@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/09/30
+// Update Date: 2026/10/01
 // Version: v1.2
 /* ----- ----- ----- ----- */
 
@@ -12,6 +12,7 @@ using Engine.Platform;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Binders;
@@ -37,6 +38,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         /// <summary>The player settings (board hints); the code defaults when none are registered.</summary>
         public PlayerSettings PlayerSettings { get; private set; } = PlayerSettings.Defaults;
+
+        /// <summary>The board type the layout rules were last applied for (see <see cref="ApplyBoardLayout"/>).</summary>
+        private BoardType? _layoutBoardType;
+
+        /// <summary>The type of the board being played (<c>GameManager.Board</c> is replaced when a game changes it).</summary>
+        public BoardType BoardType => _gameManager?.Board.Type ?? BoardType.Full;
         
         // IUiContainer implementation
 
@@ -51,9 +58,24 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             LocalPosition = UILayoutConstants.Board.Position;
             Size = UILayoutConstants.Board.Size;
 
-            // The middle column of the game screen, at its authored aspect ratio
-            // (see UILayoutSheet.GameScreen.Board).
-            LayoutRules.Apply(UILayoutSheet.GameScreen.Board);
+            // The middle column of the game screen, at the board type's authored aspect ratio
+            // (see UILayoutSheet.GameScreen.Board / HalfCenterBoard).
+            ApplyBoardLayout();
+        }
+
+        /// <summary>
+        /// Applies the layout rules of the board type being played
+        /// (<see cref="UILayoutSheet.GameScreen.BoardFor"/>) when it differs from the one last
+        /// applied: a new game on another board type gets that board's aspect ratio. Called
+        /// once per frame by the handler (a cheap comparison when nothing changed).
+        /// </summary>
+        internal void ApplyBoardLayout()
+        {
+            var type = BoardType;
+            if (_layoutBoardType == type)
+                return;
+            LayoutRules.Apply(UILayoutSheet.GameScreen.BoardFor(type));
+            _layoutBoardType = type;
         }
 
         #region Grid Geometry
@@ -61,16 +83,27 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         // Drawing and hit testing derive the grid from the board's resolved (absolute)
         // rectangle instead of UILayoutConstants.Board.Grid, so pieces and clicks stay
         // aligned with the drawn grid whenever the layout resizes or moves the board.
+        // Per board type: Full puts pieces on the line crossings of a 9x10 grid, HalfCenter
+        // in the cells of an 8x4 grid (UILayoutConstants.Board.HalfCenter).
+
+        /// <summary>The authored size of the board element for <see cref="BoardType"/>.</summary>
+        /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+        public Vector2F AuthoredSize => BoardType switch
+        {
+            BoardType.Full => UILayoutConstants.Board.Size,
+            BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Size,
+            _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
+        };
 
         /// <summary>
-        /// Resolved size relative to the authored <c>UILayoutConstants.Board.Size</c>
-        /// (1 at the authored size; the aspect ratio is locked, so one factor fits both axes).
+        /// Resolved size relative to the board type's authored size (<see cref="AuthoredSize"/>;
+        /// 1 at the authored size; the aspect ratio is locked, so one factor fits both axes).
         /// </summary>
         public float GridScale
         {
             get
             {
-                var authored = UILayoutConstants.Board.Size;
+                var authored = AuthoredSize;
                 if (authored.X <= 0f || authored.Y <= 0f || Size.X <= 0f || Size.Y <= 0f)
                     return 1f;
                 return System.Math.Min(Size.X / authored.X, Size.Y / authored.Y);
@@ -97,38 +130,55 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
         }
 
-        /// <summary>Distance between grid lines, in design units.</summary>
-        public float GridCellSize => UILayoutConstants.Board.Grid.CellSize * GridScale;
+        /// <summary>Distance between grid lines (Full) or width of a cell (HalfCenter), in design units.</summary>
+        public float GridCellSize => BoardType switch
+        {
+            BoardType.Full => UILayoutConstants.Board.Grid.CellSize,
+            BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Grid.CellSize,
+            _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
+        } * GridScale;
 
         /// <summary>
-        /// Absolute position of grid point (0, 0): the grid area centered inside the board,
-        /// as <c>UILayoutConstants.Board.Grid.Position</c> does for the authored layout.
+        /// Absolute position of the grid's top-left corner (Full: grid point (0, 0); HalfCenter:
+        /// the top-left corner of cell (0, 0)): the grid area centered inside the board, as
+        /// <c>UILayoutConstants.Board.Grid.Position</c> does for the authored Full layout.
         /// </summary>
         public Vector2F GridOrigin
         {
             get
             {
                 var position = GetCurrentAbsolutePosition();
-                var area = UILayoutConstants.Board.Grid.GridAreaSize * GridScale;
+                var area = BoardType switch
+                {
+                    BoardType.Full => UILayoutConstants.Board.Grid.GridAreaSize,
+                    BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Grid.GridAreaSize,
+                    _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
+                } * GridScale;
                 return new Vector2F(
                     position.X + (Size.X - area.X) / 2f,
                     position.Y + (Size.Y - area.Y) / 2f);
             }
         }
 
-        /// <summary>Absolute position of grid point (<paramref name="x"/>, <paramref name="y"/>).</summary>
+        /// <summary>
+        /// Absolute position where a piece on square (<paramref name="x"/>, <paramref name="y"/>)
+        /// is drawn: the grid point on the Full board, the cell's centre on HalfCenter.
+        /// </summary>
         public Vector2F GridToPixel(float x, float y)
         {
             var origin = GridOrigin;
             float cell = GridCellSize;
-            return new Vector2F(origin.X + x * cell, origin.Y + y * cell);
+            // HalfCenter: pieces stand in the cells, half a cell in from the cell's corner.
+            float inset = BoardType == BoardType.HalfCenter ? 0.5f : 0f;
+            return new Vector2F(origin.X + (x + inset) * cell, origin.Y + (y + inset) * cell);
         }
 
         /// <summary>
-        /// Converts an absolute point to the nearest grid point. Same rules as
-        /// <see cref="BoardPixelExtensions"/> (which use the authored constants):
-        /// inside when within Columns x Rows cells from the grid origin, rounded to the
-        /// nearest intersection and clamped to the board.
+        /// Converts an absolute point to a board square. Full: same rules as
+        /// <see cref="BoardPixelExtensions"/> (which use the authored constants) - inside
+        /// when within Columns x Rows cells from the grid origin, rounded to the nearest
+        /// intersection and clamped to the board. HalfCenter: inside when on the grid area
+        /// (Columns x Rows cells), the cell under the point.
         /// </summary>
         /// <returns>False when the point is outside the board.</returns>
         public bool TryPixelToGrid(float pixelX, float pixelY, out int gridX, out int gridY)
@@ -143,8 +193,11 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 || pixelY < origin.Y || pixelY > origin.Y + board.Rows * cell)
                 return false;
 
-            gridX = Math.Clamp((int)((pixelX - origin.X) / cell + 0.5f), 0, board.Columns - 1);
-            gridY = Math.Clamp((int)((pixelY - origin.Y) / cell + 0.5f), 0, board.Rows - 1);
+            // Full rounds to the nearest crossing; HalfCenter takes the cell (the far edge,
+            // exactly on the border, clamps into the last cell).
+            float round = board.Type == BoardType.HalfCenter ? 0f : 0.5f;
+            gridX = Math.Clamp((int)((pixelX - origin.X) / cell + round), 0, board.Columns - 1);
+            gridY = Math.Clamp((int)((pixelY - origin.Y) / cell + round), 0, board.Rows - 1);
             return true;
         }
 

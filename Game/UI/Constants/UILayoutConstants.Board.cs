@@ -80,6 +80,33 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             }
 
             /// <summary>
+            /// The HalfCenter board (台灣暗棋半盤, 8×4): pieces stand in the cells, not on the line
+            /// crossings, so the grid area is Columns × Rows whole cells. Placeholder values for
+            /// the author to tune. The board element takes this size's aspect ratio
+            /// (<c>UILayoutSheet.GameScreen.HalfCenterBoard</c>); pieces and their rings use the
+            /// <see cref="Piece"/> sizes, so <see cref="Grid.CellSize"/> must leave room for a
+            /// ring (2 × (Radius + GlowMargin)).
+            /// </summary>
+            public class HalfCenter
+            {
+                // Authored size of the board element (its aspect ratio): the grid plus a margin.
+                public static readonly Vector2F Size = new Vector2F(780.0f, 420.0f);
+
+                /// <summary>Encapsulates Board:HalfCenter:Grid related setting values.</summary>
+                public class Grid
+                {
+                    // Width (and height) of one cell
+                    public const float CellSize = 90.0f;
+
+                    /// <summary>The pixel size of the grid area: every cell, at the authored size.</summary>
+                    public static readonly Vector2F GridAreaSize = new Vector2F(
+                        BoardConstants.HalfCenter.Columns * CellSize,
+                        BoardConstants.HalfCenter.Rows * CellSize
+                    );
+                }
+            }
+
+            /// <summary>
             /// Encapsulates Board:Piece related setting values: the sizes a piece is drawn
             /// at, at the board's authored size (scaled by <c>UIBoard.DetailScale</c>).
             /// Colors and the font face are in <see cref="PieceSettings"/>.
