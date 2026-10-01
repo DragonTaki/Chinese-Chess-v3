@@ -21,6 +21,5 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         public static readonly Color RedSideBackgroundColor = StyleHelper.GetColor("#E83015");  // #E83015
         public static readonly Color BlackSideBackgroundColor = StyleHelper.GetColor("#1C1C1C");  // #1C1C1C
         public static readonly Color TextColor = StyleHelper.GetColor(Color.White);
-
     }
 }

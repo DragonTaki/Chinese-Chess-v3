@@ -18,7 +18,6 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
     /// </summary>
     public class UIInfoBoardHandler : UIContainerHandler<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>
     {
-
         public UIInfoBoardHandler() { }
         public void SetGameManager(GameManager gameManager)
         {
