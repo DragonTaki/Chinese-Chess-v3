@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <see cref="Submenu"/>) whose scroll container holds the category filter row and
         /// the item grid, both flex rows that wrap after <see cref="Columns"/> buttons.
         /// </summary>
-        public class CategoryListMenu
+        public static class CategoryListMenu
         {
             /// <summary>Buttons per row, in both the category row and the item grid.</summary>
             public const int Columns = 4;

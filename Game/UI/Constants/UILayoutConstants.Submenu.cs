@@ -21,7 +21,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>
         /// Encapsulates Submenu related setting values.
         /// </summary>
-        public class Submenu
+        public static class Submenu
         {
             public static Vector2F Position => Layout.Position;
             public static Vector2F Size => Layout.Size;
@@ -38,7 +38,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// Encapsulates Submenu:ScrollContainer related setting values.
             /// </summary>
-            public class ScrollContainer
+            public static class ScrollContainer
             {
                 public static Vector2F Position => Layout.Position;
                 public static Vector2F Size => Layout.Size;
@@ -50,7 +50,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// Encapsulates Submenu:ScrollContainer:Button related setting values.
             /// </summary>
-            public class Button
+            public static class Button
             {
                 public static Vector2F Position => Layout.Position;
                 public static Vector2F Size => Layout.Size;

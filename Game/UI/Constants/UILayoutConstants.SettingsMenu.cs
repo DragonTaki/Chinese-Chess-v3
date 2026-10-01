@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// save / back row, then each section's header and one full-width button per setting.
         /// All values are placeholders for the author to tune where the app can be seen.
         /// </summary>
-        public class SettingsMenu
+        public static class SettingsMenu
         {
             /// <summary>Height of a setting's button (one line).</summary>
             public const float ItemHeight = 56.0f;
