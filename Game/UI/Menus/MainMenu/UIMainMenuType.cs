@@ -12,14 +12,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
     public enum UIMainMenuType
     {
         Default,
-        NewGame,           // 開新一局
-        LoadGame,          // 讀取存檔
-        EndgameChallenge,  // 殘局闖關
-        OpeningPractice,   // 開局練習
-        RuleSettings,      // 規則設定
-        Multiplayer,       // 多人連線
-        Help,              // 教學／幫助
-        Settings,          // 遊戲設定
-        Exit               // 離開遊戲
+        NewGame,           // 開新一局 (New game)
+        LoadGame,          // 讀取存檔 (Load saved game)
+        EndgameChallenge,  // 殘局闖關 (Endgame challenge)
+        OpeningPractice,   // 開局練習 (Opening practice)
+        RuleSettings,      // 規則設定 (Rule settings)
+        Multiplayer,       // 多人連線 (Multiplayer)
+        Help,              // 教學／幫助 (Tutorial / help)
+        Settings,          // 遊戲設定 (Game settings)
+        Exit               // 離開遊戲 (Exit game)
     }
 }
