@@ -29,6 +29,8 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         protected override void AfterInit()
         {
             SetupRendererChildren();
+            // Bind the composite and its parts to this element (nothing else initializes it).
+            _composite.Init(Element);
         }
 
         private void SetupRendererChildren()
