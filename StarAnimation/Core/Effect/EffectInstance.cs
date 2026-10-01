@@ -40,9 +40,14 @@ namespace StarAnimation.Core.Effect
         private readonly List<Physics2D> _affectedPhysics = new();
         
         protected List<Star> CreateNewAffectedStars = new();
-        private float MaxEndTime => CreateNewAffectedStars.Count == 0
-            ? Duration
-            : CreateNewAffectedStars.Max(star => star.Pulse.Delay + Duration);
+
+        /// <summary>
+        /// Longest per-star start delay among the stars this instance still drives;
+        /// the instance stays active until <see cref="Duration"/> after it. 0 for
+        /// effects without per-star delays.
+        /// </summary>
+        protected virtual float MaxStartDelay => 0f;
+        private float MaxEndTime => Duration + MaxStartDelay;
         public bool IsActive => TimeProgress < MaxEndTime;
 
         public EffectInstance(Vector2F center, IAreaShape area, float duration, float effectAppliedChance)

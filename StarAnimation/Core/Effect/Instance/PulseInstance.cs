@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
@@ -44,6 +45,14 @@ namespace StarAnimation.Core.Effect.Instance
             MidOpacity = midOpacity;
             _affectedStars = new List<Star>();
         }
+
+        /// <summary>
+        /// Latest Pulse.Delay among the stars still pulsing, so the instance
+        /// is not reset before its last delayed star has finished.
+        /// </summary>
+        protected override float MaxStartDelay => _affectedStars.Count == 0
+            ? 0f
+            : _affectedStars.Max(star => star.Pulse.Delay);
 
         public static PulseInstance CreateRandom(IAreaShape area, PulseParameter config)
         {
