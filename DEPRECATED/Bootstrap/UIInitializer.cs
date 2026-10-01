@@ -23,19 +23,19 @@ namespace Chinese_Chess_v3.UI.Bootstrap
         /// </summary>
         public static UIInputManager Create(IServiceProvider sp, out UIElement rootUI)
         {
-            // 1) 構建 UI 樹根
-            rootUI = new RootUIElement();   // ← 你的自訂 Root 元件
+            // 1) Build the root of the UI tree
+            rootUI = new RootUIElement();   // <- your custom root element
 
-            // 2) 解析 DI 服務
+            // 2) Resolve DI services
             var scroll = sp.GetRequiredService<IScrollInputHandler>();
 
-            // 3) 建立 MouseInputRouter（傳 root 與 scroll）
+            // 3) Create the MouseInputRouter (pass root and scroll)
             var mouseRouter = new MouseInputRouter(rootUI, scroll);
 
-            // 4) 組裝 UIInputManager
+            // 4) Assemble the UIInputManager
             var inputMgr = new UIInputManager();
-            inputMgr.RegisterHandler(mouseRouter); // 先吃 Router
-            inputMgr.RegisterHandler(scroll);      // 再吃 Scroll (可選)
+            inputMgr.RegisterHandler(mouseRouter); // Router handles input first
+            inputMgr.RegisterHandler(scroll);      // then Scroll (optional)
 
             return inputMgr;
         }

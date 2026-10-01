@@ -122,8 +122,8 @@ namespace Chinese_Chess_v3.Panels
         /// </summary>
         private new void OnMouseClick(MouseEventArgs e)
         {
-            // TODO: 判斷是否點選到按鈕區域，進行處理
-            // 可透過 renderer 傳回的按鈕位置來比對點擊
+            // TODO: Check whether a button area was clicked and handle it.
+            // The click can be matched against the button positions returned by the renderer.
         }
     }
 }
