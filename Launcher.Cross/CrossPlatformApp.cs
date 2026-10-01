@@ -135,14 +135,6 @@ namespace Launcher.Cross
         }
 
         /// <summary>
-        /// Clamps the OS window to <see cref="UILayoutConstants.MinimumWindowSize"/>.
-        /// Silk.NET/GLFW has no built-in "minimum size" constraint to set
-        /// once, so this enforces it manually on every resize; the
-        /// re-assignment below is idempotent once clamped, so it doesn't
-        /// loop (Resize firing again with the already-clamped size is a
-        /// no-op here).
-        /// </summary>
-        /// <summary>
         /// Framebuffer pixels per logical window unit (2 on Retina, 1 otherwise).
         /// </summary>
         private void UpdatePixelScale(Silk.NET.Maths.Vector2D<int> framebufferSize)
@@ -152,6 +144,14 @@ namespace Launcher.Cross
                 GlobalWindow.UpdatePixelScale(framebufferSize.X / (float)logicalSize.X);
         }
 
+        /// <summary>
+        /// Clamps the OS window to <see cref="UILayoutConstants.MinimumWindowSize"/>.
+        /// Silk.NET/GLFW has no built-in "minimum size" constraint to set
+        /// once, so this enforces it manually on every resize; the
+        /// re-assignment below is idempotent once clamped, so it doesn't
+        /// loop (Resize firing again with the already-clamped size is a
+        /// no-op here).
+        /// </summary>
         private void OnResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
             int minWidth = (int)UILayoutConstants.MinimumWindowSize.X;

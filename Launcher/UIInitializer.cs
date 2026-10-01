@@ -23,8 +23,9 @@ namespace Launcher
     /// <summary>
     /// Responsible for initializing and connecting all UI components.
     /// <para>
-    /// Acts as the bootstrapper for the entire UI system, including the MainMenu, GameMenu,
-    /// navigation system, and dialog management.
+    /// Acts as the bootstrapper for the UI system: the root node, the main menu screen,
+    /// the navigation system, and dialog management (the other screens, e.g. GameMenu, are
+    /// created on demand when navigated to).
     /// </para>
     /// </summary>
     public static class UIInitializer
@@ -33,7 +34,7 @@ namespace Launcher
         /// Initializes the full UI hierarchy and returns the root UI node.
         /// <para>
         /// This method sets up the <see cref="UIRootNode"/>, dialog manager, navigation manager,
-        /// registers all screens, and displays the initial screen.
+        /// registers the main menu screen, and displays it as the initial screen.
         /// </para>
         /// </summary>
         /// <param name="sp">The <see cref="IServiceProvider"/> used for resolving required UI services.</param>
