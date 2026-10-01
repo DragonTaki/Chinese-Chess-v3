@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// Twist.cs
+// Twist_Old.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/08
@@ -15,8 +15,9 @@ using StarAnimation.Utils;
 namespace StarAnimation.Core.Effect
 {
     /// <summary>
-    /// Applies a twist distortion effect to stars, causing them to spiral outward.
-    /// Each affected star is offset by a rotational vector with decaying strength.
+    /// Applies a twist distortion effect to stars, by offsetting stars along a rotating vector.
+    /// Each affected star is shifted by a vector whose angle follows the system tick count
+    /// and whose length scales with a random share of Strength (which decays on every Apply call).
     /// </summary>
     public class Twist_Old
     {
@@ -46,6 +47,7 @@ namespace StarAnimation.Core.Effect
 
         /// <summary>
         /// Constructs a Twist effect with optional parameter overrides.
+        /// Chance, strength and decay values are passed through MathUtil.Sigmoid01; maxRadius is clamped to be non-negative.
         /// </summary>
         public Twist_Old(
             float? effectAppliedChance = null,
@@ -65,7 +67,8 @@ namespace StarAnimation.Core.Effect
 
         /// <summary>
         /// Applies the twist effect to a list of stars.
-        /// Stars will spiral outward and distort based on time and internal decay.
+        /// Each affected star's position is shifted by a time-dependent rotating offset; Strength
+        /// is then multiplied by DecayRate once per call.
         /// </summary>
         /// <param name="stars">The list of stars to apply the effect to.</param>
         /// <param name="rand">Random generator for probabilistic application.</param>
