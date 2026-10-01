@@ -20,7 +20,7 @@ namespace StarAnimation.Controllers
 {
     /// <summary>
     /// Controls temporary visual frames for debugging effect areas.
-    /// Each frame appears for a specified duration before fading out.
+    /// Each frame is drawn for LifetimeSeconds and is then removed (no fade-out).
     /// </summary>
     public class FrameController
     {

@@ -19,7 +19,7 @@ namespace StarAnimation.Controllers
     public class MainRenderController
     {
         /// <summary>
-        /// Optional background renderer (static or animated).
+        /// Controller for the background layer (drawn first, under the stars).
         /// </summary>
         private readonly BackgroundController _backgroundController;
 
@@ -29,12 +29,12 @@ namespace StarAnimation.Controllers
         private readonly EffectController _effectController;
 
         /// <summary>
-        /// Renderer responsible for drawing and updating star particles.
+        /// Controller responsible for updating and drawing star particles.
         /// </summary>
         private readonly StarController _starController;
 
         /// <summary>
-        /// Star animation _timer.
+        /// Global animation timer (the OnAnimationFrame subscription is currently disabled).
         /// </summary>
         private readonly ITimerProvider _timer;
 
@@ -42,9 +42,9 @@ namespace StarAnimation.Controllers
         /// <summary>
         /// Initializes the main render controller and its internal components.
         /// </summary>
-        /// <param name="rand">Random number generator used for effects and randomness.</param>
-        /// <param name="width">Width of the rendering canvas.</param>
-        /// <param name="height">Height of the rendering canvas.</param>
+        /// <remarks>
+        /// Canvas size is taken from GlobalWindow.LogicalWidth / LogicalHeight.
+        /// </remarks>
         public MainRenderController()
         {
             // Logical units: the host draws this background under a PixelScale transform.
