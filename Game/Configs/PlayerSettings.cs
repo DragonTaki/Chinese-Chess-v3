@@ -180,7 +180,7 @@ namespace Chinese_Chess_v3.Game.Configs
         /// Sets <paramref name="rules"/>' clock and rule properties from this player's choices
         /// (every property <see cref="CreateRules"/> sets; the rest are left alone). Lets the
         /// settings screen update the rules new games start with (<c>GameManager.DefaultRules</c>)
-        /// without replacing the object.
+        /// without replacing the object; a game already started keeps its own copy.
         /// </summary>
         public void ApplyTo(Rules rules)
         {
