@@ -58,6 +58,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             _ => reason.ToString(),
         };
 
+        // ----- Info board -----
+
+        /// <summary>Appended to the name of the side to move while it is in check (將軍), on the info board.</summary>
+        public const string InCheckSuffix = "（將軍）";
+
         // ----- Game log lines -----
 
         /// <summary>撤銷 with nothing to undo (a round needs both sides' last move above the undo floor).</summary>
