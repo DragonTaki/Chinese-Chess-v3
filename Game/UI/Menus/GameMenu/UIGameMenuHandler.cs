@@ -188,7 +188,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             }
 
             var side = game.CurrentTurn;
-            Log(GameMenuTexts.Resigned(side));
+            Log(GameMenuTexts.Resigned(side, game.ColorOf(side)));
             // Not an unsaved change: the game is over, nothing is left to save (the Core logs the result).
             game.Resign(side);
         }

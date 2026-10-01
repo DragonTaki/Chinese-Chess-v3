@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 
 namespace Chinese_Chess_v3.Game.UI.Constants
@@ -44,11 +45,20 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>放棄 when the game is already over.</summary>
         public const string ResignGameOver = "(Resign) 對局已經結束";
 
-        /// <summary>放棄: <paramref name="side"/> (the side to move) resigns.</summary>
-        public static string Resigned(PlayerSide side) => $"(Resign) {SideName(side)}認輸";
+        /// <summary>放棄: <paramref name="side"/> (the side to move), playing <paramref name="color"/>, resigns.</summary>
+        public static string Resigned(PlayerSide side, PieceColor color) => $"(Resign) {SideName(side, color)}認輸";
 
-        /// <summary>A side's name in the log lines: Player1 紅方, Player2 黑方 (like the move lines).</summary>
-        public static string SideName(PlayerSide side) => side == PlayerSide.Player2 ? "黑方" : "紅方";
+        /// <summary>
+        /// A side's name in the log lines, by the colour it plays (<c>GameManager.ColorOf</c>):
+        /// 紅方 / 黑方 (on the Full board Player1 is red, Player2 black, like the move lines);
+        /// 先手方 / 後手方 while a dark-chess game has not decided the colours yet.
+        /// </summary>
+        public static string SideName(PlayerSide side, PieceColor color) => color switch
+        {
+            PieceColor.Red => "紅方",
+            PieceColor.Black => "黑方",
+            _ => side == PlayerSide.Player2 ? "後手方" : "先手方",
+        };
 
         // ----- Saved-game list -----
 
