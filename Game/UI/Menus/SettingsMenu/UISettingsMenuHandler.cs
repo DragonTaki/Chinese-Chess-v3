@@ -127,12 +127,19 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             Element.RefreshTexts(_live);
         }
 
-        /// <summary>Copies the live rule / clock settings onto the rules new games start with.</summary>
+        /// <summary>
+        /// Copies the live rule / clock settings onto the rules new games start with, and the
+        /// debug log switch onto the logger (the launchers only push it once at startup, so
+        /// the 顯示 DEBUG 紀錄 toggle did nothing until the next launch).
+        /// </summary>
         private void ApplyToGame()
         {
             var gameManager = _factory.ServiceProvider.GetService<GameManager>();
             if (gameManager != null)
                 _live.ApplyTo(gameManager.DefaultRules);
+
+            Settings.EnableDebugMode = _live.ShowDebugLog;
+            AppLogger.EnableDebug = Settings.EnableDebugMode;
         }
 
         /// <summary>Closes the submenu by selecting its own main menu entry again.</summary>
