@@ -75,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         public void OnExit() { }
 
         /// <summary>
-        /// Loads both folders and rebuilds the buttons. Sorted by category, then file name
+        /// Loads both folders and rebuilds the buttons. Sorted by <see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}.CategoryOf"/> (the category by default), then file name
         /// (ordinal, as the loaders sort each folder), built-in before the player's own on a
         /// tie: the loaders return the two folders one after the other, so a category present
         /// in both would otherwise be split in two.
@@ -84,7 +84,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         {
             var warnings = new List<string>();
             Items = LoadItems(warnings)
-                .OrderBy(p => p.Category ?? string.Empty, StringComparer.Ordinal)
+                .OrderBy(Element.CategoryOf, StringComparer.Ordinal)
                 .ThenBy(p => p.FileName, StringComparer.Ordinal)
                 .ThenBy(p => p.Origin)
                 .ToList();
