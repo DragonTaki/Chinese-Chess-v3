@@ -34,7 +34,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>On/off: a switch (<see cref="SettingsToggleItem"/>).</summary>
         Toggle,
 
-        /// <summary>One of a few named choices: a button that steps to the next one for now; a dropdown later (<see cref="SettingsChoiceItem"/>).</summary>
+        /// <summary>One of a few named choices: a dropdown (<see cref="SettingsChoiceItem"/>).</summary>
         Choice,
 
         /// <summary>A number in a range: a slider (<see cref="SettingsNumberItem"/>).</summary>
@@ -144,9 +144,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>The chosen option's text in <paramref name="settings"/>.</summary>
         public string ValueText(PlayerSettings settings) => Options[Math.Clamp(GetIndex(settings), 0, Options.Count - 1)];
-
-        /// <summary>Chooses the next option (after the last: the first).</summary>
-        public void Cycle(PlayerSettings settings) => SetIndex(settings, (GetIndex(settings) + 1) % Options.Count);
     }
 
     /// <summary>A number setting in a range.</summary>

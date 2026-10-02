@@ -137,7 +137,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>A row's name.</summary>
             public static readonly IFont ItemFont = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
 
-            /// <summary>Tab texts, value buttons and the text field.</summary>
+            /// <summary>Tab texts, dropdowns, sliders' values and the text field.</summary>
             public static readonly IFont ValueFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
 
             /// <summary>Colour of a row's name (as the main menu buttons' text).</summary>
@@ -167,7 +167,10 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 CornerRadius = MainMenu.Button.Border.CornerRadius
             };
 
-            /// <summary>A choice's button (a click steps to the next choice): bright borders.</summary>
+            /// <summary>
+            /// Bright gold borders: the selected tab of the tab bar (<see cref="TabBarStyle"/>). It was
+            /// also the choice buttons' look until they became dropdowns (2026-10-02; see <see cref="DropdownStyle"/>).
+            /// </summary>
             public static readonly IButtonDrawStyle ChoiceStyle = new DoubleBorderRoundedStyle
             {
                 Font = ValueFont,
@@ -175,18 +178,6 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
                 OuterBorder = MainMenu.Button.Border.Outer,
                 InnerBorder = MainMenu.Button.Border.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
-
-            /// <summary>A number's value (only shown for now, not clickable): dimmed borders.</summary>
-            public static readonly IButtonDrawStyle NumberStyle = new DoubleBorderRoundedStyle
-            {
-                Font = ValueFont,
-                TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = CategoryListMenu.CategoryOff.Outer,
-                InnerBorder = CategoryListMenu.CategoryOff.Inner,
                 Margin = MainMenu.Button.Border.Margin,
                 CornerRadius = MainMenu.Button.Border.CornerRadius
             };

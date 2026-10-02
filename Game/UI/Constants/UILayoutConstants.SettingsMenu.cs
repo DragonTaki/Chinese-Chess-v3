@@ -59,7 +59,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Gap between a switch's knob and its track's edge.</summary>
             public const float ToggleKnobInset = 4.0f;
 
-            /// <summary>Width of a row's value button (a number; the narrowest a choice's dropdown gets).</summary>
+            /// <summary>The narrowest a choice's dropdown gets (the width the value buttons had).</summary>
             public const float ValueWidth = 260.0f;
 
             /// <summary>The widest a choice's dropdown gets (it widens to fit its longest choice, see <see cref="ValueTextPaddingX"/>).</summary>
@@ -104,7 +104,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Space between a slider's track and its value's column.</summary>
             public const float SliderLabelGap = 14.0f;
 
-            /// <summary>Height of a row's value button, dropdown, slider and text field.</summary>
+            /// <summary>Height of a row's dropdown, slider and text field.</summary>
             public const float ValueHeight = 40.0f;
 
             /// <summary>Width of a row's text field.</summary>

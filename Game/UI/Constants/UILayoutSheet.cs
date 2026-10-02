@@ -314,12 +314,6 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>A row's switch.</summary>
             public static readonly UILayoutStyle Toggle = Control(UILayoutConstants.SettingsMenu.ToggleWidth, UILayoutConstants.SettingsMenu.ToggleHeight);
 
-            /// <summary>A row's value button (a number).</summary>
-            public static readonly UILayoutStyle Value = Control(UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueHeight);
-
-            /// <summary>A choice's button, <paramref name="width"/> wide (fitted to its longest choice by <c>UISettingsMenu</c>).</summary>
-            public static UILayoutStyle Choice(float width) => Control(width, UILayoutConstants.SettingsMenu.ValueHeight);
-
             /// <summary>A choice's dropdown, <paramref name="width"/> wide (fitted to its longest choice by <c>UISettingsMenu</c>).</summary>
             public static UILayoutStyle Dropdown(float width) => Control(width, UILayoutConstants.SettingsMenu.ValueHeight);
 

@@ -95,13 +95,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             ApplyChange();
         }
 
-        /// <summary>A choice's button clicked: select the next choice and apply it live.</summary>
-        public void CycleChoice(SettingsChoiceItem item)
-        {
-            item.Cycle(_live);
-            ApplyChange();
-        }
-
         /// <summary>A dropdown's option chosen: set the setting to choice <paramref name="index"/> (kept within the options) and apply it live.</summary>
         public void SetChoice(SettingsChoiceItem item, int index)
         {
