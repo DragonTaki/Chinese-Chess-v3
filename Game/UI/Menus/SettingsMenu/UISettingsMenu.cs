@@ -3,17 +3,19 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
+using Engine.Platform;
 using Engine.Styles;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
@@ -24,26 +26,40 @@ using Engine.UI.Models;
 namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 {
     /// <summary>
-    /// The settings submenu (遊戲設定 / 規則設定, docs/SETTINGS.md): a save / back row, then
-    /// per section a header and one button per setting showing <c>名稱：開</c> (or the current
-    /// choice) that flips or cycles the setting on click. The logic - what a click edits, saving,
-    /// discarding - is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
+    /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>; docs/SETTINGS.md §4):
+    /// a tab bar at the top, and below it a scrolling list - the save / back row, then the
+    /// selected tab's sections: a header each and one row per setting, its name at the left and
+    /// its control at the right (a switch, a choice button, a number's value or a text field,
+    /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, discarding -
+    /// is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
     /// <see cref="SettingsMenuContent"/>.
     /// <para>
-    /// The setting buttons are rebuilt each time the submenu is shown
-    /// (<see cref="ShowSections"/>); a click only rewrites the button texts.
+    /// A tab's rows are rebuilt when it is shown (<see cref="ShowPage"/>); an edit only
+    /// refreshes the controls (<see cref="RefreshValues"/>).
     /// </para>
     /// </summary>
     public class UISettingsMenu : UIMenu<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>
     {
-        /// <summary>Which settings are listed (set by the main menu before the first show).</summary>
-        public SettingsMenuScope Scope { get; set; } = SettingsMenuScope.All;
+        /// <summary>Which screen this is (set by the main menu before the first show).</summary>
+        public SettingsScreen Screen { get; set; } = SettingsScreen.Game;
+
+        /// <summary>The tab selected each time the screen opens (set by the main menu; 0 = the first).</summary>
+        public int InitialTab { get; set; }
+
+        /// <summary>The tab bar (a child of the panel, above the scroll container).</summary>
+        internal UITabBar TabBar { get; private set; }
 
         /// <summary>The row holding the save and back buttons (first block of the scroll content).</summary>
         internal UIButtonRow FooterRow { get; private set; }
 
-        private readonly List<(UIButton Button, SettingsMenuItem Item)> _itemButtons = new();
-        private readonly List<UIButton> _headerButtons = new();
+        /// <summary>Everything of the shown tab in the scroll container (headers and rows), disposed by <see cref="ClearPage"/>.</summary>
+        private readonly List<UIElement> _pageElements = new();
+
+        /// <summary>The shown tab's buttons (headers, choice / number buttons): also in <see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>, which draws them.</summary>
+        private readonly List<UIButton> _pageButtons = new();
+
+        /// <summary>Per setting row: refreshes its controls from a settings instance.</summary>
+        private readonly List<Action<PlayerSettings>> _refreshers = new();
 
         public UISettingsMenu() { }
 
@@ -55,6 +71,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         protected override void BuildUIObjects()
         {
+            TabBar = _factory.CreateElement<UITabBar, UITabBarHandler, UITabBarRenderer>();
+            TabBar.Style = UILayoutStyles.SettingsMenu.TabBarStyle;
+            TabBar.LayoutRules.Apply(UILayoutSheet.SettingsMenu.TabBar);
+            TabBar.Handler.SelectionChanged = index => Handler.SelectTab(index);
+            AddChild(TabBar);
+
             FooterRow = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
             FooterRow.LayoutRules.Apply(UILayoutSheet.SettingsMenu.FooterRow);
             ScrollContainer.AddChild(FooterRow);
@@ -71,51 +93,137 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             ScrollContainer.LayoutRules.Apply(UILayoutSheet.SettingsMenu.ScrollContainer);
         }
 
-        /// <summary>The save and back buttons; the setting buttons come with <see cref="ShowSections"/>.</summary>
+        /// <summary>The save and back buttons; the tab's rows come with <see cref="ShowPage"/>.</summary>
         protected override void BuildButtons()
         {
             var save = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.SaveAndClose());
             save.Text = GameMenuTexts.SettingsSaveAndBack;
+            Buttons.Add(save);
             FooterRow.AddChild(save);
 
             var back = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.BackRequested());
             back.Text = GameMenuTexts.SettingsBack;
+            Buttons.Add(back);
             FooterRow.AddChild(back);
         }
 
-        /// <summary>
-        /// Replaces the section headers and setting buttons with those of
-        /// <paramref name="sections"/> (whose items show <paramref name="settings"/>' values).
-        /// </summary>
-        public void ShowSections(IEnumerable<SettingsMenuSection> sections, PlayerSettings settings)
+        /// <summary>Sets the tab bar's tabs to <paramref name="titles"/> with tab <paramref name="selected"/> selected (no selection callback).</summary>
+        public void SetTabs(IEnumerable<string> titles, int selected)
         {
-            ClearSectionButtons();
+            TabBar.SetTabs(titles);
+            if (TabBar.Tabs.Count > 0)
+                TabBar.SelectedIndex = Math.Clamp(selected, 0, TabBar.Tabs.Count - 1);
+        }
 
-            foreach (var section in sections)
+        /// <summary>
+        /// Replaces the shown tab's headers and rows with those of <paramref name="page"/>
+        /// (whose controls show <paramref name="settings"/>' values), back at the top of the list.
+        /// </summary>
+        public void ShowPage(SettingsMenuPage page, PlayerSettings settings)
+        {
+            ClearPage();
+
+            foreach (var section in page.Sections)
             {
-                var header = CreateButton(UILayoutSheet.SettingsMenu.Header, UILayoutStyles.SettingsMenu.HeaderStyle, null);
-                header.Text = section.Header;
-                ScrollContainer.AddChild(header);
-                _headerButtons.Add(header);
+                if (section.Header != null)
+                {
+                    var header = CreateButton(UILayoutSheet.SettingsMenu.Header, UILayoutStyles.SettingsMenu.HeaderStyle, null);
+                    header.Text = section.Header;
+                    AddPageButton(header);
+                    AddPageElement(header);
+                }
 
                 foreach (var item in section.Items)
-                {
-                    var target = item;
-                    var button = CreateButton(UILayoutSheet.SettingsMenu.Item, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.ChangeItem(target));
-                    button.Text = item.Text(settings);
-                    ScrollContainer.AddChild(button);
-                    _itemButtons.Add((button, item));
-                }
+                    AddPageElement(CreateRow(item, settings));
             }
 
+            RefreshValues(settings);
             Handler.UpdateScrollContentHeight();
         }
 
-        /// <summary>Rewrites every setting button's text from <paramref name="settings"/>.</summary>
-        public void RefreshTexts(PlayerSettings settings)
+        /// <summary>Updates every row (name, switch state and availability, values, text) from <paramref name="settings"/>.</summary>
+        public void RefreshValues(PlayerSettings settings)
         {
-            foreach (var (button, item) in _itemButtons)
-                button.Text = item.Text(settings);
+            foreach (var refresh in _refreshers)
+                refresh(settings);
+        }
+
+        #region Rows
+
+        /// <summary>A setting's row: the name, and the control of the item's kind.</summary>
+        /// <exception cref="ArgumentOutOfRangeException">The item is of an unknown kind.</exception>
+        private UILabeledRow CreateRow(SettingsMenuItem item, PlayerSettings settings)
+        {
+            var row = _factory.CreateElement<UILabeledRow, UILabeledRowHandler, UILabeledRowRenderer>();
+            row.Font = UILayoutStyles.SettingsMenu.ItemFont;
+            row.TextBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
+            row.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Item);
+            _refreshers.Add(s => row.Text = item.RowText(s));
+
+            switch (item)
+            {
+                case SettingsToggleItem toggle:
+                    var toggleSwitch = _factory.CreateElement<UIToggleSwitch, UIToggleSwitchHandler, UIToggleSwitchRenderer>();
+                    toggleSwitch.Style = UILayoutStyles.SettingsMenu.ToggleStyle;
+                    toggleSwitch.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Toggle);
+                    toggleSwitch.Handler.ValueChanged = value => Handler.SetToggle(toggle, value);
+                    row.AddChild(toggleSwitch);
+                    _refreshers.Add(s =>
+                    {
+                        toggleSwitch.IsOn = toggle.Get(s);
+                        toggleSwitch.IsEnabled = toggle.IsAvailable(s);
+                    });
+                    break;
+
+                case SettingsChoiceItem choice:
+                    var choiceButton = CreateButton(UILayoutSheet.SettingsMenu.Choice(ChoiceWidth(choice)), UILayoutStyles.SettingsMenu.ChoiceStyle, () => Handler.CycleChoice(choice));
+                    AddPageButton(choiceButton);
+                    row.AddChild(choiceButton);
+                    _refreshers.Add(s => choiceButton.Text = choice.ValueText(s));
+                    break;
+
+                case SettingsNumberItem number:
+                    // Only the value for now (the slider comes later): a button that does nothing.
+                    var numberButton = CreateButton(UILayoutSheet.SettingsMenu.Value, UILayoutStyles.SettingsMenu.NumberStyle, null);
+                    AddPageButton(numberButton);
+                    row.AddChild(numberButton);
+                    _refreshers.Add(s => numberButton.Text = number.ValueText(s));
+                    break;
+
+                case SettingsTextItem text:
+                    var field = _factory.CreateElement<UITextField, UITextFieldHandler, UITextFieldRenderer>();
+                    field.Style = UILayoutStyles.SettingsMenu.TextFieldStyle;
+                    field.Font = UILayoutStyles.SettingsMenu.ValueFont;
+                    field.MaxLength = text.MaxLength;
+                    field.Placeholder = text.Placeholder;
+                    field.LayoutRules.Apply(UILayoutSheet.SettingsMenu.TextField);
+                    field.Handler.TextChanged = value => Handler.SetText(text, value);
+                    row.AddChild(field);
+                    // Not while typing: the field itself is the source then.
+                    _refreshers.Add(s =>
+                    {
+                        if (!field.IsFocused)
+                            field.Text = text.Get(s);
+                    });
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(item), item.Kind, "Unknown settings item kind");
+            }
+
+            return row;
+        }
+
+        /// <summary>
+        /// Width of a choice's button: its longest choice's text plus padding, at least a
+        /// number's width and at most <see cref="UILayoutConstants.SettingsMenu.ValueMaxWidth"/>.
+        /// </summary>
+        private static float ChoiceWidth(SettingsChoiceItem choice)
+        {
+            using var g = GraphicsBackend.Factory.CreateMeasurementContext();
+            float longest = choice.Options.Max(option => g.MeasureString(option, UILayoutStyles.SettingsMenu.ValueFont).Width);
+            return Math.Clamp(longest + UILayoutConstants.SettingsMenu.ValueTextPaddingX * 2f,
+                UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueMaxWidth);
         }
 
         private UIButton CreateButton(UILayoutStyle rules, IButtonDrawStyle style, Action onClick)
@@ -124,25 +232,35 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             button.Handler.Action = onClick;
             button.Style = style;
             button.LayoutRules.Apply(rules);
-            Buttons.Add(button);
             return button;
         }
 
-        /// <summary>Disposes every header and setting button (which also detaches it), keeping the save / back row.</summary>
-        private void ClearSectionButtons()
+        /// <summary>A button of the shown tab: drawn by the menu (<see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>), removed by <see cref="ClearPage"/>.</summary>
+        private void AddPageButton(UIButton button)
         {
-            foreach (var header in _headerButtons)
-            {
-                Buttons.Remove(header);
-                header.Dispose();
-            }
-            foreach (var (button, _) in _itemButtons)
-            {
-                Buttons.Remove(button);
-                button.Dispose();
-            }
-            _headerButtons.Clear();
-            _itemButtons.Clear();
+            Buttons.Add(button);
+            _pageButtons.Add(button);
         }
+
+        /// <summary>A header or row of the shown tab, added to the scroll content.</summary>
+        private void AddPageElement(UIElement element)
+        {
+            ScrollContainer.AddChild(element);
+            _pageElements.Add(element);
+        }
+
+        /// <summary>Disposes the shown tab's headers and rows (which also detaches them and their controls), keeping the save / back row.</summary>
+        private void ClearPage()
+        {
+            foreach (var button in _pageButtons)
+                Buttons.Remove(button);
+            foreach (var element in _pageElements)
+                element.Dispose();
+            _pageButtons.Clear();
+            _pageElements.Clear();
+            _refreshers.Clear();
+        }
+
+        #endregion
     }
 }

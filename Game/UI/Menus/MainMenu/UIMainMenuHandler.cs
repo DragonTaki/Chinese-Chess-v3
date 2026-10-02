@@ -45,16 +45,20 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>());
             _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
             _submenus[UIMainMenuType.OpeningPractice] = CreateSubMenu(() => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>());
-            _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsMenuScope.Rules));
+            _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsScreen.Rules));
             _submenus[UIMainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
-            _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsMenuScope.All));
+            _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsScreen.Game));
         }
 
-        /// <summary>A settings submenu listing the settings of <paramref name="scope"/> (set before it is first shown, which is when its buttons are built).</summary>
-        private static UIElement CreateSettingsMenu(IUiFactory factory, SettingsMenuScope scope)
+        /// <summary>
+        /// A settings screen (<paramref name="screen"/>: 遊戲設定 or 單機規則設定), opening on its
+        /// first tab (畫面 / 傳統大盤); set before it is first shown, which is when its rows are built.
+        /// </summary>
+        private static UIElement CreateSettingsMenu(IUiFactory factory, SettingsScreen screen)
         {
             var menu = factory.CreateDIElement<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>();
-            menu.Scope = scope;
+            menu.Screen = screen;
+            menu.InitialTab = 0;
             return menu;
         }
 
