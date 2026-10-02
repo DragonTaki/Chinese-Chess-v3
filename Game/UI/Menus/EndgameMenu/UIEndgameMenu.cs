@@ -29,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
             $"{puzzle.Title}\n{DifficultyStars(puzzle.Difficulty)}";
 
         /// <summary>Same as <see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}.ShowItems"/>.</summary>
-        public void ShowPuzzles(IReadOnlyList<EndgamePuzzle> puzzles, Func<string, bool> isCategoryShown, string emptyMessage) =>
+        public void ShowPuzzles(IReadOnlyList<EndgamePuzzle> puzzles, Func<string, string, bool> isCategoryShown, string emptyMessage) =>
             ShowItems(puzzles, isCategoryShown, emptyMessage);
     }
 }

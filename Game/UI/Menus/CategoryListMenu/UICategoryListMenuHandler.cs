@@ -39,8 +39,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         where TRenderer : UIMenuRenderer<TMenu, THandler, TRenderer>
         where TItem : PgnGameFile
     {
-        /// <summary>Categories the player switched off (all on by default; kept while the game runs).</summary>
-        private readonly HashSet<string> _hiddenCategories = new(StringComparer.Ordinal);
+        /// <summary>Categories (per section) the player switched off (all on by default; kept while the game runs).</summary>
+        private readonly HashSet<(string Section, string Category)> _hiddenCategories = new();
 
         /// <summary>The items last loaded, in display order.</summary>
         public IReadOnlyList<TItem> Items { get; private set; } = Array.Empty<TItem>();
@@ -75,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         public void OnExit() { }
 
         /// <summary>
-        /// Loads both folders and rebuilds the buttons. Sorted by <see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}.CategoryOf"/> (the category by default), then file name
+        /// Loads both folders and rebuilds the buttons. Sorted by <see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}.SectionOf"/> (none by default), the category, then file name
         /// (ordinal, as the loaders sort each folder), built-in before the player's own on a
         /// tie: the loaders return the two folders one after the other, so a category present
         /// in both would otherwise be split in two.
@@ -84,7 +84,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         {
             var warnings = new List<string>();
             Items = LoadItems(warnings)
-                .OrderBy(Element.CategoryOf, StringComparer.Ordinal)
+                .OrderBy(p => Element.SectionOf(p) ?? string.Empty, StringComparer.Ordinal)
+                .ThenBy(Element.CategoryOf, StringComparer.Ordinal)
                 .ThenBy(p => p.FileName, StringComparer.Ordinal)
                 .ThenBy(p => p.Origin)
                 .ToList();
@@ -94,19 +95,21 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             Element.ShowItems(Items, IsCategoryShown, EmptyMessageText);
         }
 
-        public bool IsCategoryShown(string category) => !_hiddenCategories.Contains(category ?? string.Empty);
+        public bool IsCategoryShown(string section, string category) =>
+            !_hiddenCategories.Contains((section ?? string.Empty, category ?? string.Empty));
 
         /// <summary>Category toggle clicked: hide its items if shown, show them if hidden.</summary>
-        public void ToggleCategory(string category)
+        public void ToggleCategory(string section, string category)
         {
+            section ??= string.Empty;
             category ??= string.Empty;
-            bool show = !IsCategoryShown(category);
+            bool show = !IsCategoryShown(section, category);
             if (show)
-                _hiddenCategories.Remove(category);
+                _hiddenCategories.Remove((section, category));
             else
-                _hiddenCategories.Add(category);
+                _hiddenCategories.Add((section, category));
 
-            Element.SetCategoryShown(category, show);
+            Element.SetCategoryShown(section, category, show);
         }
 
         /// <summary>
