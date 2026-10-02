@@ -320,6 +320,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>A choice's button, <paramref name="width"/> wide (fitted to its longest choice by <c>UISettingsMenu</c>).</summary>
             public static UILayoutStyle Choice(float width) => Control(width, UILayoutConstants.SettingsMenu.ValueHeight);
 
+            /// <summary>A choice's dropdown, <paramref name="width"/> wide (fitted to its longest choice by <c>UISettingsMenu</c>).</summary>
+            public static UILayoutStyle Dropdown(float width) => Control(width, UILayoutConstants.SettingsMenu.ValueHeight);
+
             /// <summary>A row's text field.</summary>
             public static readonly UILayoutStyle TextField = Control(UILayoutConstants.SettingsMenu.TextFieldWidth, UILayoutConstants.SettingsMenu.ValueHeight);
         }

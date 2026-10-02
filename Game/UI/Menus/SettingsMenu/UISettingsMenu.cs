@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/02
-// Version: v2.0
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -29,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>; docs/SETTINGS.md §4):
     /// a tab bar at the top, and below it a scrolling list - the save / back row, then the
     /// selected tab's sections: a header each and one row per setting, its name at the left and
-    /// its control at the right (a switch, a choice button, a number's value or a text field,
+    /// its control at the right (a switch, a dropdown, a number's value or a text field,
     /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, discarding -
     /// is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
     /// <see cref="SettingsMenuContent"/>.
@@ -55,7 +55,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>Everything of the shown tab in the scroll container (headers and rows), disposed by <see cref="ClearPage"/>.</summary>
         private readonly List<UIElement> _pageElements = new();
 
-        /// <summary>The shown tab's buttons (headers, choice / number buttons): also in <see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>, which draws them.</summary>
+        /// <summary>The shown tab's buttons (headers, number buttons): also in <see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>, which draws them.</summary>
         private readonly List<UIButton> _pageButtons = new();
 
         /// <summary>Per setting row: refreshes its controls from a settings instance.</summary>
@@ -176,10 +176,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     break;
 
                 case SettingsChoiceItem choice:
-                    var choiceButton = CreateButton(UILayoutSheet.SettingsMenu.Choice(ChoiceWidth(choice)), UILayoutStyles.SettingsMenu.ChoiceStyle, () => Handler.CycleChoice(choice));
-                    AddPageButton(choiceButton);
-                    row.AddChild(choiceButton);
-                    _refreshers.Add(s => choiceButton.Text = choice.ValueText(s));
+                    var dropdown = _factory.CreateElement<UIDropdown, UIDropdownHandler, UIDropdownRenderer>();
+                    dropdown.Style = UILayoutStyles.SettingsMenu.DropdownStyle;
+                    dropdown.Font = UILayoutStyles.SettingsMenu.ValueFont;
+                    dropdown.SetOptions(choice.Options);
+                    dropdown.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Dropdown(DropdownWidth(choice)));
+                    dropdown.Handler.SelectionChanged = index => Handler.SetChoice(choice, index);
+                    row.AddChild(dropdown);
+                    _refreshers.Add(s => dropdown.SelectedIndex = choice.GetIndex(s));
                     break;
 
                 case SettingsNumberItem number:
@@ -215,15 +219,17 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         }
 
         /// <summary>
-        /// Width of a choice's button: its longest choice's text plus padding, at least a
-        /// number's width and at most <see cref="UILayoutConstants.SettingsMenu.ValueMaxWidth"/>.
+        /// Width of a choice's dropdown: its longest choice's text with the text padding on both
+        /// sides, plus the ▼ arrow and its inset; at least a number's width and at most
+        /// <see cref="UILayoutConstants.SettingsMenu.ValueMaxWidth"/>.
         /// </summary>
-        private static float ChoiceWidth(SettingsChoiceItem choice)
+        private static float DropdownWidth(SettingsChoiceItem choice)
         {
             using var g = GraphicsBackend.Factory.CreateMeasurementContext();
             float longest = choice.Options.Max(option => g.MeasureString(option, UILayoutStyles.SettingsMenu.ValueFont).Width);
-            return Math.Clamp(longest + UILayoutConstants.SettingsMenu.ValueTextPaddingX * 2f,
-                UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueMaxWidth);
+            float width = longest + UILayoutConstants.SettingsMenu.ValueTextPaddingX * 2f
+                + UILayoutConstants.SettingsMenu.DropdownArrowWidth + UILayoutConstants.SettingsMenu.DropdownArrowInset;
+            return Math.Clamp(width, UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueMaxWidth);
         }
 
         private UIButton CreateButton(UILayoutStyle rules, IButtonDrawStyle style, Action onClick)

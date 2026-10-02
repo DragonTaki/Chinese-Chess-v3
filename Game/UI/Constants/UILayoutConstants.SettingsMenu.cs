@@ -59,14 +59,35 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Gap between a switch's knob and its track's edge.</summary>
             public const float ToggleKnobInset = 4.0f;
 
-            /// <summary>Width of a row's value button (a number; the narrowest a choice's button gets).</summary>
+            /// <summary>Width of a row's value button (a number; the narrowest a choice's dropdown gets).</summary>
             public const float ValueWidth = 260.0f;
 
-            /// <summary>The widest a choice's button gets (it widens to fit its longest choice, see <see cref="ValueTextPaddingX"/>).</summary>
+            /// <summary>The widest a choice's dropdown gets (it widens to fit its longest choice, see <see cref="ValueTextPaddingX"/>).</summary>
             public const float ValueMaxWidth = 480.0f;
 
-            /// <summary>Space left and right of a choice's longest text inside its button.</summary>
+            /// <summary>Space left of a choice's text inside its dropdown (and between the longest text and the arrow).</summary>
             public const float ValueTextPaddingX = 24.0f;
+
+            /// <summary>Width of a dropdown's ▼ arrow (its height is half of it).</summary>
+            public const float DropdownArrowWidth = 14.0f;
+
+            /// <summary>Space between a dropdown's arrow and its box's right edge.</summary>
+            public const float DropdownArrowInset = 16.0f;
+
+            /// <summary>Height of one option in an open dropdown list.</summary>
+            public const float DropdownItemHeight = 40.0f;
+
+            /// <summary>Most options an open dropdown list shows at once (more scroll).</summary>
+            public const int DropdownMaxVisibleItems = 6;
+
+            /// <summary>Space between a dropdown's box and its open list.</summary>
+            public const float DropdownListGap = 4.0f;
+
+            /// <summary>Space above the first and below the last visible option inside an open dropdown list.</summary>
+            public const float DropdownListPadding = 6.0f;
+
+            /// <summary>Width of an open dropdown list's scroll bar.</summary>
+            public const float DropdownScrollBarWidth = 4.0f;
 
             /// <summary>Height of a row's value button and text field.</summary>
             public const float ValueHeight = 40.0f;
