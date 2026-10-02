@@ -113,8 +113,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 Toggle(GameMenuTexts.CanCaptureHiddenPiece, s => s.CanCaptureHiddenPiece, (s, v) => s.CanCaptureHiddenPiece = v),
                 Toggle(GameMenuTexts.CaptureHiddenStrongerSuicide, s => s.IsCaptureHiddenPieceStrongerSuicide, (s, v) => s.IsCaptureHiddenPieceStrongerSuicide = v),
                 Toggle(GameMenuTexts.AllowChainCapture, s => s.IsAllowChainCapture, (s, v) => s.IsAllowChainCapture = v),
-                Toggle(GameMenuTexts.ChariotRush, s => s.CanChariotRush, (s, v) => s.CanChariotRush = v),
-                Toggle(GameMenuTexts.HorseMoveDiagonally, s => s.IsHorseMoveDiagonally, (s, v) => s.IsHorseMoveDiagonally = v),
+                Toggle(GameMenuTexts.ChariotRushHorseDiagonal, s => s.IsChariotRushHorseDiagonal, (s, v) => s.IsChariotRushHorseDiagonal = v),
                 Toggle(GameMenuTexts.CannonMustJump, s => s.IsCannonMustJumpToCapture, (s, v) => s.IsCannonMustJumpToCapture = v),
             }, isRules: true),
 

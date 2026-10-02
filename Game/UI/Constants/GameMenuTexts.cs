@@ -156,8 +156,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string CanCaptureHiddenPiece = "暗吃";
         public const string CaptureHiddenStrongerSuicide = "暗吃到更大的子時吃方被吃";
         public const string AllowChainCapture = "連吃";
-        public const string ChariotRush = "車衝";
-        public const string HorseMoveDiagonally = "馬斜";
+        public const string ChariotRushHorseDiagonal = "車衝馬斜";
         public const string CannonMustJump = "包跳吃子";
 
         public const string StepTimer = "限制步時";

@@ -90,10 +90,8 @@ namespace Chinese_Chess_v3.Game.Configs
                 "暗吃吃到比自己大的子時：true = 吃的一方被吃掉、對方保持翻開；false = 吃的一方回到原位，對方翻開。"),
             Bool("dark_chess", "allow_chain_capture", s => s.IsAllowChainCapture, (s, v) => s.IsAllowChainCapture = v,
                 "是否允許連吃（一步連續吃多次）。"),
-            Bool("dark_chess", "chariot_rush", s => s.CanChariotRush, (s, v) => s.CanChariotRush = v,
-                "是否允許車衝（車可以沿直線一次走多格；走超過一格吃子不看大小，吃相鄰的子仍照大小）。"),
-            Bool("dark_chess", "horse_diagonal", s => s.IsHorseMoveDiagonally, (s, v) => s.IsHorseMoveDiagonally = v,
-                "是否馬斜（馬改成斜走一格，斜走吃子不看大小）。"),
+            Bool("dark_chess", "chariot_rush_horse_diagonal", s => s.IsChariotRushHorseDiagonal, (s, v) => s.IsChariotRushHorseDiagonal = v,
+                "是否採用車衝馬斜（同一個變體）：車可以沿直線一次走多格，走超過一格吃子不看大小、吃相鄰的子仍照大小；馬改成斜走一格，斜走吃子不看大小。"),
             Bool("dark_chess", "cannon_must_jump", s => s.IsCannonMustJumpToCapture, (s, v) => s.IsCannonMustJumpToCapture = v,
                 "包／炮吃子是否一定要跳過一個子。"),
 
