@@ -270,6 +270,18 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 };
             }
 
+            /// <summary>A section heading (開局練習: 先手 / 後手), shown as <c>── 先手 ──</c>.</summary>
+            public static class SectionHeading
+            {
+                public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
+                public static readonly Color Color = StyleHelper.GetColor("#F9BF45", 1.0f);  // #F9BF45
+
+                public const string Prefix = "── ";
+                public const string Suffix = " ──";
+
+                public static string Format(string section) => Prefix + section + Suffix;
+            }
+
             /// <summary>The message shown when nothing was found.</summary>
             public static class EmptyMessage
             {

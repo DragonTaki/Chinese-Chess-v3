@@ -203,6 +203,15 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>The item grid (<c>UICategoryListMenu.ItemGrid</c>).</summary>
             public static readonly UILayoutStyle ItemGrid = ButtonRows;
 
+            /// <summary>A section's heading label (<c>UICategoryListMenu.SectionOf</c>): full width, height from its text.</summary>
+            public static readonly UILayoutStyle SectionHeading = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+            };
+
             /// <summary>A button of a row: fixed column width and height, not shrinkable.</summary>
             private static UILayoutStyle RowButton(float height) => new()
             {
