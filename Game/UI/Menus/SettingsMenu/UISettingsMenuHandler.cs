@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/02
-// Version: v2.0
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -98,6 +98,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         public void CycleChoice(SettingsChoiceItem item)
         {
             item.Cycle(_live);
+            ApplyChange();
+        }
+
+        /// <summary>A dropdown's option chosen: set the setting to choice <paramref name="index"/> (kept within the options) and apply it live.</summary>
+        public void SetChoice(SettingsChoiceItem item, int index)
+        {
+            item.SetIndex(_live, Math.Clamp(index, 0, item.Options.Count - 1));
             ApplyChange();
         }
 

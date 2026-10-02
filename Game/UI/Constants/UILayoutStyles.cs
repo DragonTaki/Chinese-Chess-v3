@@ -223,6 +223,51 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 DisabledOpacity = 0.35f,
             };
 
+            /// <summary>
+            /// A choice's dropdown: the box looks like the choice buttons it replaced (bright gold
+            /// borders; a faint gold fill while open); the open list is an almost opaque dark box (it is drawn over other
+            /// rows) with a faint gold highlight under the mouse and the chosen option in gold.
+            /// </summary>
+            public static readonly DropdownStyle DropdownStyle = new DropdownStyle
+            {
+                Box = new DoubleBorderRoundedStyle
+                {
+                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    OuterBorder = MainMenu.Button.Border.Outer,
+                    InnerBorder = MainMenu.Button.Border.Inner,
+                    Margin = MainMenu.Button.Border.Margin,
+                    CornerRadius = MainMenu.Button.Border.CornerRadius
+                },
+                OpenBox = new DoubleBorderRoundedStyle
+                {
+                    BackgroundBrushFactory = new SolidBrushFactory(StyleHelper.GetColor("#F9BF45", 0.25f)),  // #F9BF45
+                    OuterBorder = MainMenu.Button.Border.Outer,
+                    InnerBorder = MainMenu.Button.Border.Inner,
+                    Margin = MainMenu.Button.Border.Margin,
+                    CornerRadius = MainMenu.Button.Border.CornerRadius
+                },
+                ListBox = new SingleBorderRoundedStyle
+                {
+                    CornerRadius = MainMenu.Button.Border.CornerRadius,
+                    BorderStyle = MainMenu.Button.Border.Inner,
+                    BackgroundBrushFactory = new SolidBrushFactory(StyleHelper.GetColor("#26221C", 0.96f)),  // #26221C
+                },
+                TextColor = StyleHelper.GetColor("#FCFAF2", 1.0f),          // #FCFAF2
+                SelectedTextColor = StyleHelper.GetColor("#F9BF45", 1.0f),  // #F9BF45
+                HoverColor = StyleHelper.GetColor("#F9BF45", 0.2f),         // #F9BF45
+                ArrowColor = StyleHelper.GetColor("#F9BF45", 0.9f),         // #F9BF45
+                ArrowWidth = UILayoutConstants.SettingsMenu.DropdownArrowWidth,
+                ArrowInset = UILayoutConstants.SettingsMenu.DropdownArrowInset,
+                TextInset = UILayoutConstants.SettingsMenu.ValueTextPaddingX,
+                ItemHeight = UILayoutConstants.SettingsMenu.DropdownItemHeight,
+                MaxVisibleItems = UILayoutConstants.SettingsMenu.DropdownMaxVisibleItems,
+                ListGap = UILayoutConstants.SettingsMenu.DropdownListGap,
+                ListPadding = UILayoutConstants.SettingsMenu.DropdownListPadding,
+                ScrollBarColor = StyleHelper.GetColor("#F9BF45", 0.6f),     // #F9BF45
+                ScrollBarWidth = UILayoutConstants.SettingsMenu.DropdownScrollBarWidth,
+                DisabledOpacity = 0.4f,
+            };
+
             /// <summary>A row's text field: faint box with gold borders (brighter while typing).</summary>
             public static readonly TextFieldStyle TextFieldStyle = new TextFieldStyle
             {
