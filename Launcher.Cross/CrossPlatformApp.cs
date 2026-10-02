@@ -69,6 +69,20 @@ namespace Launcher.Cross
             _window.FramebufferResize += OnFramebufferResize;
             _window.Closing += OnClosing;
             _window.FocusChanged += OnFocusChanged;
+
+            ApplyFrameRate(TimerSettings.GameAnimationFPS);
+            TimerSettings.GameAnimationFpsChanged += ApplyFrameRate;
+        }
+
+        /// <summary>
+        /// Runs the window's update and render loops at <paramref name="fps"/> (the player's
+        /// <c>[display] fps</c>, via <see cref="TimerSettings.GameAnimationFPS"/>). With VSync on
+        /// (Silk's default) the render rate is also capped by the display's refresh rate.
+        /// </summary>
+        private void ApplyFrameRate(int fps)
+        {
+            _window.FramesPerSecond = fps;
+            _window.UpdatesPerSecond = fps;
         }
 
         private void OnLoad()
@@ -203,6 +217,7 @@ namespace Launcher.Cross
 
         private void OnClosing()
         {
+            TimerSettings.GameAnimationFpsChanged -= ApplyFrameRate;
             _timer.Stop();
             _grContext?.Dispose();
             _grGlInterface?.Dispose();

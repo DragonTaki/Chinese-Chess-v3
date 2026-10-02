@@ -18,6 +18,7 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.Logging;
+using Engine.Timing;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Input;
@@ -186,8 +187,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>
         /// Copies each kind's live rule / clock settings onto the rules new games of that kind
         /// start with, the debug log switch onto the logger (the launchers only push it once at
-        /// startup), the player name onto the log greeting / save names and the wheel step onto
-        /// the shared scroll handler (also only set at startup).
+        /// startup), the player name onto the log greeting / save names, the wheel step onto
+        /// the shared scroll handler and the frame rate onto the engine's frame timer (both also
+        /// only set at startup otherwise).
         /// </summary>
         private void ApplyToGame()
         {
@@ -203,6 +205,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
             if (_factory.ServiceProvider.GetService<IScrollInputHandler>() is ScrollInputHandler scroll)
                 scroll.WheelStep = _live.WheelScrollStep;
+
+            TimerSettings.GameAnimationFPS = _live.Fps;
         }
 
         /// <summary>Closes the screen by selecting its own main menu entry again.</summary>
