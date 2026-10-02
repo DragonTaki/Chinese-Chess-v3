@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+
+using Chinese_Chess_v3.Game.Core;
 
 using Engine.Configs;
 using Engine.Logging;
@@ -53,66 +55,122 @@ namespace Chinese_Chess_v3.Game.Configs
             "每個項目的說明：docs/SETTINGS.md",
         };
 
-        private static readonly KeyDef[] Keys =
+        private static readonly KeyDef[] Keys = BuildKeys().ToArray();
+
+        /// <summary>Every key of the file, in file order: [player], one [rules.*] section per game kind, then the rest.</summary>
+        private static IEnumerable<KeyDef> BuildKeys()
         {
-            Str("player", "name", s => s.PlayerName, (s, v) => s.PlayerName = v, maxLength: 32,
-                "玩家名稱，用在紀錄區的問候語（可留空，最多 32 字）。"),
+            yield return Str("player", "name", s => s.PlayerName, (s, v) => s.PlayerName = v, PlayerSettings.PlayerNameMaxLength,
+                $"玩家名稱，用在紀錄區的問候語（可留空，最多 {PlayerSettings.PlayerNameMaxLength} 字）。");
 
-            Int("timer", "total_minutes", s => s.TotalTimeMinutes, (s, v) => s.TotalTimeMinutes = v, 1, 600,
-                "每方的局時（分鐘，1～600）；只用於倒數計時，正數計時（mode = CountUp）沒有時限，不使用。"),
-            Int("timer", "step_seconds", s => s.StepTimeSeconds, (s, v) => s.StepTimeSeconds = v, 1, 3600,
-                "每步的步時（秒，1～3600）；step_timer = false 或正數計時時不使用。"),
-            Int("timer", "increment_seconds", s => s.IncrementSeconds, (s, v) => s.IncrementSeconds = v, 0, 600,
-                "每走一步加回局時的秒數（0～600，0 表示不加秒）；僅倒數計時會加秒，正數計時不加。"),
-            Bool("timer", "step_timer", s => s.StepTimerEnabled, (s, v) => s.StepTimerEnabled = v,
-                "是否限制步時（true／false）；只用於倒數計時，正數計時一律只計步時、不限制。"),
-            Enum("timer", "mode", s => s.TimerMode, (s, v) => s.TimerMode = v,
-                "計時方式：CountDown（倒數到時限）或 CountUp（從 0 正數，只計時：沒有時限、不會超時判負、不加秒）。"),
-            Bool("timer", "lose_on_time_up", s => s.EndGameWhenTimesUp, (s, v) => s.EndGameWhenTimesUp = v,
-                "時間用完的一方是否判負（true／false）；false 時只停掉那一方的時鐘，棋局繼續。只用於倒數計時，正數計時不會超時。"),
+            foreach (var kind in System.Enum.GetValues<GameKind>())
+                foreach (var key in RuleKeys(kind))
+                    yield return key;
 
-            Bool("rules", "general_can_see_general", s => s.CanGeneralSeeGeneral, (s, v) => s.CanGeneralSeeGeneral = v,
-                "是否允許王見王（兩將在同一直線、中間無子）。"),
-            Bool("rules", "general_can_leave_palace", s => s.CanGeneralLeavePalace, (s, v) => s.CanGeneralLeavePalace = v,
-                "將帥是否可以出九宮。"),
-            Bool("rules", "advisor_can_leave_palace", s => s.CanAdvisorLeavePalace, (s, v) => s.CanAdvisorLeavePalace = v,
-                "士是否可以出九宮。"),
-            Bool("rules", "elephant_eye_blocks", s => s.ElephantEyeCanBeBlocked, (s, v) => s.ElephantEyeCanBeBlocked = v,
-                "是否有塞象眼（象田字中心有子就不能走）。"),
-            Bool("rules", "horse_leg_blocks", s => s.HorseLegCanBeHobbled, (s, v) => s.HorseLegCanBeHobbled = v,
-                "是否有蹩馬腳（馬腳有子就不能往那邊走）。"),
+            yield return Bool("hints", "legal_moves", s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v,
+                "選子時是否用圓圈標出可以走的位置。");
+            yield return Bool("hints", "hanging_pieces", s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v,
+                "是否用圓圈標出無根、可被吃的棋子。");
 
-            Bool("dark_chess", "is_hidden_chess", s => s.IsHiddenChess, (s, v) => s.IsHiddenChess = v,
-                "是否為暗棋（棋子蓋著走，翻開才知道是什麼）。"),
-            Bool("dark_chess", "can_capture_hidden_piece", s => s.CanCaptureHiddenPiece, (s, v) => s.CanCaptureHiddenPiece = v,
-                "是否允許暗吃（直接吃蓋著的棋子）。"),
-            Bool("dark_chess", "capture_hidden_stronger_suicide", s => s.IsCaptureHiddenPieceStrongerSuicide, (s, v) => s.IsCaptureHiddenPieceStrongerSuicide = v,
-                "暗吃吃到比自己大的子時：true = 吃的一方被吃掉、對方保持翻開；false = 吃的一方回到原位，對方翻開。"),
-            Bool("dark_chess", "allow_chain_capture", s => s.IsAllowChainCapture, (s, v) => s.IsAllowChainCapture = v,
-                "是否允許連吃（一步連續吃多次）。"),
-            Bool("dark_chess", "chariot_rush_horse_diagonal", s => s.IsChariotRushHorseDiagonal, (s, v) => s.IsChariotRushHorseDiagonal = v,
-                "是否採用車衝馬斜（同一個變體）：車可以沿直線一次走多格，走超過一格吃子不看大小、吃相鄰的子仍照大小；馬改成斜走一格，斜走吃子不看大小。"),
-            Bool("dark_chess", "cannon_must_jump", s => s.IsCannonMustJumpToCapture, (s, v) => s.IsCannonMustJumpToCapture = v,
-                "包／炮吃子是否一定要跳過一個子。"),
+            yield return Float("input", "wheel_scroll_step", s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v,
+                PlayerSettings.WheelScrollStepMin, PlayerSettings.WheelScrollStepMax,
+                $"滑鼠滾輪每一格捲動的距離（介面設計單位，{PlayerSettings.WheelScrollStepMin}～{PlayerSettings.WheelScrollStepMax}）。");
 
-            Bool("hints", "legal_moves", s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v,
-                "選子時是否用圓圈標出可以走的位置。"),
-            Bool("hints", "hanging_pieces", s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v,
-                "是否用圓圈標出無根、可被吃的棋子。"),
+            yield return Bool("log", "debug", s => s.ShowDebugLog, (s, v) => s.ShowDebugLog = v,
+                "是否顯示 DEBUG 等級的紀錄（較詳細）。");
 
-            Float("input", "wheel_scroll_step", s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v, 1f, 500f,
-                "滑鼠滾輪每一格捲動的距離（介面設計單位，1～500）。"),
-
-            Bool("log", "debug", s => s.ShowDebugLog, (s, v) => s.ShowDebugLog = v,
-                "是否顯示 DEBUG 等級的紀錄（較詳細）。"),
-
-            Path("endgame", "user_folder", s => s.EndgameUserFolder, (s, v) => s.EndgameUserFolder = v,
+            yield return Path("endgame", "user_folder", s => s.EndgameUserFolder, (s, v) => s.EndgameUserFolder = v,
                 "自己的殘局題目資料夾；留空 = 預設位置（這個設定檔旁邊的 Endgames 資料夾）。",
-                "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。"),
+                "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。");
 
-            Path("opening", "user_folder", s => s.OpeningUserFolder, (s, v) => s.OpeningUserFolder = v,
+            yield return Path("opening", "user_folder", s => s.OpeningUserFolder, (s, v) => s.OpeningUserFolder = v,
                 "自己的開局練習資料夾；留空 = 預設位置（這個設定檔旁邊的 Openings 資料夾）。",
-                "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。"),
+                "相對路徑以這個設定檔所在的資料夾為準；可以用 %環境變數%。");
+        }
+
+        /// <summary>
+        /// The section of <paramref name="kind"/>'s rules: <c>rules.traditional</c>,
+        /// <c>rules.flip</c>, <c>rules.dark_half</c>, <c>rules.open_half</c>, <c>rules.three_kingdoms</c>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="kind"/> is not a <see cref="GameKind"/>.</exception>
+        public static string RulesSection(GameKind kind) => kind switch
+        {
+            GameKind.Traditional => "rules.traditional",
+            GameKind.Flip => "rules.flip",
+            GameKind.DarkHalf => "rules.dark_half",
+            GameKind.OpenHalf => "rules.open_half",
+            GameKind.ThreeKingdoms => "rules.three_kingdoms",
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
+        };
+
+        /// <summary>The kind's name in the file's comments (the new-game menu's name).</summary>
+        private static string KindName(GameKind kind) => kind switch
+        {
+            GameKind.Traditional => "傳統大盤（也用於殘局、開局練習與讀取的存檔）",
+            GameKind.Flip => "揭棋大盤",
+            GameKind.DarkHalf => "暗棋半盤",
+            GameKind.OpenHalf => "明棋半盤",
+            GameKind.ThreeKingdoms => "三國半盤",
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
+        };
+
+        /// <summary>
+        /// The keys of <paramref name="kind"/>'s section: the clock settings, then the kind's
+        /// on/off options (<see cref="RuleSettings.OptionsFor"/>), then 三國's choices.
+        /// </summary>
+        private static IEnumerable<KeyDef> RuleKeys(GameKind kind)
+        {
+            string section = RulesSection(kind);
+            RuleSettings R(PlayerSettings s) => s.RulesFor(kind);
+
+            yield return Int(section, "total_minutes", s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
+                RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax,
+                $"── {KindName(kind)}的計時與規則（只用於單機對局，連線對局不適用；下一局開始生效）──",
+                $"每方的局時（分鐘，{RuleSettings.TotalTimeMinutesMin}～{RuleSettings.TotalTimeMinutesMax}）；只用於倒數計時，正數計時（mode = CountUp）沒有時限，不使用。");
+            yield return Int(section, "step_seconds", s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = v,
+                RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax,
+                $"每步的步時（秒，{RuleSettings.StepTimeSecondsMin}～{RuleSettings.StepTimeSecondsMax}）；step_timer = false 或正數計時時不使用。");
+            yield return Int(section, "increment_seconds", s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
+                RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax,
+                $"每走一步加回局時的秒數（{RuleSettings.IncrementSecondsMin}～{RuleSettings.IncrementSecondsMax}，0 表示不加秒）；僅倒數計時會加秒，正數計時不加。");
+            yield return Bool(section, "step_timer", s => R(s).StepTimerEnabled, (s, v) => R(s).StepTimerEnabled = v,
+                "是否限制步時（true／false）；只用於倒數計時，正數計時一律只計步時、不限制。");
+            yield return Enum(section, "mode", s => R(s).TimerMode, (s, v) => R(s).TimerMode = v,
+                "計時方式：CountDown（倒數到時限）或 CountUp（從 0 正數，只計時：沒有時限、不會超時判負、不加秒）。");
+            yield return Bool(section, "lose_on_time_up", s => R(s).EndGameWhenTimesUp, (s, v) => R(s).EndGameWhenTimesUp = v,
+                "時間用完的一方是否判負（true／false）；false 時只停掉那一方的時鐘，棋局繼續。只用於倒數計時，正數計時不會超時。");
+
+            foreach (var option in RuleSettings.OptionsFor(kind))
+            {
+                var (name, comment) = OptionKey(option);
+                yield return Bool(section, name, s => R(s).Get(option), (s, v) => R(s).Set(option, v), comment);
+            }
+
+            if (kind == GameKind.ThreeKingdoms)
+            {
+                yield return Enum(section, "team_setup", s => R(s).HalfCrossTeamVariant, (s, v) => R(s).HalfCrossTeamVariant = v,
+                    "分隊（未實作，目前只記錄）：Standard（第一種：帥將兵卒／仕相俥傌炮／士象車馬包）或 Handicap（第二種，讓子用：兵卒／帥仕相將士象／俥傌炮車馬包）。");
+                yield return Enum(section, "win_condition", s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v,
+                    "勝負方式（未實作，目前只記錄）：Points（計分，預設：車／將／帥 2 分、其他 1 分，將帥隊吃到 12 分、其他兩隊 10 分獲勝）、Annihilation（全滅）、Recall（收軍）、ScoreBalance（得失分）或 FirstTo200（先得 200 分）。");
+            }
+        }
+
+        /// <summary>The key name and comment of an on/off rule option.</summary>
+        private static (string Name, string Comment) OptionKey(RuleOption option) => option switch
+        {
+            RuleOption.GeneralCanSeeGeneral => ("general_can_see_general", "是否允許王見王（兩將在同一直線、中間無子）。"),
+            RuleOption.GeneralCanLeavePalace => ("general_can_leave_palace", "將帥是否可以出九宮。"),
+            RuleOption.AdvisorCanLeavePalace => ("advisor_can_leave_palace", "士是否可以出九宮。"),
+            RuleOption.ElephantEyeBlocks => ("elephant_eye_blocks", "是否有塞象眼（象田字中心有子就不能走）。"),
+            RuleOption.HorseLegBlocks => ("horse_leg_blocks", "是否有蹩馬腳（馬腳有子就不能往那邊走）。"),
+            RuleOption.CanCaptureHiddenPiece => ("can_capture_hidden_piece", "是否允許暗吃（直接吃蓋著的棋子）。"),
+            RuleOption.CaptureHiddenStrongerSuicide => ("capture_hidden_stronger_suicide",
+                "暗吃吃到比自己大的子時：true = 吃的一方被吃掉、對方保持翻開；false = 吃的一方回到原位，對方翻開。"),
+            RuleOption.AllowChainCapture => ("allow_chain_capture", "是否允許連吃（一步連續吃多次）。"),
+            RuleOption.ChariotRushHorseDiagonal => ("chariot_rush_horse_diagonal",
+                "是否採用車衝馬斜（同一個變體）：車可以沿直線一次走多格，走超過一格吃子不看大小、吃相鄰的子仍照大小；馬改成斜走一格，斜走吃子不看大小。"),
+            RuleOption.CannonMustJump => ("cannon_must_jump", "包／炮吃子是否一定要跳過一個子。"),
+            _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option"),
         };
 
         /// <summary>Every key of the file as (section, key), in file order.</summary>

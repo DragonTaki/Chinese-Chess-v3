@@ -106,7 +106,7 @@ namespace Launcher.Cross
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<NetworkManager>();
-            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRules()));
+            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRuleSets()));
 
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();

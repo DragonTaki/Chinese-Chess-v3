@@ -137,7 +137,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         {
             var gameManager = _factory.ServiceProvider.GetService<GameManager>();
             if (gameManager != null)
-                _live.ApplyTo(gameManager.DefaultRules);
+                _live.ApplyTo(gameManager.DefaultRuleSets);
 
             Settings.EnableDebugMode = _live.ShowDebugLog;
             AppLogger.EnableDebug = Settings.EnableDebugMode;

@@ -3,100 +3,57 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.Core.Players;
 
 namespace Chinese_Chess_v3.Game.Configs
 {
     /// <summary>
     /// The settings the player chooses (what a future in-game settings screen exposes).
     /// The property initializers ARE the code defaults - the one place they are defined
-    /// (rule and clock defaults are read from a default <see cref="Rules"/>, which owns
-    /// what those rules mean). The values in use are loaded from the player's
+    /// (the rule and clock defaults of each game kind live in <see cref="RuleSettings"/>,
+    /// read from a default <see cref="Rules"/>, which owns what those rules mean). The values in use are loaded from the player's
     /// <c>settings.ini</c> by <see cref="PlayerSettingsFile"/>; the launchers register the
     /// loaded instance in DI. Every key, default and meaning: docs/SETTINGS.md.
     /// </summary>
     public sealed class PlayerSettings
     {
-        // Default rule set: source of the rule / clock defaults below.
-        private static readonly Rules RuleDefaults = new Rules();
-
         /// <summary>A new instance holding only the code defaults.</summary>
         public static PlayerSettings Defaults => new PlayerSettings();
 
         #region [player]
 
-        /// <summary>Name shown in the log's greeting. Default: "Player"</summary>
+        /// <summary>Longest <see cref="PlayerName"/> (characters).</summary>
+        public const int PlayerNameMaxLength = 32;
+
+        /// <summary>Name shown in the log's greeting (at most <see cref="PlayerNameMaxLength"/> characters). Default: "Player"</summary>
         public string PlayerName { get; set; } = "Player";
 
         #endregion
 
-        #region [timer]
+        #region [rules.*]
 
-        /// <summary>Each side's total time, in whole minutes (1-600); countdown only, count-up has no limit. Default: from <see cref="Rules.TotalTimeLimit"/> (30)</summary>
-        public int TotalTimeMinutes { get; set; } = (int)RuleDefaults.TotalTimeLimit.TotalMinutes;
+        // One rule set per game kind (local games only; a network game does not use them).
+        private readonly Dictionary<GameKind, RuleSettings> _rules =
+            Enum.GetValues<GameKind>().ToDictionary(kind => kind, _ => new RuleSettings());
 
-        /// <summary>Time per move, in whole seconds (1-3600); countdown only. Default: from <see cref="Rules.StepTimeLimit"/> (300)</summary>
-        public int StepTimeSeconds { get; set; } = (int)RuleDefaults.StepTimeLimit.TotalSeconds;
-
-        /// <summary>Seconds added to a side's total after each of its moves (0-600); only applies to countdown clocks, count-up ignores it. Default: from <see cref="Rules.IncrementPerMove"/> (0)</summary>
-        public int IncrementSeconds { get; set; } = (int)RuleDefaults.IncrementPerMove.TotalSeconds;
-
-        /// <summary>Whether the per-move limit applies; countdown only (count-up always measures the step, without a limit). Default: from <see cref="Rules.EnableStepTimer"/> (true)</summary>
-        public bool StepTimerEnabled { get; set; } = RuleDefaults.EnableStepTimer;
-
-        /// <summary>Clocks count down to the limits or up from zero (count-up only measures: the limit, increment and time-up settings are ignored). Default: from <see cref="Rules.TimerMode"/> (CountDown)</summary>
-        public TimerMode TimerMode { get; set; } = RuleDefaults.TimerMode;
-
-        /// <summary>Whether a side whose clock runs out loses; countdown only (a count-up clock never runs out). Default: from <see cref="Rules.EndGameWhenTimesUp"/> (true)</summary>
-        public bool EndGameWhenTimesUp { get; set; } = RuleDefaults.EndGameWhenTimesUp;
-
-        #endregion
-
-        #region [rules]
-
-        /// <summary>王見王 allowed. Default: from <see cref="Rules.CanGeneralSeeGeneral"/> (false)</summary>
-        public bool CanGeneralSeeGeneral { get; set; } = RuleDefaults.CanGeneralSeeGeneral;
-
-        /// <summary>將帥出宮 allowed. Default: from <see cref="Rules.CanGeneralLeavePalace"/> (false)</summary>
-        public bool CanGeneralLeavePalace { get; set; } = RuleDefaults.CanGeneralLeavePalace;
-
-        /// <summary>士出宮 allowed. Default: from <see cref="Rules.CanAdvisorLeavePalace"/> (false)</summary>
-        public bool CanAdvisorLeavePalace { get; set; } = RuleDefaults.CanAdvisorLeavePalace;
-
-        /// <summary>塞象眼 applies. Default: from <see cref="Rules.CanElephantEyeBlocked"/> (true)</summary>
-        public bool ElephantEyeCanBeBlocked { get; set; } = RuleDefaults.CanElephantEyeBlocked;
-
-        /// <summary>蹩馬腳 applies. Default: from <see cref="Rules.CanHorseLegHobbled"/> (true)</summary>
-        public bool HorseLegCanBeHobbled { get; set; } = RuleDefaults.CanHorseLegHobbled;
-
-        #endregion
-
-        #region [dark_chess]
-
-        /// <summary>暗棋 mode. Default: from <see cref="Rules.IsHiddenChess"/> (true)</summary>
-        public bool IsHiddenChess { get; set; } = RuleDefaults.IsHiddenChess;
-
-        /// <summary>暗吃. Default: from <see cref="Rules.CanCaptureHiddenPiece"/> (false)</summary>
-        public bool CanCaptureHiddenPiece { get; set; } = RuleDefaults.CanCaptureHiddenPiece;
-
-        /// <summary>a 暗吃 revealing a stronger target kills the attacker (false: it returns alive). Default: from <see cref="Rules.IsCaptureHiddenPieceStrongerSuicide"/> (true)</summary>
-        public bool IsCaptureHiddenPieceStrongerSuicide { get; set; } = RuleDefaults.IsCaptureHiddenPieceStrongerSuicide;
-
-        /// <summary>連吃. Default: from <see cref="Rules.IsAllowChainCapture"/> (false)</summary>
-        public bool IsAllowChainCapture { get; set; } = RuleDefaults.IsAllowChainCapture;
-
-        /// <summary>車衝馬斜 (one variant). Default: from <see cref="Rules.IsChariotRushHorseDiagonal"/> (false)</summary>
-        public bool IsChariotRushHorseDiagonal { get; set; } = RuleDefaults.IsChariotRushHorseDiagonal;
-
-        /// <summary>包跳吃子. Default: from <see cref="Rules.IsCannonMustJumpToCapture"/> (true)</summary>
-        public bool IsCannonMustJumpToCapture { get; set; } = RuleDefaults.IsCannonMustJumpToCapture;
+        /// <summary>
+        /// The rule and clock choices for new games of <paramref name="kind"/> (the stored
+        /// object, edited in place; settings.ini <c>[rules.*]</c>). Default: every kind with
+        /// the <see cref="RuleSettings"/> defaults.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="kind"/> is not a <see cref="GameKind"/>.</exception>
+        public RuleSettings RulesFor(GameKind kind) =>
+            _rules.TryGetValue(kind, out var rules)
+                ? rules
+                : throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind");
 
         #endregion
 
@@ -112,7 +69,10 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #region [input]
 
-        /// <summary>Scroll distance per mouse-wheel notch, in UI design units (1-500). Default: 30</summary>
+        /// <summary>Smallest / largest <see cref="WheelScrollStep"/>.</summary>
+        public const float WheelScrollStepMin = 1f, WheelScrollStepMax = 500f;
+
+        /// <summary>Scroll distance per mouse-wheel notch, in UI design units (<see cref="WheelScrollStepMin"/>-<see cref="WheelScrollStepMax"/>). Default: 30</summary>
         public float WheelScrollStep { get; set; } = 30f;
 
         #endregion
@@ -163,43 +123,28 @@ namespace Chinese_Chess_v3.Game.Configs
             System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(folder.Trim()), SystemSettings.UserDataFolder);
 
         /// <summary>
-        /// The rule set a new <see cref="GameManager"/> plays by: the default
-        /// <see cref="Rules"/> with this player's clock and rule choices applied.
+        /// The rule sets a new <see cref="GameManager"/> starts games with: per kind, the
+        /// default <see cref="Rules"/> with that kind's choices applied.
         /// </summary>
-        public Rules CreateRules()
+        public GameRuleSets CreateRuleSets()
         {
-            var rules = new Rules();
-            ApplyTo(rules);
-            return rules;
+            var sets = new GameRuleSets();
+            ApplyTo(sets);
+            return sets;
         }
 
         /// <summary>
-        /// Sets <paramref name="rules"/>' clock and rule properties from this player's choices
-        /// (every property <see cref="CreateRules"/> sets; the rest are left alone). Lets the
-        /// settings screen update the rules new games start with (<c>GameManager.DefaultRules</c>)
-        /// without replacing the object; a game already started keeps its own copy.
+        /// Applies every kind's choices to that kind's rules in <paramref name="sets"/>
+        /// (<see cref="RuleSettings.ApplyTo"/>, the objects updated in place). Lets the settings
+        /// screen update the rules new games start with (<c>GameManager.DefaultRuleSets</c>); a
+        /// game already started keeps its own copy.
         /// </summary>
-        public void ApplyTo(Rules rules)
+        /// <exception cref="ArgumentNullException"><paramref name="sets"/> is null.</exception>
+        public void ApplyTo(GameRuleSets sets)
         {
-            ArgumentNullException.ThrowIfNull(rules);
-
-            rules.TotalTimeLimit = TimeSpan.FromMinutes(TotalTimeMinutes);
-            rules.StepTimeLimit = TimeSpan.FromSeconds(StepTimeSeconds);
-            rules.IncrementPerMove = TimeSpan.FromSeconds(IncrementSeconds);
-            rules.EnableStepTimer = StepTimerEnabled;
-            rules.TimerMode = TimerMode;
-            rules.EndGameWhenTimesUp = EndGameWhenTimesUp;
-            rules.CanGeneralSeeGeneral = CanGeneralSeeGeneral;
-            rules.CanGeneralLeavePalace = CanGeneralLeavePalace;
-            rules.CanAdvisorLeavePalace = CanAdvisorLeavePalace;
-            rules.CanElephantEyeBlocked = ElephantEyeCanBeBlocked;
-            rules.CanHorseLegHobbled = HorseLegCanBeHobbled;
-            rules.IsHiddenChess = IsHiddenChess;
-            rules.CanCaptureHiddenPiece = CanCaptureHiddenPiece;
-            rules.IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide;
-            rules.IsAllowChainCapture = IsAllowChainCapture;
-            rules.IsChariotRushHorseDiagonal = IsChariotRushHorseDiagonal;
-            rules.IsCannonMustJumpToCapture = IsCannonMustJumpToCapture;
+            ArgumentNullException.ThrowIfNull(sets);
+            foreach (var (kind, rules) in _rules)
+                rules.ApplyTo(sets[kind]);
         }
     }
 }

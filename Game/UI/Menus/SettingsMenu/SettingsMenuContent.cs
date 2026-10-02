@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Configs;
+using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -88,10 +89,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// </summary>
         private static SettingsMenuItem CountDownToggle(string name, Func<PlayerSettings, bool> get, Action<PlayerSettings, bool> set) =>
             new(name,
-                s => s.TimerMode == TimerMode.CountUp ? GameMenuTexts.NotWithCountUp : (get(s) ? GameMenuTexts.On : GameMenuTexts.Off),
+                s => s.RulesFor(GameKind.Traditional).TimerMode == TimerMode.CountUp ? GameMenuTexts.NotWithCountUp : (get(s) ? GameMenuTexts.On : GameMenuTexts.Off),
                 s =>
                 {
-                    if (s.TimerMode != TimerMode.CountUp)
+                    if (s.RulesFor(GameKind.Traditional).TimerMode != TimerMode.CountUp)
                         set(s, !get(s));
                 });
 
@@ -100,30 +101,29 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         {
             new SettingsMenuSection(GameMenuTexts.SectionRules, new[]
             {
-                Toggle(GameMenuTexts.GeneralCanSeeGeneral, s => s.CanGeneralSeeGeneral, (s, v) => s.CanGeneralSeeGeneral = v),
-                Toggle(GameMenuTexts.GeneralCanLeavePalace, s => s.CanGeneralLeavePalace, (s, v) => s.CanGeneralLeavePalace = v),
-                Toggle(GameMenuTexts.AdvisorCanLeavePalace, s => s.CanAdvisorLeavePalace, (s, v) => s.CanAdvisorLeavePalace = v),
-                Toggle(GameMenuTexts.ElephantEyeBlocks, s => s.ElephantEyeCanBeBlocked, (s, v) => s.ElephantEyeCanBeBlocked = v),
-                Toggle(GameMenuTexts.HorseLegBlocks, s => s.HorseLegCanBeHobbled, (s, v) => s.HorseLegCanBeHobbled = v),
+                Toggle(GameMenuTexts.GeneralCanSeeGeneral, s => s.RulesFor(GameKind.Traditional).CanGeneralSeeGeneral, (s, v) => s.RulesFor(GameKind.Traditional).CanGeneralSeeGeneral = v),
+                Toggle(GameMenuTexts.GeneralCanLeavePalace, s => s.RulesFor(GameKind.Traditional).CanGeneralLeavePalace, (s, v) => s.RulesFor(GameKind.Traditional).CanGeneralLeavePalace = v),
+                Toggle(GameMenuTexts.AdvisorCanLeavePalace, s => s.RulesFor(GameKind.Traditional).CanAdvisorLeavePalace, (s, v) => s.RulesFor(GameKind.Traditional).CanAdvisorLeavePalace = v),
+                Toggle(GameMenuTexts.ElephantEyeBlocks, s => s.RulesFor(GameKind.Traditional).ElephantEyeCanBeBlocked, (s, v) => s.RulesFor(GameKind.Traditional).ElephantEyeCanBeBlocked = v),
+                Toggle(GameMenuTexts.HorseLegBlocks, s => s.RulesFor(GameKind.Traditional).HorseLegCanBeHobbled, (s, v) => s.RulesFor(GameKind.Traditional).HorseLegCanBeHobbled = v),
             }, isRules: true),
 
             new SettingsMenuSection(GameMenuTexts.SectionDarkChess, new[]
             {
-                Toggle(GameMenuTexts.HiddenChess, s => s.IsHiddenChess, (s, v) => s.IsHiddenChess = v),
-                Toggle(GameMenuTexts.CanCaptureHiddenPiece, s => s.CanCaptureHiddenPiece, (s, v) => s.CanCaptureHiddenPiece = v),
-                Toggle(GameMenuTexts.CaptureHiddenStrongerSuicide, s => s.IsCaptureHiddenPieceStrongerSuicide, (s, v) => s.IsCaptureHiddenPieceStrongerSuicide = v),
-                Toggle(GameMenuTexts.AllowChainCapture, s => s.IsAllowChainCapture, (s, v) => s.IsAllowChainCapture = v),
-                Toggle(GameMenuTexts.ChariotRushHorseDiagonal, s => s.IsChariotRushHorseDiagonal, (s, v) => s.IsChariotRushHorseDiagonal = v),
-                Toggle(GameMenuTexts.CannonMustJump, s => s.IsCannonMustJumpToCapture, (s, v) => s.IsCannonMustJumpToCapture = v),
+                Toggle(GameMenuTexts.CanCaptureHiddenPiece, s => s.RulesFor(GameKind.DarkHalf).CanCaptureHiddenPiece, (s, v) => s.RulesFor(GameKind.DarkHalf).CanCaptureHiddenPiece = v),
+                Toggle(GameMenuTexts.CaptureHiddenStrongerSuicide, s => s.RulesFor(GameKind.DarkHalf).IsCaptureHiddenPieceStrongerSuicide, (s, v) => s.RulesFor(GameKind.DarkHalf).IsCaptureHiddenPieceStrongerSuicide = v),
+                Toggle(GameMenuTexts.AllowChainCapture, s => s.RulesFor(GameKind.DarkHalf).IsAllowChainCapture, (s, v) => s.RulesFor(GameKind.DarkHalf).IsAllowChainCapture = v),
+                Toggle(GameMenuTexts.ChariotRushHorseDiagonal, s => s.RulesFor(GameKind.DarkHalf).IsChariotRushHorseDiagonal, (s, v) => s.RulesFor(GameKind.DarkHalf).IsChariotRushHorseDiagonal = v),
+                Toggle(GameMenuTexts.CannonMustJump, s => s.RulesFor(GameKind.DarkHalf).IsCannonMustJumpToCapture, (s, v) => s.RulesFor(GameKind.DarkHalf).IsCannonMustJumpToCapture = v),
             }, isRules: true),
 
             new SettingsMenuSection(GameMenuTexts.SectionTimer, new[]
             {
-                CountDownToggle(GameMenuTexts.StepTimer, s => s.StepTimerEnabled, (s, v) => s.StepTimerEnabled = v),
-                CountDownToggle(GameMenuTexts.LoseOnTimeUp, s => s.EndGameWhenTimesUp, (s, v) => s.EndGameWhenTimesUp = v),
+                CountDownToggle(GameMenuTexts.StepTimer, s => s.RulesFor(GameKind.Traditional).StepTimerEnabled, (s, v) => s.RulesFor(GameKind.Traditional).StepTimerEnabled = v),
+                CountDownToggle(GameMenuTexts.LoseOnTimeUp, s => s.RulesFor(GameKind.Traditional).EndGameWhenTimesUp, (s, v) => s.RulesFor(GameKind.Traditional).EndGameWhenTimesUp = v),
                 new SettingsMenuItem(GameMenuTexts.TimerMode,
-                    s => s.TimerMode == TimerMode.CountDown ? GameMenuTexts.TimerModeCountDown : GameMenuTexts.TimerModeCountUp,
-                    s => s.TimerMode = s.TimerMode == TimerMode.CountDown ? TimerMode.CountUp : TimerMode.CountDown),
+                    s => s.RulesFor(GameKind.Traditional).TimerMode == TimerMode.CountDown ? GameMenuTexts.TimerModeCountDown : GameMenuTexts.TimerModeCountUp,
+                    s => s.RulesFor(GameKind.Traditional).TimerMode = s.RulesFor(GameKind.Traditional).TimerMode == TimerMode.CountDown ? TimerMode.CountUp : TimerMode.CountDown),
             }, isRules: false),
 
             new SettingsMenuSection(GameMenuTexts.SectionHints, new[]

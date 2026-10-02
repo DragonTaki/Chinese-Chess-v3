@@ -108,7 +108,7 @@ namespace Launcher
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<NetworkManager>();
-            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRules()));
+            services.AddSingleton(sp => new GameManager(sp.GetRequiredService<PlayerSettings>().CreateRuleSets()));
 
             // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
