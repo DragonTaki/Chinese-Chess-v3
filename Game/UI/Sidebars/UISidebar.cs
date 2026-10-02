@@ -34,7 +34,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
 
         /// <summary>
         /// Indicates which side's turn it currently is.
-        /// <see cref="PlayerSide.Player1"/> (red) or <see cref="PlayerSide.Player2"/> (black).
+        /// <see cref="PlayerSide.Player1"/> (moves first) or <see cref="PlayerSide.Player2"/>; the
+        /// colour each plays is <see cref="GameManager.ColorOf"/>.
         /// </summary>
         public PlayerSide CurrentTurn { get; set; } = PlayerSide.Player1;
 

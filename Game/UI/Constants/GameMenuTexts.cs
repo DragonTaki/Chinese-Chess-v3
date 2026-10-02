@@ -85,7 +85,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>
         /// A side's name in the log lines, by the colour it plays (<c>GameManager.ColorOf</c>):
-        /// 紅方 / 黑方 (on the Full board Player1 is red, Player2 black, like the move lines);
+        /// 紅方 / 黑方 (the colour is per game: Player1 plays the colour that moves first);
         /// 先手方 / 後手方 while a dark-chess game has not decided the colours yet.
         /// </summary>
         public static string SideName(PlayerSide side, PieceColor color) => color switch
