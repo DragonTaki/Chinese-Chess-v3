@@ -198,6 +198,25 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     _refreshers.Add(s => slider.Value = number.Get(s));
                     break;
 
+                case SettingsIntegerItem integer:
+                    var numberField = _factory.CreateElement<UINumberField, UINumberFieldHandler, UINumberFieldRenderer>();
+                    numberField.Style = UILayoutStyles.SettingsMenu.TextFieldStyle;
+                    numberField.Font = UILayoutStyles.SettingsMenu.ValueFont;
+                    numberField.UnitBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
+                    numberField.Unit = integer.Unit;
+                    numberField.Min = integer.Min;
+                    numberField.Max = integer.Max;
+                    numberField.LayoutRules.Apply(UILayoutSheet.SettingsMenu.NumberField);
+                    numberField.Handler.ValueCommitted = value => Handler.SetInteger(integer, value);
+                    row.AddChild(numberField);
+                    // Not while typing: the field itself is the source then.
+                    _refreshers.Add(s =>
+                    {
+                        if (!numberField.IsFocused)
+                            numberField.Value = integer.Get(s);
+                    });
+                    break;
+
                 case SettingsTextItem text:
                     var field = _factory.CreateElement<UITextField, UITextFieldHandler, UITextFieldRenderer>();
                     field.Style = UILayoutStyles.SettingsMenu.TextFieldStyle;

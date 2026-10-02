@@ -110,6 +110,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Width of a row's text field.</summary>
             public const float TextFieldWidth = 260.0f;
 
+            /// <summary>Width of a row's number field including its unit (the box takes what the unit leaves).</summary>
+            public const float NumberFieldWidth = 220.0f;
+
             /// <summary>Horizontal inset of the text inside a text field.</summary>
             public const float TextFieldInset = 10.0f;
 
