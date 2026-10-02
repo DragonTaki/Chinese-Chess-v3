@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -27,6 +28,24 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
         /// <summary>The game shown (clocks, turn, check, colours); set by <see cref="UIInfoBoardHandler.SetGameManager"/>.</summary>
         public GameManager GameManager { get; internal set; }
+
+        /// <summary>
+        /// The side this machine plays in a network game: shown on the left, the opponent on the
+        /// right. Null (the default) for a local game, laid out by <see cref="LeftSide"/>.
+        /// </summary>
+        public PlayerSide? LocalSide { get; set; } = null;
+
+        /// <summary>
+        /// The side shown in the left half: <see cref="LocalSide"/> in a network game; otherwise
+        /// Player1 (紅方) on the Full board — fixed red left, black right, whoever moves first —
+        /// and on a half board the side that moved first (<see cref="GameManager.FirstTurn"/>).
+        /// Each half is coloured by the colour its player actually plays (<see cref="GameManager.ColorOf"/>).
+        /// </summary>
+        public PlayerSide LeftSide =>
+            LocalSide ?? (GameManager.Board.Type == BoardType.Full ? PlayerSide.Player1 : GameManager.FirstTurn);
+
+        /// <summary>The side shown in the right half: the other one of <see cref="LeftSide"/>.</summary>
+        public PlayerSide RightSide => LeftSide == PlayerSide.Player1 ? PlayerSide.Player2 : PlayerSide.Player1;
 
         public UIInfoBoard() { }
 
@@ -48,7 +67,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             {
                 PieceColor.Red => "紅方玩家",
                 PieceColor.Black => "黑方玩家",
-                _ => side == PlayerSide.Player2 ? "後手玩家" : "先手玩家",
+                _ => side == GameManager?.FirstTurn ? "先手玩家" : "後手玩家",
             };
         }
 
