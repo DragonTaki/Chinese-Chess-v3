@@ -42,6 +42,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>A line of text: a text field (<see cref="SettingsTextItem"/>).</summary>
         Text,
+
+        /// <summary>A whole number typed in a digits-only field with range checks, never a slider (<see cref="SettingsIntegerItem"/>).</summary>
+        Integer,
     }
 
     /// <summary>
@@ -197,6 +200,49 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>The text of <paramref name="value"/> (e.g. with its unit; what a slider shows next to it).</summary>
         public string FormatValue(float value) => _format(value);
+    }
+
+    /// <summary>A whole-number setting typed in a number field (<c>UINumberField</c>): digits only, corrected into the range.</summary>
+    public sealed class SettingsIntegerItem : SettingsMenuItem
+    {
+        /// <param name="name">The setting's name.</param>
+        /// <param name="get">Reads the value.</param>
+        /// <param name="set">Writes the value (given within the range).</param>
+        /// <param name="min">Smallest value (at least 0).</param>
+        /// <param name="max">Largest value.</param>
+        /// <param name="unit">Text drawn after the field (e.g. "分鐘").</param>
+        /// <param name="isImplemented">See <see cref="SettingsMenuItem.IsImplemented"/>.</param>
+        public SettingsIntegerItem(string name, Func<PlayerSettings, int> get, Action<PlayerSettings, int> set,
+            int min, int max, string unit, bool isImplemented = true)
+            : base(name, isImplemented)
+        {
+            if (min < 0)
+                throw new ArgumentOutOfRangeException(nameof(min), min, "A digits-only field cannot go below 0.");
+            if (min > max)
+                throw new ArgumentException($"min {min} is above max {max}.", nameof(min));
+            Get = get ?? throw new ArgumentNullException(nameof(get));
+            Set = set ?? throw new ArgumentNullException(nameof(set));
+            Min = min;
+            Max = max;
+            Unit = unit ?? string.Empty;
+        }
+
+        public override SettingsItemKind Kind => SettingsItemKind.Integer;
+
+        /// <summary>Reads the value.</summary>
+        public Func<PlayerSettings, int> Get { get; }
+
+        /// <summary>Writes the value.</summary>
+        public Action<PlayerSettings, int> Set { get; }
+
+        /// <summary>Smallest value.</summary>
+        public int Min { get; }
+
+        /// <summary>Largest value.</summary>
+        public int Max { get; }
+
+        /// <summary>Text drawn after the field.</summary>
+        public string Unit { get; }
     }
 
     /// <summary>A text setting (one line).</summary>
@@ -441,12 +487,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             var timer = new SettingsMenuItem[]
             {
                 EnumChoice(GameMenuTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
-                new SettingsNumberItem(GameMenuTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = (int)MathF.Round(v),
-                    RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, 1f, GameMenuTexts.Minutes),
-                new SettingsNumberItem(GameMenuTexts.StepTime, s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = (int)MathF.Round(v),
-                    RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax, 1f, GameMenuTexts.Seconds),
-                new SettingsNumberItem(GameMenuTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = (int)MathF.Round(v),
-                    RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, 1f, GameMenuTexts.Seconds),
+                new SettingsIntegerItem(GameMenuTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
+                    RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, GameMenuTexts.MinutesUnit),
+                new SettingsIntegerItem(GameMenuTexts.StepTime, s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = v,
+                    RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax, GameMenuTexts.SecondsUnit),
+                new SettingsIntegerItem(GameMenuTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
+                    RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, GameMenuTexts.SecondsUnit),
                 CountDownToggle(GameMenuTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v),
                 CountDownToggle(GameMenuTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v),
             };

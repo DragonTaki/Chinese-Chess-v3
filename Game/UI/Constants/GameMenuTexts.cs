@@ -253,6 +253,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string HalfCrossWinFirstTo200 = "先得 200 分";
 
         // Number values.
+        public const string MinutesUnit = "分鐘";
+        public const string SecondsUnit = "秒";
         public static string Minutes(float value) => $"{value:0} 分鐘";
         public static string Seconds(float value) => $"{value:0} 秒";
         public static string Percent(float value) => $"{value:0}%";

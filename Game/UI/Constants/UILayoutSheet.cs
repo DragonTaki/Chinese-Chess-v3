@@ -320,6 +320,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>A number's slider.</summary>
             public static readonly UILayoutStyle Slider = Control(UILayoutConstants.SettingsMenu.SliderWidth, UILayoutConstants.SettingsMenu.ValueHeight);
 
+            /// <summary>A row's number field (the box and its unit).</summary>
+            public static readonly UILayoutStyle NumberField = Control(UILayoutConstants.SettingsMenu.NumberFieldWidth, UILayoutConstants.SettingsMenu.ValueHeight);
+
             /// <summary>A row's text field.</summary>
             public static readonly UILayoutStyle TextField = Control(UILayoutConstants.SettingsMenu.TextFieldWidth, UILayoutConstants.SettingsMenu.ValueHeight);
         }
