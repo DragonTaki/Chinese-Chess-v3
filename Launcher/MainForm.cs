@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/05/06
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -121,6 +121,12 @@ namespace Launcher
             MouseUp    += adapter.ProcessMouseUp;
             MouseWheel += adapter.ProcessMouseWheel;
             MouseClick += adapter.ProcessMouseClick;
+            // Keyboard (text fields): Windows-only like the rest of this form; CA1416 suppressed
+            // so the new lines don't add to the build's platform warnings.
+#pragma warning disable CA1416
+            KeyPress   += adapter.ProcessKeyPress;
+            KeyDown    += adapter.ProcessKeyDown;
+#pragma warning restore CA1416
 
             // Losing focus mid-drag (e.g. Alt-Tab) means the MouseUp never arrives.
             Deactivate += (_, _) => _inputMgr?.CancelInput();

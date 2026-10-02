@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
-// Update Date: 2026/09/24
-// Version: v1.0
+// Update Date: 2026/10/02
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -108,7 +108,8 @@ namespace Launcher.Cross
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
 
             _inputContext = _window.CreateInput();
-            _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0], _window);
+            var keyboard = _inputContext.Keyboards.Count > 0 ? _inputContext.Keyboards[0] : null;
+            _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0], _window, keyboard);
 
             _bgStar = new StarAnimationApp();
             _bgStar.Resize(GlobalWindow.LogicalWidth, GlobalWindow.LogicalHeight);
