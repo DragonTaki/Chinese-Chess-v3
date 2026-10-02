@@ -92,11 +92,8 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>連吃. Default: from <see cref="Rules.IsAllowChainCapture"/> (false)</summary>
         public bool IsAllowChainCapture { get; set; } = RuleDefaults.IsAllowChainCapture;
 
-        /// <summary>車衝. Default: from <see cref="Rules.CanChariotRush"/> (false)</summary>
-        public bool CanChariotRush { get; set; } = RuleDefaults.CanChariotRush;
-
-        /// <summary>馬斜. Default: from <see cref="Rules.IsHorseMoveDiagonally"/> (false)</summary>
-        public bool IsHorseMoveDiagonally { get; set; } = RuleDefaults.IsHorseMoveDiagonally;
+        /// <summary>車衝馬斜 (one variant). Default: from <see cref="Rules.IsChariotRushHorseDiagonal"/> (false)</summary>
+        public bool IsChariotRushHorseDiagonal { get; set; } = RuleDefaults.IsChariotRushHorseDiagonal;
 
         /// <summary>包跳吃子. Default: from <see cref="Rules.IsCannonMustJumpToCapture"/> (true)</summary>
         public bool IsCannonMustJumpToCapture { get; set; } = RuleDefaults.IsCannonMustJumpToCapture;
@@ -201,8 +198,7 @@ namespace Chinese_Chess_v3.Game.Configs
             rules.CanCaptureHiddenPiece = CanCaptureHiddenPiece;
             rules.IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide;
             rules.IsAllowChainCapture = IsAllowChainCapture;
-            rules.CanChariotRush = CanChariotRush;
-            rules.IsHorseMoveDiagonally = IsHorseMoveDiagonally;
+            rules.IsChariotRushHorseDiagonal = IsChariotRushHorseDiagonal;
             rules.IsCannonMustJumpToCapture = IsCannonMustJumpToCapture;
         }
     }
