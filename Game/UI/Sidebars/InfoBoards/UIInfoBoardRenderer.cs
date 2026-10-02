@@ -98,21 +98,24 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 }
 
                 PlayerSide currentTurn = element.GameManager.CurrentTurn;
-                // Each half is coloured by the colour its player plays (fixed on the Full
-                // board; on the dark-chess board decided by the first flip, neutral before).
-                PieceColor leftColor = element.GameManager.ColorOf(PlayerSide.Player2);
-                PieceColor rightColor = element.GameManager.ColorOf(PlayerSide.Player1);
+                // Which player each half shows (UIInfoBoard.LeftSide), coloured by the colour
+                // that player plays (fixed on the Full board; on a half board decided by the
+                // first flip / first move, neutral before).
+                PlayerSide leftSide = element.LeftSide;
+                PlayerSide rightSide = element.RightSide;
+                PieceColor leftColor = element.GameManager.ColorOf(leftSide);
+                PieceColor rightColor = element.GameManager.ColorOf(rightSide);
 
                 // Left-half background
                 using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 leftRegion.Intersect(new RectangleF(baseX, baseY, width / 2f, height));
-                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player2 ? Color.Gold : IdleColor(leftColor));
+                using IBrush leftBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == leftSide ? Color.Gold : IdleColor(leftColor));
                 g.FillRegion(leftBrush, leftRegion);
 
                 // Right-half background
                 using IRegion rightRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
                 rightRegion.Intersect(new RectangleF(baseX + width / 2f, baseY, width / 2f, height));
-                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == PlayerSide.Player1 ? Color.Gold : IdleColor(rightColor));
+                using IBrush rightBrush = GraphicsBackend.Factory.CreateSolidBrush(currentTurn == rightSide ? Color.Gold : IdleColor(rightColor));
                 g.FillRegion(rightBrush, rightRegion);
 
                 // Inner shield
@@ -126,15 +129,15 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
                 // Left-half inner overlay
                 using IRegion leftOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
-                float leftWidth = (element.GameManager.CurrentTurn == PlayerSide.Player2 ? (width / 2f - inset) : width / 2f);
+                float leftWidth = (currentTurn == leftSide ? (width / 2f - inset) : width / 2f);
                 leftOverlay.Intersect(new RectangleF(baseX + inset, baseY + inset, leftWidth, height - 2*inset));
                 using IBrush leftOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(OverlayColor(leftColor));
                 g.FillRegion(leftOverlayBrush, leftOverlay);
 
                 // Right-half inner overlay
                 using IRegion rightOverlay = GraphicsBackend.Factory.CreateRegion(innerShield);
-                float rightX = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? baseX + width / 2f + inset : baseX + width / 2f);
-                float rightWidth = (element.GameManager.CurrentTurn == PlayerSide.Player1 ? width / 2f - inset : width / 2f);
+                float rightX = (currentTurn == rightSide ? baseX + width / 2f + inset : baseX + width / 2f);
+                float rightWidth = (currentTurn == rightSide ? width / 2f - inset : width / 2f);
                 rightOverlay.Intersect(new RectangleF(rightX, baseY + inset, rightWidth, height - 2*inset));
                 using IBrush rightOverlayBrush = GraphicsBackend.Factory.CreateSolidBrush(OverlayColor(rightColor));
                 g.FillRegion(rightOverlayBrush, rightOverlay);
@@ -152,8 +155,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             /// <summary>
             /// The inner fill of a player's half: dark red / black by the colour the player
-            /// plays (the colours the board always used: Player1 red, Player2 black); a
-            /// neutral grey while a dark-chess game has not decided it yet.
+            /// plays (Player1 red, Player2 black on the Full board; on a half board whatever the
+            /// first flip / first move gave); a neutral grey while that is not decided yet.
             /// </summary>
             private static Color OverlayColor(PieceColor color) => color switch
             {
@@ -183,17 +186,18 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float width = _layout.Width;
                 float height = _layout.Height;
 
-                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height,
-                    NameWithCheck(element, PlayerSide.Player2),
-                    element.GameManager.Player2.Timer.GetTotalTimeString(),
-                    element.GameManager.Player2.Timer.GetStepTimeString(),
-                    element.GameManager.CurrentTurn == PlayerSide.Player2);
+                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, element, element.LeftSide);
+                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height, element, element.RightSide);
+            }
 
-                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height,
-                    NameWithCheck(element, PlayerSide.Player1),
-                    element.GameManager.Player1.Timer.GetTotalTimeString(),
-                    element.GameManager.Player1.Timer.GetStepTimeString(),
-                    element.GameManager.CurrentTurn == PlayerSide.Player1);
+            /// <summary>Draws <paramref name="side"/>'s name and clocks in the half at (x, y).</summary>
+            private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height, UIInfoBoard element, PlayerSide side)
+            {
+                var game = element.GameManager;
+                PlayerTimer timer = (side == PlayerSide.Player1 ? game.Player1 : game.Player2).Timer;
+                DrawPlayerSection(g, x, y, width, height,
+                    NameWithCheck(element, side), timer.GetTotalTimeString(), timer.GetStepTimeString(),
+                    game.CurrentTurn == side);
             }
 
             private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height,
