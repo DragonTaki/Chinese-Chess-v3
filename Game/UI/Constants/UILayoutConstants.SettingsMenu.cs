@@ -89,7 +89,22 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Width of an open dropdown list's scroll bar.</summary>
             public const float DropdownScrollBarWidth = 4.0f;
 
-            /// <summary>Height of a row's value button and text field.</summary>
+            /// <summary>Width of a number's slider (track, knob and the value's column).</summary>
+            public const float SliderWidth = 380.0f;
+
+            /// <summary>Height of a slider's track.</summary>
+            public const float SliderTrackHeight = 6.0f;
+
+            /// <summary>Diameter of a slider's knob.</summary>
+            public const float SliderKnobDiameter = 24.0f;
+
+            /// <summary>Width of the value's column at a slider's right (fits e.g. 「180 分鐘」).</summary>
+            public const float SliderLabelWidth = 110.0f;
+
+            /// <summary>Space between a slider's track and its value's column.</summary>
+            public const float SliderLabelGap = 14.0f;
+
+            /// <summary>Height of a row's value button, dropdown, slider and text field.</summary>
             public const float ValueHeight = 40.0f;
 
             /// <summary>Width of a row's text field.</summary>

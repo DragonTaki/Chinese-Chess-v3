@@ -37,7 +37,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>One of a few named choices: a button that steps to the next one for now; a dropdown later (<see cref="SettingsChoiceItem"/>).</summary>
         Choice,
 
-        /// <summary>A number in a range: its value shown for now; a slider later (<see cref="SettingsNumberItem"/>).</summary>
+        /// <summary>A number in a range: a slider (<see cref="SettingsNumberItem"/>).</summary>
         Number,
 
         /// <summary>A line of text: a text field (<see cref="SettingsTextItem"/>).</summary>
@@ -197,6 +197,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>The value's text in <paramref name="settings"/>.</summary>
         public string ValueText(PlayerSettings settings) => _format(Get(settings));
+
+        /// <summary>The text of <paramref name="value"/> (e.g. with its unit; what a slider shows next to it).</summary>
+        public string FormatValue(float value) => _format(value);
     }
 
     /// <summary>A text setting (one line).</summary>

@@ -108,6 +108,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             ApplyChange();
         }
 
+        /// <summary>A slider moved (also while dragging): set the setting (kept within its range) and apply it live.</summary>
+        public void SetNumber(SettingsNumberItem item, float value)
+        {
+            item.Set(_live, Math.Clamp(value, item.Min, item.Max));
+            ApplyChange();
+        }
+
         /// <summary>A text field edited: set the setting (cut to its longest length) and apply it live.</summary>
         public void SetText(SettingsTextItem item, string value)
         {

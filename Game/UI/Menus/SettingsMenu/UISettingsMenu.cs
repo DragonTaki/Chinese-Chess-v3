@@ -29,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>; docs/SETTINGS.md §4):
     /// a tab bar at the top, and below it a scrolling list - the save / back row, then the
     /// selected tab's sections: a header each and one row per setting, its name at the left and
-    /// its control at the right (a switch, a dropdown, a number's value or a text field,
+    /// its control at the right (a switch, a dropdown, a slider or a text field,
     /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, discarding -
     /// is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
     /// <see cref="SettingsMenuContent"/>.
@@ -55,7 +55,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>Everything of the shown tab in the scroll container (headers and rows), disposed by <see cref="ClearPage"/>.</summary>
         private readonly List<UIElement> _pageElements = new();
 
-        /// <summary>The shown tab's buttons (headers, number buttons): also in <see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>, which draws them.</summary>
+        /// <summary>The shown tab's buttons (the section headers): also in <see cref="UIMenu{TElement, THandler, TRenderer}.Buttons"/>, which draws them.</summary>
         private readonly List<UIButton> _pageButtons = new();
 
         /// <summary>Per setting row: refreshes its controls from a settings instance.</summary>
@@ -187,11 +187,15 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     break;
 
                 case SettingsNumberItem number:
-                    // Only the value for now (the slider comes later): a button that does nothing.
-                    var numberButton = CreateButton(UILayoutSheet.SettingsMenu.Value, UILayoutStyles.SettingsMenu.NumberStyle, null);
-                    AddPageButton(numberButton);
-                    row.AddChild(numberButton);
-                    _refreshers.Add(s => numberButton.Text = number.ValueText(s));
+                    var slider = _factory.CreateElement<UISlider, UISliderHandler, UISliderRenderer>();
+                    slider.Style = UILayoutStyles.SettingsMenu.SliderStyle;
+                    slider.Font = UILayoutStyles.SettingsMenu.ValueFont;
+                    slider.SetRange(number.Min, number.Max, number.Step);
+                    slider.ValueFormatter = number.FormatValue;
+                    slider.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Slider);
+                    slider.Handler.ValueChanged = value => Handler.SetNumber(number, value);
+                    row.AddChild(slider);
+                    _refreshers.Add(s => slider.Value = number.Get(s));
                     break;
 
                 case SettingsTextItem text:

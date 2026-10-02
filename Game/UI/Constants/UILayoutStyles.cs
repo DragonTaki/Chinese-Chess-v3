@@ -268,6 +268,22 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 DisabledOpacity = 0.4f,
             };
 
+            /// <summary>A number's slider: faint white track, gold filled part and knob outline, the value in the row's text colour.</summary>
+            public static readonly SliderStyle SliderStyle = new SliderStyle
+            {
+                TrackColor = StyleHelper.GetColor("#FFFFFF", 0.2f),        // #FFFFFF
+                FillColor = StyleHelper.GetColor("#F9BF45", 0.9f),         // #F9BF45
+                KnobColor = StyleHelper.GetColor("#FCFAF2", 1.0f),         // #FCFAF2
+                KnobBorderColor = StyleHelper.GetColor("#F9BF45", 1.0f),   // #F9BF45
+                KnobBorderWidth = 2.0f,
+                TrackHeight = UILayoutConstants.SettingsMenu.SliderTrackHeight,
+                KnobDiameter = UILayoutConstants.SettingsMenu.SliderKnobDiameter,
+                LabelColor = StyleHelper.GetColor("#FCFAF2", 1.0f),        // #FCFAF2
+                LabelWidth = UILayoutConstants.SettingsMenu.SliderLabelWidth,
+                LabelGap = UILayoutConstants.SettingsMenu.SliderLabelGap,
+                DisabledOpacity = 0.35f,
+            };
+
             /// <summary>A row's text field: faint box with gold borders (brighter while typing).</summary>
             public static readonly TextFieldStyle TextFieldStyle = new TextFieldStyle
             {
