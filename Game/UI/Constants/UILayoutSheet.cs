@@ -243,18 +243,36 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The settings submenu (<c>UISettingsMenu</c>): a submenu panel whose scroll
-        /// container is a flex column of the save / back row, section headers and setting buttons.
+        /// The settings screens (<c>UISettingsMenu</c>): a submenu panel with the tab bar at the
+        /// top and a scroll container below it - a flex column of the save / back row, section
+        /// headers and setting rows, clipping what is scrolled out (the rows draw themselves).
+        /// Each row is a flex row: the name is drawn at its left, the control is pushed to its
+        /// right edge (<c>JustifyContent.End</c>) and vertically centered.
         /// </summary>
         public static class SettingsMenu
         {
             /// <summary>The submenu: same place and size as the other submenus.</summary>
             public static readonly UILayoutStyle Panel = Submenu.Panel;
 
-            /// <summary>The submenu's scroll container: inset like the other submenus, a flex column.</summary>
+            /// <summary>The tab bar: inset like the scroll container, at the panel's top.</summary>
+            public static readonly UILayoutStyle TabBar = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.Submenu.MarginX,
+                Right = UILayoutConstants.Submenu.MarginX,
+                Top = UILayoutConstants.Submenu.MarginY,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.TabBarHeight),
+            };
+
+            /// <summary>The submenu's scroll container: inset like the other submenus, below the tab bar, a flex column that clips its rows.</summary>
             public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
                 UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
-                UILayoutConstants.SettingsMenu.RowGap);
+                UILayoutConstants.SettingsMenu.RowGap) with
+            {
+                Top = UILayoutConstants.Submenu.MarginY + UILayoutConstants.SettingsMenu.TabBarHeight + UILayoutConstants.SettingsMenu.TabBarGap,
+                Overflow = OverflowMode.Hidden,
+            };
 
             /// <summary>The row holding the save and back buttons (a flex row, height from its buttons).</summary>
             public static readonly UILayoutStyle FooterRow = CategoryListMenu.ButtonRows with
@@ -271,11 +289,39 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 FlexShrink = 0f,
             };
 
-            /// <summary>A section header: full width, shorter than a setting.</summary>
+            /// <summary>A section header: full width, shorter than a row.</summary>
             public static readonly UILayoutStyle Header = Menus.Button(UILayoutConstants.SettingsMenu.HeaderHeight);
 
-            /// <summary>A setting's button.</summary>
-            public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.SettingsMenu.ItemHeight);
+            /// <summary>A setting's row (<c>UILabeledRow</c>): full width, fixed height, a flex row with its control at the right, vertically centered.</summary>
+            public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.SettingsMenu.ItemHeight) with
+            {
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Row,
+                JustifyContent = JustifyContent.End,
+                AlignItems = FlexAlign.Center,
+                Padding = new PaddingF(UILayoutConstants.SettingsMenu.ItemPaddingX, 0f),
+            };
+
+            /// <summary>A control of a row: fixed size, never shrunk.</summary>
+            private static UILayoutStyle Control(float width, float height) => new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(width),
+                Height = LayoutSize.Fixed(height),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>A row's switch.</summary>
+            public static readonly UILayoutStyle Toggle = Control(UILayoutConstants.SettingsMenu.ToggleWidth, UILayoutConstants.SettingsMenu.ToggleHeight);
+
+            /// <summary>A row's value button (a number).</summary>
+            public static readonly UILayoutStyle Value = Control(UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueHeight);
+
+            /// <summary>A choice's button, <paramref name="width"/> wide (fitted to its longest choice by <c>UISettingsMenu</c>).</summary>
+            public static UILayoutStyle Choice(float width) => Control(width, UILayoutConstants.SettingsMenu.ValueHeight);
+
+            /// <summary>A row's text field.</summary>
+            public static readonly UILayoutStyle TextField = Control(UILayoutConstants.SettingsMenu.TextFieldWidth, UILayoutConstants.SettingsMenu.ValueHeight);
         }
 
         /// <summary>

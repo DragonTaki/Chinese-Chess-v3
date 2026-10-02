@@ -121,18 +121,29 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The settings submenu (<c>UISettingsMenu</c>). Box look as the main menu buttons;
-        /// fonts and the dimmed section header are placeholders for the author to tune.
+        /// The settings screens (<c>UISettingsMenu</c>). Box looks as the main menu buttons
+        /// (gold borders) with the category menus' dimmed variant for what is not selected or
+        /// only shows a value; fonts, colours and the dimmed section header are placeholders for
+        /// the author to tune.
         /// </summary>
         public static class SettingsMenu
         {
-            /// <summary>Setting buttons and the save / back buttons.</summary>
+            /// <summary>The save / back buttons.</summary>
             public static readonly IFont ButtonFont = StyleHelper.GetFont("NotoSerif", 24, FontStyleFlags.Bold);
 
             /// <summary>Section headers.</summary>
             public static readonly IFont HeaderFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
 
-            /// <summary>A setting's button, and the save / back buttons.</summary>
+            /// <summary>A row's name.</summary>
+            public static readonly IFont ItemFont = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
+
+            /// <summary>Tab texts, value buttons and the text field.</summary>
+            public static readonly IFont ValueFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
+
+            /// <summary>Colour of a row's name (as the main menu buttons' text).</summary>
+            public static readonly IBrush ItemTextBrush = MainMenu.Button.TextBrush;
+
+            /// <summary>The save / back buttons.</summary>
             public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
             {
                 Font = ButtonFont,
@@ -154,6 +165,85 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 InnerBorder = CategoryListMenu.CategoryOff.Inner,
                 Margin = MainMenu.Button.Border.Margin,
                 CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>A choice's button (a click steps to the next choice): bright borders.</summary>
+            public static readonly IButtonDrawStyle ChoiceStyle = new DoubleBorderRoundedStyle
+            {
+                Font = ValueFont,
+                TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = MainMenu.Button.Border.Outer,
+                InnerBorder = MainMenu.Button.Border.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>A number's value (only shown for now, not clickable): dimmed borders.</summary>
+            public static readonly IButtonDrawStyle NumberStyle = new DoubleBorderRoundedStyle
+            {
+                Font = ValueFont,
+                TextBrush = MainMenu.Button.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = CategoryListMenu.CategoryOff.Outer,
+                InnerBorder = CategoryListMenu.CategoryOff.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>The tab bar: unselected tabs dimmed, the selected one bright with a gold bar under it.</summary>
+            public static readonly TabBarStyle TabBarStyle = new TabBarStyle
+            {
+                TabStyle = new DoubleBorderRoundedStyle
+                {
+                    Font = ValueFont,
+                    TextBrush = CategoryListMenu.CategoryOff.TextBrush,
+                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    OuterBorder = CategoryListMenu.CategoryOff.Outer,
+                    InnerBorder = CategoryListMenu.CategoryOff.Inner,
+                    Margin = MainMenu.Button.Border.Margin,
+                    CornerRadius = MainMenu.Button.Border.CornerRadius
+                },
+                SelectedTabStyle = ChoiceStyle,
+                TabGap = UILayoutConstants.SettingsMenu.TabGap,
+                IndicatorColor = StyleHelper.GetColor("#F9BF45", 1.0f),  // #F9BF45
+                IndicatorHeight = UILayoutConstants.SettingsMenu.TabIndicatorHeight,
+                IndicatorInset = UILayoutConstants.SettingsMenu.TabIndicatorInset,
+            };
+
+            /// <summary>A row's switch: gold track when on, faint white when off.</summary>
+            public static readonly ToggleSwitchStyle ToggleStyle = new ToggleSwitchStyle
+            {
+                TrackOnColor = StyleHelper.GetColor("#F9BF45", 0.9f),   // #F9BF45
+                TrackOffColor = StyleHelper.GetColor("#FFFFFF", 0.2f),  // #FFFFFF
+                KnobColor = StyleHelper.GetColor("#FCFAF2", 1.0f),      // #FCFAF2
+                BorderColor = StyleHelper.GetColor("#F9BF45", 0.6f),    // #F9BF45
+                BorderWidth = 2.0f,
+                KnobInset = UILayoutConstants.SettingsMenu.ToggleKnobInset,
+                DisabledOpacity = 0.35f,
+            };
+
+            /// <summary>A row's text field: faint box with gold borders (brighter while typing).</summary>
+            public static readonly TextFieldStyle TextFieldStyle = new TextFieldStyle
+            {
+                Box = new SingleBorderRoundedStyle
+                {
+                    CornerRadius = MainMenu.Button.Border.CornerRadius,
+                    BorderStyle = CategoryListMenu.CategoryOff.Outer,
+                    BackgroundBrushFactory = new SolidBrushFactory(StyleHelper.GetColor("#FFFFFF", 0.12f)),  // #FFFFFF
+                },
+                FocusedBox = new SingleBorderRoundedStyle
+                {
+                    CornerRadius = MainMenu.Button.Border.CornerRadius,
+                    BorderStyle = MainMenu.Button.Border.Outer,
+                    BackgroundBrushFactory = new SolidBrushFactory(StyleHelper.GetColor("#FFFFFF", 0.2f)),  // #FFFFFF
+                },
+                TextColor = StyleHelper.GetColor("#FCFAF2", 1.0f),         // #FCFAF2
+                PlaceholderColor = StyleHelper.GetColor("#FCFAF2", 0.45f),  // #FCFAF2
+                CaretColor = StyleHelper.GetColor("#FCFAF2", 1.0f),        // #FCFAF2
+                CaretWidth = 2.0f,
+                TextInset = UILayoutConstants.SettingsMenu.TextFieldInset,
+                DisabledOpacity = 0.4f,
             };
         }
 
