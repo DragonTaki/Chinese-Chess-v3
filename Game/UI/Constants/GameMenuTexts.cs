@@ -150,18 +150,18 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string SectionHints = "── 提示（立即生效）──";
         public const string SectionOther = "── 其他 ──";
 
-        public const string GeneralCanSeeGeneral = "王見王";
-        public const string GeneralCanLeavePalace = "將帥出宮";
-        public const string AdvisorCanLeavePalace = "士出宮";
-        public const string ElephantEyeBlocks = "塞象眼";
-        public const string HorseLegBlocks = "蹩馬腳";
+        public const string GeneralCanSeeGeneral = "無視王見王規則";
+        public const string GeneralCanLeavePalace = "將帥無視九宮範圍";
+        public const string AdvisorCanLeavePalace = "士無視九宮範圍";
+        public const string ElephantEyeBlocks = "象眼可被塞";
+        public const string HorseLegBlocks = "馬腳可被蹩";
 
         public const string HiddenChess = "暗棋（蓋子）";
         public const string CanCaptureHiddenPiece = "暗吃";
-        public const string CaptureHiddenStrongerSuicide = "暗吃到更大的子時吃方被吃";
+        public const string CaptureHiddenStrongerSuicide = "吃更大暗棋會自殺";
         public const string AllowChainCapture = "連吃";
         public const string ChariotRushHorseDiagonal = "車衝馬斜";
-        public const string CannonMustJump = "包跳吃子";
+        public const string CannonMustJump = "砲需隔一子吃棋";
 
         public const string StepTimer = "限制步時";
         public const string LoseOnTimeUp = "超時判負";
@@ -202,7 +202,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             _ => throw new System.ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
-        /// <summary>A setting that can be changed but does nothing yet: its name with this mark.</summary>
+        /// <summary>
+        /// A setting that can be changed but does nothing yet: its name with this mark. No longer
+        /// shown (the author asked on 2026-10-02 for no 未實作 mark in the settings screens; which
+        /// items do nothing is only in the code and docs/SETTINGS.md §4). Kept, unused.
+        /// </summary>
         public static string NotImplemented(string name) => $"{name}（未實作）";
 
         /// <summary>A time-limit switch while the clocks count up: its name with <see cref="NotWithCountUp"/>.</summary>

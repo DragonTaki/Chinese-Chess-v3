@@ -61,14 +61,18 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>The setting's name (the row's left side).</summary>
         public string Name { get; }
 
-        /// <summary>Whether changing the setting does something yet (false: 未實作, shown in the row's name).</summary>
+        /// <summary>Whether changing the setting does something yet (false: 未實作; not shown on screen, see <see cref="RowText"/>).</summary>
         public bool IsImplemented { get; }
 
         /// <summary>The kind of control the row has.</summary>
         public abstract SettingsItemKind Kind { get; }
 
-        /// <summary>The row's text in <paramref name="settings"/>: the name, marked when not implemented.</summary>
-        public virtual string RowText(PlayerSettings settings) => IsImplemented ? Name : GameMenuTexts.NotImplemented(Name);
+        /// <summary>
+        /// The row's text in <paramref name="settings"/>: the name. A setting that is not
+        /// implemented is not marked (the author's choice, 2026-10-02); <see cref="IsImplemented"/>
+        /// still says which ones do nothing.
+        /// </summary>
+        public virtual string RowText(PlayerSettings settings) => Name;
     }
 
     /// <summary>An on/off setting (a switch).</summary>
