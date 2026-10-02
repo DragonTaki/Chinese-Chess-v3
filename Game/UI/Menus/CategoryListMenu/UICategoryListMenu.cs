@@ -66,6 +66,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         /// <summary>The label of <paramref name="item"/>'s button (line breaks allowed).</summary>
         protected abstract string ItemButtonText(TItem item);
 
+        /// <summary>
+        /// The group <paramref name="item"/> is listed under (its category toggle's name, the
+        /// key of the hidden-category set, and the primary sort key). The item's own
+        /// <c>Category</c> by default; a derived menu may decorate it (開局練習 prefixes the
+        /// side practised).
+        /// </summary>
+        public virtual string CategoryOf(TItem item) => item.Category ?? string.Empty;
+
         protected override void OnBeforeInit(IUiFactory factory)
         {
             // Only used by UIMenu's legacy stacking; the rows are laid out by the flex gaps.
@@ -121,7 +129,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         {
             ClearItemButtons();
 
-            foreach (var category in items.Select(p => p.Category ?? string.Empty).Distinct(StringComparer.Ordinal))
+            foreach (var category in items.Select(CategoryOf).Distinct(StringComparer.Ordinal))
             {
                 string name = category;
                 var button = CreateButton(UILayoutSheet.CategoryListMenu.CategoryButton, () => Handler.ToggleCategory(name));
@@ -136,7 +144,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                 var button = CreateButton(UILayoutSheet.CategoryListMenu.ItemButton, () => Handler.StartItem(target));
                 button.Text = ItemButtonText(item);
                 button.Style = UILayoutStyles.CategoryListMenu.ButtonStyle;
-                button.LayoutRules.Display = isCategoryShown(item.Category ?? string.Empty) ? DisplayMode.Normal : DisplayMode.None;
+                button.LayoutRules.Display = isCategoryShown(CategoryOf(item)) ? DisplayMode.Normal : DisplayMode.None;
                 ItemGrid.AddChild(button);
                 _itemButtons.Add((button, item));
             }
@@ -159,7 +167,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         {
             ApplyCategoryState(category, shown);
             foreach (var (button, item) in _itemButtons)
-                if (string.Equals(item.Category ?? string.Empty, category, StringComparison.Ordinal))
+                if (string.Equals(CategoryOf(item), category, StringComparison.Ordinal))
                     button.LayoutRules.Display = shown ? DisplayMode.Normal : DisplayMode.None;
 
             Handler.UpdateScrollContentHeight();
