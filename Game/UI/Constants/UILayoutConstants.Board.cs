@@ -86,7 +86,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// the outermost piece centres (grid crossings) out by the drawn piece radius - moved
             /// per edge by these, in design-space units at any board size (not scaled with the
             /// board). Positive extends the area outward, negative pulls it in. 0 = exactly the
-            /// drawn extent; for the author to tune.
+            /// drawn extent; for the author to tune. The edges are screen edges: they stay put
+            /// when the board is drawn rotated (<c>UIBoard.IsFlipped</c>).
             /// </summary>
             public static class ClickArea
             {

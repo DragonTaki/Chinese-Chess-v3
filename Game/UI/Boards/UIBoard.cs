@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
 // Update Date: 2026/10/02
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -162,16 +162,38 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         }
 
         /// <summary>
+        /// Whether the board is drawn rotated 180 degrees so the player's own side (己方,
+        /// <c>GameManager.LocalSide</c>) is at the bottom: the Full board when 己方 plays black
+        /// (<see cref="BoardOrientation"/>). Read live from the game, so it follows every new
+        /// game (an opening practised as 後手 after a 先手 one, a black-to-move endgame...).
+        /// Grid lines, palaces and cannon/soldier marks are 180-degree symmetric; pieces and
+        /// rings go through <see cref="GridToPixel"/>, clicks through <see cref="TryPixelToGrid"/>.
+        /// </summary>
+        public bool IsFlipped => BoardOrientation.IsFlipped(_gameManager);
+
+        /// <summary>
         /// Absolute position where a piece on square (<paramref name="x"/>, <paramref name="y"/>)
-        /// is drawn: the grid point on the Full board, the cell's centre on HalfCenter.
+        /// (board coordinates) is drawn: the grid point on the Full board, the cell's centre on
+        /// HalfCenter; rotated 180 degrees when <see cref="IsFlipped"/>.
         /// </summary>
         public Vector2F GridToPixel(float x, float y)
+        {
+            var board = _gameManager.Board;
+            var (viewX, viewY) = BoardOrientation.Map(x, y, board.Columns, board.Rows, IsFlipped);
+            return ViewToPixel(viewX, viewY);
+        }
+
+        /// <summary>
+        /// Absolute position of the piece centre at view (screen) square
+        /// (<paramref name="viewX"/>, <paramref name="viewY"/>), (0, 0) being the top-left one.
+        /// </summary>
+        private Vector2F ViewToPixel(float viewX, float viewY)
         {
             var origin = GridOrigin;
             float cell = GridCellSize;
             // HalfCenter: pieces stand in the cells, half a cell in from the cell's corner.
             float inset = BoardType == BoardType.HalfCenter ? 0.5f : 0f;
-            return new Vector2F(origin.X + (x + inset) * cell, origin.Y + (y + inset) * cell);
+            return new Vector2F(origin.X + (viewX + inset) * cell, origin.Y + (viewY + inset) * cell);
         }
 
         /// <summary>
@@ -200,13 +222,17 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// piece centres (<see cref="GridToPixel"/>: crossings on Full, cell centres on
         /// HalfCenter) out by <see cref="PieceRadius"/>, adjusted per edge by
         /// <see cref="ClickAreaEdgeAdjust"/> - then the square whose piece centre is nearest.
+        /// The hit test runs in view (screen) space, so the per-edge adjustment stays with the
+        /// screen edges; the view square is then rotated back when <see cref="IsFlipped"/>.
         /// </summary>
         /// <returns>False when the point is outside the clickable area.</returns>
         public bool TryPixelToGrid(float pixelX, float pixelY, out int gridX, out int gridY)
         {
             var board = _gameManager.Board;
-            return BoardHitTest.TryPixelToGrid(GridToPixel(0, 0), GridCellSize, board.Columns, board.Rows,
-                PieceRadius, ClickAreaEdgeAdjust, pixelX, pixelY, out gridX, out gridY);
+            bool hit = BoardHitTest.TryPixelToGrid(ViewToPixel(0, 0), GridCellSize, board.Columns, board.Rows,
+                PieceRadius, ClickAreaEdgeAdjust, pixelX, pixelY, out int viewX, out int viewY);
+            (gridX, gridY) = BoardOrientation.Map(viewX, viewY, board.Columns, board.Rows, hit && IsFlipped);
+            return hit;
         }
 
         #endregion
