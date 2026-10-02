@@ -155,7 +155,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             /// <summary>
             /// The inner fill of a player's half: dark red / black by the colour the player
-            /// plays (Player1 red, Player2 black on the Full board; on a half board whatever the
+            /// plays (<c>GameManager.ColorOf</c>: on the Full board Player1 has the colour that moves first; on a half board whatever the
             /// first flip / first move gave); a neutral grey while that is not decided yet.
             /// </summary>
             private static Color OverlayColor(PieceColor color) => color switch

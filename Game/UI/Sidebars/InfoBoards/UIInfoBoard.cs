@@ -29,9 +29,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
         public GameManager GameManager { get; internal set; }
 
         /// <summary>
-        /// The side shown in the left half: 己方 (<see cref="GameManager.LocalSide"/> — 紅方 in a
-        /// new local Full-board game, the side the player plays in a loaded save, an opening, an
-        /// endgame or a custom position, the first mover on a half board). Each half is coloured
+        /// The side shown in the left half: 己方 (<see cref="GameManager.LocalSide"/> — Player1, the
+        /// first mover, in a new local game, an endgame and on a half board; the side the player
+        /// plays in a loaded save, an opening or a custom position). Each half is coloured
         /// by the colour its player actually plays (<see cref="GameManager.ColorOf"/>).
         /// </summary>
         public PlayerSide LeftSide => GameManager.LocalSide;
@@ -59,7 +59,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             {
                 PieceColor.Red => "紅方玩家",
                 PieceColor.Black => "黑方玩家",
-                _ => side == GameManager?.FirstTurn ? "先手玩家" : "後手玩家",
+                // Player1 always moves first.
+                _ => side == PlayerSide.Player1 ? "先手玩家" : "後手玩家",
             };
         }
 
