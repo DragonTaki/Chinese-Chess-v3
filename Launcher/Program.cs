@@ -40,6 +40,7 @@ using Engine.Logging;
 using Engine.Platform;
 using Engine.Platform.WinForms;
 using Engine.Styles;
+using Engine.Timing;
 
 namespace Launcher
 {
@@ -86,6 +87,7 @@ namespace Launcher
             Settings.CurrentUser = playerSettings.PlayerName;
             AppLogger.EnableDebug = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
+            TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
 
             // Create service collection for DI

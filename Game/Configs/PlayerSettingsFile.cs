@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/02
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -66,6 +66,9 @@ namespace Chinese_Chess_v3.Game.Configs
             foreach (var kind in System.Enum.GetValues<GameKind>())
                 foreach (var key in RuleKeys(kind))
                     yield return key;
+
+            yield return IntOneOf("display", "fps", s => s.Fps, (s, v) => s.Fps = v, PlayerSettings.FpsOptions,
+                $"畫面更新率（每秒幾格動畫）：{string.Join("／", PlayerSettings.FpsOptions)}。開著垂直同步時最多到螢幕更新率；WinForms 版的計時器實際上大約只到 64。");
 
             yield return Bool("hints", "legal_moves", s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v,
                 "選子時是否用圓圈標出可以走的位置。");
@@ -468,6 +471,21 @@ namespace Chinese_Chess_v3.Game.Configs
                 TryApply = (text, s) =>
                 {
                     if (!int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int v) || v < min || v > max)
+                        return false;
+                    set(s, v);
+                    return true;
+                },
+            };
+
+        /// <summary>An integer key that must be one of <paramref name="allowed"/>.</summary>
+        private static KeyDef IntOneOf(string section, string name, Func<PlayerSettings, int> get, Action<PlayerSettings, int> set, IReadOnlyList<int> allowed, params string[] comment) =>
+            new KeyDef
+            {
+                Section = section, Name = name, Comment = comment,
+                Format = s => get(s).ToString(CultureInfo.InvariantCulture),
+                TryApply = (text, s) =>
+                {
+                    if (!int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int v) || !allowed.Contains(v))
                         return false;
                     set(s, v);
                     return true;

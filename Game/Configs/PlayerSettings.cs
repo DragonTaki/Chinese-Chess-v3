@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/02
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -54,6 +54,16 @@ namespace Chinese_Chess_v3.Game.Configs
             _rules.TryGetValue(kind, out var rules)
                 ? rules
                 : throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind");
+
+        #endregion
+
+        #region [display]
+
+        /// <summary>The frame rates <see cref="Fps"/> can be (the settings screen's FPS choices).</summary>
+        public static readonly IReadOnlyList<int> FpsOptions = new[] { 30, 60, 120, 144 };
+
+        /// <summary>Animation frame rate (one of <see cref="FpsOptions"/>), pushed to the engine's frame timer. Default: 60</summary>
+        public int Fps { get; set; } = 60;
 
         #endregion
 

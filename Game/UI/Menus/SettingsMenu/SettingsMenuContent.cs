@@ -276,7 +276,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         public static int ResolutionIndex = 2;    // 1920 × 1080
         public static int DisplayModeIndex = 0;   // 視窗
         public static bool VSync = true;
-        public static int FpsIndex = 1;           // 60
         public static float UiScalePercent = 100f;
         public static float MasterVolume = 100f;
         public static float MusicVolume = 80f;
@@ -336,8 +335,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     Placeholder(GameMenuTexts.DisplayMode, GameMenuTexts.DisplayModeOptions,
                         () => UnimplementedSettings.DisplayModeIndex, v => UnimplementedSettings.DisplayModeIndex = v),
                     Placeholder(GameMenuTexts.VSync, () => UnimplementedSettings.VSync, v => UnimplementedSettings.VSync = v),
-                    Placeholder(GameMenuTexts.Fps, GameMenuTexts.FpsOptions,
-                        () => UnimplementedSettings.FpsIndex, v => UnimplementedSettings.FpsIndex = v),
+                    new SettingsChoiceItem(GameMenuTexts.Fps, GameMenuTexts.FpsOptions,
+                        s => Math.Max(0, PlayerSettings.FpsOptions.ToList().IndexOf(s.Fps)), (s, i) => s.Fps = PlayerSettings.FpsOptions[i]),
                     Placeholder(GameMenuTexts.UiScale, UiScaleMin, UiScaleMax, UiScaleStep, GameMenuTexts.Percent,
                         () => UnimplementedSettings.UiScalePercent, v => UnimplementedSettings.UiScalePercent = v),
                     new SettingsNumberItem(GameMenuTexts.WheelScrollStep, s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v,
