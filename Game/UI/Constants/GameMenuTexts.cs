@@ -186,7 +186,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string SectionDebugLog = "── 紀錄（立即生效）──";
         public const string SectionDebugVisual = "── 視覺除錯（立即生效）──";
         public const string SectionDebugPerformance = "── 效能與連線（立即生效）──";
-        public const string DebugLog = "DEBUG 訊息";
+        public const string DebugLog = "除錯訊息";
         public const string ConsoleTrace = "主控台追蹤訊息";
         public const string LabelBackgrounds = "標籤紅色背景";
         public const string LayoutOutlines = "排版外框";
@@ -204,7 +204,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string TabDisplay = "畫面";
         public const string TabSound = "聲音";
         public const string TabGame = "遊戲";
-        public const string TabDebug = "DEBUG";
+        public const string TabDebug = "開發人員選項";
 
         /// <summary>A rules screen tab: the game kind's name (as on the new-game menu).</summary>
         public static string GameKindName(GameKind kind) => kind switch
