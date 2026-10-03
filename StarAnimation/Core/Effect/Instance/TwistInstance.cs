@@ -152,17 +152,24 @@ namespace StarAnimation.Core.Effect.Instance
                 Vector2F toCenter = star.Position.Current - Center;
                 float radius = toCenter.Length();
 
-                // Don't rotate if too closed to center
-                if (radius < 0.01f)
+                // Only stars within Radius turn, weaker toward the edge (author decision
+                // 2026-10-04); a star that drifted out loses this effect's push. Don't rotate if
+                // too close to the center.
+                if (radius < 0.01f || radius >= Radius)
+                {
+                    star.Physics.AccelerationContributions.Remove(InstanceId);
                     continue;
+                }
+                float falloff = 1f - radius / Radius;
 
                 Vector2F radialDir = toCenter / radius;
                 Vector2F tangentDir = (Direction > 0)
                     ? new Vector2F(-radialDir.Y, radialDir.X)   // Clockwise
                     : new Vector2F(radialDir.Y, -radialDir.X);  // Counter-clockwise
 
-                // Force the velocity direction to approach the tangent
-                float targetSpeed = 100.0f / (radius + 10.0f);
+                // Force the velocity direction to approach the tangent. Strength scales the
+                // turning speed, capped at MaxSpeedBoost.
+                float targetSpeed = MathF.Min(MaxSpeedBoost, Strength * falloff * 100.0f / (radius + 10.0f));
                 Vector2F desiredVelocity = tangentDir * targetSpeed;
 
                 // Correction speed: Make the current speed approach the target tangent
