@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -17,6 +17,7 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
+using Engine.Diagnostics;
 using Engine.Globals;
 using Engine.Physics;
 using Engine.Platform;
@@ -161,6 +162,9 @@ namespace Launcher
             g.PushTransform(GlobalViewport.Scale, GlobalViewport.Offset.X, GlobalViewport.Offset.Y);
             _rootCanvas?.Draw(g);
             g.PopTransform();
+
+            // Debug readouts (FPS / network latency) over everything, when switched on.
+            DebugOverlay.Draw(g);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
