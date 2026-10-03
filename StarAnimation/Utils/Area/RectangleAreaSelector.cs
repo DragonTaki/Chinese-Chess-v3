@@ -28,6 +28,13 @@ namespace StarAnimation.Utils.Area
             _maxHeight = maxHeight;
         }
 
+        /// <summary>
+        /// A selector whose area is always the whole canvas, whatever its size (a minimum
+        /// larger than any canvas makes <see cref="GetArea"/> take the full width and height).
+        /// </summary>
+        public static RectangleAreaSelector FullCanvas() =>
+            new RectangleAreaSelector(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+
         public IAreaShape GetArea(float canvasWidth, float canvasHeight)
         {
             if (canvasWidth <= 0 || canvasHeight <= 0)
