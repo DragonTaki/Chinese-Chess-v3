@@ -282,12 +282,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
         /// <summary>
         /// 回到主畫面: while the game is in progress, asks whether to give it up (yes: the side
-        /// to move resigns, then back to the main menu; no: stay); an ended game goes back
-        /// directly, saved or not.
+        /// to move resigns, then back to the main menu; no: stay); an ended game, or one in
+        /// which nobody has moved yet (author decision 2026-10-02), goes back directly.
         /// </summary>
         private void ReturnToMain()
         {
-            if (Game.IsGameOver)
+            if (Game.IsGameOver || !Game.HasPlayedMoves)
             {
                 ShowMainMenu();
                 return;
