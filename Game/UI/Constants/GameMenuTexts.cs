@@ -36,16 +36,18 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         // ----- Game-over dialog -----
 
         /// <summary>
-        /// The game-over dialog's message: the winner (by the colour it plays) and why, two lines.
+        /// The game-over dialog's message: the winner's name with the colour it plays (e.g.
+        /// 玩家一（紅方）獲勝, author decision 2026-10-02) and why, two lines.
         /// </summary>
         /// <param name="winner">The winning side; <c>None</c> is a draw (no rule ends a game in a draw yet).</param>
+        /// <param name="winnerName">The winner's name (<c>GameManager.NameOf</c>); null for <see cref="DefaultPlayerName"/>.</param>
         /// <param name="winnerColor">The colour <paramref name="winner"/> plays (<c>GameManager.ColorOf</c>).</param>
         /// <param name="reason">How the game ended.</param>
         /// <param name="boardType">The board played on (a stalemate is worded differently on the dark-chess board).</param>
-        public static string GameOverMessage(PlayerSide winner, PieceColor winnerColor, GameOverReason reason, BoardType boardType) =>
+        public static string GameOverMessage(PlayerSide winner, string winnerName, PieceColor winnerColor, GameOverReason reason, BoardType boardType) =>
             winner == PlayerSide.None
                 ? $"和棋\n{GameOverReasonText(reason, boardType)}"
-                : $"{SideName(winner, winnerColor)}獲勝\n{GameOverReasonText(reason, boardType)}";
+                : $"{winnerName ?? DefaultPlayerName(winner)}（{SideName(winner, winnerColor)}）獲勝\n{GameOverReasonText(reason, boardType)}";
 
         /// <summary>The reason line of the game-over dialog.</summary>
         public static string GameOverReasonText(GameOverReason reason, BoardType boardType) => reason switch
@@ -234,6 +236,17 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         // 遊戲 (game).
         public const string PlayerName = "玩家名稱";
         public const string PlayerNamePlaceholder = "（未命名）";
+        public const string Player1Name = "玩家一名稱";
+        public const string Player2Name = "玩家二名稱";
+        public const string Player3Name = "玩家三名稱";
+
+        /// <summary>The name of an unnamed local player: 玩家一／玩家二／玩家三 (Player1..Player3, by turn order).</summary>
+        public static string DefaultPlayerName(PlayerSide side) => side switch
+        {
+            PlayerSide.Player2 => "玩家二",
+            PlayerSide.Player3 => "玩家三",
+            _ => "玩家一",
+        };
         public const string MoveAnimationSpeed = "走子動畫速度";
         public static readonly string[] MoveAnimationSpeedOptions = { "慢", "普通", "快", "關閉" };
         public const string BoardStyle = "棋盤樣式";

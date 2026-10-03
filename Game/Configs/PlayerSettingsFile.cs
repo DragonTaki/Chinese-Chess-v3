@@ -62,6 +62,12 @@ namespace Chinese_Chess_v3.Game.Configs
         {
             yield return Str("player", "name", s => s.PlayerName, (s, v) => s.PlayerName = v, PlayerSettings.PlayerNameMaxLength,
                 $"玩家名稱，用在紀錄區的問候語（可留空，最多 {PlayerSettings.PlayerNameMaxLength} 字）。");
+            yield return Str("player", "player1_name", s => s.Player1Name, (s, v) => s.Player1Name = v, PlayerSettings.PlayerNameMaxLength,
+                $"單機對局玩家一（先手）的名稱，顯示在資訊看板、結果視窗與存檔（可留空＝「玩家一」，最多 {PlayerSettings.PlayerNameMaxLength} 字）。");
+            yield return Str("player", "player2_name", s => s.Player2Name, (s, v) => s.Player2Name = v, PlayerSettings.PlayerNameMaxLength,
+                $"單機對局玩家二（後手）的名稱（可留空＝「玩家二」，最多 {PlayerSettings.PlayerNameMaxLength} 字）。");
+            yield return Str("player", "player3_name", s => s.Player3Name, (s, v) => s.Player3Name = v, PlayerSettings.PlayerNameMaxLength,
+                $"單機對局玩家三（三國）的名稱（可留空＝「玩家三」，最多 {PlayerSettings.PlayerNameMaxLength} 字）。");
 
             foreach (var kind in System.Enum.GetValues<GameKind>())
                 foreach (var key in RuleKeys(kind))

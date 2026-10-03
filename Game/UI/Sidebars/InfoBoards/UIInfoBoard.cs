@@ -43,15 +43,19 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
         /// <summary>
         /// The name shown for <paramref name="side"/>: <see cref="Player1Name"/> /
-        /// <see cref="Player2Name"/> when set, otherwise the colour it plays
+        /// <see cref="Player2Name"/> when set, else the player's name from the settings
+        /// (<see cref="GameManager.NameOf"/>), otherwise the colour it plays
         /// (<see cref="GameManager.ColorOf"/>) — 紅方玩家 / 黑方玩家, or 先手玩家 / 後手玩家 while a
-        /// dark-chess game has not decided the colours yet.
+        /// dark-chess game has not decided the colours yet. The half is coloured by its colour either way.
         /// </summary>
         /// <param name="side">Player1 or Player2.</param>
         /// <returns>The name to draw.</returns>
         public string GetPlayerName(PlayerSide side)
         {
             string name = side == PlayerSide.Player2 ? Player2Name : Player1Name;
+            if (name != null)
+                return name;
+            name = GameManager?.NameOf(side);
             if (name != null)
                 return name;
 

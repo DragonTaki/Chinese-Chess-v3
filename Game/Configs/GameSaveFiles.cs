@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Pieces;
+using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.Core.Saves;
 
 namespace Chinese_Chess_v3.Game.Configs
@@ -28,8 +30,9 @@ namespace Chinese_Chess_v3.Game.Configs
         /// Saves <paramref name="game"/> to <see cref="SystemSettings.SaveFilePath"/> for
         /// <paramref name="time"/> (null: now); when that file already exists (two saves in one
         /// second) <c>_2</c>, <c>_3</c>, ... is added before <c>.pgn</c>. Player names default
-        /// to <see cref="Settings.CurrentUser"/> for both sides (local play: one person plays
-        /// both colors). Clears <see cref="GameManager.HasUnsavedChanges"/>.
+        /// to the local players' names (<see cref="GameManager.NameOf"/>, mapped to the colour
+        /// each plays), or <see cref="Settings.CurrentUser"/> for an unnamed one. Clears
+        /// <see cref="GameManager.HasUnsavedChanges"/>.
         /// </summary>
         /// <returns>The full path of the written file.</returns>
         /// <exception cref="InvalidOperationException">The game cannot be saved (<see cref="GameManager.CanSave"/>).</exception>
@@ -39,7 +42,11 @@ namespace Chinese_Chess_v3.Game.Configs
             ArgumentNullException.ThrowIfNull(game);
             var now = time ?? DateTime.Now;
             string path = UniquePath(SystemSettings.SaveFilePath(game, now));
-            return game.SaveGame(path, redName ?? Settings.CurrentUser, blackName ?? Settings.CurrentUser, now);
+            var redSide = game.ColorOf(PlayerSide.Player1) == PieceColor.Red ? PlayerSide.Player1 : PlayerSide.Player2;
+            var blackSide = redSide == PlayerSide.Player1 ? PlayerSide.Player2 : PlayerSide.Player1;
+            redName ??= game.NameOf(redSide) ?? Settings.CurrentUser;
+            blackName ??= game.NameOf(blackSide) ?? Settings.CurrentUser;
+            return game.SaveGame(path, redName, blackName, now);
         }
 
         /// <summary>
