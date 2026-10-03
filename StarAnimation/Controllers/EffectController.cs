@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/09
-// Update Date: 2025/05/09
+// Update Date: 2026/10/04
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -16,6 +16,7 @@ using StarAnimation.Core.Effect.Parameter;
 using StarAnimation.Models;
 using StarAnimation.Utils.Area;
 
+using Engine.Diagnostics;
 using Engine.Platform;
 using Engine.Randomization;
 using Engine.Timing;
@@ -39,7 +40,12 @@ namespace StarAnimation.Controllers
         private readonly Dictionary<EffectType, object> _effectConfigs = new(EffectConfigRegistry.Configs);
         private readonly List<EffectEntry> _effectEntries = new();
 
-        private bool EnableDebugFrame { get; set; } = false;
+        /// <summary>
+        /// Whether each started effect's area is outlined in its debug colour (visual
+        /// debugging): the engine-wide <see cref="DebugOptions.StarEffectFrames"/> switch
+        /// (settings screen DEBUG tab), so it can be turned on without editing code.
+        /// </summary>
+        private static bool EnableDebugFrame => DebugOptions.StarEffectFrames;
 
         /// <summary>
         /// Control which effects will be enabled.
