@@ -80,7 +80,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                     return;
 
                 DialogManager.ShowConfirm(
-                    GameMenuTexts.GameOverMessage(info.Winner, game.ColorOf(info.Winner), info.Reason, game.Board.Type),
+                    GameMenuTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type),
                     ConfirmDialogType.GameOver,
                     result =>
                     {

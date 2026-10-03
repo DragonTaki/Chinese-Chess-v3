@@ -36,6 +36,23 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>Name shown in the log's greeting (at most <see cref="PlayerNameMaxLength"/> characters). Default: "Player"</summary>
         public string PlayerName { get; set; } = "Player";
 
+        /// <summary>Local Player1's name (先手, 玩家一; at most <see cref="PlayerNameMaxLength"/> characters). Default: "玩家一"</summary>
+        public string Player1Name { get; set; } = "玩家一";
+
+        /// <summary>Local Player2's name (後手, 玩家二). Default: "玩家二"</summary>
+        public string Player2Name { get; set; } = "玩家二";
+
+        /// <summary>Local Player3's name (三國's third player, 玩家三). Default: "玩家三"</summary>
+        public string Player3Name { get; set; } = "玩家三";
+
+        /// <summary>Gives <paramref name="game"/> the local players' names (<see cref="GameManager.SetPlayerNames"/>).</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="game"/> is null.</exception>
+        public void ApplyPlayerNamesTo(GameManager game)
+        {
+            ArgumentNullException.ThrowIfNull(game);
+            game.SetPlayerNames(Player1Name, Player2Name, Player3Name);
+        }
+
         #endregion
 
         #region [rules.*]
