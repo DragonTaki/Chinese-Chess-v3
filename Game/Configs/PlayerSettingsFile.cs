@@ -173,6 +173,10 @@ namespace Chinese_Chess_v3.Game.Configs
             RuleOption.ChariotRushHorseDiagonal => ("chariot_rush_horse_diagonal",
                 "是否採用車衝馬斜（同一個變體）：車可以沿直線一次走多格，走超過一格吃子不看大小、吃相鄰的子仍照大小；馬改成斜走一格，斜走吃子不看大小。"),
             RuleOption.CannonMustJump => ("cannon_must_jump", "包／炮吃子是否一定要跳過一個子。"),
+            RuleOption.CaptureOwnPiece => ("can_capture_own_piece",
+                "是否可以吃己方的棋子。大盤不能吃自己的將帥；半盤吃己方的子跟吃對方一樣照大小。"),
+            RuleOption.Suicide => ("can_suicide",
+                "半盤是否可以去撞已翻開、比自己大的對方棋子（走一格的吃法）：撞的一方陣亡，對方留在原位。"),
             _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option"),
         };
 

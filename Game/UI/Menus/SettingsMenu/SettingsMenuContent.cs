@@ -434,6 +434,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             RuleOption.AllowChainCapture => GameMenuTexts.AllowChainCapture,
             RuleOption.ChariotRushHorseDiagonal => GameMenuTexts.ChariotRushHorseDiagonal,
             RuleOption.CannonMustJump => GameMenuTexts.CannonMustJump,
+            RuleOption.CaptureOwnPiece => GameMenuTexts.CaptureOwnPiece,
+            RuleOption.Suicide => GameMenuTexts.Suicide,
             _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option"),
         };
 
