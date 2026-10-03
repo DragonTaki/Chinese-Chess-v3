@@ -182,16 +182,16 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string LegalMoveHints = "可走位置提示";
         public const string HangingPieceHints = "無根子提示";
 
-        // DEBUG tab (除錯功能): one section per kind of debug feature.
+        // 開發人員選項 tab (debug features): one section per kind of debug feature. All wording is Chinese (author 2026-10-04).
         public const string SectionDebugLog = "── 紀錄（立即生效）──";
         public const string SectionDebugVisual = "── 視覺除錯（立即生效）──";
         public const string SectionDebugPerformance = "── 效能與連線（立即生效）──";
-        public const string DebugLog = "DEBUG 訊息";
+        public const string DebugLog = "除錯訊息";
         public const string ConsoleTrace = "主控台追蹤訊息";
         public const string LabelBackgrounds = "標籤紅色背景";
         public const string LayoutOutlines = "排版外框";
         public const string StarEffectFrames = "星空特效範圍框";
-        public const string ShowFps = "顯示 FPS";
+        public const string ShowFps = "顯示畫面更新率";
         public const string ShowNetworkLatency = "顯示網路延遲";
 
         /// <summary>Main menu entry and title of the rules screen (local games only; a network game does not use these rules).</summary>
@@ -204,7 +204,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string TabDisplay = "畫面";
         public const string TabSound = "聲音";
         public const string TabGame = "遊戲";
-        public const string TabDebug = "DEBUG";
+        public const string TabDebug = "開發人員選項";
 
         /// <summary>A rules screen tab: the game kind's name (as on the new-game menu).</summary>
         public static string GameKindName(GameKind kind) => kind switch
@@ -233,9 +233,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string DisplayMode = "顯示模式";
         public static readonly string[] DisplayModeOptions = { "視窗", "全螢幕", "無邊框" };
         public const string VSync = "垂直同步";
-        public const string Fps = "FPS";
+        public const string Fps = "畫面更新率";
         public static readonly string[] FpsOptions = { "30", "60", "120", "144" };
-        public const string UiScale = "UI 縮放";
+        public const string UiScale = "介面縮放";
         public const string WheelScrollStep = "滾輪捲動量";
 
         // 聲音 (sound; not implemented yet: there is no sound system).
