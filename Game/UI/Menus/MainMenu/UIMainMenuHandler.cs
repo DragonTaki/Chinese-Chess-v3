@@ -79,17 +79,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         {
             Console.WriteLine($"MainMenu: selected: {selectedMenu}");
 
-            // Leaving an open settings submenu (for another entry, or collapsing it by its own
-            // entry) with unsaved changes asks first; on yes the changes are discarded and the
-            // switch is redone.
-            if (IsSubmenuEntry(selectedMenu) && _currentSubmenu.HasValue
-                && _submenus[_currentSubmenu.Value] is UISettingsMenu settingsMenu
-                && settingsMenu.Handler.HasUnsavedChanges)
-            {
-                settingsMenu.Handler.ConfirmDiscard(() => SwitchSubmenu(selectedMenu));
-                return;
-            }
-
             switch (selectedMenu)
             {
                 case UIMainMenuType.Default:
@@ -135,15 +124,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     break;
             }
         }
-
-        /// <summary>Whether <paramref name="menu"/> opens or collapses a submenu (the entries handled together in <see cref="SwitchSubmenu"/>).</summary>
-        private static bool IsSubmenuEntry(UIMainMenuType menu) => menu switch
-        {
-            UIMainMenuType.NewGame or UIMainMenuType.LoadGame or UIMainMenuType.EndgameChallenge
-                or UIMainMenuType.OpeningPractice or UIMainMenuType.RuleSettings or UIMainMenuType.Help
-                or UIMainMenuType.Settings => true,
-            _ => false,
-        };
 
         /// <summary>
         /// Cancel and remove current submenu from the view.

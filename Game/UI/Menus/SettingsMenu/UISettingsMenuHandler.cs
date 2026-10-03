@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v2.1
+// Update Date: 2026/10/04
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Dialogs;
-using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.Logging;
 using Engine.Timing;
@@ -34,11 +33,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// pushed to where they are used, and each game kind's rule / clock settings are copied onto
     /// the rules new games of that kind start with (<see cref="GameManager.DefaultRuleSets"/>,
     /// <see cref="PlayerSettings.ApplyTo"/>), so a game started after the edit already plays by
-    /// them. The settings as they were when the screen opened (or last saved) are kept:
-    /// <b>save</b> writes <c>settings.ini</c> and makes the current values the new baseline;
-    /// leaving without saving asks to discard, and discarding puts the baseline back (live
-    /// instance and rules). Settings that are not implemented yet keep their value for the
-    /// session only (<see cref="UnimplementedSettings"/>) and are not part of this. The
+    /// them. Every edit is also written to <c>settings.ini</c> at once (there is no save or
+    /// discard button): switches, dropdowns and number fields when the value is set, a slider
+    /// when the mouse is released (not on every drag step), a text field when its edit ends.
+    /// The 恢復初始 button resets the shown tab's settings to the defaults
+    /// (<see cref="PlayerSettings.Defaults"/>) after a confirmation, then saves and applies
+    /// like any edit. Settings that are not implemented yet keep their value for the session
+    /// only (<see cref="UnimplementedSettings"/>) and are neither saved nor reset. The
     /// settings are only opened from the main menu, and a game in progress is never affected:
     /// every game plays by its own copy of the rules, taken when it starts
     /// (<see cref="GameManager.Rules"/>).
@@ -50,25 +51,29 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>The live settings (the DI instance, or a private default when none is registered).</summary>
         private PlayerSettings _live = PlayerSettings.Defaults;
 
-        /// <summary>The settings as opened / last saved.</summary>
-        private PlayerSettings _baseline = PlayerSettings.Defaults;
+        /// <summary>Whether an edit is applied but not written yet (a slider drag or text edit in progress).</summary>
+        private bool _unsaved;
+
+        /// <summary>Whether the last write failed and the failure was already reported (so a run of failing edits shows the message once).</summary>
+        private bool _saveFailureShown;
+
+        /// <summary>The shown tab's index.</summary>
+        private int _currentTab;
 
         public UISettingsMenuHandler() { }
-
-        /// <summary>Whether the live settings differ from the last saved / opened ones.</summary>
-        public bool HasUnsavedChanges => !PlayerSettingsFile.AreEqual(_live, _baseline);
 
         /// <summary>The shown screen's tabs (<see cref="SettingsMenuContent.PagesFor"/>).</summary>
         private IReadOnlyList<SettingsMenuPage> _pages = Array.Empty<SettingsMenuPage>();
 
-        /// <summary>Screen opened: take the baseline, set up the tabs and show the initial one.</summary>
+        /// <summary>Screen opened: set up the tabs and show the initial one.</summary>
         public void OnEnter()
         {
             _live = _factory.ServiceProvider.GetService<PlayerSettings>() ?? _live;
-            _baseline = PlayerSettingsFile.Clone(_live);
+            _unsaved = false;
 
             _pages = SettingsMenuContent.PagesFor(Element.Screen);
             int initial = Math.Clamp(Element.InitialTab, 0, Math.Max(0, _pages.Count - 1));
+            _currentTab = initial;
             Element.SetTabs(_pages.Select(p => p.Title), initial);
             if (_pages.Count > 0)
                 Element.ShowPage(_pages[initial], _live);
@@ -78,21 +83,25 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         public void SelectTab(int index)
         {
             if (index >= 0 && index < _pages.Count)
+            {
+                _currentTab = index;
                 Element.ShowPage(_pages[index], _live);
+            }
         }
 
-        /// <summary>
-        /// Screen closed. Normally nothing is unsaved here (leaving asks first, see
-        /// <see cref="UIMainMenuHandler.SwitchSubmenu"/>); if something still is (the whole
-        /// main menu was left), it is discarded so the live settings match the file.
-        /// </summary>
-        public void OnExit() => DiscardChanges();
+        /// <summary>Screen closed: nothing is discarded; an edit still pending (applied, not yet written) is written.</summary>
+        public void OnExit()
+        {
+            if (_unsaved)
+                SaveNow();
+        }
 
         /// <summary>A switch flipped: set the setting and apply it live.</summary>
         public void SetToggle(SettingsToggleItem item, bool value)
         {
             item.Set(_live, value);
             ApplyChange();
+            SaveNow();
         }
 
         /// <summary>A dropdown's option chosen: set the setting to choice <paramref name="index"/> (kept within the options) and apply it live.</summary>
@@ -100,13 +109,15 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         {
             item.SetIndex(_live, Math.Clamp(index, 0, item.Options.Count - 1));
             ApplyChange();
+            SaveNow();
         }
 
-        /// <summary>A slider moved (also while dragging): set the setting (kept within its range) and apply it live.</summary>
+        /// <summary>A slider moved (also while dragging): set the setting (kept within its range) and apply it live; written when the drag ends (<see cref="CommitEdit"/>).</summary>
         public void SetNumber(SettingsNumberItem item, float value)
         {
             item.Set(_live, Math.Clamp(value, item.Min, item.Max));
             ApplyChange();
+            _unsaved = true;
         }
 
         /// <summary>A number field's edit ended with a legal value: set the setting (kept within its range) and apply it live.</summary>
@@ -114,15 +125,20 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         {
             item.Set(_live, Math.Clamp(value, item.Min, item.Max));
             ApplyChange();
+            SaveNow();
         }
 
-        /// <summary>A text field edited: set the setting (cut to its longest length) and apply it live.</summary>
+        /// <summary>A text field edited: set the setting (cut to its longest length) and apply it live; written when its edit ends (<see cref="CommitEdit"/>).</summary>
         public void SetText(SettingsTextItem item, string value)
         {
             value ??= string.Empty;
             item.Set(_live, value.Length > item.MaxLength ? value.Substring(0, item.MaxLength) : value);
             ApplyChange();
+            _unsaved = true;
         }
+
+        /// <summary>A slider drag or text edit ended: write the settings (once for the whole burst of changes).</summary>
+        public void CommitEdit() => SaveNow();
 
         /// <summary>After an edit: push the live settings to the game and refresh the rows (e.g. a timer mode change enables / disables the time-limit switches).</summary>
         private void ApplyChange()
@@ -131,57 +147,44 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             Element.RefreshValues(_live);
         }
 
-        /// <summary>儲存並返回 clicked: write <c>settings.ini</c>, then close; stays open (with a message) when the write fails.</summary>
-        public void SaveAndClose()
+        /// <summary>
+        /// Writes <c>settings.ini</c>. On failure logs it and shows the save-failed message, but
+        /// only for the first failure of a run (until a write succeeds again).
+        /// </summary>
+        private void SaveNow()
         {
-            if (!PlayerSettingsFile.Save(_live, SystemSettings.PlayerSettingsFilePath))
+            _unsaved = false;
+            if (PlayerSettingsFile.Save(_live, SystemSettings.PlayerSettingsFilePath))
             {
-                AppLogger.Log($"(Settings) Could not save {SystemSettings.PlayerSettingsFilePath}", LogLevel.ERROR);
-                DialogManager.ShowConfirm(GameMenuTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
+                _saveFailureShown = false;
                 return;
             }
 
-            _baseline = PlayerSettingsFile.Clone(_live);
-            AppLogger.Log("(Settings) Settings saved", LogLevel.INFO);
-            Close();
+            AppLogger.Log($"(Settings) Could not save {SystemSettings.PlayerSettingsFilePath}", LogLevel.ERROR);
+            if (_saveFailureShown)
+                return;
+            _saveFailureShown = true;
+            DialogManager.ShowConfirm(GameMenuTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
         }
 
-        /// <summary>返回 clicked: close; with unsaved changes ask first.</summary>
-        public void BackRequested() => ConfirmDiscard(Close);
-
-        /// <summary>
-        /// Runs <paramref name="proceed"/> now when nothing is unsaved; otherwise asks whether
-        /// to discard the changes, and discards them and runs it on yes.
-        /// </summary>
-        public void ConfirmDiscard(System.Action proceed)
+        /// <summary>恢復初始 clicked: after a confirmation, reset the shown tab's settings to the defaults, refresh the controls, apply and save.</summary>
+        public void ResetRequested()
         {
-            if (!HasUnsavedChanges)
-            {
-                proceed();
+            if (_currentTab < 0 || _currentTab >= _pages.Count)
                 return;
-            }
 
+            var page = _pages[_currentTab];
             DialogManager.ShowConfirm(
-                GameMenuTexts.DiscardUnsavedSettings,
+                GameMenuTexts.ResetTabToDefaults,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
                     if (result != ConfirmDialogResult.Yes)
                         return;
-                    DiscardChanges();
-                    proceed();
+                    page.ResetToDefaults(_live, PlayerSettings.Defaults);
+                    ApplyChange();
+                    SaveNow();
                 });
-        }
-
-        /// <summary>Puts the baseline back: the live settings, the rules new games start with and the button texts.</summary>
-        public void DiscardChanges()
-        {
-            if (!HasUnsavedChanges)
-                return;
-
-            PlayerSettingsFile.Copy(_baseline, _live);
-            ApplyToGame();
-            Element.RefreshValues(_live);
         }
 
         /// <summary>
@@ -207,13 +210,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 scroll.WheelStep = _live.WheelScrollStep;
 
             TimerSettings.GameAnimationFPS = _live.Fps;
-        }
-
-        /// <summary>Closes the screen by selecting its own main menu entry again.</summary>
-        private void Close()
-        {
-            if (Element.Parent is UIMainMenu mainMenu && mainMenu.Handler.CurrentSubmenu is UIMainMenuType current)
-                mainMenu.Handler.SwitchSubmenu(current);
         }
     }
 }

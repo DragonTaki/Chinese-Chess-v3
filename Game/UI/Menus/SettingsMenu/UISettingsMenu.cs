@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v2.1
+// Update Date: 2026/10/04
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -27,10 +27,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 {
     /// <summary>
     /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>; docs/SETTINGS.md §4):
-    /// a tab bar at the top, and below it a scrolling list - the save / back row, then the
+    /// a tab bar at the top, and below it a scrolling list - the 恢復初始 row, then the
     /// selected tab's sections: a header each and one row per setting, its name at the left and
     /// its control at the right (a switch, a dropdown, a slider or a text field,
-    /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, discarding -
+    /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, resetting -
     /// is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
     /// <see cref="SettingsMenuContent"/>.
     /// <para>
@@ -49,7 +49,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>The tab bar (a child of the panel, above the scroll container).</summary>
         internal UITabBar TabBar { get; private set; }
 
-        /// <summary>The row holding the save and back buttons (first block of the scroll content).</summary>
+        /// <summary>The row holding the 恢復初始 button (first block of the scroll content).</summary>
         internal UIButtonRow FooterRow { get; private set; }
 
         /// <summary>Everything of the shown tab in the scroll container (headers and rows), disposed by <see cref="ClearPage"/>.</summary>
@@ -93,18 +93,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             ScrollContainer.LayoutRules.Apply(UILayoutSheet.SettingsMenu.ScrollContainer);
         }
 
-        /// <summary>The save and back buttons; the tab's rows come with <see cref="ShowPage"/>.</summary>
+        /// <summary>The 恢復初始 button; the tab's rows come with <see cref="ShowPage"/>.</summary>
         protected override void BuildButtons()
         {
-            var save = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.SaveAndClose());
-            save.Text = GameMenuTexts.SettingsSaveAndBack;
-            Buttons.Add(save);
-            FooterRow.AddChild(save);
-
-            var back = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.BackRequested());
-            back.Text = GameMenuTexts.SettingsBack;
-            Buttons.Add(back);
-            FooterRow.AddChild(back);
+            var reset = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.ResetRequested());
+            reset.Text = GameMenuTexts.SettingsResetTab;
+            Buttons.Add(reset);
+            FooterRow.AddChild(reset);
         }
 
         /// <summary>Sets the tab bar's tabs to <paramref name="titles"/> with tab <paramref name="selected"/> selected (no selection callback).</summary>
@@ -194,6 +189,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     slider.ValueFormatter = number.FormatValue;
                     slider.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Slider);
                     slider.Handler.ValueChanged = value => Handler.SetNumber(number, value);
+                    slider.Handler.ValueCommitted = _ => Handler.CommitEdit();
                     row.AddChild(slider);
                     _refreshers.Add(s => slider.Value = number.Get(s));
                     break;
@@ -225,6 +221,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     field.Placeholder = text.Placeholder;
                     field.LayoutRules.Apply(UILayoutSheet.SettingsMenu.TextField);
                     field.Handler.TextChanged = value => Handler.SetText(text, value);
+                    field.Handler.TextCommitted = _ => Handler.CommitEdit();
                     row.AddChild(field);
                     // Not while typing: the field itself is the source then.
                     _refreshers.Add(s =>
@@ -278,7 +275,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             _pageElements.Add(element);
         }
 
-        /// <summary>Disposes the shown tab's headers and rows (which also detaches them and their controls), keeping the save / back row.</summary>
+        /// <summary>Disposes the shown tab's headers and rows (which also detaches them and their controls), keeping the footer row.</summary>
         private void ClearPage()
         {
             foreach (var button in _pageButtons)

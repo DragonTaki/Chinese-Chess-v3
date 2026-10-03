@@ -274,13 +274,13 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 Overflow = OverflowMode.Hidden,
             };
 
-            /// <summary>The row holding the save and back buttons (a flex row, height from its buttons).</summary>
+            /// <summary>The row holding the 恢復初始 button (a flex row, height from its buttons).</summary>
             public static readonly UILayoutStyle FooterRow = CategoryListMenu.ButtonRows with
             {
                 ColumnGap = UILayoutConstants.SettingsMenu.FooterColumnGap,
             };
 
-            /// <summary>The save and back buttons: two equal columns of the footer row.</summary>
+            /// <summary>The 恢復初始 button: one column (half the scroll container wide) of the footer row.</summary>
             public static readonly UILayoutStyle FooterButton = new()
             {
                 PositionMode = PositionMode.Flow,
