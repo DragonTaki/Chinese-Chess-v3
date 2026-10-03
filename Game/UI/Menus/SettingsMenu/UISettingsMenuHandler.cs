@@ -16,7 +16,6 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Dialogs;
 
-using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.Timing;
 using Engine.UI.Core.Handlers;
@@ -30,7 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// <summary>
     /// A settings screen's logic (遊戲設定 / 單機規則設定 alike). An edit changes the <b>live</b>
     /// <see cref="PlayerSettings"/> (the instance registered in DI) at once: the hint settings
-    /// are read from it every frame by the board, the player name and the debug log switch are
+    /// are read from it every frame by the board, the player name and the DEBUG tab's switches are
     /// pushed to where they are used, and each game kind's rule / clock settings are copied onto
     /// the rules new games of that kind start with (<see cref="GameManager.DefaultRuleSets"/>,
     /// <see cref="PlayerSettings.ApplyTo"/>), so a game started after the edit already plays by
@@ -190,8 +189,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>
         /// Copies each kind's live rule / clock settings onto the rules new games of that kind
-        /// start with, the debug log switch onto the logger (the launchers only push it once at
-        /// startup), the player name onto the log greeting / save names, the wheel step onto
+        /// start with, the DEBUG tab's switches onto the engine's debug switchboard (the launchers
+        /// only push them once at startup), the player name onto the log greeting / save names, the wheel step onto
         /// the shared scroll handler and the frame rate onto the engine's frame timer (both also
         /// only set at startup otherwise).
         /// </summary>
@@ -204,8 +203,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 _live.ApplyPlayerNamesTo(gameManager);
             }
 
-            Settings.EnableDebugMode = _live.ShowDebugLog;
-            DebugOptions.VerboseLog = Settings.EnableDebugMode;
+            _live.ApplyDebugOptions();
 
             Settings.CurrentUser = _live.PlayerName;
             AppLogger.CurrentUser = Settings.CurrentUser;

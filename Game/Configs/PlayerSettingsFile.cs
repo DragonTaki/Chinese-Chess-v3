@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v1.2
+// Update Date: 2026/10/04
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -85,8 +85,21 @@ namespace Chinese_Chess_v3.Game.Configs
                 PlayerSettings.WheelScrollStepMin, PlayerSettings.WheelScrollStepMax,
                 $"滑鼠滾輪每一格捲動的距離（介面設計單位，{PlayerSettings.WheelScrollStepMin}～{PlayerSettings.WheelScrollStepMax}）。");
 
-            yield return Bool("log", "debug", s => s.ShowDebugLog, (s, v) => s.ShowDebugLog = v,
-                "是否顯示 DEBUG 等級的紀錄（較詳細）。");
+            yield return Bool("debug", "verbose_log", s => s.VerboseLog, (s, v) => s.VerboseLog = v,
+                "── 除錯功能（設定畫面的 DEBUG 分頁；改了立即生效）──",
+                "紀錄：是否寫出 DEBUG 等級的紀錄（較詳細）。");
+            yield return Bool("debug", "console_trace", s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v,
+                "紀錄：是否在主控台印出開發用的追蹤訊息（介面元件初始化、選單選擇、連線狀態；錯誤訊息不受影響，一律會印）。");
+            yield return Bool("debug", "label_backgrounds", s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v,
+                "視覺除錯：文字標籤後面畫半透明紅色背景（看出標籤的範圍）。");
+            yield return Bool("debug", "layout_outlines", s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v,
+                "視覺除錯：選單（虛線）與文字框（實線）畫灰色外框（看出排版範圍）。");
+            yield return Bool("debug", "star_effect_frames", s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v,
+                "視覺除錯：星空背景每個特效開始時，用特效的除錯顏色框出它的範圍。");
+            yield return Bool("debug", "show_fps", s => s.ShowFps, (s, v) => s.ShowFps = v,
+                "效能與連線：在視窗左上角顯示實際量到的畫面更新率（FPS）。");
+            yield return Bool("debug", "show_network_latency", s => s.ShowNetworkLatency, (s, v) => s.ShowNetworkLatency = v,
+                "效能與連線：在 FPS 下面顯示網路延遲（目前還沒有連線功能，只會顯示「—」）。");
 
             yield return Path("endgame", "user_folder", s => s.EndgameUserFolder, (s, v) => s.EndgameUserFolder = v,
                 "自己的殘局題目資料夾；留空 = 預設位置（這個設定檔旁邊的 Endgames 資料夾）。",

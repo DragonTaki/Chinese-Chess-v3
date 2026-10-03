@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v2.0
+// Update Date: 2026/10/04
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -21,7 +21,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// <summary>Which settings screen a <see cref="UISettingsMenu"/> is (both are opened from the main menu).</summary>
     public enum SettingsScreen
     {
-        /// <summary>遊戲設定: tabs 畫面 / 聲音 / 遊戲.</summary>
+        /// <summary>遊戲設定: tabs 畫面 / 聲音 / 遊戲 / DEBUG.</summary>
         Game,
 
         /// <summary>單機規則設定: one tab per game kind (local games only; a network game does not use these rules).</summary>
@@ -396,7 +396,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         private static SettingsToggleItem Placeholder(string name, Func<bool> get, Action<bool> set) =>
             new(name, _ => get(), (_, v) => set(v), isImplemented: false);
 
-        /// <summary>遊戲設定's tabs: 畫面, 聲音, 遊戲.</summary>
+        /// <summary>遊戲設定's tabs: 畫面, 聲音, 遊戲, DEBUG (the debug features' switches, one section per kind).</summary>
         public static IReadOnlyList<SettingsMenuPage> GamePages { get; } = new[]
         {
             new SettingsMenuPage(GameMenuTexts.TabDisplay, new[]
@@ -447,8 +447,28 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     Placeholder(GameMenuTexts.PieceStyle, GameMenuTexts.PieceStyleOptions,
                         () => UnimplementedSettings.PieceStyleIndex, v => UnimplementedSettings.PieceStyleIndex = v),
                     Placeholder(GameMenuTexts.Language, GameMenuTexts.LanguageOptions,
-                        () => UnimplementedSettings.LanguageIndex, v => UnimplementedSettings.LanguageIndex = v),
-                    new SettingsToggleItem(GameMenuTexts.DebugLog, s => s.ShowDebugLog, (s, v) => s.ShowDebugLog = v)),
+                        () => UnimplementedSettings.LanguageIndex, v => UnimplementedSettings.LanguageIndex = v)),
+            }),
+
+            // One section per kind of debug feature ([debug] in settings.ini; applied at once).
+            new SettingsMenuPage(GameMenuTexts.TabDebug, new[]
+            {
+                new SettingsMenuSection(GameMenuTexts.SectionDebugLog, new SettingsMenuItem[]
+                {
+                    new SettingsToggleItem(GameMenuTexts.DebugLog, s => s.VerboseLog, (s, v) => s.VerboseLog = v),
+                    new SettingsToggleItem(GameMenuTexts.ConsoleTrace, s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v),
+                }),
+                new SettingsMenuSection(GameMenuTexts.SectionDebugVisual, new SettingsMenuItem[]
+                {
+                    new SettingsToggleItem(GameMenuTexts.LabelBackgrounds, s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v),
+                    new SettingsToggleItem(GameMenuTexts.LayoutOutlines, s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v),
+                    new SettingsToggleItem(GameMenuTexts.StarEffectFrames, s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v),
+                }),
+                new SettingsMenuSection(GameMenuTexts.SectionDebugPerformance, new SettingsMenuItem[]
+                {
+                    new SettingsToggleItem(GameMenuTexts.ShowFps, s => s.ShowFps, (s, v) => s.ShowFps = v),
+                    new SettingsToggleItem(GameMenuTexts.ShowNetworkLatency, s => s.ShowNetworkLatency, (s, v) => s.ShowNetworkLatency = v),
+                }),
             }),
         };
 
