@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2025/05/14
+// Update Date: 2026/10/04
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -19,6 +19,7 @@ using Engine.Mathematics;
 using Engine.Physics;
 using Engine.Platform;
 using Engine.Randomization;
+using Engine.Timing;
 
 namespace StarAnimation.Controllers
 {
@@ -35,8 +36,10 @@ namespace StarAnimation.Controllers
 
         private readonly Queue<Star> _waitingPool = new Queue<Star>();
 
-        private readonly int _minVisibleCount;
-        private readonly int _maxVisibleCount;
+        // Visible-count bounds around the area-scaled target (the range scales with the area too).
+        private int ScaledCountRange => (int)MathF.Round(Settings.StarCountRange * ((float)_width * _height) / ReferenceArea);
+        private int MinVisibleCount => Math.Max(0, _targetCount - ScaledCountRange);
+        private int MaxVisibleCount => _targetCount + ScaledCountRange;
 
         private DateTime _lastResizeTime;
         private bool _pendingShrinkCleanup = false;
@@ -53,6 +56,13 @@ namespace StarAnimation.Controllers
         private int _targetCount;
         private float _spawnRemainder = 0f;
 
+        // Release of waiting stars (author decision 2026-10-02: the further the scene is below
+        // its target count, the more are released; slower near the target, so it fills up
+        // gradually). Each second this fraction of the missing stars is released (frame-rate
+        // independent); the value is a visual tuning constant for the author.
+        private const float ReleaseRatePerSecond = 1.5f;
+        private float _releaseRemainder = 0f;
+
         // Countdown timers for effects
         private int _directionChangeCountdown;
         private int _speedChangeCountdown;
@@ -64,8 +74,6 @@ namespace StarAnimation.Controllers
             _starCount = starCount;
             _targetCount = TargetCountFor(_width, _height);
 
-            _minVisibleCount = _starCount - Settings.StarCountRange;
-            _maxVisibleCount = _starCount + Settings.StarCountRange;
 
             _renderer = new StarRenderer(_width, _height);
             InitializeStars();
@@ -129,7 +137,7 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Releases stars from waiting pool based on Gaussian probability.
+        /// Releases stars from the waiting pool toward the target count (see <see cref="CalculateStarsToRelease"/>).
         /// </summary>
         private void ReleaseStars()
         {
@@ -150,14 +158,26 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Bell-curve like star release count.
+        /// How many waiting stars to release this frame: the missing stars (area-scaled target
+        /// minus stars in the scene) times the share of <see cref="ReleaseRatePerSecond"/> this
+        /// frame's time covers (1 - e^(-rate * dt)), so far below the target many are released
+        /// and near it only a few; fractions carry over to the next frame. None at or above the
+        /// target. The old version clamped to at least 200 per frame, emptying the pool at once.
         /// </summary>
         private int CalculateStarsToRelease()
         {
-            int targetStars = _targetCount;
-            int starsInScene = _stars.Count;
-            float normalized = (float)Math.Exp(-0.5 * Math.Pow((starsInScene - targetStars) / 25.0, 2));
-            return Math.Max(_minVisibleCount, Math.Min(_maxVisibleCount, (int)(normalized * (_maxVisibleCount - _minVisibleCount))));
+            int missing = _targetCount - _stars.Count;
+            if (missing <= 0)
+            {
+                _releaseRemainder = 0f;
+                return 0;
+            }
+
+            float dt = Math.Max(0f, GlobalTime.Timer.DeltaTimeInSeconds);
+            float wanted = missing * (1f - MathF.Exp(-ReleaseRatePerSecond * dt)) + _releaseRemainder;
+            int count = Math.Min(missing, (int)wanted);
+            _releaseRemainder = wanted - count;
+            return count;
         }
 
         /// <summary>
@@ -272,11 +292,11 @@ namespace StarAnimation.Controllers
         /// </remarks>
         private void AdjustStarCount()
         {
-            if (_stars.Count < _maxVisibleCount && _rand.NextDouble() < 0.2)
+            if (_stars.Count < MaxVisibleCount && _rand.NextDouble() < 0.2)
             {
                 _stars.Add(new Star(_width, _height));
             }
-            else if (_stars.Count > _minVisibleCount && _rand.NextDouble() < 0.1)
+            else if (_stars.Count > MinVisibleCount && _rand.NextDouble() < 0.1)
             {
                 _stars.RemoveAt(_rand.NextInt(_stars.Count));
             }
