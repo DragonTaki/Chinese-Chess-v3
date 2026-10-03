@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v2.1
 /* ----- ----- ----- ----- */
 
@@ -18,6 +18,7 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Handlers;
@@ -104,7 +105,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
         public void UIGameMenuAction(UIGameMenuType selectedAction)
         {
-            Console.WriteLine($"UIGameMenu: selected: {selectedAction}");
+            if (DebugOptions.ConsoleTrace)
+                Console.WriteLine($"UIGameMenu: selected: {selectedAction}");
 
             // Any other button closes the saved-game list first (載入 toggles it).
             if (selectedAction != UIGameMenuType.LoadLayout)

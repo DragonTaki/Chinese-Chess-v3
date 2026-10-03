@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/02
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -17,6 +17,7 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
@@ -104,7 +105,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         public void StartSave(SavedGame saved)
         {
             ArgumentNullException.ThrowIfNull(saved);
-            Console.WriteLine($"LoadMenu: selected: {saved}");
+            if (DebugOptions.ConsoleTrace)
+                Console.WriteLine($"LoadMenu: selected: {saved}");
 
             var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
