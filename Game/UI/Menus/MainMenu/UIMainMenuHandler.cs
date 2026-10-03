@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v2.2
 /* ----- ----- ----- ----- */
 
@@ -18,6 +18,7 @@ using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
+using Engine.Diagnostics;
 using Engine.Network;
 using Engine.Platform;
 using Engine.UI.Core.Elements;
@@ -77,7 +78,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         /// </summary>
         public void SwitchSubmenu(UIMainMenuType selectedMenu)
         {
-            Console.WriteLine($"MainMenu: selected: {selectedMenu}");
+            if (DebugOptions.ConsoleTrace)
+                Console.WriteLine($"MainMenu: selected: {selectedMenu}");
 
             switch (selectedMenu)
             {
@@ -120,7 +122,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                     break;
 
                 default:
-                    Console.WriteLine($"MainMenu: selected: 'Not defined'");
+                    if (DebugOptions.ConsoleTrace)
+                        Console.WriteLine($"MainMenu: selected: 'Not defined'");
                     break;
             }
         }

@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
+// Update Date: 2026/10/04
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -15,6 +15,7 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pgn;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
@@ -123,7 +124,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         /// </summary>
         public void StartItem(TItem item)
         {
-            Console.WriteLine($"{LogLabel}Menu: selected: {item}");
+            if (DebugOptions.ConsoleTrace)
+                Console.WriteLine($"{LogLabel}Menu: selected: {item}");
 
             var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();

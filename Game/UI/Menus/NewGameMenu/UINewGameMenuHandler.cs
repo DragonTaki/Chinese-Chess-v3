@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/01
+// Update Date: 2026/10/04
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -14,6 +14,7 @@ using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.UI.Core.Handlers;
 
@@ -33,7 +34,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
         public void StartNewGame(UINewGameMenuType selectedGamemode)
         {
-            Console.WriteLine($"NewGameMenu: selected: {selectedGamemode}");
+            if (DebugOptions.ConsoleTrace)
+                Console.WriteLine($"NewGameMenu: selected: {selectedGamemode}");
 
             // The game set-up per mode; null for a mode that cannot be played yet.
             Action<GameManager> start = selectedGamemode switch

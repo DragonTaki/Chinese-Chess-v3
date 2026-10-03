@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/09/30
+// Update Date: 2026/10/04
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 
+using Engine.Diagnostics;
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
@@ -45,17 +46,19 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu
 
         protected override void BuildButtons()
         {
+            // Placeholder entries (假選項): a click only prints a console trace
+            // (DebugOptions.ConsoleTrace).
             var menuEntries = new List<ButtonEntry<UINewGameMenuType>>
             {
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 1", UINewGameMenuType.Traditional, () => Console.WriteLine("假選項1被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 2", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項2被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 3", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項3被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 4", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項4被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 5", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項5被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 6", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項6被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 7", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項7被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 8", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項8被點擊")),
-                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 9", UINewGameMenuType.FlipChess, () => Console.WriteLine("假選項9被點擊")),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 1", UINewGameMenuType.Traditional, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項1被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 2", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項2被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 3", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項3被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 4", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項4被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 5", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項5被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 6", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項6被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 7", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項7被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 8", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項8被點擊"); }),
+                new ButtonEntry<UINewGameMenuType>("UILoadGameMenu Option 9", UINewGameMenuType.FlipChess, () => { if (DebugOptions.ConsoleTrace) Console.WriteLine("假選項9被點擊"); }),
             };
 
             for (int i = 0; i < menuEntries.Count; i++)
