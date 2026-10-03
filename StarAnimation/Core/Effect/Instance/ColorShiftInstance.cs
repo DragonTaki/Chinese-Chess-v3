@@ -21,8 +21,9 @@ using Engine.Mathematics;
 namespace StarAnimation.Core.Effect.Instance
 {
     /// <summary>
-    /// Applies a sinusoidal red-blue color shift effect to a list of stars.
-    /// Each star shifts color independently using a randomized phase.
+    /// Applies a color shift to a list of stars: each affected star goes from its own color
+    /// (white) to its target color (red or blue) and back over the effect's duration, each with
+    /// its own random start delay (author decision 2026-10-04: original → target → original).
     /// </summary>
     public class ColorShiftInstance : EffectInstance
     {
@@ -127,7 +128,9 @@ namespace StarAnimation.Core.Effect.Instance
                 float timeSinceStart = elapsedTime - star.ColorShift.Delay;
                 if (timeSinceStart < 0.0f) continue;
 
-                float wave = (float)Math.Sin(2.0f * Math.PI * timeSinceStart / Duration);
+                // Half a sine over the whole duration: 0 → 1 → 0, so the star is white → target →
+                // white (a full sine left the negative half clamped to white, half the time unchanged).
+                float wave = (float)Math.Sin(Math.PI * timeSinceStart / Duration);
                 Color targetColor = MathUtil.LerpColor(Color.White, star.Color.Base, wave);
                 star.Color.Current = targetColor;
             }
