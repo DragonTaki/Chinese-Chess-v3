@@ -16,7 +16,7 @@ using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
 {
     /// <summary>
-    /// The endgame challenge submenu (殘局闖關, docs/ENDGAMES.md): a category list submenu
+    /// The endgame challenge submenu (殘局闖關): a category list submenu
     /// (<see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}"/>: category toggles,
     /// then the puzzle buttons) whose buttons show the puzzle's name and its difficulty stars.
     /// </summary>

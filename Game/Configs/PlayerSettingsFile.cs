@@ -22,7 +22,7 @@ namespace Chinese_Chess_v3.Game.Configs
 {
     /// <summary>
     /// Reads and writes <see cref="PlayerSettings"/> as the player's plain-text
-    /// <c>settings.ini</c> (format: <see cref="IniDocument"/>; keys: docs/SETTINGS.md).
+    /// <c>settings.ini</c> (format: <see cref="IniDocument"/>).
     /// <para>
     /// Load rule - the file wins over the code defaults:
     /// missing file: created from the defaults;
@@ -52,7 +52,6 @@ namespace Chinese_Chess_v3.Game.Configs
             "格式：每行一個「key = value」；# 或 ; 開頭的行是註解；[名稱] 是區段。",
             "遊戲啟動時讀取。缺少或打錯的項目會用預設值，並在這個檔案補上／改回預設值；",
             "整個檔案無法解析時，會先備份成 settings.ini.bak 再用預設值重建。",
-            "每個項目的說明：docs/SETTINGS.md",
         };
 
         private static readonly KeyDef[] Keys = BuildKeys().ToArray();

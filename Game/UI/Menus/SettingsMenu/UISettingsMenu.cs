@@ -26,7 +26,7 @@ using Engine.UI.Models;
 namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 {
     /// <summary>
-    /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>; docs/SETTINGS.md §4):
+    /// A settings screen (遊戲設定 or 單機規則設定, <see cref="Screen"/>):
     /// a tab bar at the top, and below it a scrolling list - the 恢復初始 row, then the
     /// selected tab's sections: a header each and one row per setting, its name at the left and
     /// its control at the right (a switch, a dropdown, a slider or a text field,

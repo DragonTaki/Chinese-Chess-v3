@@ -19,7 +19,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 {
     /// <summary>
     /// The layout "style sheet": every layout rule of the game's screens, as declarative
-    /// data (see docs/LAYOUT.md section 9). One static class per screen or element group,
+    /// data. One static class per screen or element group,
     /// one <see cref="UILayoutStyle"/> entry per element - like one CSS class each - built
     /// from the numbers in <see cref="UILayoutConstants"/>. Elements only name the entry
     /// they use (<c>LayoutRules.Apply(UILayoutSheet.GameScreen.Sidebar)</c>); no rule value

@@ -360,7 +360,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     }
 
     /// <summary>
-    /// What the two settings screens list (docs/SETTINGS.md §4): 遊戲設定 - the general
+    /// What the two settings screens list: 遊戲設定 - the general
     /// options of <see cref="PlayerSettings"/> plus the usual game options not implemented yet;
     /// 單機規則設定 - per game kind its rule options (<see cref="RuleSettings.OptionsFor"/>, the
     /// 三國 choices) and clock settings. Folders are only edited in <c>settings.ini</c>.

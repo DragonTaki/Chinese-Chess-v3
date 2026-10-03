@@ -84,7 +84,7 @@ namespace Launcher.Cross
 
             AppControl.ExitCallback = window.Close;
 
-            // Player settings (docs/SETTINGS.md): loaded once at startup from settings.ini
+            // Player settings: loaded once at startup from settings.ini
             // in the per-user data folder (created / repaired there as needed) and
             // registered in DI below for the screens that read them.
             var playerSettings = PlayerSettingsFile.Load();

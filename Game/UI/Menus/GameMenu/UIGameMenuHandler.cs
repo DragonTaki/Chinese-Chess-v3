@@ -28,8 +28,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 {
     /// <summary>
-    /// Handles logic and interactions for the UIGameMenu: the game screen's left menu
-    /// (docs/PLAN.md in-game menu). 撤銷上步 = round undo, 儲存遊戲 = save, 載入佈局 = the
+    /// Handles logic and interactions for the UIGameMenu: the game screen's left menu.
+    /// 撤銷上步 = round undo, 儲存遊戲 = save, 載入佈局 = the
     /// saved-game list, 放棄對局 = the side to move resigns, 回到主畫面 = back to the main
     /// menu (asks first while the game is in progress). 重新開始 = the current game restarted
     /// in its mode (<see cref="GameManager.Restart"/>; a loaded saved game comes back exactly

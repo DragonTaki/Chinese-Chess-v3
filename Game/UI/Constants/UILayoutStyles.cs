@@ -361,7 +361,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public const string StarFilled = "★";
             public const string StarEmpty = "☆";
 
-            /// <summary>Difficulty is 1 to 5 (docs/ENDGAMES.md, docs/OPENINGS.md); the stars show it out of this many.</summary>
+            /// <summary>Difficulty is 1 to 5; the stars show it out of this many.</summary>
             public const int MaxDifficulty = 5;
 
             /// <summary>Category toggle labels: mark + category name.</summary>

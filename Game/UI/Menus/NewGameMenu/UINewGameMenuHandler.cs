@@ -44,7 +44,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
                 UINewGameMenuType.DarkHalf => game => game.StartHalfCenter(hiddenChess: true),
                 UINewGameMenuType.OpenHalf => game => game.StartHalfCenter(hiddenChess: false),
                 // 揭棋: Board.IsJieqi has no start position yet; 三國: its own rule system is
-                // still being specified (docs/DARK-CHESS-RULES.md §1.2).
+                // still being specified.
                 UINewGameMenuType.FlipChess or UINewGameMenuType.ThreeKingdomsHalf => null,
                 _ => throw new ArgumentOutOfRangeException(nameof(selectedGamemode), selectedGamemode, "Unknown new-game mode"),
             };

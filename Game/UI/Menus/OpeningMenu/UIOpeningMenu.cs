@@ -15,7 +15,7 @@ using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 namespace Chinese_Chess_v3.Game.UI.Menus.OpeningMenu
 {
     /// <summary>
-    /// The opening practice submenu (開局練習, docs/OPENINGS.md): a category list submenu
+    /// The opening practice submenu (開局練習): a category list submenu
     /// (<see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}"/>: category toggles,
     /// then the opening buttons, same layout as 殘局闖關, but in a 先手 and a 後手 section
     /// with a heading each) whose buttons show the opening's

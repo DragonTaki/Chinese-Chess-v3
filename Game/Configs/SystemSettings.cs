@@ -24,8 +24,7 @@ namespace Chinese_Chess_v3.Game.Configs
     /// Game-level system defaults: fixed values the player never changes (paths, the
     /// window title, the random table). The single place for them - callers reference
     /// these instead of repeating literals. Engine-level ones are in
-    /// <see cref="EnginePaths"/>; the player's own settings are <c>PlayerSettings</c>
-    /// (docs/SETTINGS.md).
+    /// <see cref="EnginePaths"/>; the player's own settings are <c>PlayerSettings</c>.
     /// </summary>
     public static class SystemSettings
     {

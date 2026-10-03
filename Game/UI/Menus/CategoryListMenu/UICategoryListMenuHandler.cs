@@ -119,7 +119,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         /// (<see cref="StartOnBoard"/>), then <see cref="OnItemStarted"/>.
         /// <para>
         /// The board is drawn as for any game (red at the bottom); turning it so the side to
-        /// move is at the bottom is phase C (docs/PLAN.md).
+        /// move is at the bottom is phase C.
         /// </para>
         /// </summary>
         public void StartItem(TItem item)
