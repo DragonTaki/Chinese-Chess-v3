@@ -20,7 +20,7 @@ namespace Chinese_Chess_v3.Game.Configs
 {
     /// <summary>
     /// Saving and listing games in the game's saves folder, by the location and naming rules
-    /// of <see cref="SystemSettings"/> (docs/SETTINGS.md). The PGN format itself is Core's
+    /// of <see cref="SystemSettings"/>. The PGN format itself is Core's
     /// (<see cref="SavedGamePgn"/>); loading a listed game into play is
     /// <see cref="GameManager.LoadSavedGame"/>.
     /// </summary>

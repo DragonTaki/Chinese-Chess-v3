@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.Configs
     /// (the rule and clock defaults of each game kind live in <see cref="RuleSettings"/>,
     /// read from a default <see cref="Rules"/>, which owns what those rules mean). The values in use are loaded from the player's
     /// <c>settings.ini</c> by <see cref="PlayerSettingsFile"/>; the launchers register the
-    /// loaded instance in DI. Every key, default and meaning: docs/SETTINGS.md.
+    /// loaded instance in DI.
     /// </summary>
     public sealed class PlayerSettings
     {

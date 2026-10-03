@@ -30,12 +30,12 @@
     <Content Include="Assets\Font\NotoSerifCJKtc-Medium.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Built-in endgame puzzles (docs/ENDGAMES.md): every .pgn under Assets/Endgames,
+    <!-- Built-in endgame puzzles: every .pgn under Assets/Endgames,
          category subfolders included, copied with its relative path. -->
     <Content Include="Assets\Endgames\**\*.pgn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Built-in openings (docs/OPENINGS.md): every .pgn under Assets/Openings, likewise. -->
+    <!-- Built-in openings: every .pgn under Assets/Openings, likewise. -->
     <Content Include="Assets\Openings\**\*.pgn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

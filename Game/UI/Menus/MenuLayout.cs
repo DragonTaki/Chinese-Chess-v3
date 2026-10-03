@@ -19,7 +19,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus
 {
     /// <summary>
     /// Imperative helpers that apply the shared menu rules to an element. The rules
-    /// themselves are data in <see cref="UILayoutSheet.Menus"/> (see docs/LAYOUT.md section 9);
+    /// themselves are data in <see cref="UILayoutSheet.Menus"/>;
     /// the menus apply their <see cref="UILayoutSheet"/> entries directly, so these helpers
     /// only remain for code that builds a menu from parameters rather than a sheet entry.
     /// Each one applies the matching <see cref="UILayoutSheet.Menus"/> style.

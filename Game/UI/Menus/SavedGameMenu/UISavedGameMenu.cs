@@ -20,7 +20,7 @@ using Engine.UI.Core.Interfaces;
 namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
 {
     /// <summary>
-    /// The saved-game list (載入, docs/PLAN.md in-game menu): a category list submenu
+    /// The saved-game list (載入): a category list submenu
     /// (<see cref="UICategoryListMenu{TMenu, THandler, TRenderer, TItem}"/>, same layout as
     /// 殘局闖關 / 開局練習; categories = the mode folders 對局 / 殘局 / 開局) shown on the game
     /// screen by the game menu, in the board's place (<see cref="UILayoutSheet.GameScreen.SavedGameList"/>). A button shows the save's name, its

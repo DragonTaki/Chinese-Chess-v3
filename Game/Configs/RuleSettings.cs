@@ -60,7 +60,7 @@ namespace Chinese_Chess_v3.Game.Configs
 
     /// <summary>
     /// The player's rule and clock choices for one <see cref="GameKind"/> (one
-    /// <c>[rules.*]</c> section of settings.ini, docs/SETTINGS.md). These rules are for local
+    /// <c>[rules.*]</c> section of settings.ini). These rules are for local
     /// games only (a network game does not use them). The property initializers are the code
     /// defaults, read from a default <see cref="Rules"/>. Every kind holds every property, but
     /// only its clock settings and its <see cref="OptionsFor"/> options (plus the 三國 choices

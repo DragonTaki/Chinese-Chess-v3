@@ -79,7 +79,7 @@ namespace Launcher
 
             // Push Game-level config into Engine (Engine must not read
             // Game.Configs directly — see Engine/Logging/AppLogger.cs).
-            // Player settings (docs/SETTINGS.md): loaded once at startup from settings.ini
+            // Player settings: loaded once at startup from settings.ini
             // in the per-user data folder (created / repaired there as needed) and
             // registered in DI below for the screens that read them.
             var playerSettings = PlayerSettingsFile.Load();

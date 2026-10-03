@@ -15,7 +15,7 @@ using Chinese_Chess_v3.Game.Core.Players;
 namespace Chinese_Chess_v3.Game.UI.Constants
 {
     /// <summary>
-    /// Texts of the game screen's menu (<c>UIGameMenu</c>, docs/PLAN.md in-game menu): its
+    /// Texts of the game screen's menu (<c>UIGameMenu</c>): its
     /// confirm dialog messages, the game-log lines it writes itself (the Core writes the
     /// lines of the actions themselves, e.g. each move taken back, the saved file name, the
     /// game result) and the saved-game list's button texts.
@@ -220,7 +220,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// <summary>
         /// A setting that can be changed but does nothing yet: its name with this mark. No longer
         /// shown (the author asked on 2026-10-02 for no 未實作 mark in the settings screens; which
-        /// items do nothing is only in the code and docs/SETTINGS.md §4). Kept, unused.
+        /// items do nothing is only in the code). Kept, unused.
         /// </summary>
         public static string NotImplemented(string name) => $"{name}（未實作）";
 
