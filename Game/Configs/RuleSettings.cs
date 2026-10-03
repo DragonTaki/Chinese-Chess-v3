@@ -50,6 +50,12 @@ namespace Chinese_Chess_v3.Game.Configs
 
         /// <summary>包跳吃子 (<see cref="Rules.IsCannonMustJumpToCapture"/>).</summary>
         CannonMustJump,
+
+        /// <summary>吃己棋 (<see cref="Rules.CanCaptureOwnPiece"/>).</summary>
+        CaptureOwnPiece,
+
+        /// <summary>自殺 (<see cref="Rules.CanSuicide"/>).</summary>
+        Suicide,
     }
 
     /// <summary>
@@ -118,6 +124,9 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>蹩馬腳 applies. Default: from <see cref="Rules.CanHorseLegHobbled"/> (true)</summary>
         public bool HorseLegCanBeHobbled { get; set; } = RuleDefaults.CanHorseLegHobbled;
 
+        /// <summary>吃己棋 (Full board and HalfCenter). Default: from <see cref="Rules.CanCaptureOwnPiece"/> (false)</summary>
+        public bool CanCaptureOwnPiece { get; set; } = RuleDefaults.CanCaptureOwnPiece;
+
         #endregion
 
         #region Half board
@@ -127,6 +136,9 @@ namespace Chinese_Chess_v3.Game.Configs
 
         /// <summary>A 暗吃 revealing a stronger target kills the attacker (false: it returns alive). Default: from <see cref="Rules.IsCaptureHiddenPieceStrongerSuicide"/> (true)</summary>
         public bool IsCaptureHiddenPieceStrongerSuicide { get; set; } = RuleDefaults.IsCaptureHiddenPieceStrongerSuicide;
+
+        /// <summary>自殺 (moving onto a stronger face-up enemy piece kills the mover). Default: from <see cref="Rules.CanSuicide"/> (false)</summary>
+        public bool CanSuicide { get; set; } = RuleDefaults.CanSuicide;
 
         /// <summary>連吃. Default: from <see cref="Rules.IsAllowChainCapture"/> (false)</summary>
         public bool IsAllowChainCapture { get; set; } = RuleDefaults.IsAllowChainCapture;
@@ -154,19 +166,21 @@ namespace Chinese_Chess_v3.Game.Configs
         private static readonly RuleOption[] FullBoardOptions =
         {
             RuleOption.GeneralCanSeeGeneral, RuleOption.GeneralCanLeavePalace, RuleOption.AdvisorCanLeavePalace,
-            RuleOption.ElephantEyeBlocks, RuleOption.HorseLegBlocks,
+            RuleOption.ElephantEyeBlocks, RuleOption.HorseLegBlocks, RuleOption.CaptureOwnPiece,
         };
 
         private static readonly RuleOption[] DarkHalfOptions =
         {
             RuleOption.CanCaptureHiddenPiece, RuleOption.CaptureHiddenStrongerSuicide,
             RuleOption.AllowChainCapture, RuleOption.ChariotRushHorseDiagonal, RuleOption.CannonMustJump,
+            RuleOption.CaptureOwnPiece, RuleOption.Suicide,
         };
 
         // 明棋半盤: every piece is face up, so the hidden-capture options do not apply.
         private static readonly RuleOption[] OpenHalfOptions =
         {
             RuleOption.AllowChainCapture, RuleOption.ChariotRushHorseDiagonal, RuleOption.CannonMustJump,
+            RuleOption.CaptureOwnPiece, RuleOption.Suicide,
         };
 
         /// <summary>
@@ -197,6 +211,8 @@ namespace Chinese_Chess_v3.Game.Configs
             RuleOption.AllowChainCapture => IsAllowChainCapture,
             RuleOption.ChariotRushHorseDiagonal => IsChariotRushHorseDiagonal,
             RuleOption.CannonMustJump => IsCannonMustJumpToCapture,
+            RuleOption.CaptureOwnPiece => CanCaptureOwnPiece,
+            RuleOption.Suicide => CanSuicide,
             _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option"),
         };
 
@@ -216,6 +232,8 @@ namespace Chinese_Chess_v3.Game.Configs
                 case RuleOption.AllowChainCapture: IsAllowChainCapture = value; break;
                 case RuleOption.ChariotRushHorseDiagonal: IsChariotRushHorseDiagonal = value; break;
                 case RuleOption.CannonMustJump: IsCannonMustJumpToCapture = value; break;
+                case RuleOption.CaptureOwnPiece: CanCaptureOwnPiece = value; break;
+                case RuleOption.Suicide: CanSuicide = value; break;
                 default: throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option");
             }
         }
@@ -254,6 +272,8 @@ namespace Chinese_Chess_v3.Game.Configs
             rules.CanAdvisorLeavePalace = CanAdvisorLeavePalace;
             rules.CanElephantEyeBlocked = ElephantEyeCanBeBlocked;
             rules.CanHorseLegHobbled = HorseLegCanBeHobbled;
+            rules.CanCaptureOwnPiece = CanCaptureOwnPiece;
+            rules.CanSuicide = CanSuicide;
             rules.CanCaptureHiddenPiece = CanCaptureHiddenPiece;
             rules.IsCaptureHiddenPieceStrongerSuicide = IsCaptureHiddenPieceStrongerSuicide;
             rules.IsAllowChainCapture = IsAllowChainCapture;
