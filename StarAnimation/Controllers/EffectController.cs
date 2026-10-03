@@ -100,9 +100,11 @@ namespace StarAnimation.Controllers
                     Name = type,
                     AreaSelector = type switch
                     {
-                        EffectType.ColorShift => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
-                        EffectType.Pulse => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f),
-                        EffectType.Twist => new RectangleAreaSelector(1920f, 1080f, 1920f, 1080f), //CircleAreaSelector(1920f, 1920f),
+                        // The whole canvas at any size (author decision 2026-10-02: follow the
+                        // canvas; the old fixed 1920x1080 only covered a part of a larger one).
+                        EffectType.ColorShift => RectangleAreaSelector.FullCanvas(),
+                        EffectType.Pulse => RectangleAreaSelector.FullCanvas(),
+                        EffectType.Twist => RectangleAreaSelector.FullCanvas(), //CircleAreaSelector(1920f, 1920f),
                         _ => throw new NotSupportedException($"No area selector for effect type: {type}")
                     },
                     
