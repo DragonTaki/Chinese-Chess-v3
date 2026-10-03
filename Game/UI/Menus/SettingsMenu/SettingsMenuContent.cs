@@ -76,6 +76,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// still says which ones do nothing.
         /// </summary>
         public virtual string RowText(PlayerSettings settings) => Name;
+
+        /// <summary>
+        /// Copies this setting's value from <paramref name="source"/> to <paramref name="target"/>
+        /// (the 恢復初始 button copies from <see cref="PlayerSettings.Defaults"/>).
+        /// </summary>
+        public abstract void CopyValue(PlayerSettings source, PlayerSettings target);
     }
 
     /// <summary>An on/off setting (a switch).</summary>
@@ -99,6 +105,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             _isAvailable = isAvailable;
             _unavailableText = unavailableText;
         }
+
+        public override void CopyValue(PlayerSettings source, PlayerSettings target) => Set(target, Get(source));
 
         public override SettingsItemKind Kind => SettingsItemKind.Toggle;
 
@@ -133,6 +141,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             GetIndex = getIndex ?? throw new ArgumentNullException(nameof(getIndex));
             SetIndex = setIndex ?? throw new ArgumentNullException(nameof(setIndex));
         }
+
+        public override void CopyValue(PlayerSettings source, PlayerSettings target) => SetIndex(target, GetIndex(source));
 
         public override SettingsItemKind Kind => SettingsItemKind.Choice;
 
@@ -177,6 +187,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             Step = step;
             _format = format ?? throw new ArgumentNullException(nameof(format));
         }
+
+        public override void CopyValue(PlayerSettings source, PlayerSettings target) => Set(target, Get(source));
 
         public override SettingsItemKind Kind => SettingsItemKind.Number;
 
@@ -227,6 +239,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             Unit = unit ?? string.Empty;
         }
 
+        public override void CopyValue(PlayerSettings source, PlayerSettings target) => Set(target, Get(source));
+
         public override SettingsItemKind Kind => SettingsItemKind.Integer;
 
         /// <summary>Reads the value.</summary>
@@ -263,6 +277,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             MaxLength = maxLength >= 0 ? maxLength : throw new ArgumentOutOfRangeException(nameof(maxLength), maxLength, "Cannot be negative.");
             Placeholder = placeholder ?? string.Empty;
         }
+
+        public override void CopyValue(PlayerSettings source, PlayerSettings target) => Set(target, Get(source));
 
         public override SettingsItemKind Kind => SettingsItemKind.Text;
 
@@ -307,11 +323,24 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         public string Title { get; }
 
         public IReadOnlyList<SettingsMenuSection> Sections { get; }
+
+        /// <summary>
+        /// Resets the tab's settings in <paramref name="target"/> to <paramref name="defaults"/>'
+        /// values. Items that are not implemented yet (<see cref="SettingsMenuItem.IsImplemented"/>
+        /// false) are left alone: UI-only, never saved.
+        /// </summary>
+        public void ResetToDefaults(PlayerSettings target, PlayerSettings defaults)
+        {
+            foreach (var section in Sections)
+                foreach (var item in section.Items)
+                    if (item.IsImplemented)
+                        item.CopyValue(defaults, target);
+        }
     }
 
     /// <summary>
     /// Values of the settings that are not implemented yet (未實作): kept for this session only
-    /// (never saved, not part of "unsaved changes") so their controls work; nothing reads them.
+    /// (never saved) so their controls work; nothing reads them.
     /// Defaults are what a later implementation would most likely start with.
     /// </summary>
     public static class UnimplementedSettings
