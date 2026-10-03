@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v1.2
 /* ----- ----- ----- ----- */
 
@@ -182,7 +182,17 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string LegalMoveHints = "可走位置提示";
         public const string HangingPieceHints = "無根子提示";
 
+        // DEBUG tab (除錯功能): one section per kind of debug feature.
+        public const string SectionDebugLog = "── 紀錄（立即生效）──";
+        public const string SectionDebugVisual = "── 視覺除錯（立即生效）──";
+        public const string SectionDebugPerformance = "── 效能與連線（立即生效）──";
         public const string DebugLog = "DEBUG 訊息";
+        public const string ConsoleTrace = "主控台追蹤訊息";
+        public const string LabelBackgrounds = "標籤紅色背景";
+        public const string LayoutOutlines = "排版外框";
+        public const string StarEffectFrames = "星空特效範圍框";
+        public const string ShowFps = "顯示 FPS";
+        public const string ShowNetworkLatency = "顯示網路延遲";
 
         /// <summary>Main menu entry and title of the rules screen (local games only; a network game does not use these rules).</summary>
         public const string LocalRuleSettings = "單機規則設定";
@@ -194,6 +204,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string TabDisplay = "畫面";
         public const string TabSound = "聲音";
         public const string TabGame = "遊戲";
+        public const string TabDebug = "DEBUG";
 
         /// <summary>A rules screen tab: the game kind's name (as on the new-game menu).</summary>
         public static string GameKindName(GameKind kind) => kind switch

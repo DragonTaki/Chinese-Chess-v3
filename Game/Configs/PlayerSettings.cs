@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v1.2
+// Update Date: 2026/10/04
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
+
+using Engine.Diagnostics;
 
 namespace Chinese_Chess_v3.Game.Configs
 {
@@ -104,10 +106,44 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #endregion
 
-        #region [log]
+        #region [debug]
 
-        /// <summary>Whether DEBUG-level log lines are shown (the log's verbosity). Default: true</summary>
-        public bool ShowDebugLog { get; set; } = true;
+        // The debug features' switches (the settings screen's DEBUG tab), pushed into the
+        // engine's DebugOptions by ApplyDebugOptions. Each debug feature in the code runs or
+        // draws only while its switch is on.
+
+        /// <summary>Whether DEBUG-level log lines are written (the log's verbosity). Default: true</summary>
+        public bool VerboseLog { get; set; } = true;
+
+        /// <summary>Whether developer trace lines (UI init / menu selections / network status) are printed to the console. Default: true</summary>
+        public bool ConsoleTrace { get; set; } = true;
+
+        /// <summary>Whether labels get a semi-transparent red background (visual debugging). Default: false</summary>
+        public bool LabelBackgrounds { get; set; } = false;
+
+        /// <summary>Whether menus and text boxes get a grey layout outline (visual debugging). Default: false</summary>
+        public bool LayoutOutlines { get; set; } = false;
+
+        /// <summary>Whether the star background outlines each effect's area (visual debugging). Default: false</summary>
+        public bool StarEffectFrames { get; set; } = false;
+
+        /// <summary>Whether the measured frame rate is shown in the window's top-left corner. Default: false</summary>
+        public bool ShowFps { get; set; } = false;
+
+        /// <summary>Whether the network latency is shown under the frame rate (a dash until there is a connection). Default: false</summary>
+        public bool ShowNetworkLatency { get; set; } = false;
+
+        /// <summary>Pushes the debug switches into the engine (<see cref="DebugOptions"/>), where the debug features read them.</summary>
+        public void ApplyDebugOptions()
+        {
+            DebugOptions.VerboseLog = VerboseLog;
+            DebugOptions.ConsoleTrace = ConsoleTrace;
+            DebugOptions.LabelBackgrounds = LabelBackgrounds;
+            DebugOptions.LayoutOutlines = LayoutOutlines;
+            DebugOptions.StarEffectFrames = StarEffectFrames;
+            DebugOptions.ShowFps = ShowFps;
+            DebugOptions.ShowNetworkLatency = ShowNetworkLatency;
+        }
 
         #endregion
 
