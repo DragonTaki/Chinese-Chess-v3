@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
-// Update Date: 2026/09/24
+// Update Date: 2026/10/04
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -38,6 +38,7 @@ using Engine.UI.Infrastructure;
 using Engine.UI.Input;
 using Engine.Randomization;
 using Engine.Network;
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.Platform;
 using Engine.Platform.Skia;
@@ -90,7 +91,7 @@ namespace Launcher.Cross
             var playerSettings = PlayerSettingsFile.Load();
             Settings.EnableDebugMode = playerSettings.ShowDebugLog;
             Settings.CurrentUser = playerSettings.PlayerName;
-            AppLogger.EnableDebug = Settings.EnableDebugMode;
+            DebugOptions.VerboseLog = Settings.EnableDebugMode;
             AppLogger.CurrentUser = Settings.CurrentUser;
             TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;

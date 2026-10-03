@@ -16,6 +16,7 @@ using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Dialogs;
 
+using Engine.Diagnostics;
 using Engine.Logging;
 using Engine.Timing;
 using Engine.UI.Core.Handlers;
@@ -204,7 +205,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             }
 
             Settings.EnableDebugMode = _live.ShowDebugLog;
-            AppLogger.EnableDebug = Settings.EnableDebugMode;
+            DebugOptions.VerboseLog = Settings.EnableDebugMode;
 
             Settings.CurrentUser = _live.PlayerName;
             AppLogger.CurrentUser = Settings.CurrentUser;
