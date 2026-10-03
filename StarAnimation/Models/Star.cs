@@ -7,6 +7,7 @@
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
+using System;
 using System.Drawing;
 
 using Engine.Mathematics;
@@ -78,6 +79,23 @@ namespace StarAnimation.Models
             Velocity.Base = new Vector2F(_rand.NextFloat(-0.5f, 0.5f), _rand.NextFloat(-0.5f, 0.5f));
             Velocity.Current = Velocity.Base;
         }
+        /// <summary>
+        /// Steers toward a new random direction at the current speed: picks a new base velocity
+        /// and sets the target acceleration toward it, so the physics turns the star smoothly
+        /// instead of snapping (unlike <see cref="RandomizeBaseSpeed"/>, which jumps).
+        /// </summary>
+        public void SteerToRandomDirection()
+        {
+            float speed = Velocity.Current.Length();
+            float angle = _rand.NextFloat(0f, 2f * MathF.PI);
+            var newVelocity = new Vector2F(MathF.Cos(angle) * speed, MathF.Sin(angle) * speed);
+            Velocity.Base = newVelocity;
+            Acceleration.Target = (newVelocity - Velocity.Current) * SteerFactor;
+        }
+
+        // How strongly SteerToRandomDirection accelerates toward the new direction (visual tuning).
+        private const float SteerFactor = 0.5f;
+
         /// <summary>
         /// Assigns a new random target acceleration (each axis in [-0.5, 0.5)).
         /// </summary>

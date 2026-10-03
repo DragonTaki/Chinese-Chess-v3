@@ -63,9 +63,12 @@ namespace StarAnimation.Controllers
         private const float ReleaseRatePerSecond = 1.5f;
         private float _releaseRemainder = 0f;
 
-        // Countdown timers for effects
-        private int _directionChangeCountdown;
-        private int _speedChangeCountdown;
+        // Countdowns (seconds) to the next periodic speed / direction change of every star
+        // (author decision 2026-10-04: both on). Ranges are the old frame counts at 60 fps.
+        private float _directionChangeCountdown;
+        private float _speedChangeCountdown;
+        private const float SpeedChangeMinSeconds = 100f / 60f, SpeedChangeMaxSeconds = 300f / 60f;
+        private const float DirectionChangeMinSeconds = 300f / 60f, DirectionChangeMaxSeconds = 800f / 60f;
 
         public StarController(int width, int height, int starCount = 250)
         {
@@ -94,8 +97,8 @@ namespace StarAnimation.Controllers
 
         private void InitializeCounters()
         {
-            _directionChangeCountdown = _rand.NextInt(300, 800);
-            _speedChangeCountdown = _rand.NextInt(100, 300);
+            _directionChangeCountdown = _rand.NextFloat(DirectionChangeMinSeconds, DirectionChangeMaxSeconds);
+            _speedChangeCountdown = _rand.NextFloat(SpeedChangeMinSeconds, SpeedChangeMaxSeconds);
         }
 
         /// <summary>
@@ -193,17 +196,29 @@ namespace StarAnimation.Controllers
         }
 
         /// <summary>
-        /// Handles normal effects. Only the periodic speed (acceleration) change exists,
-        /// and it is currently disabled by the "false &&" guard; the direction-change
-        /// countdown is initialized but unused.
+        /// Periodic changes of every star (author decision 2026-10-04: both on, they were
+        /// disabled by an "if (false && ...)" guard): a new random acceleration (speed change)
+        /// every few seconds, and a steer toward a new random direction less often. Both go
+        /// through the physics acceleration, so the change is smooth. Time-based (seconds).
         /// </summary>
         private void UpdateEffects()
         {
-            if (false && --_speedChangeCountdown <= 0)
+            float dt = Math.Max(0f, GlobalTime.Timer.DeltaTimeInSeconds);
+
+            _speedChangeCountdown -= dt;
+            if (_speedChangeCountdown <= 0f)
             {
                 foreach (var star in _stars)
                     star.RandomizeAcceleration();
-                _speedChangeCountdown = _rand.NextInt(100, 300);
+                _speedChangeCountdown = _rand.NextFloat(SpeedChangeMinSeconds, SpeedChangeMaxSeconds);
+            }
+
+            _directionChangeCountdown -= dt;
+            if (_directionChangeCountdown <= 0f)
+            {
+                foreach (var star in _stars)
+                    star.SteerToRandomDirection();
+                _directionChangeCountdown = _rand.NextFloat(DirectionChangeMinSeconds, DirectionChangeMaxSeconds);
             }
         }
 
