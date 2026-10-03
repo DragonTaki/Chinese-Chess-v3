@@ -13,6 +13,7 @@ namespace StarAnimation.Models
     {
         ColorShift,
         Pulse,
-        Twist
+        Twist,
+        Concentrate
     }
 }

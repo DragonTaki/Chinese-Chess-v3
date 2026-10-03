@@ -56,6 +56,17 @@ namespace StarAnimation.Core.Effect
                 RadiusRange = new RangeF(200.0f, 400.0f),
                 StrengthRange = new RangeF(0.5f, 1.5f),
                 ClockwiseChance = 0.45f
+            },
+            // Placeholder values (author decision 2026-10-04: implement the effect); visual
+            // tuning is the author's.
+            [EffectType.Concentrate] = new ConcentrateParameter
+            {
+                CountdownRange = new RangeF(20.0f, 30.0f),
+                TriggerChance = 0.5f,
+                EffectAppliedChance = 0.6f,
+                DurationRange = new RangeF(4.0f, 6.0f),
+                RadiusRange = new RangeF(150.0f, 300.0f),
+                StrengthRange = new RangeF(0.3f, 0.6f)
             }
         };
 
@@ -66,7 +77,8 @@ namespace StarAnimation.Core.Effect
         {
             [EffectType.Pulse] = (area, config) => PulseInstance.CreateRandom(area, (PulseParameter)config),
             [EffectType.Twist] = (area, config) => TwistInstance.CreateRandom(area, (TwistParameter)config),
-            [EffectType.ColorShift] = (area, config) => ColorShiftInstance.CreateRandom(area, (ColorShiftParameter)config)
+            [EffectType.ColorShift] = (area, config) => ColorShiftInstance.CreateRandom(area, (ColorShiftParameter)config),
+            [EffectType.Concentrate] = (area, config) => ConcentrateInstance.CreateRandom(area, (ConcentrateParameter)config)
         };
 
         /// <summary>
@@ -76,7 +88,8 @@ namespace StarAnimation.Core.Effect
         {
             [EffectType.Pulse] = Color.Magenta,
             [EffectType.Twist] = Color.Cyan,
-            [EffectType.ColorShift] = Color.Orange
+            [EffectType.ColorShift] = Color.Orange,
+            [EffectType.Concentrate] = Color.Yellow
         };
     }
 }

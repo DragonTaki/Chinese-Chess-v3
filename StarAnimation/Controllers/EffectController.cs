@@ -54,7 +54,8 @@ namespace StarAnimation.Controllers
         {
             [EffectType.ColorShift] = true,
             [EffectType.Pulse] = true,
-            [EffectType.Twist] = true
+            [EffectType.Twist] = true,
+            [EffectType.Concentrate] = true
         };
 
         /// <summary>
@@ -111,6 +112,7 @@ namespace StarAnimation.Controllers
                         EffectType.ColorShift => RectangleAreaSelector.FullCanvas(),
                         EffectType.Pulse => RectangleAreaSelector.FullCanvas(),
                         EffectType.Twist => RectangleAreaSelector.FullCanvas(), //CircleAreaSelector(1920f, 1920f),
+                        EffectType.Concentrate => RectangleAreaSelector.FullCanvas(),
                         _ => throw new NotSupportedException($"No area selector for effect type: {type}")
                     },
                     
@@ -149,6 +151,7 @@ namespace StarAnimation.Controllers
                     ColorShiftParameter shift => (shift.TriggerChance, _rand.NextFloat(shift.CountdownRange.Min, shift.CountdownRange.Max)),
                     PulseParameter pulse => (pulse.TriggerChance, _rand.NextFloat(pulse.CountdownRange.Min, pulse.CountdownRange.Max)),
                     TwistParameter twist => (twist.TriggerChance, _rand.NextFloat(twist.CountdownRange.Min, twist.CountdownRange.Max)),
+                    ConcentrateParameter concentrate => (concentrate.TriggerChance, _rand.NextFloat(concentrate.CountdownRange.Min, concentrate.CountdownRange.Max)),
                     _ => (1.0f, 10.0f)  // Default values for unknown effect types
                 };
 
