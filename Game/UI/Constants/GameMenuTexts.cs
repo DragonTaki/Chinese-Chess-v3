@@ -125,14 +125,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         // ----- Settings screens (遊戲設定 / 單機規則設定) -----
 
-        /// <summary>Leaving the settings menu (back, or opening another entry) with unsaved changes.</summary>
-        public const string DiscardUnsavedSettings = "設定尚未儲存，是否捨棄變更？";
-
         /// <summary>The save failed (details are in the log).</summary>
         public const string SettingsSaveFailed = "設定檔寫入失敗，請查看紀錄。";
 
-        public const string SettingsSaveAndBack = "儲存並返回";
-        public const string SettingsBack = "返回";
+        /// <summary>The footer button resetting the shown tab to the defaults.</summary>
+        public const string SettingsResetTab = "恢復初始";
+
+        /// <summary>The confirmation before resetting the shown tab.</summary>
+        public const string ResetTabToDefaults = "將目前分頁恢復成預設值？";
 
         /// <summary>A setting's button text: name, then its value.</summary>
         public static string SettingText(string name, string value) => $"{name}：{value}";

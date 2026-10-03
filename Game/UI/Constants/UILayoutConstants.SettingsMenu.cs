@@ -116,14 +116,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Horizontal inset of the text inside a text field.</summary>
             public const float TextFieldInset = 10.0f;
 
-            /// <summary>Horizontal space between the save and back buttons.</summary>
+            /// <summary>Horizontal space between footer buttons (only 恢復初始 at present).</summary>
             public const float FooterColumnGap = 20.0f;
 
-            /// <summary>Height of the save / back buttons.</summary>
+            /// <summary>Height of the footer button.</summary>
             public const float FooterButtonHeight = 64.0f;
 
             /// <summary>
-            /// Width of the save and back buttons: the scroll container's width split in two
+            /// Width of the footer button: the scroll container's width split in two
             /// with <see cref="FooterColumnGap"/> between, minus one unit of slack (see
             /// <see cref="CategoryListMenu.ButtonWidth"/> for why).
             /// </summary>
