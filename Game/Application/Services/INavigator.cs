@@ -21,5 +21,13 @@ namespace Chinese_Chess_v3.Game.Application.Services
         /// </summary>
         /// <param name="screen">The screen to show.</param>
         void Show(ScreenId screen);
+
+        /// <summary>
+        /// Whether <paramref name="screen"/> is on display: created, attached to the window's
+        /// root (so it is updated each frame) and visible.
+        /// </summary>
+        /// <param name="screen">The screen to check.</param>
+        /// <returns>True while <paramref name="screen"/> is the screen on display.</returns>
+        bool IsShown(ScreenId screen);
     }
 }

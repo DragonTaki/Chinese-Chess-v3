@@ -13,6 +13,7 @@ using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
+using Engine.UI.Core.Bases;
 using Engine.UI.Infrastructure;
 
 namespace Chinese_Chess_v3.Game.UI.Navigation
@@ -43,6 +44,18 @@ namespace Chinese_Chess_v3.Game.UI.Navigation
                 default:
                     throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen");
             }
+        }
+
+        public bool IsShown(ScreenId screen)
+        {
+            UIElementBase instance = screen switch
+            {
+                ScreenId.MainMenu => _navigationManager.GetScreen<UIMainMenu>(),
+                ScreenId.Game => _navigationManager.GetScreen<UIGameMenu>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen"),
+            };
+            // A screen another Show replaced is off the root (Parent null) but may still be IsVisible.
+            return instance != null && instance.Parent != null && instance.IsVisible;
         }
     }
 }

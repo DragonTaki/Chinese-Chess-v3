@@ -15,6 +15,7 @@ using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Boards;
@@ -118,6 +119,8 @@ namespace Launcher.Cross
                 settings.ApplyPlayerNamesTo(game);
                 return game;
             });
+            // The game flow; takes the game through a factory so the GameManager is still created on first use.
+            services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
 
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
