@@ -29,6 +29,7 @@ using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
+using Chinese_Chess_v3.Game.UI.Navigation;
 using Chinese_Chess_v3.Game.UI.Sidebars;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
@@ -104,6 +105,7 @@ namespace Launcher.Cross
             services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
 
             services.AddSingleton<NavigationManager>();
+            services.AddSingleton<INavigator, Navigator>();
             services.AddSingleton<UIRootNode>();
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
