@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pgn;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
@@ -127,7 +128,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"{LogLabel}Menu: selected: {item}");
 
-            var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
+            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
+            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
 
             // Reset first (clears the log, restarts the game being played - UIBoard.OnReset ->

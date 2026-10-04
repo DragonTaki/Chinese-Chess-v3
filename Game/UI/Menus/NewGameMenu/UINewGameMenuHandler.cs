@@ -58,7 +58,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
                 return;
             }
 
-            var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
+            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
+            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
 
             // Reset first (clears the log, restarts the board), then the chosen mode's game.

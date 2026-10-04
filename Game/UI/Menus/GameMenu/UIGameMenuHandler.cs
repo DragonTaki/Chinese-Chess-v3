@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 
 using Engine.Diagnostics;
@@ -321,7 +320,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         private void ShowMainMenu()
         {
             CloseSavedGameList();
-            _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
+            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.MainMenu);
         }
 
         /// <summary>A line in the game log (the sidebar's log box) and the debug log.</summary>

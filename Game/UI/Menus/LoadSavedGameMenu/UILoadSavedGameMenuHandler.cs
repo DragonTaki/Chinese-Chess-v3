@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Saves;
@@ -108,7 +109,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"LoadMenu: selected: {saved}");
 
-            var gameMenu = _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
+            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
+            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
 
             // Reset first (clears the log, restarts the game being played), then the save.
