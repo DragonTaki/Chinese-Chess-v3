@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/10/02
+// Update Date: 2026/10/04
 // Version: v1.4
 /* ----- ----- ----- ----- */
 
@@ -254,19 +254,6 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             PendingActions.Clear();
             PieceBinder?.Dispose();
             PieceBinder = null;
-        }
-
-        /// <summary>
-        /// Restarts the game being played (<see cref="GameManager.Restart"/>, the one restart
-        /// path - also behind the game menu's 重新開始): the standard start, a new shuffled
-        /// HalfCenter game of the same variant, the same endgame / opening, or a loaded saved
-        /// game loaded again exactly as it was when loaded. A caller that starts a specific game (new-game menu, endgame / opening /
-        /// saved-game lists) sets it up after this.
-        /// </summary>
-        /// <exception cref="NotSupportedException">The board type cannot be played yet (HalfCross).</exception>
-        protected override void OnReset()
-        {
-            GameManager.Restart();
         }
     }
 }

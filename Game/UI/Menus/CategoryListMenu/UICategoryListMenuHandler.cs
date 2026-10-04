@@ -11,10 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pgn;
-using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -115,9 +114,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         }
 
         /// <summary>
-        /// Item clicked: switch to the game screen the same way a new game does (reset the
-        /// game UI; already there for a submenu on the game screen), then set the item up
-        /// (<see cref="StartOnBoard"/>), then <see cref="OnItemStarted"/>.
+        /// Item clicked: started the way a new game is (<see cref="GameSession.TryStart"/>: game
+        /// screen - already there for a submenu on the game screen -, restart and views reset,
+        /// then the item set up with <see cref="StartOnBoard"/>; an item that cannot be set up
+        /// is logged), then <see cref="OnItemStarted"/>.
         /// <para>
         /// The board is drawn as for any game (red at the bottom); turning it so the side to
         /// move is at the bottom is phase C.
@@ -128,23 +128,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"{LogLabel}Menu: selected: {item}");
 
-            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
-            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
-            var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-
-            // Reset first (clears the log, restarts the game being played - UIBoard.OnReset ->
-            // GameManager.Restart), then the item's position - the start's own log lines stay.
-            gameMenu.ResetGameUI();
-
-            try
-            {
-                StartOnBoard(gameManager, item);
-            }
-            catch (FormatException ex)
-            {
-                // Items from the loaders were already validated; the restarted previous game stays on the board.
-                AppLogger.Log($"({LogLabel}) cannot start {item.FileName}: {ex.Message}", LogLevel.ERROR);
-            }
+            // Restart first (views reset, log cleared), then the item's position - the start's
+            // own log lines stay.
+            _factory.ServiceProvider.GetRequiredService<GameSession>()
+                .TryStart(game => StartOnBoard(game, item), LogLabel, item.FileName);
 
             OnItemStarted(item);
         }

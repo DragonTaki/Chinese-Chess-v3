@@ -11,6 +11,7 @@ using System;
 using System.IO;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -31,7 +32,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
     /// 撤銷上步 = round undo, 儲存遊戲 = save, 載入佈局 = the
     /// saved-game list, 放棄對局 = the side to move resigns, 回到主畫面 = back to the main
     /// menu (asks first while the game is in progress). 重新開始 = the current game restarted
-    /// in its mode (<see cref="GameManager.Restart"/>; a loaded saved game comes back exactly
+    /// in its mode (<see cref="GameSession.Restart"/>; a loaded saved game comes back exactly
     /// as it was when loaded) (asks first while a move has been made and the game is not over).
     /// <para>
     /// Local hot-seat play: one person plays both sides, so 放棄 always resigns for the side
@@ -52,13 +53,21 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         public UIGameMenuHandler() { }
 
         /// <summary>
-        /// Subscribes to the game's end once: the screen (and this handler) is a single
-        /// long-lived instance, like the <see cref="GameManager"/> it listens to.
+        /// Subscribes to the game's end and to the session's reset once: the screen (and this
+        /// handler) is a single long-lived instance, like the <see cref="GameManager"/> and the
+        /// <see cref="GameSession"/> it listens to.
         /// </summary>
         protected override void OnInit(IUiFactory factory)
         {
             Game.GameOver += OnGameOver;
+            Session.GameReset += OnGameReset;
         }
+
+        /// <summary>
+        /// The game was restarted (<see cref="GameSession.GameReset"/>: 重新開始, or the start of
+        /// any game): resets the game screen's views, so the log, board and sidebar start clean.
+        /// </summary>
+        private void OnGameReset() => Element.ResetGameUI();
 
         /// <summary>
         /// The game just ended (checkmate, stalemate, time-up, resignation, no pieces left): shows
@@ -102,6 +111,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
         private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
 
+        /// <summary>The game flow (the <see cref="GameSession"/> registered in DI).</summary>
+        private GameSession Session => _factory.ServiceProvider.GetRequiredService<GameSession>();
+
         /// <summary>Whether the saved-game list is shown (in the board's place).</summary>
         public bool IsSavedGameListOpen => _savedGameMenu != null && Element.Children.Contains(_savedGameMenu);
 
@@ -143,8 +155,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
         /// <summary>
         /// 重新開始: restarts the current game in its current mode - from its start position, or
-        /// a loaded saved game exactly as it was when loaded (<see cref="GameManager.Restart"/>, through the game UI's reset so the log, board and
-        /// sidebar start clean, like a new game). While a move has been made and the game is
+        /// a loaded saved game exactly as it was when loaded (<see cref="GameSession.Restart"/>, whose
+        /// <see cref="GameSession.GameReset"/> resets the views so the log, board and sidebar start
+        /// clean, like a new game). While a move has been made and the game is
         /// not over it asks first; an ended game or an untouched start restarts directly.
         /// </summary>
         public void Restart()
@@ -169,7 +182,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         private void RestartNow()
         {
             CloseSavedGameList();
-            Element.ResetGameUI();
+            Session.Restart();
         }
 
         /// <summary>撤銷: takes back one round (both sides' last move); a log line when there is none.</summary>

@@ -10,9 +10,9 @@
 using System;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -24,9 +24,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 {
     /// <summary>
     /// Handles logic and interactions for the UINewGameMenu: each mode button starts that
-    /// mode's game on the game screen (傳統大盤 the standard position, 暗棋／明棋半盤 a shuffled
-    /// HalfCenter game, <see cref="GameManager.StartHalfCenter"/>). A mode without a game yet
-    /// (揭棋大盤, 三國半盤) shows a message and stays on this menu.
+    /// mode's game on the game screen (<see cref="GameSession.StartNew"/>: 傳統大盤 the standard
+    /// position, 暗棋／明棋半盤 a shuffled HalfCenter game, <see cref="GameManager.StartHalfCenter"/>).
+    /// A mode without a game yet (揭棋大盤, 三國半盤, <see cref="GameSession.CanStartNew"/>) shows a
+    /// message and stays on this menu.
     /// </summary>
     public class UINewGameMenuHandler : UIMenuHandler<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>
     {
@@ -35,36 +36,32 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
         /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
         private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
 
+        /// <summary>The game flow (the <see cref="GameSession"/> registered in DI).</summary>
+        private GameSession Session => _factory.ServiceProvider.GetRequiredService<GameSession>();
+
         public void StartNewGame(UINewGameMenuType selectedGamemode)
         {
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"NewGameMenu: selected: {selectedGamemode}");
 
-            // The game set-up per mode; null for a mode that cannot be played yet.
-            Action<GameManager> start = selectedGamemode switch
+            GameKind kind = selectedGamemode switch
             {
-                UINewGameMenuType.Default or UINewGameMenuType.Traditional => game => game.ResetBoardToDefault(),
-                UINewGameMenuType.DarkHalf => game => game.StartHalfCenter(hiddenChess: true),
-                UINewGameMenuType.OpenHalf => game => game.StartHalfCenter(hiddenChess: false),
-                // 揭棋: Board.IsJieqi has no start position yet; 三國: its own rule system is
-                // still being specified.
-                UINewGameMenuType.FlipChess or UINewGameMenuType.ThreeKingdomsHalf => null,
+                UINewGameMenuType.Default or UINewGameMenuType.Traditional => GameKind.Traditional,
+                UINewGameMenuType.FlipChess => GameKind.Flip,
+                UINewGameMenuType.DarkHalf => GameKind.DarkHalf,
+                UINewGameMenuType.OpenHalf => GameKind.OpenHalf,
+                UINewGameMenuType.ThreeKingdomsHalf => GameKind.ThreeKingdoms,
                 _ => throw new ArgumentOutOfRangeException(nameof(selectedGamemode), selectedGamemode, "Unknown new-game mode"),
             };
-            if (start == null)
+            if (!GameSession.CanStartNew(kind))
             {
                 AppLogger.Log($"(NewGame) {selectedGamemode} is not implemented yet; staying on the new-game menu", LogLevel.WARN);
                 Dialogs.ShowConfirm(GameMenuTexts.NewGameModeUnavailable(LabelOf(selectedGamemode)), ConfirmDialogType.Ok, _ => { });
                 return;
             }
 
-            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
-            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
-            var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-
-            // Reset first (clears the log, restarts the board), then the chosen mode's game.
-            gameMenu.ResetGameUI();
-            start(gameManager);
+            // Game screen, restart (views reset, log cleared), then the chosen mode's game.
+            Session.StartNew(kind);
         }
 
         /// <summary>The button text of <paramref name="mode"/> (see <see cref="UINewGameMenuOptions"/>).</summary>

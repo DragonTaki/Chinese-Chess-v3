@@ -12,11 +12,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Saves;
-using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -99,9 +98,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         }
 
         /// <summary>
-        /// A save clicked: switch to the game screen the way a new game does (reset the game
-        /// UI), then replay the save (<see cref="GameManager.LoadSavedGame"/>) - the same steps
-        /// as the game screen's list (<c>UICategoryListMenuHandler.StartItem</c>).
+        /// A save clicked: started the way a new game is (<see cref="GameSession.TryStart"/>:
+        /// game screen, restart and views reset, then the save replayed with
+        /// <see cref="GameManager.LoadSavedGame"/>; a bad save is logged) - the same steps as the
+        /// game screen's list (<c>UICategoryListMenuHandler.StartItem</c>).
         /// </summary>
         public void StartSave(SavedGame saved)
         {
@@ -109,22 +109,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"LoadMenu: selected: {saved}");
 
-            _factory.ServiceProvider.GetRequiredService<INavigator>().Show(ScreenId.Game);
-            var gameMenu = _navigationManager.GetScreen<UIGameMenu>();
-            var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-
-            // Reset first (clears the log, restarts the game being played), then the save.
-            gameMenu.ResetGameUI();
-
-            try
-            {
-                gameManager.LoadSavedGame(saved);
-            }
-            catch (FormatException ex)
-            {
-                // Saves from the loader were already validated; the restarted previous game stays on the board.
-                AppLogger.Log($"(LoadMenu) cannot start {saved.FileName}: {ex.Message}", LogLevel.ERROR);
-            }
+            _factory.ServiceProvider.GetRequiredService<GameSession>()
+                .TryStart(game => game.LoadSavedGame(saved), "LoadMenu", saved.FileName);
         }
     }
 }

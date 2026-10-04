@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/09/30
+// Update Date: 2026/10/04
 // Version: v1.3
 /* ----- ----- ----- ----- */
 
@@ -77,6 +77,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             if (!Children.Contains(Sidebar))
                 AddChild(Sidebar);
         }
+
+        /// <summary>
+        /// Resets the game screen's views (the game log is cleared). Called on
+        /// <c>GameSession.GameReset</c>; the game itself is restarted by the session, not here.
+        /// </summary>
         public void ResetGameUI() => Reset();
 
         protected override void OnAfterReset()
