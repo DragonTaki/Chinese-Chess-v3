@@ -12,7 +12,6 @@ using System;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 
 using Engine.Diagnostics;
@@ -33,6 +32,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
     {
         public UINewGameMenuHandler() { }
 
+        /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
+        private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
+
         public void StartNewGame(UINewGameMenuType selectedGamemode)
         {
             if (DebugOptions.ConsoleTrace)
@@ -52,7 +54,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
             if (start == null)
             {
                 AppLogger.Log($"(NewGame) {selectedGamemode} is not implemented yet; staying on the new-game menu", LogLevel.WARN);
-                DialogManager.ShowConfirm(GameMenuTexts.NewGameModeUnavailable(LabelOf(selectedGamemode)), ConfirmDialogType.Ok, _ => { });
+                Dialogs.ShowConfirm(GameMenuTexts.NewGameModeUnavailable(LabelOf(selectedGamemode)), ConfirmDialogType.Ok, _ => { });
                 return;
             }
 

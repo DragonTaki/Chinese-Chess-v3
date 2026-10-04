@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Dialogs;
 
 using Engine.Logging;
 using Engine.Timing;
@@ -65,6 +64,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         /// <summary>The shown screen's tabs (<see cref="SettingsMenuContent.PagesFor"/>).</summary>
         private IReadOnlyList<SettingsMenuPage> _pages = Array.Empty<SettingsMenuPage>();
+
+        /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
+        private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
 
         /// <summary>Screen opened: set up the tabs and show the initial one.</summary>
         public void OnEnter()
@@ -165,7 +167,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             if (_saveFailureShown)
                 return;
             _saveFailureShown = true;
-            DialogManager.ShowConfirm(GameMenuTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
+            Dialogs.ShowConfirm(GameMenuTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
         }
 
         /// <summary>恢復初始 clicked: after a confirmation, reset the shown tab's settings to the defaults, refresh the controls, apply and save.</summary>
@@ -175,7 +177,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 return;
 
             var page = _pages[_currentTab];
-            DialogManager.ShowConfirm(
+            Dialogs.ShowConfirm(
                 GameMenuTexts.ResetTabToDefaults,
                 ConfirmDialogType.YesNo,
                 result =>

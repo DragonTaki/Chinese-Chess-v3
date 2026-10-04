@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 
@@ -81,7 +80,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 if (Element.Parent == null || !Element.IsVisible || !game.IsGameOver)
                     return;
 
-                DialogManager.ShowConfirm(
+                Dialogs.ShowConfirm(
                     GameMenuTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type),
                     ConfirmDialogType.GameOver,
                     result =>
@@ -100,6 +99,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         }
 
         private GameManager Game => _factory.ServiceProvider.GetRequiredService<GameManager>();
+
+        /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
+        private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
 
         /// <summary>Whether the saved-game list is shown (in the board's place).</summary>
         public bool IsSavedGameListOpen => _savedGameMenu != null && Element.Children.Contains(_savedGameMenu);
@@ -155,7 +157,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 return;
             }
 
-            DialogManager.ShowConfirm(
+            Dialogs.ShowConfirm(
                 GameMenuTexts.DiscardAndRestart,
                 ConfirmDialogType.YesNo,
                 result =>
@@ -224,7 +226,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 return;
             }
 
-            DialogManager.ShowConfirm(
+            Dialogs.ShowConfirm(
                 GameMenuTexts.DiscardUnsavedGame,
                 ConfirmDialogType.YesNo,
                 result =>
@@ -296,7 +298,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                 return;
             }
 
-            DialogManager.ShowConfirm(
+            Dialogs.ShowConfirm(
                 GameMenuTexts.ResignAndReturnToMain,
                 ConfirmDialogType.YesNo,
                 result =>

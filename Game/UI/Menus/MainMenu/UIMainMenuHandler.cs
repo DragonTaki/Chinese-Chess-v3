@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Services;
-using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
@@ -152,9 +151,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         private static IScreen AsScreen(UIElement submenu) =>
             submenu as IScreen ?? submenu.HandlerBase as IScreen;
 
+        /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
+        private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
+
         private void ClickExitAction()
         {
-            DialogManager.ShowConfirm(
+            Dialogs.ShowConfirm(
                 "確認要離開遊戲嗎？",
                 ConfirmDialogType.YesNo,
                 result =>
