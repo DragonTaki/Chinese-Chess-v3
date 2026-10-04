@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
@@ -433,11 +434,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     new SettingsTextItem(GameMenuTexts.PlayerName, s => s.PlayerName, (s, v) => s.PlayerName = v,
                         PlayerSettings.PlayerNameMaxLength, GameMenuTexts.PlayerNamePlaceholder),
                     new SettingsTextItem(GameMenuTexts.Player1Name, s => s.Player1Name, (s, v) => s.Player1Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameMenuTexts.DefaultPlayerName(PlayerSide.Player1)),
+                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player1)),
                     new SettingsTextItem(GameMenuTexts.Player2Name, s => s.Player2Name, (s, v) => s.Player2Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameMenuTexts.DefaultPlayerName(PlayerSide.Player2)),
+                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player2)),
                     new SettingsTextItem(GameMenuTexts.Player3Name, s => s.Player3Name, (s, v) => s.Player3Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameMenuTexts.DefaultPlayerName(PlayerSide.Player3)),
+                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player3)),
                     new SettingsToggleItem(GameMenuTexts.LegalMoveHints, s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v),
                     new SettingsToggleItem(GameMenuTexts.HangingPieceHints, s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v),
                     Placeholder(GameMenuTexts.MoveAnimationSpeed, GameMenuTexts.MoveAnimationSpeedOptions,

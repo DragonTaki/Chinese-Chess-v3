@@ -12,10 +12,10 @@ using System.IO;
 
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 
 using Engine.Diagnostics;
@@ -89,7 +89,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
                     return;
 
                 Dialogs.ShowConfirm(
-                    GameMenuTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type),
+                    GameTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type),
                     ConfirmDialogType.GameOver,
                     result =>
                     {
@@ -170,7 +170,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             }
 
             Dialogs.ShowConfirm(
-                GameMenuTexts.DiscardAndRestart,
+                GameTexts.DiscardAndRestart,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
@@ -191,7 +191,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             var game = Game;
             if (!game.CanUndo)
             {
-                Log(GameMenuTexts.UndoUnavailable);
+                Log(GameTexts.UndoUnavailable);
                 return;
             }
             // The Core logs each move taken back.
@@ -204,7 +204,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             var game = Game;
             if (!game.CanSave)
             {
-                Log(game.Board.Type != BoardType.Full ? GameMenuTexts.SaveUnavailableBoardType : GameMenuTexts.SaveUnavailableNoStartPosition);
+                Log(game.Board.Type != BoardType.Full ? GameTexts.SaveUnavailableBoardType : GameTexts.SaveUnavailableNoStartPosition);
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
             {
                 AppLogger.Log($"(Save) Cannot save: {ex.Message}", LogLevel.ERROR);
-                Log(GameMenuTexts.SaveFailed(ex.Message));
+                Log(GameTexts.SaveFailed(ex.Message));
             }
         }
 
@@ -239,7 +239,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             }
 
             Dialogs.ShowConfirm(
-                GameMenuTexts.DiscardUnsavedGame,
+                GameTexts.DiscardUnsavedGame,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
@@ -287,12 +287,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             var game = Game;
             if (game.IsGameOver)
             {
-                Log(GameMenuTexts.ResignGameOver);
+                Log(GameTexts.ResignGameOver);
                 return;
             }
 
             var side = game.CurrentTurn;
-            Log(GameMenuTexts.Resigned(side, game.ColorOf(side)));
+            Log(GameTexts.Resigned(side, game.ColorOf(side)));
             // Not an unsaved change: the game is over, nothing is left to save (the Core logs the result).
             game.Resign(side);
         }
@@ -311,7 +311,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             }
 
             Dialogs.ShowConfirm(
-                GameMenuTexts.ResignAndReturnToMain,
+                GameTexts.ResignAndReturnToMain,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
