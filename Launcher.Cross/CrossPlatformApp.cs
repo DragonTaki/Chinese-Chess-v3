@@ -16,6 +16,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SilkWindowInterface = Silk.NET.Windowing.IWindow;
 
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Diagnostics;
@@ -49,6 +50,7 @@ namespace Launcher.Cross
         private UIInputManager _inputMgr;
         private UIRootNode _rootCanvas;
         private NavigationManager _navigationManager;
+        private GameSession _gameSession;
         private StarAnimationApp _bgStar;
 
         private IInputContext _inputContext;
@@ -118,6 +120,7 @@ namespace Launcher.Cross
             _rootCanvas.MainWindow = new SilkWindow();
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
+            _gameSession = _sp.GetRequiredService<GameSession>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
@@ -134,6 +137,8 @@ namespace Launcher.Cross
             {
                 _bgStar?.Update();
                 _rootCanvas?.Update();
+                // Right after the UI update, where the board's update used to advance the clocks.
+                _gameSession?.Tick();
                 PhysicsRegistry.UpdateAll();
                 _inputMgr?.EndFrame();
             };

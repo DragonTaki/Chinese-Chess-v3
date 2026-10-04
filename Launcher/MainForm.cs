@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
@@ -39,6 +40,7 @@ namespace Launcher
         private readonly UIInputManager _inputMgr;
         private readonly UIRootNode _rootCanvas;
         private NavigationManager _navigationManager;
+        private readonly GameSession _gameSession;
 
         private StarAnimationApp _bgStar;
 
@@ -56,6 +58,7 @@ namespace Launcher
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _navigationManager.Init(_rootCanvas);
             _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
+            _gameSession = _sp.GetRequiredService<GameSession>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
@@ -140,6 +143,8 @@ namespace Launcher
             {
                 _bgStar?.Update();
                 _rootCanvas?.Update();
+                // Right after the UI update, where the board's update used to advance the clocks.
+                _gameSession?.Tick();
                 PhysicsRegistry.UpdateAll();
                 _inputMgr?.EndFrame();
                 this.Invalidate();

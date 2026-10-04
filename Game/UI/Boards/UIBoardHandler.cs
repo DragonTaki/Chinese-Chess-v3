@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/10/01
+// Update Date: 2026/10/04
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -34,9 +34,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             Element.PendingActions.Clear();
             foreach (var a in actions) a();
 
-            // Without a per-frame tick the clocks only advanced inside EndStep(),
-            // i.e. the displayed time only changed when a move was made.
-            Element.GameManager?.UpdateTimers();
+            // The clocks are advanced by GameSession.Tick from the frame loop, not here.
         }
     }
 }
