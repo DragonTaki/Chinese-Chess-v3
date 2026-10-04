@@ -9,6 +9,8 @@
 
 using System;
 
+using Chinese_Chess_v3.Game.Application.Services;
+
 using Engine.UI.Infrastructure;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs

@@ -9,6 +9,7 @@
 
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Platform;

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Services;
+
 using Engine.UI.Widgets;
 
 namespace Chinese_Chess_v3.Game.UI.Dialogs

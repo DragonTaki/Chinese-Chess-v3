@@ -3,12 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/19
-// Update Date: 2025/05/19
-// Version: v1.0
+// Update Date: 2026/10/04
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
-namespace Chinese_Chess_v3.Game.UI.Dialogs
+namespace Chinese_Chess_v3.Game.Application.Services
 {
+    /// <summary>
+    /// The kind of a confirm dialog (<see cref="IDialogService.ShowConfirm"/>): which buttons it offers.
+    /// </summary>
     public enum ConfirmDialogType
     {
         Default,
@@ -20,6 +23,9 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
         GameOver
     }
 
+    /// <summary>
+    /// The button a confirm dialog was closed with, passed to its callback.
+    /// </summary>
     public enum ConfirmDialogResult
     {
         None,
