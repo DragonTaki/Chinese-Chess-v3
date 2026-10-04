@@ -526,6 +526,37 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 isAvailable: s => rules(s).TimerMode != TimerMode.CountUp, unavailableText: GameMenuTexts.WithCountUpNote);
 
         /// <summary>One game kind's tab: its rule options, then its clock settings.</summary>
+        /// <summary>
+        /// 計時預設: the <see cref="PlayerTimerPresets"/> plus 自訂. Choosing a preset fills in 局時,
+        /// 步時 and 加秒; the shown choice is the preset matching the current values, else 自訂.
+        /// </summary>
+        private static SettingsChoiceItem PresetChoice(Func<PlayerSettings, RuleSettings> rules)
+        {
+            var presets = PlayerTimerPresets.Presets;
+            var options = presets.Select(p => p.Name).Append(GameMenuTexts.TimerPresetCustom).ToArray();
+            int Matching(RuleSettings r)
+            {
+                for (int i = 0; i < presets.Count; i++)
+                {
+                    var p = presets[i];
+                    if (r.TotalTimeMinutes == (int)p.TotalTime.TotalMinutes && r.StepTimeSeconds == (int)p.StepTime.TotalSeconds
+                        && r.IncrementSeconds == (int)p.Increment.TotalSeconds)
+                        return i;
+                }
+                return presets.Count;
+            }
+            return new SettingsChoiceItem(GameMenuTexts.TimerPreset, options, s => Matching(rules(s)), (s, index) =>
+            {
+                if (index < 0 || index >= presets.Count)
+                    return;
+                var p = presets[index];
+                var r = rules(s);
+                r.TotalTimeMinutes = (int)p.TotalTime.TotalMinutes;
+                r.StepTimeSeconds = (int)p.StepTime.TotalSeconds;
+                r.IncrementSeconds = (int)p.Increment.TotalSeconds;
+            });
+        }
+
         private static SettingsMenuPage RulePage(GameKind kind)
         {
             RuleSettings R(PlayerSettings s) => s.RulesFor(kind);
@@ -544,6 +575,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             var timer = new SettingsMenuItem[]
             {
                 EnumChoice(GameMenuTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
+                PresetChoice(R),
                 new SettingsIntegerItem(GameMenuTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
                     RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, GameMenuTexts.MinutesUnit),
                 new SettingsIntegerItem(GameMenuTexts.StepTime, s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = v,

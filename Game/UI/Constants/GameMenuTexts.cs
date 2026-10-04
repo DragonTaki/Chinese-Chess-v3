@@ -172,6 +172,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public const string TimerMode = "計時方式";
         public const string TimerModeCountDown = "倒數";
         public const string TimerModeCountUp = "正數";
+        public const string TimerPreset = "計時預設";
+        public const string TimerPresetCustom = "自訂";
         public const string TotalTime = "局時";
         public const string StepTime = "步時";
         public const string Increment = "加秒";
