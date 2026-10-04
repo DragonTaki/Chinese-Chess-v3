@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.UI.Boards;
@@ -108,6 +109,7 @@ namespace Launcher
             services.AddSingleton<UIRootNode>();
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
+            services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<NetworkManager>();
             services.AddSingleton(sp =>
             {
