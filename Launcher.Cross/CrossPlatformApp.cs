@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -21,6 +21,7 @@ using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Diagnostics;
+using Engine.UI.Diagnostics;
 using Engine.Globals;
 using Engine.Physics;
 using Engine.Platform;
