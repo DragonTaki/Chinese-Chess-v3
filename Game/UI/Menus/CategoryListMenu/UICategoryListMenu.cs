@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Core.Pgn;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -31,9 +32,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
     /// as wrapping rows of <c>UILayoutConstants.CategoryListMenu.Columns</c> equal-width
     /// buttons inside the scroll container. A centered message replaces them when no item was
     /// found. A derived menu only decides an item button's text (<see cref="ItemButtonText"/>);
-    /// loading and starting items is its handler's (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>).
+    /// the items, their order, sections and categories and the switched-off categories are the
+    /// list's model (<see cref="CategoryListModel{T}"/>), which the handler
+    /// (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>) loads and
+    /// binds; starting an item is the handler's.
     /// <para>
-    /// The buttons are rebuilt from the item list each time the submenu is shown (the
+    /// The buttons are rebuilt from the model each time the submenu is shown (the
     /// handler's <c>OnEnter</c> loads the files), so files added while the game runs appear
     /// the next time it opens. A category toggle only hides or shows that category's buttons
     /// (<c>Display = None</c>), nothing is rebuilt.
@@ -61,25 +65,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         private readonly Dictionary<(string Section, string Category), UIButton> _categoryButtons = new();
         /// <summary>Headings and rows built for sections (disposed on every rebuild).</summary>
         private readonly List<UIElement> _sectionElements = new();
-        private readonly List<(UIButton Button, TItem Item)> _itemButtons = new();
+        /// <summary>Each item button with its section (null = empty) and category, for the toggles.</summary>
+        private readonly List<(UIButton Button, string Section, string Category)> _itemButtons = new();
 
         protected UICategoryListMenu() { }
 
         /// <summary>The label of <paramref name="item"/>'s button (line breaks allowed).</summary>
         protected abstract string ItemButtonText(TItem item);
-
-        /// <summary>The category <paramref name="item"/>'s toggle is named after (its own <c>Category</c>).</summary>
-        public string CategoryOf(TItem item) => item.Category ?? string.Empty;
-
-        /// <summary>
-        /// The section <paramref name="item"/> is listed in, or null (the default) for no
-        /// sections: one category row and one item grid. With sections, each gets a heading,
-        /// its own category row (only the categories of its items) and its own item grid;
-        /// the same category name in two sections is two independent toggles. Sections are
-        /// shown in ordinal order of their names, and the handler sorts the items by it
-        /// (開局練習: 先手 before 後手); a section without items is not shown.
-        /// </summary>
-        public virtual string SectionOf(TItem item) => null;
 
         protected override void OnBeforeInit(IUiFactory factory)
         {
@@ -125,32 +117,35 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         protected override void BuildButtons() { }
 
         /// <summary>
-        /// Replaces all buttons with one toggle per category present in
-        /// <paramref name="items"/> (in list order) and one button per item, or shows the
-        /// empty message when there is none. With <see cref="SectionOf"/> sections, that is
-        /// done per section under a heading.
+        /// Replaces all buttons with those of <paramref name="model"/>'s items: without
+        /// sections (<see cref="CategoryListModel{T}.Sections"/> is one section named null), one
+        /// toggle per category (in list order) in <see cref="CategoryRow"/> and one button per
+        /// item in <see cref="ItemGrid"/>; with sections, a heading, a category row (only the
+        /// categories of its items) and an item grid per section. The empty message is shown
+        /// when there is no item.
         /// </summary>
-        /// <param name="items">The items in display order (section, category, then file name).</param>
-        /// <param name="isCategoryShown">Whether a category's items are currently shown (section, category).</param>
-        /// <param name="emptyMessage">Text shown when <paramref name="items"/> is empty.</param>
-        public void ShowItems(IReadOnlyList<TItem> items, Func<string, string, bool> isCategoryShown, string emptyMessage)
+        /// <param name="model">The list: items in display order, sections, categories, which categories are shown.</param>
+        /// <param name="emptyMessage">Text shown when the list is empty.</param>
+        public void ShowItems(CategoryListModel<TItem> model, string emptyMessage)
         {
+            ArgumentNullException.ThrowIfNull(model);
             ClearItemButtons();
 
-            bool sectioned = items.Any(i => SectionOf(i) != null);
+            bool sectioned = model.Sections.Any(section => section.Name != null);
             if (!sectioned)
             {
-                BuildGroup(items, null, CategoryRow, ItemGrid, isCategoryShown);
+                foreach (var section in model.Sections)
+                    BuildGroup(model, section, CategoryRow, ItemGrid);
             }
             else
             {
-                foreach (var group in items.GroupBy(i => SectionOf(i) ?? string.Empty, StringComparer.Ordinal))
+                foreach (var section in model.Sections)
                 {
                     var heading = _factory.CreateElement<UILabel, UILabelHandler, UILabelRenderer>();
                     heading.Font = UILayoutStyles.CategoryListMenu.SectionHeading.Font;
                     heading.ForeColor = UILayoutStyles.CategoryListMenu.SectionHeading.Color;
                     heading.TextAlign = ContentAlign.MiddleLeft;
-                    heading.Text = UILayoutStyles.CategoryListMenu.SectionHeading.Format(group.Key);
+                    heading.Text = UILayoutStyles.CategoryListMenu.SectionHeading.Format(section.Name);
                     heading.LayoutRules.Apply(UILayoutSheet.CategoryListMenu.SectionHeading);
                     ScrollContainer.AddChild(heading);
 
@@ -165,11 +160,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                     _sectionElements.Add(heading);
                     _sectionElements.Add(categoryRow);
                     _sectionElements.Add(itemGrid);
-                    BuildGroup(group.ToList(), group.Key, categoryRow, itemGrid, isCategoryShown);
+                    BuildGroup(model, section, categoryRow, itemGrid);
                 }
             }
 
-            bool empty = items.Count == 0;
+            bool empty = model.Items.Count == 0;
             EmptyMessage.Text = empty ? emptyMessage : string.Empty;
             EmptyMessage.LayoutRules.Display = empty ? DisplayMode.Normal : DisplayMode.None;
             CategoryRow.LayoutRules.Display = empty || sectioned ? DisplayMode.None : DisplayMode.Normal;
@@ -179,27 +174,28 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         }
 
         /// <summary>One section's (or the whole list's) category toggles and item buttons.</summary>
-        private void BuildGroup(IReadOnlyList<TItem> items, string section, UIButtonRow categoryRow, UIButtonRow itemGrid,
-            Func<string, string, bool> isCategoryShown)
+        private void BuildGroup(CategoryListModel<TItem> model, CategoryListSection<TItem> section, UIButtonRow categoryRow, UIButtonRow itemGrid)
         {
-            foreach (var category in items.Select(CategoryOf).Distinct(StringComparer.Ordinal))
+            string sectionName = section.Name;
+            foreach (var category in section.Categories)
             {
                 string name = category;
-                var button = CreateButton(UILayoutSheet.CategoryListMenu.CategoryButton, () => Handler.ToggleCategory(section, name));
+                var button = CreateButton(UILayoutSheet.CategoryListMenu.CategoryButton, () => Handler.ToggleCategory(sectionName, name));
                 categoryRow.AddChild(button);
-                _categoryButtons[(section ?? string.Empty, name)] = button;
-                ApplyCategoryState(section, name, isCategoryShown(section, name));
+                _categoryButtons[(sectionName ?? string.Empty, name)] = button;
+                ApplyCategoryState(sectionName, name, model.IsCategoryShown(sectionName, name));
             }
 
-            foreach (var item in items)
+            foreach (var item in section.Items)
             {
                 var target = item;
+                string category = model.CategoryOf(item);
                 var button = CreateButton(UILayoutSheet.CategoryListMenu.ItemButton, () => Handler.StartItem(target));
                 button.Text = ItemButtonText(item);
                 button.Style = UILayoutStyles.CategoryListMenu.ButtonStyle;
-                button.LayoutRules.Display = isCategoryShown(section, CategoryOf(item)) ? DisplayMode.Normal : DisplayMode.None;
+                button.LayoutRules.Display = model.IsCategoryShown(sectionName, category) ? DisplayMode.Normal : DisplayMode.None;
                 itemGrid.AddChild(button);
-                _itemButtons.Add((button, item));
+                _itemButtons.Add((button, sectionName ?? string.Empty, category));
             }
         }
 
@@ -211,10 +207,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         public void SetCategoryShown(string section, string category, bool shown)
         {
             ApplyCategoryState(section, category, shown);
-            foreach (var (button, item) in _itemButtons)
+            foreach (var (button, itemSection, itemCategory) in _itemButtons)
                 // Compared as keys (null = no section = empty), as the toggle passes them.
-                if (string.Equals(SectionOf(item) ?? string.Empty, section ?? string.Empty, StringComparison.Ordinal)
-                    && string.Equals(CategoryOf(item), category, StringComparison.Ordinal))
+                if (string.Equals(itemSection, section ?? string.Empty, StringComparison.Ordinal)
+                    && string.Equals(itemCategory, category ?? string.Empty, StringComparison.Ordinal))
                     button.LayoutRules.Display = shown ? DisplayMode.Normal : DisplayMode.None;
 
             Handler.UpdateScrollContentHeight();

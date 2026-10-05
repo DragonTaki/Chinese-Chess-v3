@@ -3,13 +3,14 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
+// Update Date: 2026/10/05
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Globalization;
 using System.Text;
 
+using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -40,7 +41,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
 
         protected override string ItemButtonText(SavedGame saved)
         {
-            if (!SystemSettings.TryParseSaveFileName(saved.Title, out string name, out var time))
+            if (!SavedGameCatalog.TryGetNameAndTime(saved, out string name, out var time))
                 return WrapTitle(saved.Title, UILayoutStyles.CategoryListMenu.TitleLineLength);
 
             return $"{OneLine(name, UILayoutStyles.CategoryListMenu.TitleLineLength)}\n" +

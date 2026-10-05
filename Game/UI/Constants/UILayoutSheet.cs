@@ -203,7 +203,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>The item grid (<c>UICategoryListMenu.ItemGrid</c>).</summary>
             public static readonly UILayoutStyle ItemGrid = ButtonRows;
 
-            /// <summary>A section's heading label (<c>UICategoryListMenu.SectionOf</c>): full width, height from its text.</summary>
+            /// <summary>A section's heading label (<c>CategoryListModel.Sections</c>): full width, height from its text.</summary>
             public static readonly UILayoutStyle SectionHeading = new()
             {
                 PositionMode = PositionMode.Flow,
