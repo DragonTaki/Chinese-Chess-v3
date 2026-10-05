@@ -10,10 +10,11 @@
 namespace Chinese_Chess_v3.Game.UI.Constants
 {
     /// <summary>
-    /// Texts of the screens: the info board, the saved-game lists, the new-game menu and the
-    /// settings screens' entries and buttons. The game screen's dialog messages, game-over
-    /// message and game-log lines, and the players' default names, are in the logic layer's
-    /// <c>GameTexts</c>; the settings screens' rows, tabs and messages in its <c>SettingsTexts</c>.
+    /// Texts of the screens: the info board, the saved-game lists and the settings screens'
+    /// entries and buttons. The game screen's dialog messages, game-over message and game-log
+    /// lines, and the players' default names, are in the logic layer's <c>GameTexts</c>; the
+    /// settings screens' rows, tabs and messages in its <c>SettingsTexts</c>; the menus' dialog
+    /// messages in its <c>MenuTexts</c>.
     /// </summary>
     public static class GameMenuTexts
     {
@@ -53,11 +54,6 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>Both saved-game lists: the delete-mode toggle while on (clicking it goes back to loading saves).</summary>
         public const string DeleteModeOn = "結束刪除";
-
-        // ----- New-game menu -----
-
-        /// <summary>A new-game mode whose game cannot be started yet (揭棋大盤, 三國半盤); <paramref name="mode"/> = its button text.</summary>
-        public static string NewGameModeUnavailable(string mode) => $"「{mode}」尚未完成，目前無法開始。";
 
         // ----- Settings screens (遊戲設定 / 單機規則設定) -----
 

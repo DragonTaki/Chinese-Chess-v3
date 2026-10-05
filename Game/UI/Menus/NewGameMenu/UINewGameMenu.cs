@@ -7,6 +7,7 @@
 // Version: v1.2
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Mathematics;
@@ -40,7 +41,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
         protected override void BuildButtons()
         {
-            var menuEntries = UINewGameMenuOptions.Create(Handler.StartNewGame);
+            var menuEntries = NewGameOptions.Create(Handler.StartNewGame);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {

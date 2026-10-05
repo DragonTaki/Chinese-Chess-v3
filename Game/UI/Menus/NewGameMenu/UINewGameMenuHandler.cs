@@ -9,10 +9,11 @@
 
 using System;
 
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -39,33 +40,20 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
         /// <summary>The game flow (the <see cref="GameSession"/> registered in DI).</summary>
         private GameSession Session => _factory.ServiceProvider.GetRequiredService<GameSession>();
 
-        public void StartNewGame(UINewGameMenuType selectedGamemode)
+        public void StartNewGame(GameKind kind)
         {
             if (DebugOptions.ConsoleTrace)
-                Console.WriteLine($"NewGameMenu: selected: {selectedGamemode}");
+                Console.WriteLine($"NewGameMenu: selected: {kind}");
 
-            GameKind kind = selectedGamemode switch
-            {
-                UINewGameMenuType.Default or UINewGameMenuType.Traditional => GameKind.Traditional,
-                UINewGameMenuType.FlipChess => GameKind.Flip,
-                UINewGameMenuType.DarkHalf => GameKind.DarkHalf,
-                UINewGameMenuType.OpenHalf => GameKind.OpenHalf,
-                UINewGameMenuType.ThreeKingdomsHalf => GameKind.ThreeKingdoms,
-                _ => throw new ArgumentOutOfRangeException(nameof(selectedGamemode), selectedGamemode, "Unknown new-game mode"),
-            };
             if (!GameSession.CanStartNew(kind))
             {
-                AppLogger.Log($"(NewGame) {selectedGamemode} is not implemented yet; staying on the new-game menu", LogLevel.WARN);
-                Dialogs.ShowConfirm(GameMenuTexts.NewGameModeUnavailable(LabelOf(selectedGamemode)), ConfirmDialogType.Ok, _ => { });
+                AppLogger.Log($"(NewGame) {kind} is not implemented yet; staying on the new-game menu", LogLevel.WARN);
+                Dialogs.ShowConfirm(MenuTexts.NewGameModeUnavailable(NewGameOptions.LabelOf(kind)), ConfirmDialogType.Ok, _ => { });
                 return;
             }
 
             // Game screen, restart (views reset, log cleared), then the chosen mode's game.
             Session.StartNew(kind);
         }
-
-        /// <summary>The button text of <paramref name="mode"/> (see <see cref="UINewGameMenuOptions"/>).</summary>
-        private static string LabelOf(UINewGameMenuType mode) =>
-            UINewGameMenuOptions.Create(_ => { }).Find(e => e.Id == mode)?.Label ?? mode.ToString();
     }
 }
