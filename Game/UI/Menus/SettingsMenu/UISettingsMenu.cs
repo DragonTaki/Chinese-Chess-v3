@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v2.2
 /* ----- ----- ----- ----- */
 
@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;

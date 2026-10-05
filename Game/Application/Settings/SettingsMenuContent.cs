@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v2.1
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -16,9 +16,9 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
+namespace Chinese_Chess_v3.Game.Application.Settings
 {
-    /// <summary>Which settings screen a <see cref="UISettingsMenu"/> is (both are opened from the main menu).</summary>
+    /// <summary>Which settings screen a <c>UISettingsMenu</c> is (both are opened from the main menu).</summary>
     public enum SettingsScreen
     {
         /// <summary>遊戲設定: tabs 畫面 / 聲音 / 遊戲 / DEBUG.</summary>
