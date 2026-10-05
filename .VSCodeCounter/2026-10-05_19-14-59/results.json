@@ -1,0 +1,2780 @@
+{
+ "Assets.props": {
+  "language": "XML",
+  "code": 8,
+  "comment": 2,
+  "blank": 0
+ },
+ "Chinese-Chess-v3.sln": {
+  "language": "Solution",
+  "code": 173,
+  "comment": 0,
+  "blank": 1
+ },
+ "README.md": {
+  "language": "Markdown",
+  "code": 29,
+  "comment": 0,
+  "blank": 16
+ },
+ "git_push.sh": {
+  "language": "Shell Script",
+  "code": 39,
+  "comment": 15,
+  "blank": 9
+ },
+ "run_csharp_main.bat": {
+  "language": "Batch",
+  "code": 3,
+  "comment": 0,
+  "blank": 0
+ },
+ "run_git_push.bat": {
+  "language": "Batch",
+  "code": 3,
+  "comment": 0,
+  "blank": 0
+ },
+ "Assets/Font/Readme.md": {
+  "language": "Markdown",
+  "code": 17,
+  "comment": 0,
+  "blank": 6
+ },
+ "Composition/AppStartup.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 31,
+  "blank": 9
+ },
+ "Composition/ChineseChess.Composition.csproj": {
+  "language": "XML",
+  "code": 14,
+  "comment": 1,
+  "blank": 0
+ },
+ "Composition/ServiceCollectionExtensions.cs": {
+  "language": "C#",
+  "code": 123,
+  "comment": 54,
+  "blank": 14
+ },
+ "Composition/UIInitializer.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 32,
+  "blank": 11
+ },
+ "DEPRECATED/BoardConstants.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 16,
+  "blank": 6
+ },
+ "DEPRECATED/BoardSettings.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 13,
+  "blank": 4
+ },
+ "DEPRECATED/InitializableOnceElement.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 31,
+  "blank": 14
+ },
+ "DEPRECATED/SidebarConstants.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 9,
+  "blank": 2
+ },
+ "DEPRECATED/SidebarSettings.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 16,
+  "blank": 9
+ },
+ "DEPRECATED/StarfieldRenderer.cs": {
+  "language": "C#",
+  "code": 361,
+  "comment": 121,
+  "blank": 62
+ },
+ "DEPRECATED/UIBoardRenderer.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 11,
+  "blank": 8
+ },
+ "DEPRECATED/UIRenderContext.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 8,
+  "blank": 3
+ },
+ "DEPRECATED/Bootstrap/UIInitializer.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 15,
+  "blank": 8
+ },
+ "DEPRECATED/Controllers/MainMenuController.cs": {
+  "language": "C#",
+  "code": 53,
+  "comment": 8,
+  "blank": 11
+ },
+ "DEPRECATED/Controls/ScrollTextBox.cs": {
+  "language": "C#",
+  "code": 60,
+  "comment": 11,
+  "blank": 18
+ },
+ "DEPRECATED/Panels/BoardPanel.cs": {
+  "language": "C#",
+  "code": 0,
+  "comment": 8,
+  "blank": 0
+ },
+ "DEPRECATED/Panels/GameMenuPanel.cs": {
+  "language": "C#",
+  "code": 0,
+  "comment": 8,
+  "blank": 0
+ },
+ "DEPRECATED/Panels/MainMenuPanel.cs": {
+  "language": "C#",
+  "code": 87,
+  "comment": 25,
+  "blank": 17
+ },
+ "DEPRECATED/Panels/SidebarPanel.cs": {
+  "language": "C#",
+  "code": 0,
+  "comment": 8,
+  "blank": 0
+ },
+ "DEPRECATED/Timing/PlayerTimer.cs": {
+  "language": "C#",
+  "code": 66,
+  "comment": 14,
+  "blank": 12
+ },
+ "Engine/Directory.Build.props": {
+  "language": "XML",
+  "code": 7,
+  "comment": 2,
+  "blank": 0
+ },
+ "Engine/Engine.Platform.Skia.csproj": {
+  "language": "XML",
+  "code": 16,
+  "comment": 1,
+  "blank": 0
+ },
+ "Engine/Engine.Platform.WinForms.csproj": {
+  "language": "XML",
+  "code": 13,
+  "comment": 1,
+  "blank": 0
+ },
+ "Engine/Engine.UI.csproj": {
+  "language": "XML",
+  "code": 14,
+  "comment": 2,
+  "blank": 0
+ },
+ "Engine/Engine.csproj": {
+  "language": "XML",
+  "code": 9,
+  "comment": 2,
+  "blank": 0
+ },
+ "Engine/Configs/EnginePaths.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 21,
+  "blank": 8
+ },
+ "Engine/Configs/ISettingsArea.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 17,
+  "blank": 3
+ },
+ "Engine/Configs/IniDocument.cs": {
+  "language": "C#",
+  "code": 221,
+  "comment": 54,
+  "blank": 44
+ },
+ "Engine/Configs/InputOptions.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 1
+ },
+ "Engine/Configs/InputSettings.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 13,
+  "blank": 7
+ },
+ "Engine/Configs/SettingsFile.cs": {
+  "language": "C#",
+  "code": 219,
+  "comment": 64,
+  "blank": 38
+ },
+ "Engine/Configs/SettingsKey.cs": {
+  "language": "C#",
+  "code": 122,
+  "comment": 34,
+  "blank": 20
+ },
+ "Engine/Diagnostics/DebugOptions.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 37,
+  "blank": 13
+ },
+ "Engine/Diagnostics/DebugSettings.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 23,
+  "blank": 13
+ },
+ "Engine/Diagnostics/FrameRateCounter.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 24,
+  "blank": 9
+ },
+ "Engine/Geometry/LayoutF.cs": {
+  "language": "C#",
+  "code": 73,
+  "comment": 45,
+  "blank": 24
+ },
+ "Engine/Globals/GlobalViewport.cs": {
+  "language": "C#",
+  "code": 51,
+  "comment": 83,
+  "blank": 17
+ },
+ "Engine/Globals/GlobalWindow.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 46,
+  "blank": 12
+ },
+ "Engine/GraphicsUtils/GraphicsHelper.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/GraphicsUtils/GraphicsPaths/ApplyVerticalSkew.cs": {
+  "language": "C#",
+  "code": 21,
+  "comment": 18,
+  "blank": 5
+ },
+ "Engine/GraphicsUtils/GraphicsPaths/InvertedRoundedRectPath.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 50,
+  "blank": 21
+ },
+ "Engine/GraphicsUtils/GraphicsPaths/RoundedRectPath.cs": {
+  "language": "C#",
+  "code": 42,
+  "comment": 18,
+  "blank": 10
+ },
+ "Engine/GraphicsUtils/GraphicsPaths/ShieldPath.cs": {
+  "language": "C#",
+  "code": 30,
+  "comment": 19,
+  "blank": 10
+ },
+ "Engine/Logging/AppLogger.cs": {
+  "language": "C#",
+  "code": 143,
+  "comment": 20,
+  "blank": 20
+ },
+ "Engine/Logging/LogFileManager.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 10,
+  "blank": 4
+ },
+ "Engine/Mathematics/MathUtil.cs": {
+  "language": "C#",
+  "code": 74,
+  "comment": 44,
+  "blank": 20
+ },
+ "Engine/Mathematics/PositionHelper.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 8,
+  "blank": 1
+ },
+ "Engine/Mathematics/RangeF.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 27,
+  "blank": 5
+ },
+ "Engine/Mathematics/Vector2F.cs": {
+  "language": "C#",
+  "code": 169,
+  "comment": 247,
+  "blank": 50
+ },
+ "Engine/Network/AuthManager.cs": {
+  "language": "C#",
+  "code": 99,
+  "comment": 26,
+  "blank": 21
+ },
+ "Engine/Network/GameClient.cs": {
+  "language": "C#",
+  "code": 59,
+  "comment": 12,
+  "blank": 9
+ },
+ "Engine/Network/NetworkManager.cs": {
+  "language": "C#",
+  "code": 231,
+  "comment": 36,
+  "blank": 41
+ },
+ "Engine/Network/Packet.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 8,
+  "blank": 6
+ },
+ "Engine/Network/PacketType.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 13,
+  "blank": 6
+ },
+ "Engine/Physics/IPhysical2D.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 19,
+  "blank": 1
+ },
+ "Engine/Physics/Physics2D.cs": {
+  "language": "C#",
+  "code": 212,
+  "comment": 227,
+  "blank": 69
+ },
+ "Engine/Physics/PhysicsRegistry.cs": {
+  "language": "C#",
+  "code": 50,
+  "comment": 62,
+  "blank": 8
+ },
+ "Engine/Platform/AppControl.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 14,
+  "blank": 2
+ },
+ "Engine/Platform/GraphicsBackend.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 16,
+  "blank": 1
+ },
+ "Engine/Platform/IBrush.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 2
+ },
+ "Engine/Platform/IFont.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 22,
+  "blank": 5
+ },
+ "Engine/Platform/IGraphics.cs": {
+  "language": "C#",
+  "code": 27,
+  "comment": 34,
+  "blank": 15
+ },
+ "Engine/Platform/IGraphicsFactory.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 33,
+  "blank": 12
+ },
+ "Engine/Platform/IGraphicsPath.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 14,
+  "blank": 2
+ },
+ "Engine/Platform/IMatrix.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 16,
+  "blank": 2
+ },
+ "Engine/Platform/IMouseEvent.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 14,
+  "blank": 3
+ },
+ "Engine/Platform/IPen.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 20,
+  "blank": 4
+ },
+ "Engine/Platform/IRegion.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 14,
+  "blank": 2
+ },
+ "Engine/Platform/IStringFormat.cs": {
+  "language": "C#",
+  "code": 29,
+  "comment": 24,
+  "blank": 6
+ },
+ "Engine/Platform/IWindow.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 1
+ },
+ "Engine/Platform/Skia/SilkInputAdapter.cs": {
+  "language": "C#",
+  "code": 78,
+  "comment": 33,
+  "blank": 20
+ },
+ "Engine/Platform/Skia/SilkMouseEvent.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Platform/Skia/SilkWindow.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 15,
+  "blank": 1
+ },
+ "Engine/Platform/Skia/SkiaBrush.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Platform/Skia/SkiaFont.cs": {
+  "language": "C#",
+  "code": 136,
+  "comment": 32,
+  "blank": 19
+ },
+ "Engine/Platform/Skia/SkiaFontFallback.cs": {
+  "language": "C#",
+  "code": 68,
+  "comment": 41,
+  "blank": 15
+ },
+ "Engine/Platform/Skia/SkiaFontFamily.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Platform/Skia/SkiaGraphics.cs": {
+  "language": "C#",
+  "code": 246,
+  "comment": 71,
+  "blank": 56
+ },
+ "Engine/Platform/Skia/SkiaGraphicsFactory.cs": {
+  "language": "C#",
+  "code": 87,
+  "comment": 24,
+  "blank": 22
+ },
+ "Engine/Platform/Skia/SkiaGraphicsPath.cs": {
+  "language": "C#",
+  "code": 57,
+  "comment": 19,
+  "blank": 12
+ },
+ "Engine/Platform/Skia/SkiaMatrix.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 16,
+  "blank": 5
+ },
+ "Engine/Platform/Skia/SkiaPen.cs": {
+  "language": "C#",
+  "code": 30,
+  "comment": 15,
+  "blank": 6
+ },
+ "Engine/Platform/Skia/SkiaRegion.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 9,
+  "blank": 6
+ },
+ "Engine/Platform/Skia/SkiaStringFormat.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 17,
+  "blank": 3
+ },
+ "Engine/Platform/WinForms/WinFormsBrush.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Platform/WinForms/WinFormsFont.cs": {
+  "language": "C#",
+  "code": 27,
+  "comment": 9,
+  "blank": 6
+ },
+ "Engine/Platform/WinForms/WinFormsFontFamily.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Platform/WinForms/WinFormsGraphics.cs": {
+  "language": "C#",
+  "code": 90,
+  "comment": 26,
+  "blank": 26
+ },
+ "Engine/Platform/WinForms/WinFormsGraphicsFactory.cs": {
+  "language": "C#",
+  "code": 80,
+  "comment": 13,
+  "blank": 18
+ },
+ "Engine/Platform/WinForms/WinFormsGraphicsPath.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 9,
+  "blank": 7
+ },
+ "Engine/Platform/WinForms/WinFormsInputAdapter.cs": {
+  "language": "C#",
+  "code": 47,
+  "comment": 20,
+  "blank": 11
+ },
+ "Engine/Platform/WinForms/WinFormsMatrix.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 9,
+  "blank": 5
+ },
+ "Engine/Platform/WinForms/WinFormsMouseEvent.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 15,
+  "blank": 5
+ },
+ "Engine/Platform/WinForms/WinFormsPen.cs": {
+  "language": "C#",
+  "code": 24,
+  "comment": 9,
+  "blank": 6
+ },
+ "Engine/Platform/WinForms/WinFormsRegion.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 9,
+  "blank": 5
+ },
+ "Engine/Platform/WinForms/WinFormsStringFormat.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 9,
+  "blank": 10
+ },
+ "Engine/Platform/WinForms/WinFormsTimerProvider.cs": {
+  "language": "C#",
+  "code": 54,
+  "comment": 48,
+  "blank": 16
+ },
+ "Engine/Platform/WinForms/WinFormsWindow.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 4
+ },
+ "Engine/Randomization/GlobalRandom.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 15,
+  "blank": 1
+ },
+ "Engine/Randomization/IRandomProvider.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 53,
+  "blank": 9
+ },
+ "Engine/Randomization/RandomTable.cs": {
+  "language": "C#",
+  "code": 89,
+  "comment": 80,
+  "blank": 17
+ },
+ "Engine/Randomization/RandomTableThreadSafe.cs": {
+  "language": "C#",
+  "code": 111,
+  "comment": 80,
+  "blank": 17
+ },
+ "Engine/Randomization/WeightedRandomSelector.cs": {
+  "language": "C#",
+  "code": 38,
+  "comment": 23,
+  "blank": 7
+ },
+ "Engine/Styles/BorderStyle.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/Styles/ButtonText.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 25,
+  "blank": 4
+ },
+ "Engine/Styles/DefaultStyles.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 14,
+  "blank": 1
+ },
+ "Engine/Styles/DoubleBorderRoundedStyle.cs": {
+  "language": "C#",
+  "code": 51,
+  "comment": 11,
+  "blank": 15
+ },
+ "Engine/Styles/DropdownStyle.cs": {
+  "language": "C#",
+  "code": 24,
+  "comment": 30,
+  "blank": 18
+ },
+ "Engine/Styles/FontManager.cs": {
+  "language": "C#",
+  "code": 31,
+  "comment": 11,
+  "blank": 7
+ },
+ "Engine/Styles/IBoxDrawStyle.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/Styles/IBrushFactory.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/Styles/IButtonDrawStyle.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/Styles/InwardCornerDialogStyle.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 17,
+  "blank": 9
+ },
+ "Engine/Styles/LinearGradientBrushFactory.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 19,
+  "blank": 7
+ },
+ "Engine/Styles/SingleBorderRoundedStyle.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 11,
+  "blank": 15
+ },
+ "Engine/Styles/SliderStyle.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 23,
+  "blank": 12
+ },
+ "Engine/Styles/SolidBrushFactory.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 8,
+  "blank": 5
+ },
+ "Engine/Styles/StyleHelper.cs": {
+  "language": "C#",
+  "code": 132,
+  "comment": 22,
+  "blank": 16
+ },
+ "Engine/Styles/TabBarStyle.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 19,
+  "blank": 7
+ },
+ "Engine/Styles/TextFieldStyle.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 20,
+  "blank": 9
+ },
+ "Engine/Styles/ToggleSwitchStyle.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 19,
+  "blank": 8
+ },
+ "Engine/Timing/FrameRateSettings.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 16,
+  "blank": 8
+ },
+ "Engine/Timing/GlobalTime.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 14,
+  "blank": 1
+ },
+ "Engine/Timing/ITimerProvider.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 24,
+  "blank": 5
+ },
+ "Engine/Timing/ManualTimerProvider.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 19,
+  "blank": 7
+ },
+ "Engine/Timing/TimerSettings.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 43,
+  "blank": 11
+ },
+ "Engine/UI/Constants/Components/BaseDefaults.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 8,
+  "blank": 7
+ },
+ "Engine/UI/Constants/Components/ButtonDefaults.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 8,
+  "blank": 7
+ },
+ "Engine/UI/Constants/Components/ContainerDefaults.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 8,
+  "blank": 7
+ },
+ "Engine/UI/Constants/Components/DropdownDefaults.cs": {
+  "language": "C#",
+  "code": 48,
+  "comment": 20,
+  "blank": 7
+ },
+ "Engine/UI/Constants/Components/EngineSettings.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 15,
+  "blank": 6
+ },
+ "Engine/UI/Constants/Components/MenuDefaults.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 11,
+  "blank": 20
+ },
+ "Engine/UI/Constants/Components/ScrollContainerDefaults.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 8,
+  "blank": 8
+ },
+ "Engine/UI/Constants/Components/SliderDefaults.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 15,
+  "blank": 5
+ },
+ "Engine/UI/Constants/Components/TabBarDefaults.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 15,
+  "blank": 4
+ },
+ "Engine/UI/Constants/Components/TextBoxDefaults.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 10,
+  "blank": 14
+ },
+ "Engine/UI/Constants/Components/TextFieldDefaults.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 17,
+  "blank": 7
+ },
+ "Engine/UI/Constants/Components/ToggleSwitchDefaults.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 14,
+  "blank": 4
+ },
+ "Engine/UI/Constants/Components/UIElementType.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 12,
+  "blank": 1
+ },
+ "Engine/UI/Constants/Core/Alignment.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 16,
+  "blank": 1
+ },
+ "Engine/UI/Constants/Core/Anchor.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 16,
+  "blank": 2
+ },
+ "Engine/UI/Constants/Core/AspectFit.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 14,
+  "blank": 2
+ },
+ "Engine/UI/Constants/Core/DisplayMode.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 18,
+  "blank": 2
+ },
+ "Engine/UI/Constants/Core/FlexEnums.cs": {
+  "language": "C#",
+  "code": 43,
+  "comment": 30,
+  "blank": 9
+ },
+ "Engine/UI/Constants/Core/OverflowMode.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 17,
+  "blank": 3
+ },
+ "Engine/UI/Constants/Core/PaddingF.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 11,
+  "blank": 4
+ },
+ "Engine/UI/Constants/Core/PositionMode.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 26,
+  "blank": 3
+ },
+ "Engine/UI/Constants/Core/SizeMode.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 15,
+  "blank": 4
+ },
+ "Engine/UI/Constants/Events/UIEventType.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 11,
+  "blank": 1
+ },
+ "Engine/UI/Core/Bases/InitializableOnceBase.cs": {
+  "language": "C#",
+  "code": 52,
+  "comment": 46,
+  "blank": 19
+ },
+ "Engine/UI/Core/Bases/UIElementBase.cs": {
+  "language": "C#",
+  "code": 242,
+  "comment": 300,
+  "blank": 96
+ },
+ "Engine/UI/Core/Bases/UIHandlerBase.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 18,
+  "blank": 10
+ },
+ "Engine/UI/Core/Bases/UIRendererBase.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 22,
+  "blank": 4
+ },
+ "Engine/UI/Core/Elements/UIButton.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 37,
+  "blank": 14
+ },
+ "Engine/UI/Core/Elements/UIContainer.cs": {
+  "language": "C#",
+  "code": 55,
+  "comment": 27,
+  "blank": 23
+ },
+ "Engine/UI/Core/Elements/UIDropdown.cs": {
+  "language": "C#",
+  "code": 56,
+  "comment": 40,
+  "blank": 22
+ },
+ "Engine/UI/Core/Elements/UIDropdownList.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 26,
+  "blank": 14
+ },
+ "Engine/UI/Core/Elements/UIElement.cs": {
+  "language": "C#",
+  "code": 452,
+  "comment": 219,
+  "blank": 117
+ },
+ "Engine/UI/Core/Elements/UILabel.cs": {
+  "language": "C#",
+  "code": 155,
+  "comment": 58,
+  "blank": 36
+ },
+ "Engine/UI/Core/Elements/UILabeledRow.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 23,
+  "blank": 9
+ },
+ "Engine/UI/Core/Elements/UIMenu.cs": {
+  "language": "C#",
+  "code": 132,
+  "comment": 46,
+  "blank": 40
+ },
+ "Engine/UI/Core/Elements/UINode.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 34,
+  "blank": 11
+ },
+ "Engine/UI/Core/Elements/UINumberField.cs": {
+  "language": "C#",
+  "code": 65,
+  "comment": 29,
+  "blank": 17
+ },
+ "Engine/UI/Core/Elements/UIOverlayMask.cs": {
+  "language": "C#",
+  "code": 79,
+  "comment": 30,
+  "blank": 16
+ },
+ "Engine/UI/Core/Elements/UIOverlayNode.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 31,
+  "blank": 2
+ },
+ "Engine/UI/Core/Elements/UIRootNode.cs": {
+  "language": "C#",
+  "code": 43,
+  "comment": 47,
+  "blank": 8
+ },
+ "Engine/UI/Core/Elements/UIScrollContainer.cs": {
+  "language": "C#",
+  "code": 212,
+  "comment": 174,
+  "blank": 59
+ },
+ "Engine/UI/Core/Elements/UISlider.cs": {
+  "language": "C#",
+  "code": 76,
+  "comment": 47,
+  "blank": 26
+ },
+ "Engine/UI/Core/Elements/UITabBar.cs": {
+  "language": "C#",
+  "code": 66,
+  "comment": 37,
+  "blank": 19
+ },
+ "Engine/UI/Core/Elements/UITextBox.cs": {
+  "language": "C#",
+  "code": 226,
+  "comment": 53,
+  "blank": 61
+ },
+ "Engine/UI/Core/Elements/UITextField.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 20,
+  "blank": 2
+ },
+ "Engine/UI/Core/Elements/UITextInputElement.cs": {
+  "language": "C#",
+  "code": 103,
+  "comment": 41,
+  "blank": 28
+ },
+ "Engine/UI/Core/Elements/UIToggleSwitch.cs": {
+  "language": "C#",
+  "code": 24,
+  "comment": 26,
+  "blank": 9
+ },
+ "Engine/UI/Core/Handlers/UIButtonHandler.cs": {
+  "language": "C#",
+  "code": 42,
+  "comment": 27,
+  "blank": 12
+ },
+ "Engine/UI/Core/Handlers/UIContainerHandler.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 8,
+  "blank": 2
+ },
+ "Engine/UI/Core/Handlers/UIDropdownHandler.cs": {
+  "language": "C#",
+  "code": 83,
+  "comment": 33,
+  "blank": 22
+ },
+ "Engine/UI/Core/Handlers/UIDropdownListHandler.cs": {
+  "language": "C#",
+  "code": 87,
+  "comment": 29,
+  "blank": 26
+ },
+ "Engine/UI/Core/Handlers/UIHandler.cs": {
+  "language": "C#",
+  "code": 78,
+  "comment": 27,
+  "blank": 23
+ },
+ "Engine/UI/Core/Handlers/UILabelHandler.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 20,
+  "blank": 6
+ },
+ "Engine/UI/Core/Handlers/UILabeledRowHandler.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 12,
+  "blank": 2
+ },
+ "Engine/UI/Core/Handlers/UIMenuHandler.cs": {
+  "language": "C#",
+  "code": 21,
+  "comment": 18,
+  "blank": 4
+ },
+ "Engine/UI/Core/Handlers/UINumberFieldHandler.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 17,
+  "blank": 9
+ },
+ "Engine/UI/Core/Handlers/UIScrollContainerHandler.cs": {
+  "language": "C#",
+  "code": 132,
+  "comment": 61,
+  "blank": 30
+ },
+ "Engine/UI/Core/Handlers/UISliderHandler.cs": {
+  "language": "C#",
+  "code": 72,
+  "comment": 30,
+  "blank": 24
+ },
+ "Engine/UI/Core/Handlers/UITabBarHandler.cs": {
+  "language": "C#",
+  "code": 33,
+  "comment": 20,
+  "blank": 10
+ },
+ "Engine/UI/Core/Handlers/UITextBoxHandler.cs": {
+  "language": "C#",
+  "code": 32,
+  "comment": 23,
+  "blank": 9
+ },
+ "Engine/UI/Core/Handlers/UITextFieldHandler.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 15,
+  "blank": 7
+ },
+ "Engine/UI/Core/Handlers/UITextInputHandler.cs": {
+  "language": "C#",
+  "code": 103,
+  "comment": 27,
+  "blank": 26
+ },
+ "Engine/UI/Core/Handlers/UIToggleSwitchHandler.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 18,
+  "blank": 9
+ },
+ "Engine/UI/Core/Interfaces/IDrawable.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 28,
+  "blank": 2
+ },
+ "Engine/UI/Core/Interfaces/IInitializableOnce.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 41,
+  "blank": 4
+ },
+ "Engine/UI/Core/Interfaces/IResettable.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 14,
+  "blank": 1
+ },
+ "Engine/UI/Core/Interfaces/IScreen.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 30,
+  "blank": 2
+ },
+ "Engine/UI/Core/Interfaces/IUiContainer.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 31,
+  "blank": 3
+ },
+ "Engine/UI/Core/Interfaces/IUiFactory.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 68,
+  "blank": 15
+ },
+ "Engine/UI/Core/Interfaces/IUpdatable.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 22,
+  "blank": 1
+ },
+ "Engine/UI/Core/Renderers/CompositeRenderer.cs": {
+  "language": "C#",
+  "code": 48,
+  "comment": 23,
+  "blank": 8
+ },
+ "Engine/UI/Core/Renderers/UIButtonRenderer.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 14,
+  "blank": 4
+ },
+ "Engine/UI/Core/Renderers/UIContainerRenderer.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 28,
+  "blank": 7
+ },
+ "Engine/UI/Core/Renderers/UIDropdownListRenderer.cs": {
+  "language": "C#",
+  "code": 67,
+  "comment": 19,
+  "blank": 13
+ },
+ "Engine/UI/Core/Renderers/UIDropdownRenderer.cs": {
+  "language": "C#",
+  "code": 61,
+  "comment": 17,
+  "blank": 13
+ },
+ "Engine/UI/Core/Renderers/UILabelRenderer.cs": {
+  "language": "C#",
+  "code": 120,
+  "comment": 32,
+  "blank": 19
+ },
+ "Engine/UI/Core/Renderers/UILabeledRowRenderer.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 13,
+  "blank": 5
+ },
+ "Engine/UI/Core/Renderers/UIMenuRenderer.cs": {
+  "language": "C#",
+  "code": 79,
+  "comment": 25,
+  "blank": 13
+ },
+ "Engine/UI/Core/Renderers/UINumberFieldRenderer.cs": {
+  "language": "C#",
+  "code": 40,
+  "comment": 14,
+  "blank": 7
+ },
+ "Engine/UI/Core/Renderers/UIRenderer.cs": {
+  "language": "C#",
+  "code": 68,
+  "comment": 50,
+  "blank": 27
+ },
+ "Engine/UI/Core/Renderers/UIScrollContainerRenderer.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 12,
+  "blank": 2
+ },
+ "Engine/UI/Core/Renderers/UISliderRenderer.cs": {
+  "language": "C#",
+  "code": 75,
+  "comment": 20,
+  "blank": 12
+ },
+ "Engine/UI/Core/Renderers/UITabBarRenderer.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 13,
+  "blank": 8
+ },
+ "Engine/UI/Core/Renderers/UITextBoxRenderer.cs": {
+  "language": "C#",
+  "code": 86,
+  "comment": 23,
+  "blank": 16
+ },
+ "Engine/UI/Core/Renderers/UITextFieldRenderer.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 13,
+  "blank": 2
+ },
+ "Engine/UI/Core/Renderers/UITextInputRenderer.cs": {
+  "language": "C#",
+  "code": 78,
+  "comment": 22,
+  "blank": 18
+ },
+ "Engine/UI/Core/Renderers/UIToggleSwitchRenderer.cs": {
+  "language": "C#",
+  "code": 48,
+  "comment": 17,
+  "blank": 11
+ },
+ "Engine/UI/Diagnostics/DebugOverlay.cs": {
+  "language": "C#",
+  "code": 73,
+  "comment": 34,
+  "blank": 18
+ },
+ "Engine/UI/Dialogs/IUIDialog.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 26,
+  "blank": 5
+ },
+ "Engine/UI/Infrastructure/DialogManager.cs": {
+  "language": "C#",
+  "code": 47,
+  "comment": 20,
+  "blank": 12
+ },
+ "Engine/UI/Infrastructure/IUiFactoryContext.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 8,
+  "blank": 3
+ },
+ "Engine/UI/Infrastructure/NavigationManager.cs": {
+  "language": "C#",
+  "code": 104,
+  "comment": 57,
+  "blank": 26
+ },
+ "Engine/UI/Infrastructure/UIManager.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 38,
+  "blank": 12
+ },
+ "Engine/UI/Infrastructure/UiFactory.cs": {
+  "language": "C#",
+  "code": 152,
+  "comment": 77,
+  "blank": 42
+ },
+ "Engine/UI/Input/DragHandler.cs": {
+  "language": "C#",
+  "code": 103,
+  "comment": 103,
+  "blank": 48
+ },
+ "Engine/UI/Input/IInputHandler.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 77,
+  "blank": 11
+ },
+ "Engine/UI/Input/IKeyboardInputTarget.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 19,
+  "blank": 5
+ },
+ "Engine/UI/Input/IPointerCaptureTarget.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 19,
+  "blank": 3
+ },
+ "Engine/UI/Input/IScrollInputHandler.cs": {
+  "language": "C#",
+  "code": 31,
+  "comment": 79,
+  "blank": 16
+ },
+ "Engine/UI/Input/KeyboardFocus.cs": {
+  "language": "C#",
+  "code": 58,
+  "comment": 34,
+  "blank": 11
+ },
+ "Engine/UI/Input/MouseInputRouter.cs": {
+  "language": "C#",
+  "code": 152,
+  "comment": 125,
+  "blank": 55
+ },
+ "Engine/UI/Input/ScrollInputHandler.cs": {
+  "language": "C#",
+  "code": 221,
+  "comment": 147,
+  "blank": 72
+ },
+ "Engine/UI/Input/UIInputManager.cs": {
+  "language": "C#",
+  "code": 84,
+  "comment": 89,
+  "blank": 41
+ },
+ "Engine/UI/Input/UIKey.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 20,
+  "blank": 8
+ },
+ "Engine/UI/Layout/BoxSolver.cs": {
+  "language": "C#",
+  "code": 186,
+  "comment": 93,
+  "blank": 37
+ },
+ "Engine/UI/Layout/FlexSolver.cs": {
+  "language": "C#",
+  "code": 376,
+  "comment": 62,
+  "blank": 57
+ },
+ "Engine/UI/Layout/LayoutEngine.cs": {
+  "language": "C#",
+  "code": 136,
+  "comment": 42,
+  "blank": 27
+ },
+ "Engine/UI/Layout/LayoutItem.cs": {
+  "language": "C#",
+  "code": 51,
+  "comment": 29,
+  "blank": 24
+ },
+ "Engine/UI/Models/LayoutSize.cs": {
+  "language": "C#",
+  "code": 39,
+  "comment": 32,
+  "blank": 19
+ },
+ "Engine/UI/Models/UILayout.cs": {
+  "language": "C#",
+  "code": 178,
+  "comment": 183,
+  "blank": 83
+ },
+ "Engine/UI/Models/UILayoutStyle.cs": {
+  "language": "C#",
+  "code": 58,
+  "comment": 64,
+  "blank": 51
+ },
+ "Engine/UI/Models/UIPosition.cs": {
+  "language": "C#",
+  "code": 24,
+  "comment": 42,
+  "blank": 11
+ },
+ "Engine/UI/Utils/DropdownLayout.cs": {
+  "language": "C#",
+  "code": 82,
+  "comment": 41,
+  "blank": 18
+ },
+ "Engine/UI/Utils/NumberInput.cs": {
+  "language": "C#",
+  "code": 61,
+  "comment": 34,
+  "blank": 12
+ },
+ "Engine/UI/Utils/SliderMath.cs": {
+  "language": "C#",
+  "code": 35,
+  "comment": 30,
+  "blank": 7
+ },
+ "Engine/UI/Utils/UIElementUtils.cs": {
+  "language": "C#",
+  "code": 35,
+  "comment": 30,
+  "blank": 8
+ },
+ "Engine/UI/Widgets/ButtonEntry.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 21,
+  "blank": 5
+ },
+ "Game/Application/ChineseChess.Application.csproj": {
+  "language": "XML",
+  "code": 13,
+  "comment": 2,
+  "blank": 0
+ },
+ "Game/Application/Boards/BoardPerspective.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 33,
+  "blank": 5
+ },
+ "Game/Application/Boards/BoardViewModel.cs": {
+  "language": "C#",
+  "code": 137,
+  "comment": 72,
+  "blank": 41
+ },
+ "Game/Application/Boards/BoardViewModelFactory.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 16,
+  "blank": 5
+ },
+ "Game/Application/Catalogs/CategoryListModel.cs": {
+  "language": "C#",
+  "code": 69,
+  "comment": 62,
+  "blank": 18
+ },
+ "Game/Application/Catalogs/EndgameCatalog.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 25,
+  "blank": 8
+ },
+ "Game/Application/Catalogs/GameSaveFiles.cs": {
+  "language": "C#",
+  "code": 48,
+  "comment": 43,
+  "blank": 7
+ },
+ "Game/Application/Catalogs/OpeningCatalog.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 33,
+  "blank": 11
+ },
+ "Game/Application/Catalogs/SavedGameCatalog.cs": {
+  "language": "C#",
+  "code": 95,
+  "comment": 56,
+  "blank": 14
+ },
+ "Game/Application/GameLog/GameLogComposer.cs": {
+  "language": "C#",
+  "code": 55,
+  "comment": 20,
+  "blank": 9
+ },
+ "Game/Application/GameLog/IGameLog.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 1
+ },
+ "Game/Application/GameScreen/GameMenuOption.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 9,
+  "blank": 1
+ },
+ "Game/Application/GameScreen/GameMenuOptions.cs": {
+  "language": "C#",
+  "code": 21,
+  "comment": 12,
+  "blank": 3
+ },
+ "Game/Application/GameScreen/GameScreenPresenter.cs": {
+  "language": "C#",
+  "code": 205,
+  "comment": 94,
+  "blank": 41
+ },
+ "Game/Application/GameScreen/IGameControlCommands.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 24,
+  "blank": 3
+ },
+ "Game/Application/GameScreen/IGameNavigationCommands.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 25,
+  "blank": 3
+ },
+ "Game/Application/InfoBoards/ClockFormatter.cs": {
+  "language": "C#",
+  "code": 77,
+  "comment": 40,
+  "blank": 19
+ },
+ "Game/Application/InfoBoards/InfoBoardViewModel.cs": {
+  "language": "C#",
+  "code": 42,
+  "comment": 49,
+  "blank": 17
+ },
+ "Game/Application/MainMenu/MainMenuOption.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 12,
+  "blank": 1
+ },
+ "Game/Application/MainMenu/MainMenuOptions.cs": {
+  "language": "C#",
+  "code": 25,
+  "comment": 13,
+  "blank": 3
+ },
+ "Game/Application/MainMenu/MainMenuPresenter.cs": {
+  "language": "C#",
+  "code": 124,
+  "comment": 59,
+  "blank": 29
+ },
+ "Game/Application/MainMenu/NewGameOptions.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 15,
+  "blank": 4
+ },
+ "Game/Application/Menus/MenuEntry.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 19,
+  "blank": 5
+ },
+ "Game/Application/Services/ConfirmDialogType.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 18,
+  "blank": 2
+ },
+ "Game/Application/Services/IAppLifetime.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 1
+ },
+ "Game/Application/Services/IDialogService.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 22,
+  "blank": 2
+ },
+ "Game/Application/Services/INavigator.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 23,
+  "blank": 2
+ },
+ "Game/Application/Services/ScreenId.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 15,
+  "blank": 1
+ },
+ "Game/Application/Session/GameSession.cs": {
+  "language": "C#",
+  "code": 89,
+  "comment": 81,
+  "blank": 17
+ },
+ "Game/Application/Settings/SettingsMenuContent.cs": {
+  "language": "C#",
+  "code": 381,
+  "comment": 131,
+  "blank": 93
+ },
+ "Game/Application/Settings/SettingsScreenModel.cs": {
+  "language": "C#",
+  "code": 123,
+  "comment": 63,
+  "blank": 28
+ },
+ "Game/Application/Texts/GameTexts.cs": {
+  "language": "C#",
+  "code": 125,
+  "comment": 81,
+  "blank": 47
+ },
+ "Game/Application/Texts/MenuTexts.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 31,
+  "blank": 16
+ },
+ "Game/Application/Texts/SettingsTexts.cs": {
+  "language": "C#",
+  "code": 111,
+  "comment": 36,
+  "blank": 24
+ },
+ "Game/Configs/FolderSettings.cs": {
+  "language": "C#",
+  "code": 35,
+  "comment": 27,
+  "blank": 11
+ },
+ "Game/Configs/GameRuleSettings.cs": {
+  "language": "C#",
+  "code": 107,
+  "comment": 45,
+  "blank": 20
+ },
+ "Game/Configs/HintSettings.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 16,
+  "blank": 8
+ },
+ "Game/Configs/PlayerNameSettings.cs": {
+  "language": "C#",
+  "code": 40,
+  "comment": 24,
+  "blank": 14
+ },
+ "Game/Configs/PlayerSettings.cs": {
+  "language": "C#",
+  "code": 19,
+  "comment": 25,
+  "blank": 11
+ },
+ "Game/Configs/PlayerSettingsFile.cs": {
+  "language": "C#",
+  "code": 51,
+  "comment": 28,
+  "blank": 13
+ },
+ "Game/Configs/RuleSettings.cs": {
+  "language": "C#",
+  "code": 152,
+  "comment": 75,
+  "blank": 61
+ },
+ "Game/Configs/SystemSettings.cs": {
+  "language": "C#",
+  "code": 86,
+  "comment": 84,
+  "blank": 39
+ },
+ "Game/Core/ChineseChess.Core.csproj": {
+  "language": "XML",
+  "code": 9,
+  "comment": 1,
+  "blank": 0
+ },
+ "Game/Core/GameKind.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 20,
+  "blank": 5
+ },
+ "Game/Core/GameLogEvent.cs": {
+  "language": "C#",
+  "code": 38,
+  "comment": 56,
+  "blank": 29
+ },
+ "Game/Core/GameManager.cs": {
+  "language": "C#",
+  "code": 1015,
+  "comment": 682,
+  "blank": 211
+ },
+ "Game/Core/GameMode.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 15,
+  "blank": 3
+ },
+ "Game/Core/GameOverInfo.cs": {
+  "language": "C#",
+  "code": 69,
+  "comment": 75,
+  "blank": 20
+ },
+ "Game/Core/GameOverReason.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 25,
+  "blank": 5
+ },
+ "Game/Core/GameRuleSets.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 26,
+  "blank": 6
+ },
+ "Game/Core/HalfCrossVariants.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 25,
+  "blank": 7
+ },
+ "Game/Core/MoveKind.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 41,
+  "blank": 7
+ },
+ "Game/Core/Rules.cs": {
+  "language": "C#",
+  "code": 81,
+  "comment": 104,
+  "blank": 41
+ },
+ "Game/Core/TacticalAnalysis.cs": {
+  "language": "C#",
+  "code": 230,
+  "comment": 75,
+  "blank": 32
+ },
+ "Game/Core/TacticalEvent.cs": {
+  "language": "C#",
+  "code": 49,
+  "comment": 47,
+  "blank": 18
+ },
+ "Game/Core/Boards/Board.cs": {
+  "language": "C#",
+  "code": 421,
+  "comment": 301,
+  "blank": 92
+ },
+ "Game/Core/Boards/BoardAnalysis.cs": {
+  "language": "C#",
+  "code": 67,
+  "comment": 51,
+  "blank": 10
+ },
+ "Game/Core/Boards/BoardConfigLoader.cs": {
+  "language": "C#",
+  "code": 79,
+  "comment": 42,
+  "blank": 12
+ },
+ "Game/Core/Boards/BoardConstants.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 85,
+  "blank": 8
+ },
+ "Game/Core/Boards/GridPoint.cs": {
+  "language": "C#",
+  "code": 4,
+  "comment": 15,
+  "blank": 1
+ },
+ "Game/Core/Endgames/EndgameLoader.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 27,
+  "blank": 7
+ },
+ "Game/Core/Endgames/EndgamePgn.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 33,
+  "blank": 9
+ },
+ "Game/Core/Endgames/EndgamePuzzle.cs": {
+  "language": "C#",
+  "code": 21,
+  "comment": 23,
+  "blank": 8
+ },
+ "Game/Core/Movements/MoveDirections.cs": {
+  "language": "C#",
+  "code": 51,
+  "comment": 8,
+  "blank": 5
+ },
+ "Game/Core/Movements/MoveMatrix.cs": {
+  "language": "C#",
+  "code": 46,
+  "comment": 36,
+  "blank": 9
+ },
+ "Game/Core/Movements/MovePatterns.cs": {
+  "language": "C#",
+  "code": 20,
+  "comment": 27,
+  "blank": 6
+ },
+ "Game/Core/Notation/ChineseMoveNotation.cs": {
+  "language": "C#",
+  "code": 99,
+  "comment": 64,
+  "blank": 20
+ },
+ "Game/Core/Openings/OpeningLine.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 27,
+  "blank": 6
+ },
+ "Game/Core/Openings/OpeningLoader.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 28,
+  "blank": 7
+ },
+ "Game/Core/Openings/OpeningPgn.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 26,
+  "blank": 7
+ },
+ "Game/Core/Pgn/IccsMove.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 29,
+  "blank": 10
+ },
+ "Game/Core/Pgn/PgnFolderLoader.cs": {
+  "language": "C#",
+  "code": 111,
+  "comment": 50,
+  "blank": 19
+ },
+ "Game/Core/Pgn/PgnGameFile.cs": {
+  "language": "C#",
+  "code": 52,
+  "comment": 51,
+  "blank": 22
+ },
+ "Game/Core/Pgn/PgnReader.cs": {
+  "language": "C#",
+  "code": 215,
+  "comment": 75,
+  "blank": 28
+ },
+ "Game/Core/Pgn/PgnWriter.cs": {
+  "language": "C#",
+  "code": 49,
+  "comment": 23,
+  "blank": 7
+ },
+ "Game/Core/Pgn/XiangqiFen.cs": {
+  "language": "C#",
+  "code": 147,
+  "comment": 59,
+  "blank": 22
+ },
+ "Game/Core/Pieces/Piece.cs": {
+  "language": "C#",
+  "code": 253,
+  "comment": 219,
+  "blank": 62
+ },
+ "Game/Core/Pieces/PieceConstants.cs": {
+  "language": "C#",
+  "code": 91,
+  "comment": 30,
+  "blank": 11
+ },
+ "Game/Core/Pieces/PieceInfo.cs": {
+  "language": "C#",
+  "code": 74,
+  "comment": 46,
+  "blank": 17
+ },
+ "Game/Core/Pieces/PieceType.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 8,
+  "blank": 1
+ },
+ "Game/Core/Pieces/PieceTypes/Advisor.cs": {
+  "language": "C#",
+  "code": 77,
+  "comment": 63,
+  "blank": 25
+ },
+ "Game/Core/Pieces/PieceTypes/Cannon.cs": {
+  "language": "C#",
+  "code": 199,
+  "comment": 94,
+  "blank": 52
+ },
+ "Game/Core/Pieces/PieceTypes/Chariot.cs": {
+  "language": "C#",
+  "code": 169,
+  "comment": 70,
+  "blank": 54
+ },
+ "Game/Core/Pieces/PieceTypes/Elephant.cs": {
+  "language": "C#",
+  "code": 92,
+  "comment": 75,
+  "blank": 32
+ },
+ "Game/Core/Pieces/PieceTypes/General.cs": {
+  "language": "C#",
+  "code": 75,
+  "comment": 66,
+  "blank": 24
+ },
+ "Game/Core/Pieces/PieceTypes/Horse.cs": {
+  "language": "C#",
+  "code": 144,
+  "comment": 72,
+  "blank": 47
+ },
+ "Game/Core/Pieces/PieceTypes/Soldier.cs": {
+  "language": "C#",
+  "code": 76,
+  "comment": 65,
+  "blank": 25
+ },
+ "Game/Core/Players/Player.cs": {
+  "language": "C#",
+  "code": 37,
+  "comment": 29,
+  "blank": 8
+ },
+ "Game/Core/Players/PlayerSide.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 28,
+  "blank": 5
+ },
+ "Game/Core/Players/PlayerTimer.cs": {
+  "language": "C#",
+  "code": 169,
+  "comment": 73,
+  "blank": 39
+ },
+ "Game/Core/Players/PlayerTimerPresets.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 16,
+  "blank": 3
+ },
+ "Game/Core/Saves/SavedGame.cs": {
+  "language": "C#",
+  "code": 72,
+  "comment": 63,
+  "blank": 34
+ },
+ "Game/Core/Saves/SavedGameLoader.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 22,
+  "blank": 6
+ },
+ "Game/Core/Saves/SavedGamePgn.cs": {
+  "language": "C#",
+  "code": 222,
+  "comment": 71,
+  "blank": 25
+ },
+ "Game/UI/ChineseChess.UI.csproj": {
+  "language": "XML",
+  "code": 13,
+  "comment": 1,
+  "blank": 0
+ },
+ "Game/UI/Binders/UIPieceBinder.cs": {
+  "language": "C#",
+  "code": 117,
+  "comment": 23,
+  "blank": 26
+ },
+ "Game/UI/Boards/BoardHitTest.cs": {
+  "language": "C#",
+  "code": 38,
+  "comment": 61,
+  "blank": 8
+ },
+ "Game/UI/Boards/BoardPixelExtensions.cs": {
+  "language": "C#",
+  "code": 16,
+  "comment": 34,
+  "blank": 5
+ },
+ "Game/UI/Boards/UIBoard.cs": {
+  "language": "C#",
+  "code": 140,
+  "comment": 89,
+  "blank": 33
+ },
+ "Game/UI/Boards/UIBoardHandler.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 13,
+  "blank": 5
+ },
+ "Game/UI/Boards/UIBoardRenderer.cs": {
+  "language": "C#",
+  "code": 232,
+  "comment": 55,
+  "blank": 48
+ },
+ "Game/UI/Boards/UIBoardStyles.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 8,
+  "blank": 3
+ },
+ "Game/UI/Boards/Pieces/UIPiece.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 34,
+  "blank": 10
+ },
+ "Game/UI/Boards/Pieces/UIPieceRenderer.cs": {
+  "language": "C#",
+  "code": 107,
+  "comment": 35,
+  "blank": 21
+ },
+ "Game/UI/Constants/PieceSettings.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 26,
+  "blank": 5
+ },
+ "Game/UI/Constants/UILayoutConstants.Board.cs": {
+  "language": "C#",
+  "code": 78,
+  "comment": 73,
+  "blank": 22
+ },
+ "Game/UI/Constants/UILayoutConstants.CategoryListMenu.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 30,
+  "blank": 9
+ },
+ "Game/UI/Constants/UILayoutConstants.GameMenu.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 21,
+  "blank": 6
+ },
+ "Game/UI/Constants/UILayoutConstants.LoadSavedGameMenu.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 20,
+  "blank": 4
+ },
+ "Game/UI/Constants/UILayoutConstants.MainMenu.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 25,
+  "blank": 7
+ },
+ "Game/UI/Constants/UILayoutConstants.SettingsMenu.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 55,
+  "blank": 35
+ },
+ "Game/UI/Constants/UILayoutConstants.Sidebar.cs": {
+  "language": "C#",
+  "code": 45,
+  "comment": 36,
+  "blank": 10
+ },
+ "Game/UI/Constants/UILayoutConstants.Submenu.cs": {
+  "language": "C#",
+  "code": 35,
+  "comment": 23,
+  "blank": 6
+ },
+ "Game/UI/Constants/UILayoutConstants.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 29,
+  "blank": 4
+ },
+ "Game/UI/Constants/UILayoutSheet.cs": {
+  "language": "C#",
+  "code": 283,
+  "comment": 175,
+  "blank": 54
+ },
+ "Game/UI/Constants/UILayoutStyles.cs": {
+  "language": "C#",
+  "code": 318,
+  "comment": 74,
+  "blank": 43
+ },
+ "Game/UI/Constants/WindowSettings.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 13,
+  "blank": 1
+ },
+ "Game/UI/Dialogs/ConfirmDialogOptions.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 13,
+  "blank": 7
+ },
+ "Game/UI/Dialogs/DialogManager.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 14,
+  "blank": 5
+ },
+ "Game/UI/Dialogs/DialogService.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 12,
+  "blank": 3
+ },
+ "Game/UI/Dialogs/UIConfirmDialog.cs": {
+  "language": "C#",
+  "code": 148,
+  "comment": 56,
+  "blank": 38
+ },
+ "Game/UI/Dialogs/UIConfirmDialogRenderer.cs": {
+  "language": "C#",
+  "code": 27,
+  "comment": 8,
+  "blank": 7
+ },
+ "Game/UI/Menus/MenuEntryButtons.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 15,
+  "blank": 4
+ },
+ "Game/UI/Menus/MenuLayout.cs": {
+  "language": "C#",
+  "code": 34,
+  "comment": 42,
+  "blank": 7
+ },
+ "Game/UI/Menus/CategoryListMenu/UIButtonRow.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 16,
+  "blank": 2
+ },
+ "Game/UI/Menus/CategoryListMenu/UIButtonRowHandler.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 9,
+  "blank": 2
+ },
+ "Game/UI/Menus/CategoryListMenu/UIButtonRowRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/CategoryListMenu/UICategoryListMenu.cs": {
+  "language": "C#",
+  "code": 192,
+  "comment": 83,
+  "blank": 35
+ },
+ "Game/UI/Menus/CategoryListMenu/UICategoryListMenuHandler.cs": {
+  "language": "C#",
+  "code": 52,
+  "comment": 52,
+  "blank": 23
+ },
+ "Game/UI/Menus/EndgameMenu/UIEndgameMenu.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 15,
+  "blank": 4
+ },
+ "Game/UI/Menus/EndgameMenu/UIEndgameMenuHandler.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 21,
+  "blank": 14
+ },
+ "Game/UI/Menus/EndgameMenu/UIEndgameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/GameMenu/UIGameMenu.cs": {
+  "language": "C#",
+  "code": 61,
+  "comment": 17,
+  "blank": 15
+ },
+ "Game/UI/Menus/GameMenu/UIGameMenuHandler.cs": {
+  "language": "C#",
+  "code": 93,
+  "comment": 40,
+  "blank": 19
+ },
+ "Game/UI/Menus/GameMenu/UIGameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/LoadGameMenu/UILoadGameMenu.cs": {
+  "language": "C#",
+  "code": 55,
+  "comment": 14,
+  "blank": 12
+ },
+ "Game/UI/Menus/LoadGameMenu/UILoadGameMenuHandler.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 12,
+  "blank": 4
+ },
+ "Game/UI/Menus/LoadGameMenu/UILoadGameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/LoadSavedGameMenu/UILoadSavedGameMenu.cs": {
+  "language": "C#",
+  "code": 95,
+  "comment": 47,
+  "blank": 21
+ },
+ "Game/UI/Menus/LoadSavedGameMenu/UILoadSavedGameMenuHandler.cs": {
+  "language": "C#",
+  "code": 54,
+  "comment": 36,
+  "blank": 15
+ },
+ "Game/UI/Menus/LoadSavedGameMenu/UILoadSavedGameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/MainMenu/UIMainMenu.cs": {
+  "language": "C#",
+  "code": 42,
+  "comment": 14,
+  "blank": 10
+ },
+ "Game/UI/Menus/MainMenu/UIMainMenuHandler.cs": {
+  "language": "C#",
+  "code": 79,
+  "comment": 43,
+  "blank": 21
+ },
+ "Game/UI/Menus/MainMenu/UIMainMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/NewGameMenu/UINewGameMenu.cs": {
+  "language": "C#",
+  "code": 40,
+  "comment": 12,
+  "blank": 11
+ },
+ "Game/UI/Menus/NewGameMenu/UINewGameMenuHandler.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 16,
+  "blank": 6
+ },
+ "Game/UI/Menus/NewGameMenu/UINewGameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/OpeningMenu/UIOpeningMenu.cs": {
+  "language": "C#",
+  "code": 15,
+  "comment": 16,
+  "blank": 3
+ },
+ "Game/UI/Menus/OpeningMenu/UIOpeningMenuHandler.cs": {
+  "language": "C#",
+  "code": 21,
+  "comment": 18,
+  "blank": 10
+ },
+ "Game/UI/Menus/OpeningMenu/UIOpeningMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/SavedGameMenu/UISavedGameMenu.cs": {
+  "language": "C#",
+  "code": 49,
+  "comment": 29,
+  "blank": 11
+ },
+ "Game/UI/Menus/SavedGameMenu/UISavedGameMenuHandler.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 33,
+  "blank": 16
+ },
+ "Game/UI/Menus/SavedGameMenu/UISavedGameMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Menus/SettingsMenu/UISettingsMenu.cs": {
+  "language": "C#",
+  "code": 206,
+  "comment": 50,
+  "blank": 38
+ },
+ "Game/UI/Menus/SettingsMenu/UISettingsMenuHandler.cs": {
+  "language": "C#",
+  "code": 54,
+  "comment": 30,
+  "blank": 19
+ },
+ "Game/UI/Menus/SettingsMenu/UISettingsMenuRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Navigation/AppLifetime.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 12,
+  "blank": 3
+ },
+ "Game/UI/Navigation/Navigator.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 13,
+  "blank": 7
+ },
+ "Game/UI/Sidebars/UISidebar.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 28,
+  "blank": 14
+ },
+ "Game/UI/Sidebars/UISidebarHandler.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 12,
+  "blank": 2
+ },
+ "Game/UI/Sidebars/UISidebarRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Sidebars/InfoBoards/UIInfoBoard.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 13,
+  "blank": 6
+ },
+ "Game/UI/Sidebars/InfoBoards/UIInfoBoardHandler.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 12,
+  "blank": 3
+ },
+ "Game/UI/Sidebars/InfoBoards/UIInfoBoardRenderer.cs": {
+  "language": "C#",
+  "code": 162,
+  "comment": 38,
+  "blank": 34
+ },
+ "Game/UI/Sidebars/InfoBoards/UIInfoBoardSettings.cs": {
+  "language": "C#",
+  "code": 14,
+  "comment": 8,
+  "blank": 3
+ },
+ "Game/UI/Sidebars/LoggerBoxes/UILoggerBox.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 13,
+  "blank": 8
+ },
+ "Game/UI/Sidebars/LoggerBoxes/UILoggerBoxHandler.cs": {
+  "language": "C#",
+  "code": 9,
+  "comment": 12,
+  "blank": 3
+ },
+ "Game/UI/Sidebars/LoggerBoxes/UILoggerBoxRenderer.cs": {
+  "language": "C#",
+  "code": 8,
+  "comment": 8,
+  "blank": 2
+ },
+ "Game/UI/Sidebars/LoggerBoxes/UILoggerBoxSettings.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 8,
+  "blank": 3
+ },
+ "Launcher/Launcher.csproj": {
+  "language": "XML",
+  "code": 20,
+  "comment": 1,
+  "blank": 0
+ },
+ "Launcher/MainForm.cs": {
+  "language": "C#",
+  "code": 117,
+  "comment": 35,
+  "blank": 29
+ },
+ "Launcher/Program.cs": {
+  "language": "C#",
+  "code": 23,
+  "comment": 36,
+  "blank": 9
+ },
+ "Launcher.Cross/CrossPlatformApp.cs": {
+  "language": "C#",
+  "code": 147,
+  "comment": 55,
+  "blank": 38
+ },
+ "Launcher.Cross/Launcher.Cross.csproj": {
+  "language": "XML",
+  "code": 20,
+  "comment": 3,
+  "blank": 0
+ },
+ "Launcher.Cross/Program.cs": {
+  "language": "C#",
+  "code": 32,
+  "comment": 30,
+  "blank": 11
+ },
+ "StarAnimation/StarAnimation.cs": {
+  "language": "C#",
+  "code": 30,
+  "comment": 24,
+  "blank": 9
+ },
+ "StarAnimation/StarAnimation.csproj": {
+  "language": "XML",
+  "code": 14,
+  "comment": 1,
+  "blank": 0
+ },
+ "StarAnimation/Configs/Settings.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 8,
+  "blank": 1
+ },
+ "StarAnimation/Controllers/BackgroundController.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 8,
+  "blank": 8
+ },
+ "StarAnimation/Controllers/EffectController.cs": {
+  "language": "C#",
+  "code": 132,
+  "comment": 39,
+  "blank": 27
+ },
+ "StarAnimation/Controllers/FrameController.cs": {
+  "language": "C#",
+  "code": 53,
+  "comment": 40,
+  "blank": 16
+ },
+ "StarAnimation/Controllers/MainRenderController.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 45,
+  "blank": 14
+ },
+ "StarAnimation/Controllers/StarController.cs": {
+  "language": "C#",
+  "code": 205,
+  "comment": 72,
+  "blank": 43
+ },
+ "StarAnimation/Core/Effect/EffectConfigRegistry.cs": {
+  "language": "C#",
+  "code": 66,
+  "comment": 23,
+  "blank": 6
+ },
+ "StarAnimation/Core/Effect/EffectInstance.cs": {
+  "language": "C#",
+  "code": 78,
+  "comment": 14,
+  "blank": 12
+ },
+ "StarAnimation/Core/Effect/IEffectInstance.cs": {
+  "language": "C#",
+  "code": 11,
+  "comment": 8,
+  "blank": 3
+ },
+ "StarAnimation/Core/Effect/Instance/ColorShiftInstance.cs": {
+  "language": "C#",
+  "code": 95,
+  "comment": 34,
+  "blank": 20
+ },
+ "StarAnimation/Core/Effect/Instance/ConcentrateInstance.cs": {
+  "language": "C#",
+  "code": 68,
+  "comment": 16,
+  "blank": 12
+ },
+ "StarAnimation/Core/Effect/Instance/PulseInstance.cs": {
+  "language": "C#",
+  "code": 91,
+  "comment": 31,
+  "blank": 18
+ },
+ "StarAnimation/Core/Effect/Instance/TwistInstance.cs": {
+  "language": "C#",
+  "code": 141,
+  "comment": 29,
+  "blank": 25
+ },
+ "StarAnimation/Core/Effect/Parameter/ColorShiftParameter.cs": {
+  "language": "C#",
+  "code": 18,
+  "comment": 11,
+  "blank": 6
+ },
+ "StarAnimation/Core/Effect/Parameter/ConcentrateParameter.cs": {
+  "language": "C#",
+  "code": 13,
+  "comment": 13,
+  "blank": 4
+ },
+ "StarAnimation/Core/Effect/Parameter/PulseParameter.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 11,
+  "blank": 6
+ },
+ "StarAnimation/Core/Effect/Parameter/TwistParameter.cs": {
+  "language": "C#",
+  "code": 26,
+  "comment": 11,
+  "blank": 6
+ },
+ "StarAnimation/DEPRECATED/OverscrollCalculator.cs": {
+  "language": "C#",
+  "code": 56,
+  "comment": 33,
+  "blank": 10
+ },
+ "StarAnimation/DEPRECATED/TwistInstanceGravity.cs": {
+  "language": "C#",
+  "code": 141,
+  "comment": 40,
+  "blank": 28
+ },
+ "StarAnimation/DEPRECATED/TwistManager.cs": {
+  "language": "C#",
+  "code": 40,
+  "comment": 20,
+  "blank": 7
+ },
+ "StarAnimation/DEPRECATED/Twist_Old.cs": {
+  "language": "C#",
+  "code": 47,
+  "comment": 39,
+  "blank": 15
+ },
+ "StarAnimation/Interfaces/IDrawable.cs": {
+  "language": "C#",
+  "code": 6,
+  "comment": 9,
+  "blank": 1
+ },
+ "StarAnimation/Models/Effect.cs": {
+  "language": "C#",
+  "code": 22,
+  "comment": 20,
+  "blank": 3
+ },
+ "StarAnimation/Models/EffectType.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 8,
+  "blank": 1
+ },
+ "StarAnimation/Models/Frame.cs": {
+  "language": "C#",
+  "code": 12,
+  "comment": 11,
+  "blank": 2
+ },
+ "StarAnimation/Models/Star.cs": {
+  "language": "C#",
+  "code": 89,
+  "comment": 65,
+  "blank": 18
+ },
+ "StarAnimation/Renderers/BackgroundRenderer.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 34,
+  "blank": 10
+ },
+ "StarAnimation/Renderers/FrameRenderer.cs": {
+  "language": "C#",
+  "code": 41,
+  "comment": 23,
+  "blank": 6
+ },
+ "StarAnimation/Renderers/StarRenderer.cs": {
+  "language": "C#",
+  "code": 44,
+  "comment": 19,
+  "blank": 6
+ },
+ "StarAnimation/Utils/AreaHandler.cs": {
+  "language": "C#",
+  "code": 31,
+  "comment": 33,
+  "blank": 6
+ },
+ "StarAnimation/Utils/Area/CircleAreaSelector.cs": {
+  "language": "C#",
+  "code": 47,
+  "comment": 11,
+  "blank": 8
+ },
+ "StarAnimation/Utils/Area/CircleAreaShape.cs": {
+  "language": "C#",
+  "code": 28,
+  "comment": 26,
+  "blank": 8
+ },
+ "StarAnimation/Utils/Area/IAreaSelector.cs": {
+  "language": "C#",
+  "code": 7,
+  "comment": 11,
+  "blank": 1
+ },
+ "StarAnimation/Utils/Area/IAreaShape.cs": {
+  "language": "C#",
+  "code": 10,
+  "comment": 14,
+  "blank": 4
+ },
+ "StarAnimation/Utils/Area/RectangleAreaSelector.cs": {
+  "language": "C#",
+  "code": 59,
+  "comment": 14,
+  "blank": 10
+ },
+ "StarAnimation/Utils/Area/RectangleAreaShape.cs": {
+  "language": "C#",
+  "code": 17,
+  "comment": 8,
+  "blank": 5
+ }
+}

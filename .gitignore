@@ -30,9 +30,8 @@ project.fragment.lock.json
 *.sbr
 *.scc
 *.publish.xml
-# VS Code (.VSCodeCounter: the VS Code Counter extension's reports)
+# VS Code
 .vscode/
-.VSCodeCounter
 # JetBrains Rider / ReSharper
 .idea/
 *.sln.iml
