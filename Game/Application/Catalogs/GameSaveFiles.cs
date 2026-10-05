@@ -4,19 +4,20 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.Core.Saves;
 
-namespace Chinese_Chess_v3.Game.Configs
+namespace Chinese_Chess_v3.Game.Application.Catalogs
 {
     /// <summary>
     /// Saving, listing and deleting games in the game's saves folder, by the location and naming rules
