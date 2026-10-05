@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.3
 /* ----- ----- ----- ----- */
 
@@ -45,6 +45,15 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// (<see cref="SavedGameDateFormat"/>), {2} = time (<see cref="SavedGameTimeFormat"/>).
         /// </summary>
         public const string SavedGameRowFormat = "{0}　{1} {2}";
+
+        /// <summary>
+        /// Both saved-game lists: the delete-mode toggle while off (clicking it turns delete
+        /// mode on: a clicked save then asks to be deleted instead of being loaded).
+        /// </summary>
+        public const string DeleteModeOff = "刪除存檔";
+
+        /// <summary>Both saved-game lists: the delete-mode toggle while on (clicking it goes back to loading saves).</summary>
+        public const string DeleteModeOn = "結束刪除";
 
         // ----- New-game menu -----
 

@@ -70,7 +70,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         protected virtual void OnItemStarted(TItem item) { }
 
         /// <summary>Submenu opened: reload the files, so items added meanwhile appear.</summary>
-        public void OnEnter() => Reload();
+        public virtual void OnEnter() => Reload();
 
         public void OnExit() { }
 
@@ -99,7 +99,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         }
 
         /// <summary>
-        /// Item clicked: started the way a new game is (<see cref="GameSession.TryStart"/>: game
+        /// Item button clicked: starts it (<see cref="StartItem"/>). A derived handler may do
+        /// something else in a mode of its own (the saved-game list's delete mode).
+        /// </summary>
+        public virtual void ClickItem(TItem item) => StartItem(item);
+
+        /// <summary>
+        /// Starts <paramref name="item"/> the way a new game is (<see cref="GameSession.TryStart"/>: game
         /// screen - already there for a submenu on the game screen -, restart and views reset,
         /// then the item set up with <see cref="StartOnBoard"/>; an item that cannot be set up
         /// is logged), then <see cref="OnItemStarted"/>.

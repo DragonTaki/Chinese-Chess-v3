@@ -24,7 +24,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
     /// <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>): lists the
     /// saves of the <see cref="SavedGameCatalog"/> (categories = mode folders) and loads the
     /// chosen one with <see cref="GameManager.LoadSavedGame"/>, then tells the game menu
-    /// (<see cref="ItemStarted"/>) so it closes the list. Opened and closed by
+    /// (<see cref="ItemStarted"/>) so it closes the list; in delete mode
+    /// (<see cref="IsDeleteMode"/>) a clicked save is deleted after asking. Opened and closed by
     /// <c>UIGameMenuHandler</c>, which calls <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.OnEnter"/>
     /// to reload the files each time.
     /// </summary>
@@ -52,5 +53,38 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
             gameManager.LoadSavedGame(saved);
 
         protected override void OnItemStarted(SavedGame item) => ItemStarted?.Invoke();
+
+        /// <summary>
+        /// Whether the list is in delete mode: a clicked save asks to be deleted
+        /// (<see cref="SavedGameCatalog.ConfirmDelete"/>) instead of being loaded. Off each time
+        /// the list is opened.
+        /// </summary>
+        public bool IsDeleteMode { get; private set; }
+
+        /// <summary>List opened: delete mode off, then the files reloaded.</summary>
+        public override void OnEnter()
+        {
+            IsDeleteMode = false;
+            base.OnEnter();
+        }
+
+        /// <summary>The delete-mode toggle clicked: switches delete mode on or off.</summary>
+        public void ToggleDeleteMode()
+        {
+            IsDeleteMode = !IsDeleteMode;
+            Element.SetDeleteMode(IsDeleteMode);
+        }
+
+        /// <summary>
+        /// A save clicked: in delete mode, asks and deletes it, then reloads the list (delete
+        /// mode stays on); otherwise loads it (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.StartItem"/>).
+        /// </summary>
+        public override void ClickItem(SavedGame item)
+        {
+            if (IsDeleteMode)
+                Catalog.ConfirmDelete(item, Reload);
+            else
+                base.ClickItem(item);
+        }
     }
 }

@@ -135,10 +135,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             if (!sectioned)
             {
                 foreach (var section in model.Sections)
-                    BuildGroup(model, section, CategoryRow, ItemGrid);
+                    BuildGroup(model, section, CategoryRow, ItemGrid, isFirst: true);
             }
             else
             {
+                bool first = true;
                 foreach (var section in model.Sections)
                 {
                     var heading = _factory.CreateElement<UILabel, UILabelHandler, UILabelRenderer>();
@@ -160,7 +161,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                     _sectionElements.Add(heading);
                     _sectionElements.Add(categoryRow);
                     _sectionElements.Add(itemGrid);
-                    BuildGroup(model, section, categoryRow, itemGrid);
+                    BuildGroup(model, section, categoryRow, itemGrid, first);
+                    first = false;
                 }
             }
 
@@ -173,8 +175,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             Handler.UpdateScrollContentHeight();
         }
 
-        /// <summary>One section's (or the whole list's) category toggles and item buttons.</summary>
-        private void BuildGroup(CategoryListModel<TItem> model, CategoryListSection<TItem> section, UIButtonRow categoryRow, UIButtonRow itemGrid)
+        /// <summary>
+        /// One section's (or the whole list's) category toggles and item buttons; the first
+        /// section's category row also gets <see cref="AddCategoryRowButtons"/>.
+        /// </summary>
+        private void BuildGroup(CategoryListModel<TItem> model, CategoryListSection<TItem> section, UIButtonRow categoryRow, UIButtonRow itemGrid,
+            bool isFirst)
         {
             string sectionName = section.Name;
             foreach (var category in section.Categories)
@@ -185,12 +191,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                 _categoryButtons[(sectionName ?? string.Empty, name)] = button;
                 ApplyCategoryState(sectionName, name, model.IsCategoryShown(sectionName, name));
             }
+            if (isFirst)
+                AddCategoryRowButtons(categoryRow);
 
             foreach (var item in section.Items)
             {
                 var target = item;
                 string category = model.CategoryOf(item);
-                var button = CreateButton(UILayoutSheet.CategoryListMenu.ItemButton, () => Handler.StartItem(target));
+                var button = CreateButton(UILayoutSheet.CategoryListMenu.ItemButton, () => Handler.ClickItem(target));
                 button.Text = ItemButtonText(item);
                 button.Style = UILayoutStyles.CategoryListMenu.ButtonStyle;
                 button.LayoutRules.Display = model.IsCategoryShown(sectionName, category) ? DisplayMode.Normal : DisplayMode.None;
@@ -198,6 +206,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
                 _itemButtons.Add((button, sectionName ?? string.Empty, category));
             }
         }
+
+        /// <summary>
+        /// Adds a derived menu's own buttons after the category toggles of the first category
+        /// row (e.g. the saved-game list's delete-mode toggle), with <see cref="CreateButton"/> so
+        /// they are rebuilt with the list. Called only when the list has items. Nothing by default.
+        /// </summary>
+        /// <param name="categoryRow">The row to add them to (<see cref="CategoryRow"/>, or the first section's).</param>
+        protected virtual void AddCategoryRowButtons(UIButtonRow categoryRow) { }
 
         /// <summary>
         /// Shows or hides <paramref name="category"/>'s item buttons (of <paramref name="section"/>)
@@ -265,7 +281,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             return text.ToString();
         }
 
-        private UIButton CreateButton(UILayoutStyle rules, Action onClick)
+        /// <summary>
+        /// A button laid out by <paramref name="rules"/> that calls <paramref name="onClick"/>,
+        /// listed in <c>Buttons</c> so the next rebuild disposes it; the caller adds it to a row.
+        /// </summary>
+        protected UIButton CreateButton(UILayoutStyle rules, Action onClick)
         {
             var button = _factory.CreateElement<UIButton, UIButtonHandler, UIButtonRenderer>();
             button.Handler.Action = onClick;
