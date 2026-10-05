@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Configs;
@@ -13,8 +13,9 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 {
     /// <summary>
     /// Pushes the player settings to where the running app uses them, so the settings screen's
-    /// logic does not depend on the game, engine or UI objects that read them. Implemented on the
-    /// UI side, which reaches the engine services.
+    /// logic does not depend on the game, engine or UI objects that read them. Implemented by
+    /// <see cref="SettingsApplier"/>, which leaves the display's engine UI services to
+    /// <see cref="IDisplaySettingsApplier"/>.
     /// </summary>
     public interface ISettingsApplier
     {

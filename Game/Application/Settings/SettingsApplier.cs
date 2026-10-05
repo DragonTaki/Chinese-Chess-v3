@@ -9,15 +9,13 @@
 
 using System;
 
-using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 
 using Engine.Logging;
 using Engine.Timing;
-using Engine.UI.Input;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
+namespace Chinese_Chess_v3.Game.Application.Settings
 {
     /// <summary>
     /// The app's <see cref="ISettingsApplier"/>: copies each kind's rule / clock settings onto
@@ -25,25 +23,24 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// local players' names onto the game (<see cref="PlayerSettings.ApplyPlayerNamesTo"/>), the
     /// DEBUG tab's switches onto the engine's debug switchboard
     /// (<see cref="PlayerSettings.ApplyDebugOptions"/>), the player name onto the log greeting
-    /// (<see cref="AppLogger.CurrentUser"/>), the wheel step onto the shared
-    /// <see cref="ScrollInputHandler"/> and the frame rate onto the engine's frame timer
+    /// (<see cref="AppLogger.CurrentUser"/>), the display's part (the wheel step,
+    /// <see cref="IDisplaySettingsApplier"/>) and the frame rate onto the engine's frame timer
     /// (<see cref="TimerSettings.GameAnimationFPS"/>). The shared startup applies the parts that
     /// don't need the game once (<see cref="ApplyToEngine"/>; the game takes its rules and names
     /// from the settings when it is created); the settings screen applies its later changes
-    /// with <see cref="Apply"/>. It is in the UI layer
-    /// because the scroll handler is an engine UI service.
+    /// with <see cref="Apply"/>.
     /// </summary>
     public sealed class SettingsApplier : ISettingsApplier
     {
         private readonly Func<GameManager> _game;
-        private readonly IScrollInputHandler _scroll;
+        private readonly IDisplaySettingsApplier _display;
 
         /// <param name="game">Gets the game (called on each apply, so the game is still created on first use).</param>
-        /// <param name="scroll">The shared scroll handler (its wheel step is set when it is a <see cref="ScrollInputHandler"/>).</param>
-        public SettingsApplier(Func<GameManager> game, IScrollInputHandler scroll)
+        /// <param name="display">The display layer's part (the wheel step); null for none.</param>
+        public SettingsApplier(Func<GameManager> game, IDisplaySettingsApplier display)
         {
             _game = game ?? throw new ArgumentNullException(nameof(game));
-            _scroll = scroll;
+            _display = display;
         }
 
         /// <inheritdoc/>
@@ -70,8 +67,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
             AppLogger.CurrentUser = settings.PlayerName;
 
-            if (_scroll is ScrollInputHandler scroll)
-                scroll.WheelStep = settings.WheelScrollStep;
+            _display?.Apply(settings);
 
             TimerSettings.GameAnimationFPS = settings.Fps;
         }

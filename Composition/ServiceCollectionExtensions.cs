@@ -103,7 +103,8 @@ namespace Chinese_Chess_v3.Composition
             // What the game screen's info board shows (names, sides, clock texts); read live from the game.
             services.AddSingleton<InfoBoardViewModel>();
             // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
-            services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IScrollInputHandler>()));
+            services.AddSingleton<IDisplaySettingsApplier>(sp => new DisplaySettingsApplier(sp.GetRequiredService<IScrollInputHandler>()));
+            services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IDisplaySettingsApplier>()));
             // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's
             // switched-off categories are kept while the game runs.
             services.AddSingleton<EndgameCatalog>();
