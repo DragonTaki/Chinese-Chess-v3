@@ -17,7 +17,6 @@ using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 
 using Engine.Diagnostics;
 using Engine.Globals;
@@ -53,12 +52,11 @@ namespace Launcher
             InitComponents();  // Create WinForms Designer
             InitWindow();
 
+            // Also initializes navigation and shows the main menu (once).
             _rootCanvas = UIInitializer.Initialize(_sp);
             _rootCanvas.MainWindow = new WinFormsWindow(this);
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
-            _navigationManager.Init(_rootCanvas);
-            _navigationManager.Show<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>();
             _gameSession = _sp.GetRequiredService<GameSession>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
