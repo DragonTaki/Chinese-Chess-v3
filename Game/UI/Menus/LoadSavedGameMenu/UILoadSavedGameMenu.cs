@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/02
-// Update Date: 2026/10/02
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-using Chinese_Chess_v3.Game.Configs;
+using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
@@ -29,9 +29,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
     /// The main menu's saved-game list (讀取存檔): the player's saved games - the same files
     /// as the game screen's list (<see cref="UISavedGameMenu"/>) - as a submenu column: per
     /// category a header, then one full-width button per save (name, date and time from the
-    /// file name, <see cref="SystemSettings.TryParseSaveFileName"/>), or a disabled
-    /// 沒有存檔 row when there is none. The grouping, the order and starting a save are the
-    /// handler's (<see cref="UILoadSavedGameMenuHandler"/>).
+    /// file name, <see cref="SavedGameCatalog.TryGetNameAndTime"/>), or a disabled
+    /// 沒有存檔 row when there is none. The grouping and the order are the catalog's
+    /// (<see cref="SavedGameCatalog.Group"/>); loading and starting a save the handler's
+    /// (<see cref="UILoadSavedGameMenuHandler"/>).
     /// <para>
     /// The rows are rebuilt each time the submenu is shown (<see cref="ShowGroups"/>), so
     /// games saved meanwhile appear.
@@ -110,7 +111,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         {
             ArgumentNullException.ThrowIfNull(saved);
             int length = UILayoutStyles.LoadSavedGameMenu.NameLength;
-            if (!SystemSettings.TryParseSaveFileName(saved.Title, out string name, out var time))
+            if (!SavedGameCatalog.TryGetNameAndTime(saved, out string name, out var time))
                 return UISavedGameMenu.OneLine(saved.Title, length);
 
             return string.Format(CultureInfo.InvariantCulture, GameMenuTexts.SavedGameRowFormat,
