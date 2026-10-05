@@ -3,14 +3,17 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/04
-// Version: v1.0
+// Update Date: 2026/10/05
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Endgames;
+using Chinese_Chess_v3.Game.Core.Openings;
+using Chinese_Chess_v3.Game.Core.Saves;
 
 using Engine.Logging;
 
@@ -124,6 +127,36 @@ namespace Chinese_Chess_v3.Game.Application.Session
                 AppLogger.Log($"({logLabel}) cannot start {name}: {ex.Message}", LogLevel.ERROR);
                 return false;
             }
+        }
+
+        /// <summary>Starts <paramref name="puzzle"/> (<see cref="GameManager.StartEndgame"/>) through <see cref="TryStart"/>.</summary>
+        /// <param name="puzzle">The endgame puzzle.</param>
+        /// <param name="logLabel">Log prefix without parentheses for a puzzle that cannot be set up.</param>
+        /// <returns>False when the puzzle could not be set up.</returns>
+        public bool StartEndgame(EndgamePuzzle puzzle, string logLabel)
+        {
+            ArgumentNullException.ThrowIfNull(puzzle);
+            return TryStart(game => game.StartEndgame(puzzle), logLabel, puzzle.FileName);
+        }
+
+        /// <summary>Starts <paramref name="opening"/> (<see cref="GameManager.StartOpening"/>) through <see cref="TryStart"/>.</summary>
+        /// <param name="opening">The opening line.</param>
+        /// <param name="logLabel">Log prefix without parentheses for a line that cannot be set up.</param>
+        /// <returns>False when the line could not be set up.</returns>
+        public bool StartOpening(OpeningLine opening, string logLabel)
+        {
+            ArgumentNullException.ThrowIfNull(opening);
+            return TryStart(game => game.StartOpening(opening), logLabel, opening.FileName);
+        }
+
+        /// <summary>Loads <paramref name="saved"/> (<see cref="GameManager.LoadSavedGame"/>) through <see cref="TryStart"/>.</summary>
+        /// <param name="saved">The saved game.</param>
+        /// <param name="logLabel">Log prefix without parentheses for a save that cannot be set up.</param>
+        /// <returns>False when the save could not be set up.</returns>
+        public bool LoadSavedGame(SavedGame saved, string logLabel)
+        {
+            ArgumentNullException.ThrowIfNull(saved);
+            return TryStart(game => game.LoadSavedGame(saved), logLabel, saved.FileName);
         }
 
         /// <summary>

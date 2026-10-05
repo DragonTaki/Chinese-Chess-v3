@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/02
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Saves;
 
 using Engine.Diagnostics;
@@ -29,7 +28,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
     /// <see cref="SavedGameCatalog.LoadAll"/> (the same loader as the game screen's list), shows
     /// them grouped by mode, newest first within a group (<see cref="SavedGameCatalog.Group"/>),
     /// and starts a clicked save on the game screen the way the game screen's list does
-    /// (<see cref="GameManager.LoadSavedGame"/>); in delete mode (<see cref="IsDeleteMode"/>) a
+    /// (<see cref="GameSession.LoadSavedGame"/>); in delete mode (<see cref="IsDeleteMode"/>) a
     /// clicked save is deleted after asking.
     /// <see cref="IScreen"/>: the main menu calls <see cref="OnEnter"/>/<see cref="OnExit"/>
     /// when it opens/closes the submenu.
@@ -90,9 +89,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         }
 
         /// <summary>
-        /// Starts a save the way a new game is (<see cref="GameSession.TryStart"/>:
-        /// game screen, restart and views reset, then the save replayed with
-        /// <see cref="GameManager.LoadSavedGame"/>; a bad save is logged) - the same steps as the
+        /// Starts a save the way a new game is (<see cref="GameSession.LoadSavedGame"/>:
+        /// game screen, restart and views reset, then the save replayed; a bad save is logged) - the same steps as the
         /// game screen's list (<c>UICategoryListMenuHandler.StartItem</c>).
         /// </summary>
         public void StartSave(SavedGame saved)
@@ -101,8 +99,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"LoadMenu: selected: {saved}");
 
-            _factory.ServiceProvider.GetRequiredService<GameSession>()
-                .TryStart(game => game.LoadSavedGame(saved), "LoadMenu", saved.FileName);
+            _factory.ServiceProvider.GetRequiredService<GameSession>().LoadSavedGame(saved, "LoadMenu");
         }
     }
 }

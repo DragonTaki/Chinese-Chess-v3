@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pgn;
 
 using Engine.Diagnostics;
@@ -32,7 +31,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
     /// sections, the category filter): reloads it when the submenu is shown, passes the
     /// category toggles to it, and starts an item on the game screen when its button is
     /// clicked. A derived handler supplies the model, the start itself
-    /// (<see cref="StartOnBoard"/>) and its texts.
+    /// (<see cref="StartInSession"/>) and its texts.
     /// <see cref="IScreen"/>: the main menu calls <see cref="OnEnter"/>/<see cref="OnExit"/>
     /// when it opens/closes the submenu.
     /// </summary>
@@ -59,9 +58,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         /// <summary>Text shown when nothing was found.</summary>
         protected abstract string EmptyMessageText { get; }
 
-        /// <summary>Sets <paramref name="item"/> up on the (already reset) game.</summary>
-        /// <exception cref="FormatException">The item cannot be set up.</exception>
-        protected abstract void StartOnBoard(GameManager gameManager, TItem item);
+        /// <summary>Starts <paramref name="item"/> through <paramref name="session"/>'s start of its kind (e.g. <see cref="GameSession.StartEndgame"/>).</summary>
+        protected abstract void StartInSession(GameSession session, TItem item);
 
         /// <summary>
         /// Called at the end of <see cref="StartItem"/> (also when the item could not be set
@@ -105,9 +103,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         public virtual void ClickItem(TItem item) => StartItem(item);
 
         /// <summary>
-        /// Starts <paramref name="item"/> the way a new game is (<see cref="GameSession.TryStart"/>: game
-        /// screen - already there for a submenu on the game screen -, restart and views reset,
-        /// then the item set up with <see cref="StartOnBoard"/>; an item that cannot be set up
+        /// Starts <paramref name="item"/> the way a new game is (<see cref="StartInSession"/>, through
+        /// <see cref="GameSession.TryStart"/>: game screen - already there for a submenu on the game
+        /// screen -, restart and views reset, then the item set up; an item that cannot be set up
         /// is logged), then <see cref="OnItemStarted"/>.
         /// <para>
         /// The board is drawn as for any game (red at the bottom); turning it so the side to
@@ -121,8 +119,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
 
             // Restart first (views reset, log cleared), then the item's position - the start's
             // own log lines stay.
-            _factory.ServiceProvider.GetRequiredService<GameSession>()
-                .TryStart(game => StartOnBoard(game, item), LogLabel, item.FileName);
+            StartInSession(_factory.ServiceProvider.GetRequiredService<GameSession>(), item);
 
             OnItemStarted(item);
         }

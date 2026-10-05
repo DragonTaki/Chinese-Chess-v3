@@ -4,14 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Endgames;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
     /// The endgame submenu's binding (shared part:
     /// <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>): lists the
     /// puzzles of the <see cref="EndgameCatalog"/> and starts one with
-    /// <see cref="GameManager.StartEndgame"/>.
+    /// <see cref="GameSession.StartEndgame"/>.
     /// </summary>
     public class UIEndgameMenuHandler : UICategoryListMenuHandler<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer, EndgamePuzzle>
     {
@@ -52,8 +52,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
             $"找不到殘局題目。\n可以把題目檔（.pgn）放到：\n{UserFolder}";
 
         /// <summary>The puzzle's position, with the side to move from its FEN; the solution is not played.</summary>
-        protected override void StartOnBoard(GameManager gameManager, EndgamePuzzle puzzle) =>
-            gameManager.StartEndgame(puzzle);
+        protected override void StartInSession(GameSession session, EndgamePuzzle puzzle) =>
+            session.StartEndgame(puzzle, LogLabel);
 
         /// <summary>Puzzle clicked (<see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.StartItem"/>).</summary>
         public void StartPuzzle(EndgamePuzzle puzzle) => StartItem(puzzle);

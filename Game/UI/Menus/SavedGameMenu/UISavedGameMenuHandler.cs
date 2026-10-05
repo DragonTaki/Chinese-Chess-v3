@@ -4,13 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
-using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
@@ -23,7 +23,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
     /// The saved-game list's binding (shared part:
     /// <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>): lists the
     /// saves of the <see cref="SavedGameCatalog"/> (categories = mode folders) and loads the
-    /// chosen one with <see cref="GameManager.LoadSavedGame"/>, then tells the game menu
+    /// chosen one with <see cref="GameSession.LoadSavedGame"/>, then tells the game menu
     /// (<see cref="ItemStarted"/>) so it closes the list; in delete mode
     /// (<see cref="IsDeleteMode"/>) a clicked save is deleted after asking. Opened and closed by
     /// <c>UIGameMenuHandler</c>, which calls <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}.OnEnter"/>
@@ -48,9 +48,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
 
         protected override string EmptyMessageText => string.Format(GameMenuTexts.NoSavedGamesFormat, UserFolder);
 
-        /// <summary>The save's start position and moves replayed, with its rules and clocks (<see cref="GameManager.LoadSavedGame"/>).</summary>
-        protected override void StartOnBoard(GameManager gameManager, SavedGame saved) =>
-            gameManager.LoadSavedGame(saved);
+        /// <summary>The save's start position and moves replayed, with its rules and clocks (<see cref="GameSession.LoadSavedGame"/>).</summary>
+        protected override void StartInSession(GameSession session, SavedGame saved) =>
+            session.LoadSavedGame(saved, LogLabel);
 
         protected override void OnItemStarted(SavedGame item) => ItemStarted?.Invoke();
 

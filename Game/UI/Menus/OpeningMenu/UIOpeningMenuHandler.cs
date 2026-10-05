@@ -4,11 +4,11 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
-using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Core.Openings;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
@@ -20,7 +20,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.OpeningMenu
     /// The opening submenu's binding (shared part:
     /// <see cref="UICategoryListMenuHandler{TMenu, THandler, TRenderer, TItem}"/>): lists the
     /// openings of the <see cref="OpeningCatalog"/> (先手 / 後手 sections) and starts one with
-    /// <see cref="GameManager.StartOpening"/> (position, then the opening line played onto
+    /// <see cref="GameSession.StartOpening"/> (position, then the opening line played onto
     /// the board; the player continues from there).
     /// </summary>
     public class UIOpeningMenuHandler : UICategoryListMenuHandler<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer, OpeningLine>
@@ -43,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.OpeningMenu
         protected override string EmptyMessageText =>
             $"找不到開局。\n可以把開局檔（.pgn）放到：\n{UserFolder}";
 
-        protected override void StartOnBoard(GameManager gameManager, OpeningLine opening) =>
-            gameManager.StartOpening(opening);
+        protected override void StartInSession(GameSession session, OpeningLine opening) =>
+            session.StartOpening(opening, LogLabel);
     }
 }
