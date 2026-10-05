@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
 // Update Date: 2026/10/05
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -34,12 +34,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards
     {
         // fields
         public UIPieceBinder PieceBinder { get; private set; }
+
+        /// <summary>The board's state (selection, hints, which way up) and click command; created with the board.</summary>
+        public BoardViewModel ViewModel { get; private set; }
         private GameManager _gameManager;
         public GameManager GameManager => _gameManager;
         public Piece SelectedPiece => _gameManager.SelectedPiece;
-
-        /// <summary>The player settings (board hints); the code defaults when none are registered.</summary>
-        public PlayerSettings PlayerSettings { get; private set; } = PlayerSettings.Defaults;
 
         /// <summary>The board type the layout rules were last applied for (see <see cref="ApplyBoardLayout"/>).</summary>
         private BoardType? _layoutBoardType;
@@ -53,8 +53,10 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         protected override void OnInit(IUiFactory factory)
         {
             _gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-            PlayerSettings = _factory.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults;
-            PieceBinder = new UIPieceBinder(_gameManager, this /* or boardPanel */);
+            // Board hints follow the player settings; the code defaults when none are registered.
+            var playerSettings = _factory.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults;
+            ViewModel = new BoardViewModel(_gameManager, playerSettings, PostToUI);
+            PieceBinder = new UIPieceBinder(ViewModel);
 
             // Declared size (pre-layout fallback), then the layout rules.
             LocalPosition = UILayoutConstants.Board.Position;
@@ -165,12 +167,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>
         /// Whether the board is drawn rotated 180 degrees so the player's own side (己方,
         /// <c>GameManager.LocalSide</c>) is at the bottom: the Full board when 己方 plays black
-        /// (<see cref="BoardPerspective"/>). Read live from the game, so it follows every new
+        /// (<see cref="BoardViewModel.IsFlipped"/>). Read live from the game, so it follows every new
         /// game (an opening practised as 後手 after a 先手 one, a black-to-move endgame...).
         /// Grid lines, palaces and cannon/soldier marks are 180-degree symmetric; pieces and
         /// rings go through <see cref="GridToPixel"/>, clicks through <see cref="TryPixelToGrid"/>.
         /// </summary>
-        public bool IsFlipped => BoardPerspective.IsFlipped(_gameManager);
+        public bool IsFlipped => ViewModel.IsFlipped;
 
         /// <summary>
         /// Absolute position where a piece on square (<paramref name="x"/>, <paramref name="y"/>)
@@ -250,11 +252,20 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         }
 
 
+        // Runs a view model update on the UI thread (dropped once the board is disposed).
+        private void PostToUI(Action action)
+        {
+            if (IsDisposed) return;
+            Post(action);
+        }
+
         protected override void DisposeUI()
         {
             PendingActions.Clear();
             PieceBinder?.Dispose();
             PieceBinder = null;
+            ViewModel?.Dispose();
+            ViewModel = null;
         }
     }
 }

@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -21,7 +21,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         {
             if (Element is UIBoard board)
             {
-                board.GameManager.HandleClick(gridX, gridY);
+                board.ViewModel.HandleClick(gridX, gridY);
             }
         }
 

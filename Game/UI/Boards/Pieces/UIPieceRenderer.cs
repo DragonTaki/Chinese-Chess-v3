@@ -3,13 +3,14 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/02
-// Version: v2.5
+// Update Date: 2026/10/05
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
 using System.Drawing;
 
+using Chinese_Chess_v3.Game.Application.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -27,11 +28,9 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
         {
             if (element is UIBoard board)
             {
-                // Board hints follow the player settings ([hints] in settings.ini).
-                var settings = board.PlayerSettings;
-                _pieces.Draw(g, board, board.PieceBinder.UIPieces,
-                    settings.ShowLegalMoveHints ? board.PieceBinder.LegalMoveTargets : null,
-                    settings.ShowHangingPieceHints);
+                // Board hints, already filtered by the player settings ([hints] in settings.ini).
+                var viewModel = board.ViewModel;
+                _pieces.Draw(g, board, board.PieceBinder.UIPieces, viewModel.LegalTargets, viewModel.HangingSquares);
             }
         }
 
@@ -43,7 +42,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
             private IFont _font = PieceSettings.Font;
             private float _fontScale = 1f;
 
-            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces, IReadOnlyList<(int x, int y)> legalMoveTargets, bool showHanging)
+            public void Draw(IGraphics g, UIBoard board, List<UIPiece> uiPieces, IReadOnlyList<(int x, int y)> legalMoveTargets, IReadOnlyList<HangingSquare> hangingSquares)
             {
                 if (uiPieces == null) return;
                 float scale = board.DetailScale;
@@ -52,15 +51,13 @@ namespace Chinese_Chess_v3.Game.UI.Boards.Pieces
                 // Rings first, pieces after: a ring lies just outside a piece's radius and
                 // must never cover a piece (not even a neighbour's edge). Where rings share a
                 // square the later one wins: hanging < legal move < selected.
-                foreach (var uiPiece in uiPieces)
+                // Face-up hanging pieces only (BoardViewModel.HangingSquares).
+                if (hangingSquares != null)
                 {
-                    // A face-down piece's ring would show its colour; the Core never reports
-                    // one as hanging anyway (BoardAnalysis), this only makes sure.
-                    if (showHanging && uiPiece.IsHanging && uiPiece.PieceModel.CurrentInfo.IsFaceUp)
+                    foreach (var square in hangingSquares)
                     {
-                        var piece = uiPiece.PieceModel;
-                        Color color = piece.Color == PieceColor.Red ? PieceSettings.HangingRedRingColor : PieceSettings.HangingBlackRingColor;
-                        DrawRing(g, board, piece.X, piece.Y, scale, color);
+                        Color color = square.Color == PieceColor.Red ? PieceSettings.HangingRedRingColor : PieceSettings.HangingBlackRingColor;
+                        DrawRing(g, board, square.X, square.Y, scale, color);
                     }
                 }
                 if (legalMoveTargets != null)

@@ -3,64 +3,52 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/23
-// Update Date: 2026/09/30
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Application.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.UI.Boards.Pieces;
-
-using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Binders
 {
     /// <summary>
-    /// Binds GameManager events to UIPiece instances.
-    /// Responsible for creating UIPiece collection and updating UI state on events.
+    /// Binds the board's view model (<see cref="BoardViewModel"/>) to UIPiece instances:
+    /// keeps one UIPiece per <see cref="Piece"/> and updates their visual state on the view
+    /// model's events (raised on the UI thread). The selection, move hints and hanging pieces
+    /// are the view model's.
     /// Must be disposed to unsubscribe.
     /// </summary>
     public class UIPieceBinder : IDisposable
     {
-        private readonly GameManager _gameManager;
-        private readonly IUiContainer _uiHost; // used for invoking on UI thread
+        private readonly BoardViewModel _viewModel;
         public List<UIPiece> UIPieces { get; } = new();
 
-        /// <summary>
-        /// Legal destinations of the selected piece, for the move-hint rings; empty when
-        /// nothing is selected. Taken from <see cref="GameManager.SelectedPieceLegalMoves"/>
-        /// once per selection.
-        /// </summary>
-        public IReadOnlyList<(int x, int y)> LegalMoveTargets { get; private set; } = Array.Empty<(int x, int y)>();
-        // The piece LegalMoveTargets belongs to (null when empty).
-        private Piece _legalMovesOwner;
         private readonly List<(Piece piece, UIPiece uiPiece)> _bindings = new();
 
         // Mapping from Piece model to UIPiece
         private readonly Dictionary<Piece, UIPiece> _pieceMap = new();
 
-        public UIPieceBinder(GameManager gameManager, IUiContainer parentElement)
+        public UIPieceBinder(BoardViewModel viewModel)
         {
-            _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
-            _uiHost = parentElement ?? throw new ArgumentNullException(nameof(parentElement));
+            _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
             // subscribe
-            _gameManager.PieceSelected += OnPieceSelected;
-            _gameManager.PieceUnselected += OnPieceUnselected;
-            _gameManager.PieceMoved += OnPieceMoved;
-            _gameManager.PieceCaptured += OnPieceCaptured;
-            _gameManager.PieceAdded += OnPieceAdded;
-            _gameManager.PieceRemoved += OnPieceRemoved;
-            _gameManager.BoardReset += OnBoardReset;
-            _gameManager.HangingPiecesChanged += OnHangingPiecesChanged;
+            _viewModel.PieceSelected += OnPieceSelected;
+            _viewModel.PieceUnselected += OnPieceUnselected;
+            _viewModel.PieceMoved += OnPieceMoved;
+            _viewModel.PieceCaptured += OnPieceCaptured;
+            _viewModel.PieceAdded += OnPieceAdded;
+            _viewModel.PieceRemoved += OnPieceRemoved;
+            _viewModel.BoardReset += OnBoardReset;
 
             // create initial set from current board
-            foreach (var p in _gameManager.GetCurrentPieces())
+            foreach (var p in _viewModel.GetCurrentPieces())
                 AddUIPieceFor(p);
-            ApplyHanging(new HashSet<Piece>(_gameManager.HangingPieces));
         }
 
         private void AddUIPieceFor(Piece piece)
@@ -92,47 +80,18 @@ namespace Chinese_Chess_v3.Game.UI.Binders
             UIPieces.Clear();
         }
 
-        private void ApplyHanging(HashSet<Piece> hanging)
-        {
-            foreach (var uiPiece in UIPieces)
-                uiPiece.IsHanging = hanging.Contains(uiPiece.PieceModel);
-        }
-
-        private void ClearLegalMoveTargets()
-        {
-            LegalMoveTargets = Array.Empty<(int x, int y)>();
-            _legalMovesOwner = null;
-        }
-
-        #region Event Handlers (marshal to UI thread)
+        #region View model event handlers (already on the UI thread)
         private void OnPieceSelected(Piece piece)
         {
-            // Computed now (the selection's position), applied on the UI thread.
-            var moves = _gameManager.SelectedPiece == piece
-                ? _gameManager.SelectedPieceLegalMoves
-                : piece.GetLegalMoves(_gameManager.Board);
-            PostToUI(() =>
-            {
-                if (_pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
-                LegalMoveTargets = moves;
-                _legalMovesOwner = piece;
-            });
+            if (_pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = true;
         }
 
-        private void OnPieceUnselected(Piece piece) => PostToUI(() =>
+        private void OnPieceUnselected(Piece piece)
         {
             if (_pieceMap.TryGetValue(piece, out var ui)) ui.IsSelected = false;
-            if (_legalMovesOwner == piece) ClearLegalMoveTargets();
-        });
-
-        private void OnHangingPiecesChanged(IReadOnlyList<Piece> hanging)
-        {
-            // Snapshot now; the GameManager replaces the list on the next move.
-            var set = new HashSet<Piece>(hanging);
-            PostToUI(() => ApplyHanging(set));
         }
 
-        private void OnPieceMoved(Piece piece, int toX, int toY) => PostToUI(() =>
+        private void OnPieceMoved(Piece piece, int toX, int toY)
         {
             if (_pieceMap.TryGetValue(piece, out var ui))
             {
@@ -140,56 +99,41 @@ namespace Chinese_Chess_v3.Game.UI.Binders
                 ui.TargetY = toY;
                 ui.IsSelected = false; // typically unselected after move
             }
-        });
+        }
 
-        private void OnPieceCaptured(Piece piece) => PostToUI(() =>
+        private void OnPieceCaptured(Piece piece)
         {
             if (_pieceMap.TryGetValue(piece, out var ui))
             {
                 ui.IsCaptured = true;
                 // Optionally mark hidden or trigger captured animation
             }
-        });
-
-        private void OnPieceAdded(Piece piece) => PostToUI(() =>
-        {
-            AddUIPieceFor(piece);
-        });
-
-        private void OnPieceRemoved(Piece piece) => PostToUI(() =>
-        {
-            RemoveUIPieceFor(piece);
-        });
-
-        private void OnBoardReset() => PostToUI(() =>
-        {
-            // Clear existing UI pieces and recreate (a reset raises no PieceUnselected)
-            ClearLegalMoveTargets();
-            DisposeAllUIPieces();
-            foreach (var p in _gameManager.GetCurrentPieces())
-                AddUIPieceFor(p);
-        });
-        #endregion
-
-        private void PostToUI(Action action)
-        {
-            if (_uiHost.IsDisposed) return;
-            _uiHost.Post(action);
         }
+
+        private void OnPieceAdded(Piece piece) => AddUIPieceFor(piece);
+
+        private void OnPieceRemoved(Piece piece) => RemoveUIPieceFor(piece);
+
+        private void OnBoardReset()
+        {
+            // Clear existing UI pieces and recreate
+            DisposeAllUIPieces();
+            foreach (var p in _viewModel.GetCurrentPieces())
+                AddUIPieceFor(p);
+        }
+        #endregion
 
         // Must be called when the screen is unloaded or switched, to avoid memory / event leaks.
         public void Dispose()
         {
-            _gameManager.PieceSelected -= OnPieceSelected;
-            _gameManager.PieceUnselected -= OnPieceUnselected;
-            _gameManager.PieceMoved -= OnPieceMoved;
-            _gameManager.PieceCaptured -= OnPieceCaptured;
-            _gameManager.PieceAdded -= OnPieceAdded;
-            _gameManager.PieceRemoved -= OnPieceRemoved;
-            _gameManager.BoardReset -= OnBoardReset;
-            _gameManager.HangingPiecesChanged -= OnHangingPiecesChanged;
+            _viewModel.PieceSelected -= OnPieceSelected;
+            _viewModel.PieceUnselected -= OnPieceUnselected;
+            _viewModel.PieceMoved -= OnPieceMoved;
+            _viewModel.PieceCaptured -= OnPieceCaptured;
+            _viewModel.PieceAdded -= OnPieceAdded;
+            _viewModel.PieceRemoved -= OnPieceRemoved;
+            _viewModel.BoardReset -= OnBoardReset;
 
-            ClearLegalMoveTargets();
             DisposeAllUIPieces();
         }
 
