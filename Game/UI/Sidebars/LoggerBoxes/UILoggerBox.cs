@@ -3,12 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/30
-// Version: v2.1
+// Update Date: 2026/10/05
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.UI.Constants;
 
+using Engine.Diagnostics;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 
@@ -32,6 +33,10 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
             BackgroundColor = UILoggerBoxSettings.BackgroundColor;
             TextColor = UILoggerBoxSettings.TextColor;
             Font = UILoggerBoxSettings.Font;
+
+            // The log lines' red background follows 除錯訊息 (author 2026-10-05), not the other
+            // labels' 標籤紅色背景 switch.
+            LineDebugBackgroundSwitch = () => DebugOptions.VerboseLog;
         }
 
         protected override void OnReset()

@@ -86,11 +86,11 @@ namespace Chinese_Chess_v3.Game.Configs
 
             yield return Bool("debug", "verbose_log", s => s.VerboseLog, (s, v) => s.VerboseLog = v,
                 "── 除錯功能（設定畫面的 DEBUG 分頁；改了立即生效）──",
-                "紀錄：是否寫出 DEBUG 等級的紀錄（較詳細）。");
+                "紀錄：是否寫出 DEBUG 等級的紀錄（較詳細）；紀錄框的訊息同時畫紅色背景。");
             yield return Bool("debug", "console_trace", s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v,
                 "紀錄：是否在主控台印出開發用的追蹤訊息（介面元件初始化、選單選擇、連線狀態；錯誤訊息不受影響，一律會印）。");
             yield return Bool("debug", "label_backgrounds", s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v,
-                "視覺除錯：文字標籤後面畫半透明紅色背景（看出標籤的範圍）。");
+                "視覺除錯：文字標籤後面畫半透明紅色背景（看出標籤的範圍；紀錄框的訊息跟著「除錯訊息」）。");
             yield return Bool("debug", "layout_outlines", s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v,
                 "視覺除錯：文字框畫灰色實線外框（看出排版範圍；選單的虛線外框是設計，一律畫）。");
             yield return Bool("debug", "star_effect_frames", s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v,
