@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/19
-// Update Date: 2026/09/30
-// Version: v1.2
+// Update Date: 2026/10/05
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -233,10 +233,10 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
 
     public class UIConfirmDialogHandler : UIHandler
     {
-        internal override bool HandleMouseDown(IMouseEvent e) => true;
-        internal override bool HandleMouseMove(IMouseEvent e) => true;
-        internal override bool HandleMouseUp(IMouseEvent e) => true;
-        internal override bool HandleMouseWheel(IMouseEvent e) => true;
-        internal override bool HandleMouseClick(IMouseEvent e) => true;
+        protected internal override bool HandleMouseDown(IMouseEvent e) => true;
+        protected internal override bool HandleMouseMove(IMouseEvent e) => true;
+        protected internal override bool HandleMouseUp(IMouseEvent e) => true;
+        protected internal override bool HandleMouseWheel(IMouseEvent e) => true;
+        protected internal override bool HandleMouseClick(IMouseEvent e) => true;
     }
 }

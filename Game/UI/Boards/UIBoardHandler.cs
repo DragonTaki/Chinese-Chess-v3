@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Engine.UI.Core.Handlers;
@@ -25,7 +25,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
         }
 
-        internal override void OnUpdate()
+        protected internal override void OnUpdate()
         {
             // A new game on another board type takes that board's layout.
             Element.ApplyBoardLayout();
