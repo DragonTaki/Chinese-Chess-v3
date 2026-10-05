@@ -12,7 +12,6 @@ using System.Drawing;
 using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
-using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Geometry;
 using Engine.GraphicsUtils;
@@ -58,8 +57,6 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             private LayoutF _layout;
             protected readonly IFont _nameFont;
             protected readonly IFont _timerFont;
-            // Writes the clock texts.
-            private readonly ClockFormatter _clockFormatter = new();
 
             public ClassicInfoBoard()
             {
@@ -100,14 +97,15 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                     fullShield.Transform(translate);
                 }
 
-                PlayerSide currentTurn = element.GameManager.CurrentTurn;
-                // Which player each half shows (UIInfoBoard.LeftSide), coloured by the colour
+                var viewModel = element.ViewModel;
+                PlayerSide currentTurn = viewModel.CurrentTurn;
+                // Which player each half shows (InfoBoardViewModel.LeftSide), coloured by the colour
                 // that player plays (fixed on the Full board; on a half board decided by the
                 // first flip / first move, neutral before).
-                PlayerSide leftSide = element.LeftSide;
-                PlayerSide rightSide = element.RightSide;
-                PieceColor leftColor = element.GameManager.ColorOf(leftSide);
-                PieceColor rightColor = element.GameManager.ColorOf(rightSide);
+                PlayerSide leftSide = viewModel.LeftSide;
+                PlayerSide rightSide = viewModel.RightSide;
+                PieceColor leftColor = viewModel.ColorOf(leftSide);
+                PieceColor rightColor = viewModel.ColorOf(rightSide);
 
                 // Left-half background
                 using IRegion leftRegion = GraphicsBackend.Factory.CreateRegion(fullShield);
@@ -171,17 +169,6 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             /// <summary>The outer rim of a player's half while it is not that player's turn (the active one is gold).</summary>
             private static Color IdleColor(PieceColor color) => color == PieceColor.Red ? Color.LightCoral : Color.Gray;
 
-            /// <summary>
-            /// The player's name, followed by 將軍 while that side is to move and in check
-            /// (<c>GameManager.IsInCheck</c>; false once the game is over and on boards without check).
-            /// </summary>
-            private static string NameWithCheck(UIInfoBoard element, PlayerSide side)
-            {
-                string name = element.GetPlayerName(side);
-                var game = element.GameManager;
-                return game.IsInCheck && game.CurrentTurn == side ? name + GameMenuTexts.InCheckSuffix : name;
-            }
-
             private void DrawPlayers(IGraphics g, UIInfoBoard element)
             {
                 float baseX = _layout.X;
@@ -189,18 +176,17 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 float width = _layout.Width;
                 float height = _layout.Height;
 
-                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, element, element.LeftSide);
-                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height, element, element.RightSide);
+                var viewModel = element.ViewModel;
+                DrawPlayerSection(g, baseX, baseY, width / 2.0f, height, viewModel, viewModel.LeftSide);
+                DrawPlayerSection(g, baseX + width / 2.0f, baseY, width / 2.0f, height, viewModel, viewModel.RightSide);
             }
 
-            /// <summary>Draws <paramref name="side"/>'s name and clocks in the half at (x, y).</summary>
-            private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height, UIInfoBoard element, PlayerSide side)
+            /// <summary>Draws <paramref name="side"/>'s name (with 將軍 while in check) and clocks in the half at (x, y).</summary>
+            private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height, InfoBoardViewModel viewModel, PlayerSide side)
             {
-                var game = element.GameManager;
-                PlayerTimer timer = (side == PlayerSide.Player1 ? game.Player1 : game.Player2).Timer;
                 DrawPlayerSection(g, x, y, width, height,
-                    NameWithCheck(element, side), _clockFormatter.GetTotalTimeString(timer), _clockFormatter.GetStepTimeString(timer),
-                    game.CurrentTurn == side);
+                    viewModel.NameWithCheck(side), viewModel.TotalTimeText(side), viewModel.StepTimeText(side),
+                    viewModel.CurrentTurn == side);
             }
 
             private void DrawPlayerSection(IGraphics g, float x, float y, float width, float height,

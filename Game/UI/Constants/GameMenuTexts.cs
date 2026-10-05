@@ -4,25 +4,20 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.UI.Constants
 {
     /// <summary>
-    /// Texts of the screens: the info board, the saved-game lists and the settings screens'
+    /// Texts of the screens: the saved-game lists and the settings screens'
     /// footer button. The game screen's dialog messages, game-over message and game-log
-    /// lines, and the players' default names, are in the logic layer's <c>GameTexts</c>; the
+    /// lines, the info board's names and check mark, and the players' default names, are in the logic layer's <c>GameTexts</c>; the
     /// settings screens' rows, tabs and messages in its <c>SettingsTexts</c>; the main menu's
     /// settings entries and the menus' dialog messages in its <c>MenuTexts</c>.
     /// </summary>
     public static class GameMenuTexts
     {
-        // ----- Info board -----
-
-        /// <summary>Appended to the name of the side to move while it is in check (將軍), on the info board.</summary>
-        public const string InCheckSuffix = "（將軍）";
-
         // ----- Saved-game list -----
 
         /// <summary>Shown when there is no saved game; {0} = the saves folder.</summary>

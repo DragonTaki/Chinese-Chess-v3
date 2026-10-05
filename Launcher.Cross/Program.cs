@@ -16,6 +16,7 @@ using Silk.NET.Windowing;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameScreen;
+using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
@@ -129,6 +130,8 @@ namespace Launcher.Cross
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
+            // What the game screen's info board shows (names, sides, clock texts); read live from the game.
+            services.AddSingleton<InfoBoardViewModel>();
             // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
             services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IScrollInputHandler>()));
             // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's

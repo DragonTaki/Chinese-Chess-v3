@@ -3,12 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/09/30
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 
+using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -74,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
 
             var gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
             gameManager.SetLogger(LoggerBox.Handler);
-            InfoBoard.Handler.SetGameManager(gameManager);
+            InfoBoard.Handler.SetViewModel(_factory.ServiceProvider.GetRequiredService<InfoBoardViewModel>());
         }
 
         public void ResetGameUI() => BuildUIObjects();

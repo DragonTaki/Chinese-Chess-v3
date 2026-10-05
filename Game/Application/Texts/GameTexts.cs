@@ -15,10 +15,10 @@ using Chinese_Chess_v3.Game.Core.Players;
 namespace Chinese_Chess_v3.Game.Application.Texts
 {
     /// <summary>
-    /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog): their
+    /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog, the info board's view model): their
     /// confirm dialog messages, the game-over message, the game-log lines it writes itself (the
     /// Core writes the lines of the actions themselves, e.g. each move taken back, the saved file
-    /// name, the game result) and the players' default names. The screens' own texts stay in
+    /// name, the game result), the info board's names and check mark, and the players' default names. The screens' own texts stay in
     /// <c>GameMenuTexts</c> (UI).
     /// </summary>
     public static class GameTexts
@@ -102,6 +102,23 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             PieceColor.Red => "紅方",
             PieceColor.Black => "黑方",
             _ => side == PlayerSide.Player2 ? "後手方" : "先手方",
+        };
+
+        // ----- Info board -----
+
+        /// <summary>Appended to the name of the side to move while it is in check (將軍), on the info board.</summary>
+        public const string InCheckSuffix = "（將軍）";
+
+        /// <summary>
+        /// The info board's name for a player with no name: the colour it plays — 紅方玩家 /
+        /// 黑方玩家, or 先手玩家 / 後手玩家 while the colours are not decided yet (dark chess).
+        /// </summary>
+        public static string InfoBoardColorName(PlayerSide side, PieceColor color) => color switch
+        {
+            PieceColor.Red => "紅方玩家",
+            PieceColor.Black => "黑方玩家",
+            // Player1 always moves first.
+            _ => side == PlayerSide.Player1 ? "先手玩家" : "後手玩家",
         };
 
         /// <summary>The name of an unnamed local player: 玩家一／玩家二／玩家三 (Player1..Player3, by turn order).</summary>
