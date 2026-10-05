@@ -4,13 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/10/05
-// Version: v2.2
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 
-using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
@@ -19,8 +19,6 @@ using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
-using Engine.Diagnostics;
-using Engine.Network;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
@@ -30,25 +28,52 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 {
     /// <summary>
-    /// Handles logic and interactions for the UIMainMenu.
+    /// Binds the UIMainMenu to the <see cref="MainMenuPresenter"/>, which makes the decisions
+    /// (which submenu is open, 多人連線, 離開遊戲): each button calls
+    /// <see cref="MainMenuPresenter.Select"/>, and the presenter's events show / hide the
+    /// submenu elements this handler creates.
     /// </summary>
     public class UIMainMenuHandler : UIMenuHandler<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>, IScreen
     {
-        private UIMainMenuType? _currentSubmenu = null;
-        private readonly Dictionary<UIMainMenuType, UIElement> _submenus = new();
+        private readonly Dictionary<MainMenuOption, UIElement> _submenus = new();
 
         public UIMainMenuHandler() { }
+
+        /// <summary>
+        /// Creates the submenu elements (hidden) and subscribes to the presenter's events once:
+        /// the screen (and this handler) is a single long-lived instance, like the
+        /// <see cref="MainMenuPresenter"/> it listens to.
+        /// </summary>
         protected override void OnInit(IUiFactory factory)
         {
             // Initialize _submenus
-            _submenus[UIMainMenuType.NewGame] = CreateSubMenu(() => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>());
-            // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
-            _submenus[UIMainMenuType.LoadGame] = CreateSubMenu(() => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>());
-            _submenus[UIMainMenuType.EndgameChallenge] = CreateSubMenu(() => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>());
-            _submenus[UIMainMenuType.OpeningPractice] = CreateSubMenu(() => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>());
-            _submenus[UIMainMenuType.RuleSettings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsScreen.Rules));
-            _submenus[UIMainMenuType.Help] = CreateSubMenu(() => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>());
-            _submenus[UIMainMenuType.Settings] = CreateSubMenu(() => CreateSettingsMenu(factory, SettingsScreen.Game));
+            foreach (var option in MainMenuPresenter.SubmenuOptions)
+                _submenus[option] = CreateSubMenu(() => CreateSubmenuElement(factory, option));
+
+            var presenter = Presenter;
+            presenter.SubmenuOpened += ShowSubmenu;
+            presenter.SubmenuClosed += HideSubmenu;
+        }
+
+        /// <summary>The main menu's decisions (the <see cref="MainMenuPresenter"/> registered in DI).</summary>
+        private MainMenuPresenter Presenter => _factory.ServiceProvider.GetRequiredService<MainMenuPresenter>();
+
+        /// <summary>The element of <paramref name="option"/>'s submenu.</summary>
+        private static UIElement CreateSubmenuElement(IUiFactory factory, MainMenuOption option)
+        {
+            if (MainMenuPresenter.SettingsScreenOf(option) is SettingsScreen screen)
+                return CreateSettingsMenu(factory, screen);
+
+            return option switch
+            {
+                MainMenuOption.NewGame => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>(),
+                // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
+                MainMenuOption.LoadGame => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>(),
+                MainMenuOption.EndgameChallenge => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>(),
+                MainMenuOption.OpeningPractice => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>(),
+                MainMenuOption.Help => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Not a submenu option"),
+            };
         }
 
         /// <summary>
@@ -74,72 +99,27 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         }
 
         /// <summary>
-        /// Switch to the selected submenu. Clicking the same submenu closes it.
+        /// A main menu button: passed to the presenter (<see cref="MainMenuPresenter.Select"/>),
+        /// which opens / closes a submenu, connects, or asks before exiting.
         /// </summary>
-        public void SwitchSubmenu(UIMainMenuType selectedMenu)
+        public void SwitchSubmenu(MainMenuOption selectedMenu) => Presenter.Select(selectedMenu);
+
+        /// <summary>Shows <paramref name="option"/>'s submenu (<see cref="MainMenuPresenter.SubmenuOpened"/>).</summary>
+        private void ShowSubmenu(MainMenuOption option)
         {
-            if (DebugOptions.ConsoleTrace)
-                Console.WriteLine($"MainMenu: selected: {selectedMenu}");
-
-            switch (selectedMenu)
-            {
-                case UIMainMenuType.Default:
-                    break;
-
-                case UIMainMenuType.NewGame:
-                case UIMainMenuType.LoadGame:
-                case UIMainMenuType.EndgameChallenge:
-                case UIMainMenuType.OpeningPractice:
-                case UIMainMenuType.RuleSettings:
-                case UIMainMenuType.Help:
-                case UIMainMenuType.Settings:
-                    CancelCurrentSubmenu();
-
-                    if (_currentSubmenu == selectedMenu)  // Same menu clicked again, collapse
-                        _currentSubmenu = null;
-                    else  // Show new submenu
-                    {
-                        _currentSubmenu = selectedMenu;
-                        var submenu = _submenus[_currentSubmenu.Value];
-                        submenu.IsVisible = true;
-                        Element.AddChild(submenu);
-                        AsScreen(submenu)?.OnEnter();
-                    }
-                    break;
-
-                case UIMainMenuType.Multiplayer:
-                    var networkManager = _factory.ServiceProvider.GetRequiredService<NetworkManager>();
-
-                    if (!networkManager.IsConnected)
-                        _ = networkManager.ConnectAsync();
-                    else
-                        networkManager.Reconnect();
-
-                    break;
-
-                case UIMainMenuType.Exit:
-                    ClickExitAction();
-                    break;
-
-                default:
-                    if (DebugOptions.ConsoleTrace)
-                        Console.WriteLine($"MainMenu: selected: 'Not defined'");
-                    break;
-            }
+            var submenu = _submenus[option];
+            submenu.IsVisible = true;
+            Element.AddChild(submenu);
+            AsScreen(submenu)?.OnEnter();
         }
 
-        /// <summary>
-        /// Cancel and remove current submenu from the view.
-        /// </summary>
-        public void CancelCurrentSubmenu()
+        /// <summary>Hides <paramref name="option"/>'s submenu and removes it from the view (<see cref="MainMenuPresenter.SubmenuClosed"/>).</summary>
+        private void HideSubmenu(MainMenuOption option)
         {
-            if (_currentSubmenu.HasValue)
-            {
-                var submenu = _submenus[_currentSubmenu.Value];
-                submenu.IsVisible = false;
-                Element.RemoveChild(submenu);
-                AsScreen(submenu)?.OnExit();
-            }
+            var submenu = _submenus[option];
+            submenu.IsVisible = false;
+            Element.RemoveChild(submenu);
+            AsScreen(submenu)?.OnExit();
         }
 
         /// <summary>
@@ -151,49 +131,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         private static IScreen AsScreen(UIElement submenu) =>
             submenu as IScreen ?? submenu.HandlerBase as IScreen;
 
-        /// <summary>The app's confirm dialogs (the <see cref="IDialogService"/> registered in DI).</summary>
-        private IDialogService Dialogs => _factory.ServiceProvider.GetRequiredService<IDialogService>();
-
-        private void ClickExitAction()
-        {
-            Dialogs.ShowConfirm(
-                "確認要離開遊戲嗎？",
-                ConfirmDialogType.YesNo,
-                result =>
-                {
-                    if (result == ConfirmDialogResult.Yes)
-                    {
-                        ExitApplication();
-                    }
-                    else if (result == ConfirmDialogResult.No)
-                    {
-                        // Stay in the game: the dialog has already closed.
-                    }
-                }
-            );
-        }
-
-        /// <summary>
-        /// Exit the application (the <see cref="IAppLifetime"/> registered in DI).
-        /// </summary>
-        public void ExitApplication()
-        {
-            _factory.ServiceProvider.GetRequiredService<IAppLifetime>().Exit();
-        }
-
-        public Dictionary<UIMainMenuType, UIElement> Submenus => _submenus;
-        public UIMainMenuType? CurrentSubmenu => _currentSubmenu;
+        public Dictionary<MainMenuOption, UIElement> Submenus => _submenus;
+        public MainMenuOption? CurrentSubmenu => Presenter.CurrentSubmenu;
 
 
         public void OnEnter() { }
-        public void OnExit()
-        {
-            CancelCurrentSubmenu();
 
-            // Forget it too: otherwise, back on the main menu, the first click on the same
-            // submenu's button counted as "clicked again" and collapsed the (already
-            // closed) submenu instead of opening it.
-            _currentSubmenu = null;
-        }
+        /// <summary>Leaving the main menu: closes the open submenu and forgets it (<see cref="MainMenuPresenter.CloseSubmenu"/>).</summary>
+        public void OnExit() => Presenter.CloseSubmenu();
     }
 }

@@ -11,10 +11,10 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 {
     /// <summary>
     /// Texts of the screens: the info board, the saved-game lists and the settings screens'
-    /// entries and buttons. The game screen's dialog messages, game-over message and game-log
+    /// footer button. The game screen's dialog messages, game-over message and game-log
     /// lines, and the players' default names, are in the logic layer's <c>GameTexts</c>; the
-    /// settings screens' rows, tabs and messages in its <c>SettingsTexts</c>; the menus' dialog
-    /// messages in its <c>MenuTexts</c>.
+    /// settings screens' rows, tabs and messages in its <c>SettingsTexts</c>; the main menu's
+    /// settings entries and the menus' dialog messages in its <c>MenuTexts</c>.
     /// </summary>
     public static class GameMenuTexts
     {
@@ -59,11 +59,5 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
         /// <summary>The footer button resetting the shown tab to the defaults.</summary>
         public const string SettingsResetTab = "恢復初始";
-
-        /// <summary>Main menu entry and title of the rules screen (local games only; a network game does not use these rules).</summary>
-        public const string LocalRuleSettings = "單機規則設定";
-
-        /// <summary>Main menu entry and title of the general settings screen.</summary>
-        public const string GameSettings = "遊戲設定";
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameScreen;
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Settings;
@@ -128,6 +129,8 @@ namespace Launcher
             services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
             // The game screen's decisions; created with the game screen (its handler resolves it).
             services.AddSingleton<GameScreenPresenter>();
+            // The main menu's decisions; created with the main menu (its handler resolves it).
+            services.AddSingleton<MainMenuPresenter>();
             // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
             services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IScrollInputHandler>()));
             // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's

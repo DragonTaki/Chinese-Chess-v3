@@ -1,15 +1,19 @@
 /* ----- ----- ----- ----- */
-// UIMainMenuType.cs
+// MainMenuOption.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/02
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
-namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
+namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
-    public enum UIMainMenuType
+    /// <summary>
+    /// The options of the main menu (<see cref="MainMenuOptions"/>); most open a submenu inside
+    /// the main menu (<see cref="MainMenuPresenter.IsSubmenu"/>).
+    /// </summary>
+    public enum MainMenuOption
     {
         Default,
         NewGame,           // 開新一局 (New game)

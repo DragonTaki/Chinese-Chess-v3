@@ -7,6 +7,7 @@
 // Version: v1.4
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Mathematics;
@@ -42,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         protected override void BuildButtons()
         {
             // Create the buttons
-            var menuEntries = UIMainMenuOptions.Create(Handler.SwitchSubmenu);
+            var menuEntries = MainMenuOptions.Create(Handler.SwitchSubmenu);
             Vector2F btnStartPos = UILayoutConstants.MainMenu.Button.Position; // TODO: btnStartPos is unused; remove it or use it
 
             for (int i = 0; i < menuEntries.Count; i++)
