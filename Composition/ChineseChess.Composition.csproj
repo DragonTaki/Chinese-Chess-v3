@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 上層: the composition root both launchers share (DI registrations, startup, UI init). -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Chinese_Chess_v3.Composition</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Game\UI\ChineseChess.UI.csproj" />
+    <ProjectReference Include="..\Game\Application\ChineseChess.Application.csproj" />
+    <ProjectReference Include="..\Game\Core\ChineseChess.Core.csproj" />
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\Engine.UI.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project>
+  <!-- The game's assets, copied next to each launcher's executable (fonts, built-in endgames
+       and openings, category subfolders kept). Imported by both launcher projects. -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Font\MoeLI.ttf" Link="Assets\Font\MoeLI.ttf" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Font\NotoSerifCJKtc-Medium.otf" Link="Assets\Font\NotoSerifCJKtc-Medium.otf" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Endgames\**\*.pgn" LinkBase="Assets\Endgames" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Openings\**\*.pgn" LinkBase="Assets\Openings" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

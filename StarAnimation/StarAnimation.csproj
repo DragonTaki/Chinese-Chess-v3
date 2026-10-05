@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The star background (a display module on the engine). -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>StarAnimation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="DEPRECATED\**\*.cs" />
+    <None Remove="DEPRECATED\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\Engine.UI.csproj" />
+  </ItemGroup>
+</Project>

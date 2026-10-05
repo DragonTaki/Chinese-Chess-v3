@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 下層 (logic): the game flow, presenters / view models, texts and settings (Game/Configs
+       is compiled in here, keeping its folder and namespace). -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Chinese_Chess_v3.Game.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Configs\**\*.cs" Link="Configs\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\ChineseChess.Core.csproj" />
+    <ProjectReference Include="..\..\Engine\Engine.csproj" />
+  </ItemGroup>
+</Project>

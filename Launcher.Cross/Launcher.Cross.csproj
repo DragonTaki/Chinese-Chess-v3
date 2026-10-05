@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The cross-platform entry point (Silk.NET window, SkiaSharp backend). -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Chinese-Chess-v3</AssemblyName>
+    <RootNamespace>Chinese_Chess_v3.Launcher.Cross</RootNamespace>
+    <!-- Run against whichever .NET major version the host has installed (e.g. only .NET 10),
+         instead of failing to launch over a runtime version that isn't present. -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+  <Import Project="..\Assets.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\Composition\ChineseChess.Composition.csproj" />
+    <ProjectReference Include="..\Game\UI\ChineseChess.UI.csproj" />
+    <ProjectReference Include="..\Game\Application\ChineseChess.Application.csproj" />
+    <ProjectReference Include="..\StarAnimation\StarAnimation.csproj" />
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\Engine.UI.csproj" />
+    <ProjectReference Include="..\Engine\Engine.Platform.Skia.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
+  </ItemGroup>
+</Project>

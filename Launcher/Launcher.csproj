@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The Windows entry point (WinForms window, GDI+ backend). -->
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Chinese-Chess-v3</AssemblyName>
+    <RootNamespace>Chinese_Chess_v3.Launcher</RootNamespace>
+  </PropertyGroup>
+  <Import Project="..\Assets.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\Composition\ChineseChess.Composition.csproj" />
+    <ProjectReference Include="..\Game\UI\ChineseChess.UI.csproj" />
+    <ProjectReference Include="..\Game\Application\ChineseChess.Application.csproj" />
+    <ProjectReference Include="..\StarAnimation\StarAnimation.csproj" />
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\Engine.UI.csproj" />
+    <ProjectReference Include="..\Engine\Engine.Platform.WinForms.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
+  </ItemGroup>
+</Project>

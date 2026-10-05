@@ -25,7 +25,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             }
         }
 
-        protected internal override void OnUpdate()
+        protected override void OnUpdate()
         {
             // A new game on another board type takes that board's layout.
             Element.ApplyBoardLayout();

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 上層 (display): the game's screens, renderers, layout and styles. -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Chinese_Chess_v3.Game.UI</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Application\ChineseChess.Application.csproj" />
+    <ProjectReference Include="..\Core\ChineseChess.Core.csproj" />
+    <ProjectReference Include="..\..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\..\Engine\Engine.UI.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
+  </ItemGroup>
+</Project>

@@ -233,10 +233,10 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
 
     public class UIConfirmDialogHandler : UIHandler
     {
-        protected internal override bool HandleMouseDown(IMouseEvent e) => true;
-        protected internal override bool HandleMouseMove(IMouseEvent e) => true;
-        protected internal override bool HandleMouseUp(IMouseEvent e) => true;
-        protected internal override bool HandleMouseWheel(IMouseEvent e) => true;
-        protected internal override bool HandleMouseClick(IMouseEvent e) => true;
+        protected override bool HandleMouseDown(IMouseEvent e) => true;
+        protected override bool HandleMouseMove(IMouseEvent e) => true;
+        protected override bool HandleMouseUp(IMouseEvent e) => true;
+        protected override bool HandleMouseWheel(IMouseEvent e) => true;
+        protected override bool HandleMouseClick(IMouseEvent e) => true;
     }
 }
