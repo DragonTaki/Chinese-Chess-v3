@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
-// Version: v1.3
+// Update Date: 2026/10/05
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -92,7 +92,7 @@ namespace Chinese_Chess_v3.Game.Configs
             yield return Bool("debug", "label_backgrounds", s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v,
                 "視覺除錯：文字標籤後面畫半透明紅色背景（看出標籤的範圍）。");
             yield return Bool("debug", "layout_outlines", s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v,
-                "視覺除錯：選單（虛線）與文字框（實線）畫灰色外框（看出排版範圍）。");
+                "視覺除錯：文字框畫灰色實線外框（看出排版範圍；選單的虛線外框是設計，一律畫）。");
             yield return Bool("debug", "star_effect_frames", s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v,
                 "視覺除錯：星空背景每個特效開始時，用特效的除錯顏色框出它的範圍。");
             yield return Bool("debug", "show_fps", s => s.ShowFps, (s, v) => s.ShowFps = v,

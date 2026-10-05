@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
-// Version: v1.3
+// Update Date: 2026/10/05
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -118,11 +118,11 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>Whether developer trace lines (UI init / menu selections / network status) are printed to the console. Default: true</summary>
         public bool ConsoleTrace { get; set; } = true;
 
-        /// <summary>Whether labels get a semi-transparent red background (visual debugging). Default: false</summary>
-        public bool LabelBackgrounds { get; set; } = false;
+        /// <summary>Whether labels get a semi-transparent red background (visual debugging; always drawn before the switch existed). Default: true</summary>
+        public bool LabelBackgrounds { get; set; } = true;
 
-        /// <summary>Whether menus and text boxes get a grey layout outline (visual debugging). Default: false</summary>
-        public bool LayoutOutlines { get; set; } = false;
+        /// <summary>Whether text boxes get a grey layout outline (visual debugging; always drawn before the switch existed). Default: true</summary>
+        public bool LayoutOutlines { get; set; } = true;
 
         /// <summary>Whether the star background outlines each effect's area (visual debugging). Default: false</summary>
         public bool StarEffectFrames { get; set; } = false;
