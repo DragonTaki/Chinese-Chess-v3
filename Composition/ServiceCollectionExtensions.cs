@@ -12,6 +12,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
+using Chinese_Chess_v3.Game.Application.GameLog;
 using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Application.MainMenu;
@@ -87,6 +88,8 @@ namespace Chinese_Chess_v3.Composition
                 settings.ApplyPlayerNamesTo(game);
                 return game;
             });
+            // The game log's sentences (from the game's log entries); the sidebar hands it the log box.
+            services.AddSingleton<GameLogComposer>();
             // The game flow; takes the game through a factory so the GameManager is still created on first use.
             services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
             // The game screen's decisions; created with the game screen (its handler resolves it).

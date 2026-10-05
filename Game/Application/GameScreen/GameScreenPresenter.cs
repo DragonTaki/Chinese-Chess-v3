@@ -4,12 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.IO;
 
+using Chinese_Chess_v3.Game.Application.GameLog;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Texts;
@@ -36,8 +37,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
     /// on <see cref="GameReset"/>, shows / hides the saved-game list on
     /// <see cref="SavedGameListOpenRequested"/> / <see cref="SavedGameListCloseRequested"/>, and
     /// on <see cref="GameOverDialogRequested"/> calls <see cref="ShowGameOverDialog"/> from the UI
-    /// thread while it is displayed. Game-log lines go to the game's log
-    /// (<see cref="GameManager.Logger"/>), which the sidebar shows.
+    /// thread while it is displayed. Game-log lines go to the game log
+    /// (<see cref="GameLogComposer"/>), which the sidebar shows.
     /// </para>
     /// </summary>
     public sealed class GameScreenPresenter : IGameControlCommands, IGameNavigationCommands
@@ -46,6 +47,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private readonly IDialogService _dialogs;
         private readonly INavigator _navigator;
         private readonly PlayerSettings _settings;
+        private readonly GameLogComposer _gameLog;
 
         /// <summary>
         /// Set while 回到主畫面 resigns the game itself: that ending is not announced (the
@@ -62,12 +64,14 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <param name="dialogs">The confirm dialogs.</param>
         /// <param name="navigator">Goes back to the main menu.</param>
         /// <param name="settings">The live player settings (the player's name for a save's unnamed players).</param>
-        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerSettings settings)
+        /// <param name="gameLog">The game log the presenter's own lines go to.</param>
+        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerSettings settings, GameLogComposer gameLog)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _navigator = navigator ?? throw new ArgumentNullException(nameof(navigator));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _gameLog = gameLog ?? throw new ArgumentNullException(nameof(gameLog));
 
             Game.GameOver += OnGameOver;
             _session.GameReset += OnGameReset;
@@ -329,7 +333,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void Log(string message)
         {
             AppLogger.Log(message, LogLevel.DEBUG);
-            Game.Logger?.AddMessage(message);
+            _gameLog.Write(message);
         }
     }
 }

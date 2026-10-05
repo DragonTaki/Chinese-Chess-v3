@@ -4,8 +4,11 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
+
+using System;
+using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -15,11 +18,10 @@ using Chinese_Chess_v3.Game.Core.Players;
 namespace Chinese_Chess_v3.Game.Application.Texts
 {
     /// <summary>
-    /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog, the info board's view model): their
-    /// confirm dialog messages, the game-over message, the game-log lines it writes itself (the
-    /// Core writes the lines of the actions themselves, e.g. each move taken back, the saved file
-    /// name, the game result), the info board's names and check mark, and the players' default names. The screens' own texts stay in
-    /// <c>GameMenuTexts</c> (UI).
+    /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog, the info board's view model,
+    /// the game log's composer): their confirm dialog messages, the game-over message, every game-log line (the lines of the
+    /// game's own entries, composed from <c>GameLogEvent</c>s, and the lines the logic layer writes itself), the info board's
+    /// names and check mark, and the players' default names. The screens' own texts stay in <c>GameMenuTexts</c> (UI).
     /// </summary>
     public static class GameTexts
     {
@@ -89,6 +91,125 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         /// <summary>放棄: <paramref name="side"/> (the side to move), playing <paramref name="color"/>, resigns.</summary>
         public static string Resigned(PlayerSide side, PieceColor color) => $"(Resign) {SideName(side, color)}認輸";
+
+        // ----- Game log: the game's entries (GameLogComposer) -----
+
+        /// <summary>A shuffled HalfCenter game was dealt.</summary>
+        public static string HalfCenterStarted(bool isHiddenChess) =>
+            isHiddenChess ? "(DarkChess) 新局：暗棋半盤" : "(DarkChess) 新局：明棋半盤";
+
+        /// <summary>An endgame puzzle was set up.</summary>
+        public static string EndgameStarted(string title, string goal) => $"(Endgame) {title} ({goal})";
+
+        /// <summary>An opening was set up; <paramref name="ecco"/> may be null.</summary>
+        public static string OpeningStarted(string title, string ecco) =>
+            ecco != null ? $"(Opening) {title} ({ecco})" : $"(Opening) {title}";
+
+        /// <summary>A saved game was loaded, or restarted.</summary>
+        public static string SavedGameStarted(string title, bool isRestart) => $"{(isRestart ? "(Restart)" : "(Load)")} {title}";
+
+        /// <summary>The game was saved to <paramref name="fileName"/>.</summary>
+        public static string GameSaved(string fileName) => $"(Save) {fileName}";
+
+        /// <summary>A board click (debug-style line): the side to move, the selected piece, the square and what is on it.</summary>
+        public static string BoardClicked(PlayerSide turn, PieceType? held, int x, int y, PieceType? clicked, bool clickedFaceDown) =>
+            $"Current turn: {turn}, holding: {(held == null ? "null" : held.Value.ToString())},\n" +
+            $"clicked at ({x},{y}), on: {(clicked == null ? "null" : clickedFaceDown ? "face-down piece" : clicked.Value.ToString())}";
+
+        /// <summary>A click changed the selection (debug-style line).</summary>
+        public static string SelectionChanged(SelectionChange change, PieceType type, int x, int y) => change switch
+        {
+            SelectionChange.Selected => $"(Action) Selected {type} at ({x},{y})",
+            SelectionChange.Unselected => $"(Action) Un-selected {type} at ({x},{y})",
+            SelectionChange.Switched => $"(Action) Switched to {type} at ({x},{y})",
+            SelectionChange.Invalid => $"(Action) Invalid move to ({x},{y})",
+            _ => throw new ArgumentOutOfRangeException(nameof(change), change, "Unknown selection change"),
+        };
+
+        /// <summary>An ordinary move took a piece (debug-style line).</summary>
+        public static string PieceTaken(PieceType type, int x, int y) => $"(Action) Captured {type} at ({x},{y})";
+
+        /// <summary>An ordinary move put a piece on a square (debug-style line).</summary>
+        public static string PieceMoved(PieceType type, int x, int y) => $"(Action) Moved {type} to ({x},{y})";
+
+        /// <summary>
+        /// A move's line: <c>第{MoveNumber}回合 紅：{Notation}</c> or <c>第{MoveNumber}回合 黑：{Notation}</c>
+        /// (e.g. <c>第1回合 紅：炮二平五</c>). The side name is the moved piece's colour, like the notation's piece characters.
+        /// </summary>
+        public static string MoveLine(MoveRecord move) =>
+            $"第{move.MoveNumber}回合 {(move.Color == PieceColor.Red ? "紅" : "黑")}：{move.Notation}";
+
+        /// <summary>
+        /// A dark-chess action's line, which has no notation (e.g. <c>第1回合 紅：翻開(3,2) 紅俥</c>);
+        /// <paramref name="moverColor"/> is the mover's colour as decided when the entry was raised.
+        /// </summary>
+        public static string DarkChessLine(MoveRecord move, PieceColor moverColor)
+        {
+            string head = $"第{move.MoveNumber}回合 {ColorName(moverColor)}：";
+            switch (move.Kind)
+            {
+                case MoveKind.Flip:
+                    return head + $"翻開({move.FromX},{move.FromY}) {PieceText(move.Revealed)}";
+                case MoveKind.HiddenCapture:
+                    return head + $"{HiddenCaptureHead(move)}，吃掉";
+                case MoveKind.HiddenOwnPiece:
+                    return head + $"{HiddenCaptureHead(move)}（己方），退回原位";
+                case MoveKind.HiddenStrongerReturn:
+                    return head + $"{HiddenCaptureHead(move)}（吃不了），退回原位";
+                case MoveKind.HiddenStrongerSuicide:
+                    return head + $"{HiddenCaptureHead(move)}（吃不了），{PieceText(move.Piece)}陣亡";
+                case MoveKind.Suicide:
+                    return head + $"{PieceText(move.Piece)}({move.FromX},{move.FromY})撞({move.ToX},{move.ToY}){PieceText(move.Revealed)}，自殺陣亡";
+                default:
+                    return head + $"{PieceText(move.Piece)}({move.FromX},{move.FromY})→({move.ToX},{move.ToY})"
+                        + (move.Captured != null ? $"，吃{PieceText(move.Captured)}" : "");
+            }
+        }
+
+        /// <summary>The common start of a hidden-capture line, e.g. 紅俥(2,1)暗吃(3,1)，翻出黑卒.</summary>
+        private static string HiddenCaptureHead(MoveRecord move) =>
+            $"{PieceText(move.Piece)}({move.FromX},{move.FromY})暗吃({move.ToX},{move.ToY})，翻出{PieceText(move.Revealed)}";
+
+        /// <summary>A piece's character with its colour name, e.g. 黑卒 (see <see cref="PieceConstants.GetPieceText"/>).</summary>
+        private static string PieceText(PieceInfo info) =>
+            info == null ? "?" : ColorName(info.Color) + PieceConstants.GetPieceText(info.Type, info.Color);
+
+        /// <summary>紅 / 黑 for the log lines; 未定 for a colour not decided yet.</summary>
+        private static string ColorName(PieceColor color) => color switch
+        {
+            PieceColor.Red => "紅",
+            PieceColor.Black => "黑",
+            _ => "未定",
+        };
+
+        /// <summary>The first action decided the factions.</summary>
+        public static string FactionsDecided(PieceColor player1Color, PieceColor player2Color) =>
+            $"(Faction) {PlayerSide.Player1} 執{ColorName(player1Color)}，{PlayerSide.Player2} 執{ColorName(player2Color)}";
+
+        /// <summary><paramref name="side"/> is in check.</summary>
+        public static string CheckGiven(PlayerSide side) => $"(Check) {side} is in check";
+
+        /// <summary>One tactical event (Chinese name, event type, mover, move and involved pieces).</summary>
+        public static string TacticDetected(TacticalEvent e)
+        {
+            var m = e.Move;
+            string involved = e.Pieces.Count == 0
+                ? "-"
+                : string.Join(", ", e.Pieces.Select(p => $"{p.Side} {p.Type} ({p.X},{p.Y})"));
+            return $"(Tactic) {e.ChineseName} [{e.Type}] {e.Mover} {m.Piece.Type} ({m.FromX},{m.FromY})->({m.ToX},{m.ToY}); pieces: {involved}";
+        }
+
+        /// <summary>A move taken back; <paramref name="moveLine"/> is its line (<see cref="MoveLine"/>, <see cref="DarkChessLine"/> or <see cref="MoveBackTo"/>).</summary>
+        public static string MoveTakenBack(string moveLine) => $"(Undo) {moveLine}";
+
+        /// <summary>A taken-back move with neither notation nor dark-chess rules: the piece and its from-square.</summary>
+        public static string MoveBackTo(PieceType type, int x, int y) => $"{type} back to ({x},{y})";
+
+        /// <summary><paramref name="side"/>'s clock ran out and the game goes on.</summary>
+        public static string TimeRanOut(PlayerSide side) => $"(Timer) {side} ran out of time";
+
+        /// <summary>The game ended.</summary>
+        public static string GameEnded(PlayerSide winner, GameOverReason reason) => $"(Game over) {winner} wins ({reason})";
 
         // ----- Names -----
 

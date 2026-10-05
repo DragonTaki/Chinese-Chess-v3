@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -13,8 +13,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.GameLog;
 using Chinese_Chess_v3.Game.Application.Services;
-using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
@@ -35,15 +35,15 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
     public sealed class SavedGameCatalog
     {
         private readonly IDialogService _dialogs;
-        private readonly GameSession _session;
+        private readonly GameLogComposer _gameLog;
 
         /// <summary>Creates the catalog; nothing is loaded until <c>List.Reload</c> / <see cref="LoadAll"/>.</summary>
         /// <param name="dialogs">Asks before a save is deleted.</param>
-        /// <param name="session">The game, whose log shows a failed delete (like a failed save).</param>
-        public SavedGameCatalog(IDialogService dialogs, GameSession session)
+        /// <param name="gameLog">The game log, which shows a failed delete (like a failed save).</param>
+        public SavedGameCatalog(IDialogService dialogs, GameLogComposer gameLog)
         {
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
-            _session = session ?? throw new ArgumentNullException(nameof(session));
+            _gameLog = gameLog ?? throw new ArgumentNullException(nameof(gameLog));
             List = new CategoryListModel<SavedGame>(LoadAll);
         }
 
@@ -154,7 +154,7 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
                     else
                     {
                         AppLogger.Log($"(Delete) Cannot delete {saved.FilePath}: {error}", LogLevel.ERROR);
-                        _session.Game.Logger?.AddMessage(GameTexts.DeleteSaveFailed(error));
+                        _gameLog.Write(GameTexts.DeleteSaveFailed(error));
                         if (reportFailureInDialog)
                             _dialogs.ShowConfirm(GameTexts.DeleteSaveFailedDialog(error), ConfirmDialogType.Ok, _ => { });
                     }
