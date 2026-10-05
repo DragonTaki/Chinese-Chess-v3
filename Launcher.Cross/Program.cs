@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
+using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
@@ -124,6 +125,11 @@ namespace Launcher.Cross
             services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
             // The game screen's decisions; created with the game screen (its handler resolves it).
             services.AddSingleton<GameScreenPresenter>();
+            // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's
+            // switched-off categories are kept while the game runs.
+            services.AddSingleton<EndgameCatalog>();
+            services.AddSingleton<OpeningCatalog>();
+            services.AddSingleton<SavedGameCatalog>();
 
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
