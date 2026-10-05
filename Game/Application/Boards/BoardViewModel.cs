@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 
 namespace Chinese_Chess_v3.Game.Application.Boards
@@ -72,8 +73,14 @@ namespace Chinese_Chess_v3.Game.Application.Boards
 
         // ----- State -----
 
-        /// <summary>The game shown.</summary>
-        public GameManager Game => _game;
+        /// <summary>The type of the board being played (the game's board is replaced when a game changes it, so read it each time).</summary>
+        public BoardType BoardType => _game.Board.Type;
+
+        /// <summary>The board's number of columns (files), read live like <see cref="BoardType"/>.</summary>
+        public int Columns => _game.Board.Columns;
+
+        /// <summary>The board's number of rows (ranks), read live like <see cref="BoardType"/>.</summary>
+        public int Rows => _game.Board.Rows;
 
         /// <summary>
         /// Whether the board is drawn rotated 180 degrees so 己方 is at the bottom

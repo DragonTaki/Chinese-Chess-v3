@@ -4,16 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
 // Update Date: 2026/10/05
-// Version: v1.5
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Chinese_Chess_v3.Game.Application.Boards;
-using Chinese_Chess_v3.Game.Configs;
-using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
-using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.UI.Binders;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -37,25 +34,19 @@ namespace Chinese_Chess_v3.Game.UI.Boards
 
         /// <summary>The board's state (selection, hints, which way up) and click command; created with the board.</summary>
         public BoardViewModel ViewModel { get; private set; }
-        private GameManager _gameManager;
-        public GameManager GameManager => _gameManager;
-        public Piece SelectedPiece => _gameManager.SelectedPiece;
 
         /// <summary>The board type the layout rules were last applied for (see <see cref="ApplyBoardLayout"/>).</summary>
         private BoardType? _layoutBoardType;
 
-        /// <summary>The type of the board being played (<c>GameManager.Board</c> is replaced when a game changes it).</summary>
-        public BoardType BoardType => _gameManager?.Board.Type ?? BoardType.Full;
+        /// <summary>The type of the board being played (<see cref="BoardViewModel.BoardType"/>; Full before the view model exists).</summary>
+        public BoardType BoardType => ViewModel?.BoardType ?? BoardType.Full;
 
         // IUiContainer implementation
 
         public UIBoard() { }
         protected override void OnInit(IUiFactory factory)
         {
-            _gameManager = _factory.ServiceProvider.GetRequiredService<GameManager>();
-            // Board hints follow the player settings; the code defaults when none are registered.
-            var playerSettings = _factory.ServiceProvider.GetService<PlayerSettings>() ?? PlayerSettings.Defaults;
-            ViewModel = new BoardViewModel(_gameManager, playerSettings, PostToUI);
+            ViewModel = _factory.ServiceProvider.GetRequiredService<BoardViewModelFactory>().Create(PostToUI);
             PieceBinder = new UIPieceBinder(ViewModel);
 
             // Declared size (pre-layout fallback), then the layout rules.
@@ -181,8 +172,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// </summary>
         public Vector2F GridToPixel(float x, float y)
         {
-            var board = _gameManager.Board;
-            var (viewX, viewY) = BoardPerspective.Map(x, y, board.Columns, board.Rows, IsFlipped);
+            var (viewX, viewY) = BoardPerspective.Map(x, y, ViewModel.Columns, ViewModel.Rows, IsFlipped);
             return ViewToPixel(viewX, viewY);
         }
 
@@ -231,10 +221,11 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <returns>False when the point is outside the clickable area.</returns>
         public bool TryPixelToGrid(float pixelX, float pixelY, out int gridX, out int gridY)
         {
-            var board = _gameManager.Board;
-            bool hit = BoardHitTest.TryPixelToGrid(ViewToPixel(0, 0), GridCellSize, board.Columns, board.Rows,
+            int columns = ViewModel.Columns;
+            int rows = ViewModel.Rows;
+            bool hit = BoardHitTest.TryPixelToGrid(ViewToPixel(0, 0), GridCellSize, columns, rows,
                 PieceRadius, ClickAreaEdgeAdjust, pixelX, pixelY, out int viewX, out int viewY);
-            (gridX, gridY) = BoardPerspective.Map(viewX, viewY, board.Columns, board.Rows, hit && IsFlipped);
+            (gridX, gridY) = BoardPerspective.Map(viewX, viewY, columns, rows, hit && IsFlipped);
             return hit;
         }
 

@@ -11,6 +11,7 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Application.Boards;
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameLog;
 using Chinese_Chess_v3.Game.Application.GameScreen;
@@ -96,6 +97,9 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
+            // Each board view's view model (created per board element).
+            services.AddSingleton(sp => new BoardViewModelFactory(() => sp.GetRequiredService<GameManager>(),
+                sp.GetService<PlayerSettings>() ?? PlayerSettings.Defaults));
             // What the game screen's info board shows (names, sides, clock texts); read live from the game.
             services.AddSingleton<InfoBoardViewModel>();
             // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
