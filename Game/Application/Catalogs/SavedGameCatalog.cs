@@ -135,7 +135,8 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         /// </summary>
         /// <param name="saved">The save to delete.</param>
         /// <param name="onDone">Called after a delete was tried (also when it failed: the list then shows what is really on disk).</param>
-        public void ConfirmDelete(SavedGame saved, Action onDone)
+        /// <param name="reportFailureInDialog">Also show a failure in an Ok dialog (the main menu, which has no game log).</param>
+        public void ConfirmDelete(SavedGame saved, Action onDone, bool reportFailureInDialog = false)
         {
             ArgumentNullException.ThrowIfNull(saved);
             _dialogs.ShowConfirm(
@@ -154,6 +155,8 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
                     {
                         AppLogger.Log($"(Delete) Cannot delete {saved.FilePath}: {error}", LogLevel.ERROR);
                         _session.Game.Logger?.AddMessage(GameTexts.DeleteSaveFailed(error));
+                        if (reportFailureInDialog)
+                            _dialogs.ShowConfirm(GameTexts.DeleteSaveFailedDialog(error), ConfirmDialogType.Ok, _ => { });
                     }
                     onDone?.Invoke();
                 });

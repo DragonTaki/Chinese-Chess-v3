@@ -81,6 +81,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>Deleting a save failed (the file could not be deleted).</summary>
         public static string DeleteSaveFailed(string reason) => $"(Delete) 刪除存檔失敗：{reason}";
 
+        /// <summary>A failed delete shown in a dialog (the main menu has no game log; author decision 2026-10-05).</summary>
+        public static string DeleteSaveFailedDialog(string reason) => $"刪除存檔失敗：{reason}";
+
         /// <summary>放棄 when the game is already over.</summary>
         public const string ResignGameOver = "(Resign) 對局已經結束";
 

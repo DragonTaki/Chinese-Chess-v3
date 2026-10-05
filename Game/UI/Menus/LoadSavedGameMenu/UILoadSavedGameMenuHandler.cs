@@ -84,7 +84,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         {
             ArgumentNullException.ThrowIfNull(saved);
             if (IsDeleteMode)
-                Catalog.ConfirmDelete(saved, Reload);
+                Catalog.ConfirmDelete(saved, Reload, reportFailureInDialog: true);
             else
                 StartSave(saved);
         }
