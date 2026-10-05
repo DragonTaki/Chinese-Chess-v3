@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/09/30
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -44,11 +44,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
             for (int i = 0; i < menuEntries.Count; i++)
             {
-                var entry = menuEntries[i];
+                var entry = menuEntries[i].ToButtonEntry();
                 var button = _factory.CreateElement<UIButton, UIButtonHandler, UIButtonRenderer>();
 
                 button.Text = entry.Label;
-                button.Handler.Action = () => Handler.StartNewGame(entry.Type);
+                button.Handler.Action = entry.OnClick;
 
                 // Stacked by the scroll container's flex column (Gap = Button.Spacing).
                 button.Size = UILayoutConstants.Submenu.Button.Size;

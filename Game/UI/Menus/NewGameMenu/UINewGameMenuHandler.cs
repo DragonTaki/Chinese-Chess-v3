@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/04
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -66,6 +66,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
         /// <summary>The button text of <paramref name="mode"/> (see <see cref="UINewGameMenuOptions"/>).</summary>
         private static string LabelOf(UINewGameMenuType mode) =>
-            UINewGameMenuOptions.Create(_ => { }).Find(e => e.Type == mode)?.Label ?? mode.ToString();
+            UINewGameMenuOptions.Create(_ => { }).Find(e => e.Id == mode)?.Label ?? mode.ToString();
     }
 }
