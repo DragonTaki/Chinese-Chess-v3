@@ -1,95 +1,47 @@
-## Ignore Visual Studio temporary files, build results, and
-## user-specific files
-
-# Build results
+# ----- Build output -----
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 *.log
+artifacts/
+*.exe
+*.dll
+*.pdb
+*.cache
 
-# Uncomment if you have tasks that create the project's static files in wwwroot
-# wwwroot/
-
-# User-specific files
-.VSCodeCounter
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# Mono Auto Generated Files
-mono_crash.*
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# VS Code
-.vscode/
-
-# Rider
-.idea/
-
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
-
-# DotCover
-*.dotCover
-
-# JetBrains Rider
-.idea/
-*.sln.iml
-
-# Visual Studio
-.vs/
-
-# NuGet
+# ----- NuGet -----
 *.nupkg
 *.snupkg
 .nuget/
 packages/
 project.lock.json
 project.fragment.lock.json
-artifacts/
 
-# Resharper
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
-
-# File-based project tools
-*.dbmdl
-*.bak
-
-# T4
-*.tt~
-*.tmp
-
-# Publish files
-*.publish.xml
-
-# Runtime
-*.exe
-*.dll
-*.pdb
-
-# Others
-*.cache
-*.config
+# ----- Editors and IDEs -----
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 *.vspscc
 *.vssscc
 *.ncb
 *.sbr
 *.scc
-*.class
-*.DS_Store
-*.orig
-*.bak
+*.publish.xml
+# VS Code (.VSCodeCounter: the VS Code Counter extension's reports)
+.vscode/
+.VSCodeCounter
+# JetBrains Rider / ReSharper
+.idea/
+*.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+*.dotCover
 
-# Test results
+# ----- Tests and coverage -----
 TestResults/
 *.trx
 *.coverage
@@ -100,15 +52,21 @@ TestResults/
 *.vspx
 *.sarif
 
-# Temporary files
+# ----- Operating systems -----
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ----- Temporary, backup and merge files -----
 ~$*
 *.tmp
 *.temp
 *.swp
 *.swo
-
-# Git directory metadata
+*.bak
 *.orig
 
-# Others
+# ----- Others -----
+*.config
 *.sqlite
