@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v2.1
 /* ----- ----- ----- ----- */
 
@@ -15,7 +15,6 @@ using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
-using Chinese_Chess_v3.Game.UI.Constants;
 
 namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 {
@@ -400,75 +399,75 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>遊戲設定's tabs: 畫面, 聲音, 遊戲, DEBUG (the debug features' switches, one section per kind).</summary>
         public static IReadOnlyList<SettingsMenuPage> GamePages { get; } = new[]
         {
-            new SettingsMenuPage(GameMenuTexts.TabDisplay, new[]
+            new SettingsMenuPage(SettingsTexts.TabDisplay, new[]
             {
                 Section(
-                    Placeholder(GameMenuTexts.Resolution, GameMenuTexts.ResolutionOptions,
+                    Placeholder(SettingsTexts.Resolution, SettingsTexts.ResolutionOptions,
                         () => UnimplementedSettings.ResolutionIndex, v => UnimplementedSettings.ResolutionIndex = v),
-                    Placeholder(GameMenuTexts.DisplayMode, GameMenuTexts.DisplayModeOptions,
+                    Placeholder(SettingsTexts.DisplayMode, SettingsTexts.DisplayModeOptions,
                         () => UnimplementedSettings.DisplayModeIndex, v => UnimplementedSettings.DisplayModeIndex = v),
-                    Placeholder(GameMenuTexts.VSync, () => UnimplementedSettings.VSync, v => UnimplementedSettings.VSync = v),
-                    new SettingsChoiceItem(GameMenuTexts.Fps, GameMenuTexts.FpsOptions,
+                    Placeholder(SettingsTexts.VSync, () => UnimplementedSettings.VSync, v => UnimplementedSettings.VSync = v),
+                    new SettingsChoiceItem(SettingsTexts.Fps, SettingsTexts.FpsOptions,
                         s => Math.Max(0, PlayerSettings.FpsOptions.ToList().IndexOf(s.Fps)), (s, i) => s.Fps = PlayerSettings.FpsOptions[i]),
-                    Placeholder(GameMenuTexts.UiScale, UiScaleMin, UiScaleMax, UiScaleStep, GameMenuTexts.Percent,
+                    Placeholder(SettingsTexts.UiScale, UiScaleMin, UiScaleMax, UiScaleStep, SettingsTexts.Percent,
                         () => UnimplementedSettings.UiScalePercent, v => UnimplementedSettings.UiScalePercent = v),
-                    new SettingsNumberItem(GameMenuTexts.WheelScrollStep, s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v,
-                        PlayerSettings.WheelScrollStepMin, PlayerSettings.WheelScrollStepMax, 1f, GameMenuTexts.PlainNumber)),
+                    new SettingsNumberItem(SettingsTexts.WheelScrollStep, s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v,
+                        PlayerSettings.WheelScrollStepMin, PlayerSettings.WheelScrollStepMax, 1f, SettingsTexts.PlainNumber)),
             }),
 
-            new SettingsMenuPage(GameMenuTexts.TabSound, new[]
+            new SettingsMenuPage(SettingsTexts.TabSound, new[]
             {
                 Section(
-                    Placeholder(GameMenuTexts.MasterVolume, VolumeMin, VolumeMax, VolumeStep, GameMenuTexts.PlainNumber,
+                    Placeholder(SettingsTexts.MasterVolume, VolumeMin, VolumeMax, VolumeStep, SettingsTexts.PlainNumber,
                         () => UnimplementedSettings.MasterVolume, v => UnimplementedSettings.MasterVolume = v),
-                    Placeholder(GameMenuTexts.MusicVolume, VolumeMin, VolumeMax, VolumeStep, GameMenuTexts.PlainNumber,
+                    Placeholder(SettingsTexts.MusicVolume, VolumeMin, VolumeMax, VolumeStep, SettingsTexts.PlainNumber,
                         () => UnimplementedSettings.MusicVolume, v => UnimplementedSettings.MusicVolume = v),
-                    Placeholder(GameMenuTexts.EffectsVolume, VolumeMin, VolumeMax, VolumeStep, GameMenuTexts.PlainNumber,
+                    Placeholder(SettingsTexts.EffectsVolume, VolumeMin, VolumeMax, VolumeStep, SettingsTexts.PlainNumber,
                         () => UnimplementedSettings.EffectsVolume, v => UnimplementedSettings.EffectsVolume = v),
-                    Placeholder(GameMenuTexts.Mute, () => UnimplementedSettings.Mute, v => UnimplementedSettings.Mute = v)),
+                    Placeholder(SettingsTexts.Mute, () => UnimplementedSettings.Mute, v => UnimplementedSettings.Mute = v)),
             }),
 
-            new SettingsMenuPage(GameMenuTexts.TabGame, new[]
+            new SettingsMenuPage(SettingsTexts.TabGame, new[]
             {
                 Section(
-                    new SettingsTextItem(GameMenuTexts.PlayerName, s => s.PlayerName, (s, v) => s.PlayerName = v,
-                        PlayerSettings.PlayerNameMaxLength, GameMenuTexts.PlayerNamePlaceholder),
-                    new SettingsTextItem(GameMenuTexts.Player1Name, s => s.Player1Name, (s, v) => s.Player1Name = v,
+                    new SettingsTextItem(SettingsTexts.PlayerName, s => s.PlayerName, (s, v) => s.PlayerName = v,
+                        PlayerSettings.PlayerNameMaxLength, SettingsTexts.PlayerNamePlaceholder),
+                    new SettingsTextItem(SettingsTexts.Player1Name, s => s.Player1Name, (s, v) => s.Player1Name = v,
                         PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player1)),
-                    new SettingsTextItem(GameMenuTexts.Player2Name, s => s.Player2Name, (s, v) => s.Player2Name = v,
+                    new SettingsTextItem(SettingsTexts.Player2Name, s => s.Player2Name, (s, v) => s.Player2Name = v,
                         PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player2)),
-                    new SettingsTextItem(GameMenuTexts.Player3Name, s => s.Player3Name, (s, v) => s.Player3Name = v,
+                    new SettingsTextItem(SettingsTexts.Player3Name, s => s.Player3Name, (s, v) => s.Player3Name = v,
                         PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player3)),
-                    new SettingsToggleItem(GameMenuTexts.LegalMoveHints, s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v),
-                    new SettingsToggleItem(GameMenuTexts.HangingPieceHints, s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v),
-                    Placeholder(GameMenuTexts.MoveAnimationSpeed, GameMenuTexts.MoveAnimationSpeedOptions,
+                    new SettingsToggleItem(SettingsTexts.LegalMoveHints, s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v),
+                    new SettingsToggleItem(SettingsTexts.HangingPieceHints, s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v),
+                    Placeholder(SettingsTexts.MoveAnimationSpeed, SettingsTexts.MoveAnimationSpeedOptions,
                         () => UnimplementedSettings.MoveAnimationSpeedIndex, v => UnimplementedSettings.MoveAnimationSpeedIndex = v),
-                    Placeholder(GameMenuTexts.BoardStyle, GameMenuTexts.BoardStyleOptions,
+                    Placeholder(SettingsTexts.BoardStyle, SettingsTexts.BoardStyleOptions,
                         () => UnimplementedSettings.BoardStyleIndex, v => UnimplementedSettings.BoardStyleIndex = v),
-                    Placeholder(GameMenuTexts.PieceStyle, GameMenuTexts.PieceStyleOptions,
+                    Placeholder(SettingsTexts.PieceStyle, SettingsTexts.PieceStyleOptions,
                         () => UnimplementedSettings.PieceStyleIndex, v => UnimplementedSettings.PieceStyleIndex = v),
-                    Placeholder(GameMenuTexts.Language, GameMenuTexts.LanguageOptions,
+                    Placeholder(SettingsTexts.Language, SettingsTexts.LanguageOptions,
                         () => UnimplementedSettings.LanguageIndex, v => UnimplementedSettings.LanguageIndex = v)),
             }),
 
             // One section per kind of debug feature ([debug] in settings.ini; applied at once).
-            new SettingsMenuPage(GameMenuTexts.TabDebug, new[]
+            new SettingsMenuPage(SettingsTexts.TabDebug, new[]
             {
-                new SettingsMenuSection(GameMenuTexts.SectionDebugLog, new SettingsMenuItem[]
+                new SettingsMenuSection(SettingsTexts.SectionDebugLog, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(GameMenuTexts.DebugLog, s => s.VerboseLog, (s, v) => s.VerboseLog = v),
-                    new SettingsToggleItem(GameMenuTexts.ConsoleTrace, s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v),
+                    new SettingsToggleItem(SettingsTexts.DebugLog, s => s.VerboseLog, (s, v) => s.VerboseLog = v),
+                    new SettingsToggleItem(SettingsTexts.ConsoleTrace, s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v),
                 }),
-                new SettingsMenuSection(GameMenuTexts.SectionDebugVisual, new SettingsMenuItem[]
+                new SettingsMenuSection(SettingsTexts.SectionDebugVisual, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(GameMenuTexts.LabelBackgrounds, s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v),
-                    new SettingsToggleItem(GameMenuTexts.LayoutOutlines, s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v),
-                    new SettingsToggleItem(GameMenuTexts.StarEffectFrames, s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v),
+                    new SettingsToggleItem(SettingsTexts.LabelBackgrounds, s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v),
+                    new SettingsToggleItem(SettingsTexts.LayoutOutlines, s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v),
+                    new SettingsToggleItem(SettingsTexts.StarEffectFrames, s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v),
                 }),
-                new SettingsMenuSection(GameMenuTexts.SectionDebugPerformance, new SettingsMenuItem[]
+                new SettingsMenuSection(SettingsTexts.SectionDebugPerformance, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(GameMenuTexts.ShowFps, s => s.ShowFps, (s, v) => s.ShowFps = v),
-                    new SettingsToggleItem(GameMenuTexts.ShowNetworkLatency, s => s.ShowNetworkLatency, (s, v) => s.ShowNetworkLatency = v),
+                    new SettingsToggleItem(SettingsTexts.ShowFps, s => s.ShowFps, (s, v) => s.ShowFps = v),
+                    new SettingsToggleItem(SettingsTexts.ShowNetworkLatency, s => s.ShowNetworkLatency, (s, v) => s.ShowNetworkLatency = v),
                 }),
             }),
         };
@@ -480,26 +479,26 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <summary>The name of an on/off rule option.</summary>
         private static string OptionName(RuleOption option) => option switch
         {
-            RuleOption.GeneralCanSeeGeneral => GameMenuTexts.GeneralCanSeeGeneral,
-            RuleOption.GeneralCanLeavePalace => GameMenuTexts.GeneralCanLeavePalace,
-            RuleOption.AdvisorCanLeavePalace => GameMenuTexts.AdvisorCanLeavePalace,
-            RuleOption.ElephantEyeBlocks => GameMenuTexts.ElephantEyeBlocks,
-            RuleOption.HorseLegBlocks => GameMenuTexts.HorseLegBlocks,
-            RuleOption.CanCaptureHiddenPiece => GameMenuTexts.CanCaptureHiddenPiece,
-            RuleOption.CaptureHiddenStrongerSuicide => GameMenuTexts.CaptureHiddenStrongerSuicide,
-            RuleOption.AllowChainCapture => GameMenuTexts.AllowChainCapture,
-            RuleOption.ChariotRushHorseDiagonal => GameMenuTexts.ChariotRushHorseDiagonal,
-            RuleOption.CannonMustJump => GameMenuTexts.CannonMustJump,
-            RuleOption.CaptureOwnPiece => GameMenuTexts.CaptureOwnPiece,
-            RuleOption.Suicide => GameMenuTexts.Suicide,
+            RuleOption.GeneralCanSeeGeneral => SettingsTexts.GeneralCanSeeGeneral,
+            RuleOption.GeneralCanLeavePalace => SettingsTexts.GeneralCanLeavePalace,
+            RuleOption.AdvisorCanLeavePalace => SettingsTexts.AdvisorCanLeavePalace,
+            RuleOption.ElephantEyeBlocks => SettingsTexts.ElephantEyeBlocks,
+            RuleOption.HorseLegBlocks => SettingsTexts.HorseLegBlocks,
+            RuleOption.CanCaptureHiddenPiece => SettingsTexts.CanCaptureHiddenPiece,
+            RuleOption.CaptureHiddenStrongerSuicide => SettingsTexts.CaptureHiddenStrongerSuicide,
+            RuleOption.AllowChainCapture => SettingsTexts.AllowChainCapture,
+            RuleOption.ChariotRushHorseDiagonal => SettingsTexts.ChariotRushHorseDiagonal,
+            RuleOption.CannonMustJump => SettingsTexts.CannonMustJump,
+            RuleOption.CaptureOwnPiece => SettingsTexts.CaptureOwnPiece,
+            RuleOption.Suicide => SettingsTexts.Suicide,
             _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unknown rule option"),
         };
 
         private static readonly TimerMode[] TimerModes = { TimerMode.CountDown, TimerMode.CountUp };
-        private static readonly string[] TimerModeTexts = { GameMenuTexts.TimerModeCountDown, GameMenuTexts.TimerModeCountUp };
+        private static readonly string[] TimerModeTexts = { SettingsTexts.TimerModeCountDown, SettingsTexts.TimerModeCountUp };
 
         private static readonly HalfCrossTeamVariant[] TeamVariants = { HalfCrossTeamVariant.Standard, HalfCrossTeamVariant.Handicap };
-        private static readonly string[] TeamVariantTexts = { GameMenuTexts.HalfCrossTeamStandard, GameMenuTexts.HalfCrossTeamHandicap };
+        private static readonly string[] TeamVariantTexts = { SettingsTexts.HalfCrossTeamStandard, SettingsTexts.HalfCrossTeamHandicap };
 
         private static readonly HalfCrossWinCondition[] WinConditions =
         {
@@ -508,8 +507,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         };
         private static readonly string[] WinConditionTexts =
         {
-            GameMenuTexts.HalfCrossWinPoints, GameMenuTexts.HalfCrossWinAnnihilation, GameMenuTexts.HalfCrossWinRecall,
-            GameMenuTexts.HalfCrossWinScoreBalance, GameMenuTexts.HalfCrossWinFirstTo200,
+            SettingsTexts.HalfCrossWinPoints, SettingsTexts.HalfCrossWinAnnihilation, SettingsTexts.HalfCrossWinRecall,
+            SettingsTexts.HalfCrossWinScoreBalance, SettingsTexts.HalfCrossWinFirstTo200,
         };
 
         /// <summary>A choice over <paramref name="values"/> (an enum setting), shown as <paramref name="texts"/>.</summary>
@@ -524,7 +523,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         private static SettingsToggleItem CountDownToggle(string name, Func<PlayerSettings, RuleSettings> rules,
             Func<RuleSettings, bool> get, Action<RuleSettings, bool> set) =>
             new(name, s => get(rules(s)), (s, v) => set(rules(s), v),
-                isAvailable: s => rules(s).TimerMode != TimerMode.CountUp, unavailableText: GameMenuTexts.WithCountUpNote);
+                isAvailable: s => rules(s).TimerMode != TimerMode.CountUp, unavailableText: SettingsTexts.WithCountUpNote);
 
         /// <summary>One game kind's tab: its rule options, then its clock settings.</summary>
         /// <summary>
@@ -534,7 +533,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         private static SettingsChoiceItem PresetChoice(Func<PlayerSettings, RuleSettings> rules)
         {
             var presets = PlayerTimerPresets.Presets;
-            var options = presets.Select(p => p.Name).Append(GameMenuTexts.TimerPresetCustom).ToArray();
+            var options = presets.Select(p => p.Name).Append(SettingsTexts.TimerPresetCustom).ToArray();
             int Matching(RuleSettings r)
             {
                 for (int i = 0; i < presets.Count; i++)
@@ -546,7 +545,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 }
                 return presets.Count;
             }
-            return new SettingsChoiceItem(GameMenuTexts.TimerPreset, options, s => Matching(rules(s)), (s, index) =>
+            return new SettingsChoiceItem(SettingsTexts.TimerPreset, options, s => Matching(rules(s)), (s, index) =>
             {
                 if (index < 0 || index >= presets.Count)
                     return;
@@ -567,31 +566,31 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 .ToList();
             if (kind == GameKind.ThreeKingdoms)
             {
-                rules.Add(EnumChoice(GameMenuTexts.HalfCrossTeamVariant, TeamVariants, TeamVariantTexts,
+                rules.Add(EnumChoice(SettingsTexts.HalfCrossTeamVariant, TeamVariants, TeamVariantTexts,
                     s => R(s).HalfCrossTeamVariant, (s, v) => R(s).HalfCrossTeamVariant = v, isImplemented: false));
-                rules.Add(EnumChoice(GameMenuTexts.HalfCrossWinCondition, WinConditions, WinConditionTexts,
+                rules.Add(EnumChoice(SettingsTexts.HalfCrossWinCondition, WinConditions, WinConditionTexts,
                     s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v, isImplemented: false));
             }
 
             var timer = new SettingsMenuItem[]
             {
-                EnumChoice(GameMenuTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
+                EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
                 PresetChoice(R),
-                new SettingsIntegerItem(GameMenuTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
-                    RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, GameMenuTexts.MinutesUnit),
-                new SettingsIntegerItem(GameMenuTexts.StepTime, s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = v,
-                    RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax, GameMenuTexts.SecondsUnit),
-                new SettingsIntegerItem(GameMenuTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
-                    RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, GameMenuTexts.SecondsUnit),
-                CountDownToggle(GameMenuTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v),
-                CountDownToggle(GameMenuTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v),
+                new SettingsIntegerItem(SettingsTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
+                    RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, SettingsTexts.MinutesUnit),
+                new SettingsIntegerItem(SettingsTexts.StepTime, s => R(s).StepTimeSeconds, (s, v) => R(s).StepTimeSeconds = v,
+                    RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax, SettingsTexts.SecondsUnit),
+                new SettingsIntegerItem(SettingsTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
+                    RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, SettingsTexts.SecondsUnit),
+                CountDownToggle(SettingsTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v),
+                CountDownToggle(SettingsTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v),
             };
 
             var sections = new List<SettingsMenuSection>();
             if (rules.Count > 0)
-                sections.Add(new SettingsMenuSection(GameMenuTexts.SectionRules, rules));
-            sections.Add(new SettingsMenuSection(GameMenuTexts.SectionTimer, timer));
-            return new SettingsMenuPage(GameMenuTexts.GameKindName(kind), sections);
+                sections.Add(new SettingsMenuSection(SettingsTexts.SectionRules, rules));
+            sections.Add(new SettingsMenuSection(SettingsTexts.SectionTimer, timer));
+            return new SettingsMenuPage(SettingsTexts.GameKindName(kind), sections);
         }
 
         /// <summary>單機規則設定's tabs: one per game kind, in new-game menu order.</summary>

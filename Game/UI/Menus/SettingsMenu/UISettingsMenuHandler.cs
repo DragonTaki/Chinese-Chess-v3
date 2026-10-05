@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v2.2
 /* ----- ----- ----- ----- */
 
@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Logging;
 using Engine.Timing;
@@ -167,7 +167,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             if (_saveFailureShown)
                 return;
             _saveFailureShown = true;
-            Dialogs.ShowConfirm(GameMenuTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
+            Dialogs.ShowConfirm(SettingsTexts.SettingsSaveFailed, ConfirmDialogType.Ok, _ => { });
         }
 
         /// <summary>恢復初始 clicked: after a confirmation, reset the shown tab's settings to the defaults, refresh the controls, apply and save.</summary>
@@ -178,7 +178,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
             var page = _pages[_currentTab];
             Dialogs.ShowConfirm(
-                GameMenuTexts.ResetTabToDefaults,
+                SettingsTexts.ResetTabToDefaults,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
