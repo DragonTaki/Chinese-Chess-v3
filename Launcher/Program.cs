@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
@@ -123,6 +124,8 @@ namespace Launcher
             });
             // The game flow; takes the game through a factory so the GameManager is still created on first use.
             services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
+            // The game screen's decisions; created with the game screen (its handler resolves it).
+            services.AddSingleton<GameScreenPresenter>();
 
             // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
+using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
@@ -121,6 +122,8 @@ namespace Launcher.Cross
             });
             // The game flow; takes the game through a factory so the GameManager is still created on first use.
             services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
+            // The game screen's decisions; created with the game screen (its handler resolves it).
+            services.AddSingleton<GameScreenPresenter>();
 
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
