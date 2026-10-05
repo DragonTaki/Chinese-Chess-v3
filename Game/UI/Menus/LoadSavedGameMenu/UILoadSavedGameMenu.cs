@@ -4,15 +4,15 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/02
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
@@ -111,7 +111,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
                 // Disabled: no action. (Not IsEnabled = false: UIMenu reuses IsEnabled for
                 // its scroll culling and would switch it back on.)
                 var empty = CreateRow(UILayoutSheet.LoadSavedGameMenu.Item, UILayoutStyles.LoadSavedGameMenu.EmptyRowStyle, null);
-                empty.Text = GameMenuTexts.NoSavedGamesRow;
+                empty.Text = MenuTexts.NoSavedGamesRow;
             }
 
             Handler.UpdateScrollContentHeight();
@@ -122,12 +122,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         {
             if (_deleteToggle == null)
                 return;
-            _deleteToggle.Text = on ? GameMenuTexts.DeleteModeOn : GameMenuTexts.DeleteModeOff;
+            _deleteToggle.Text = MenuTexts.DeleteModeToggle(on);
         }
 
         /// <summary>
         /// A save's one-line label: name, date and time read from the file name
-        /// (<see cref="GameMenuTexts.SavedGameRowFormat"/>); a file named otherwise shows its
+        /// (<see cref="MenuTexts.SavedGameRow"/>); a file named otherwise shows its
         /// title. Names are cut to <c>UILayoutStyles.LoadSavedGameMenu.NameLength</c>.
         /// </summary>
         public static string ButtonText(SavedGame saved)
@@ -137,10 +137,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             if (!SavedGameCatalog.TryGetNameAndTime(saved, out string name, out var time))
                 return UISavedGameMenu.OneLine(saved.Title, length);
 
-            return string.Format(CultureInfo.InvariantCulture, GameMenuTexts.SavedGameRowFormat,
-                UISavedGameMenu.OneLine(name, length),
-                time.ToString(GameMenuTexts.SavedGameDateFormat, CultureInfo.InvariantCulture),
-                time.ToString(GameMenuTexts.SavedGameTimeFormat, CultureInfo.InvariantCulture));
+            return MenuTexts.SavedGameRow(UISavedGameMenu.OneLine(name, length), time);
         }
 
         /// <summary>A row button in the scroll column; <paramref name="onClick"/> null = does nothing (header, 沒有存檔).</summary>

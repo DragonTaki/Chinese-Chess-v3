@@ -4,15 +4,15 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core.Saves;
-using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +46,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
 
         protected override string LogLabel => "Load";
 
-        protected override string EmptyMessageText => string.Format(GameMenuTexts.NoSavedGamesFormat, UserFolder);
+        protected override string EmptyMessageText => MenuTexts.NoSavedGames(UserFolder);
 
         /// <summary>The save's start position and moves replayed, with its rules and clocks (<see cref="GameSession.LoadSavedGame"/>).</summary>
         protected override void StartInSession(GameSession session, SavedGame saved) =>

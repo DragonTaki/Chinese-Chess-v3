@@ -309,7 +309,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// Characters of a save's name shown on its button (about what fits next to the
             /// date and time at <see cref="SettingsMenu.ButtonFont"/>); a longer one is cut with
-            /// <c>GameMenuTexts.Ellipsis</c>.
+            /// <c>MenuTexts.Ellipsis</c>.
             /// </summary>
             public const int NameLength = 14;
 

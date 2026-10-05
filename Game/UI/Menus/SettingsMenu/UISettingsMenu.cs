@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v2.2
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Settings;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
@@ -98,7 +99,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         protected override void BuildButtons()
         {
             var reset = CreateButton(UILayoutSheet.SettingsMenu.FooterButton, UILayoutStyles.SettingsMenu.ButtonStyle, () => Handler.ResetRequested());
-            reset.Text = GameMenuTexts.SettingsResetTab;
+            reset.Text = SettingsTexts.ResetTab;
             Buttons.Add(reset);
             FooterRow.AddChild(reset);
         }

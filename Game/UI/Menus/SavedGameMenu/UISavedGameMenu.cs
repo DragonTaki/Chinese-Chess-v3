@@ -4,13 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System.Globalization;
 using System.Text;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core.Saves;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -55,7 +56,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
         {
             if (_deleteToggle == null || !Buttons.Contains(_deleteToggle))
                 return;
-            _deleteToggle.Text = on ? GameMenuTexts.DeleteModeOn : GameMenuTexts.DeleteModeOff;
+            _deleteToggle.Text = MenuTexts.DeleteModeToggle(on);
         }
 
         /// <summary>The category list layout, then placed in the board's area (<see cref="UILayoutSheet.GameScreen.SavedGameList"/>).</summary>
@@ -70,21 +71,19 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu
             if (!SavedGameCatalog.TryGetNameAndTime(saved, out string name, out var time))
                 return WrapTitle(saved.Title, UILayoutStyles.CategoryListMenu.TitleLineLength);
 
-            return $"{OneLine(name, UILayoutStyles.CategoryListMenu.TitleLineLength)}\n" +
-                $"{time.ToString(GameMenuTexts.SavedGameDateFormat, CultureInfo.InvariantCulture)}\n" +
-                $"{time.ToString(GameMenuTexts.SavedGameTimeFormat, CultureInfo.InvariantCulture)}";
+            return MenuTexts.SavedGameButton(OneLine(name, UILayoutStyles.CategoryListMenu.TitleLineLength), time);
         }
 
         /// <summary>
         /// <paramref name="text"/> cut to <paramref name="lineLength"/> characters (text
-        /// elements) with <see cref="GameMenuTexts.Ellipsis"/> as the last one when longer.
+        /// elements) with <see cref="MenuTexts.Ellipsis"/> as the last one when longer.
         /// </summary>
         internal static string OneLine(string text, int lineLength)
         {
             var info = new StringInfo(text ?? string.Empty);
             if (info.LengthInTextElements <= lineLength || lineLength < 2)
                 return info.String;
-            return new StringBuilder(info.SubstringByTextElements(0, lineLength - 1)).Append(GameMenuTexts.Ellipsis).ToString();
+            return new StringBuilder(info.SubstringByTextElements(0, lineLength - 1)).Append(MenuTexts.Ellipsis).ToString();
         }
     }
 }

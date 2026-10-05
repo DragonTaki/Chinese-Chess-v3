@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -16,13 +16,15 @@ namespace Chinese_Chess_v3.Game.Application.Texts
     /// <summary>
     /// Texts of the settings screens (遊戲設定 / 單機規則設定) used by the logic layer: the tabs,
     /// section headers, setting names, choices and value formats the screens' content lists
-    /// (<c>SettingsMenuContent</c>), and the messages of the settings screen model. The screens'
-    /// own button and menu-entry texts stay in <c>GameMenuTexts</c> (UI).
+    /// (<c>SettingsMenuContent</c>), the footer button, and the messages of the settings screen model.
     /// </summary>
     public static class SettingsTexts
     {
         /// <summary>The save failed (details are in the log).</summary>
         public const string SettingsSaveFailed = "設定檔寫入失敗，請查看紀錄。";
+
+        /// <summary>The footer button resetting the shown tab to the defaults.</summary>
+        public const string ResetTab = "恢復初始";
 
         /// <summary>The confirmation before resetting the shown tab.</summary>
         public const string ResetTabToDefaults = "將目前分頁恢復成預設值？";

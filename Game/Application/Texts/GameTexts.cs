@@ -21,7 +21,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
     /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog, the info board's view model,
     /// the game log's composer): their confirm dialog messages, the game-over message, every game-log line (the lines of the
     /// game's own entries, composed from <c>GameLogEvent</c>s, and the lines the logic layer writes itself), the info board's
-    /// names and check mark, and the players' default names. The screens' own texts stay in <c>GameMenuTexts</c> (UI).
+    /// names and check mark, and the players' default names. The menus' texts are in <c>MenuTexts</c> and <c>SettingsTexts</c>.
     /// </summary>
     public static class GameTexts
     {
