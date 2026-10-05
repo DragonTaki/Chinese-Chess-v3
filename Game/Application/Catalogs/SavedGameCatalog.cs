@@ -10,11 +10,17 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Saves;
+
+using Engine.Logging;
 
 namespace Chinese_Chess_v3.Game.Application.Catalogs
 {
@@ -22,14 +28,22 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
     /// The player's saved games (棋譜存檔) in <see cref="Folder"/>, for both save lists: the game
     /// screen's (載入) as a category list (<see cref="List"/>, categories = the mode folders) and
     /// the main menu's (讀取存檔) grouped by mode, newest first (<see cref="Group"/>). Also reads
-    /// a save's name and time from its file name for the buttons (<see cref="TryGetNameAndTime"/>).
+    /// a save's name and time from its file name for the buttons (<see cref="TryGetNameAndTime"/>),
+    /// and deletes a save after asking (<see cref="ConfirmDelete"/>).
     /// A single long-lived instance, so the switched-off categories are kept while the game runs.
     /// </summary>
     public sealed class SavedGameCatalog
     {
+        private readonly IDialogService _dialogs;
+        private readonly GameSession _session;
+
         /// <summary>Creates the catalog; nothing is loaded until <c>List.Reload</c> / <see cref="LoadAll"/>.</summary>
-        public SavedGameCatalog()
+        /// <param name="dialogs">Asks before a save is deleted.</param>
+        /// <param name="session">The game, whose log shows a failed delete (like a failed save).</param>
+        public SavedGameCatalog(IDialogService dialogs, GameSession session)
         {
+            _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
+            _session = session ?? throw new ArgumentNullException(nameof(session));
             List = new CategoryListModel<SavedGame>(LoadAll);
         }
 
@@ -89,5 +103,60 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         /// </summary>
         public static bool TryGetNameAndTime(SavedGame saved, out string name, out DateTime time) =>
             SystemSettings.TryParseSaveFileName(saved?.Title, out name, out time);
+
+        /// <summary>
+        /// Deletes <paramref name="saved"/>'s file (<see cref="GameSaveFiles.Delete"/>). A write
+        /// error (IO, access) is returned, not thrown.
+        /// </summary>
+        /// <param name="saved">A save from the list (loaded from a file).</param>
+        /// <param name="error">Why the file could not be deleted; null on success.</param>
+        /// <returns>True when the file is gone.</returns>
+        /// <exception cref="ArgumentException"><paramref name="saved"/> was not loaded from a file.</exception>
+        public static bool TryDelete(SavedGame saved, out string error)
+        {
+            try
+            {
+                GameSaveFiles.Delete(saved);
+                error = null;
+                return true;
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+            {
+                error = ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// A save chosen for deleting: asks first (<see cref="GameTexts.DeleteSaveConfirm"/>, yes /
+        /// no); yes deletes its file (<see cref="TryDelete"/>; a failure is reported like a failed
+        /// save: the debug log, and <see cref="GameTexts.DeleteSaveFailed"/> in the game log),
+        /// then calls <paramref name="onDone"/> so the list reloads. No does nothing.
+        /// </summary>
+        /// <param name="saved">The save to delete.</param>
+        /// <param name="onDone">Called after a delete was tried (also when it failed: the list then shows what is really on disk).</param>
+        public void ConfirmDelete(SavedGame saved, Action onDone)
+        {
+            ArgumentNullException.ThrowIfNull(saved);
+            _dialogs.ShowConfirm(
+                GameTexts.DeleteSaveConfirm,
+                ConfirmDialogType.YesNo,
+                result =>
+                {
+                    if (result != ConfirmDialogResult.Yes)
+                        return;
+
+                    if (TryDelete(saved, out string error))
+                    {
+                        AppLogger.Log($"(Delete) Deleted {saved.FilePath}", LogLevel.DEBUG);
+                    }
+                    else
+                    {
+                        AppLogger.Log($"(Delete) Cannot delete {saved.FilePath}: {error}", LogLevel.ERROR);
+                        _session.Game.Logger?.AddMessage(GameTexts.DeleteSaveFailed(error));
+                    }
+                    onDone?.Invoke();
+                });
+        }
     }
 }

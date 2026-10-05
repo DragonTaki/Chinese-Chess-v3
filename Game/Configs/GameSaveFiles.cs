@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -19,7 +19,7 @@ using Chinese_Chess_v3.Game.Core.Saves;
 namespace Chinese_Chess_v3.Game.Configs
 {
     /// <summary>
-    /// Saving and listing games in the game's saves folder, by the location and naming rules
+    /// Saving, listing and deleting games in the game's saves folder, by the location and naming rules
     /// of <see cref="SystemSettings"/>. The PGN format itself is Core's
     /// (<see cref="SavedGamePgn"/>); loading a listed game into play is
     /// <see cref="GameManager.LoadSavedGame"/>.
@@ -57,6 +57,20 @@ namespace Chinese_Chess_v3.Game.Configs
         /// </summary>
         public static List<SavedGame> LoadAll(List<string> warnings = null) =>
             SavedGameLoader.LoadFolder(SystemSettings.SavesFolder, createIfMissing: true, warnings);
+
+        /// <summary>
+        /// Deletes <paramref name="saved"/>'s file (<see cref="Core.Pgn.PgnGameFile.FilePath"/>).
+        /// A file that is already gone is not an error (<see cref="File.Delete"/>).
+        /// </summary>
+        /// <exception cref="ArgumentException"><paramref name="saved"/> was not loaded from a file (no <c>FilePath</c>).</exception>
+        /// <exception cref="IOException">The file cannot be deleted, e.g. it is open elsewhere or its folder is gone (also <see cref="UnauthorizedAccessException"/>).</exception>
+        public static void Delete(SavedGame saved)
+        {
+            ArgumentNullException.ThrowIfNull(saved);
+            if (string.IsNullOrEmpty(saved.FilePath))
+                throw new ArgumentException("The saved game was not loaded from a file", nameof(saved));
+            File.Delete(saved.FilePath);
+        }
 
         /// <summary><paramref name="path"/>, or the first free <c>name_N.pgn</c> next to it when it exists.</summary>
         private static string UniquePath(string path)

@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -15,7 +15,7 @@ using Chinese_Chess_v3.Game.Core.Players;
 namespace Chinese_Chess_v3.Game.Application.Texts
 {
     /// <summary>
-    /// Texts with game meaning used by the logic layer (the game screen's presenter): its
+    /// Texts with game meaning used by the logic layer (the game screen's presenter, the saved-game catalog): their
     /// confirm dialog messages, the game-over message, the game-log lines it writes itself (the
     /// Core writes the lines of the actions themselves, e.g. each move taken back, the saved file
     /// name, the game result) and the players' default names. The screens' own texts stay in
@@ -33,6 +33,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         /// <summary>重新開始 while the game is in progress (a move was made and the game is not over).</summary>
         public const string DiscardAndRestart = "是否放棄目前進度並重新開始？";
+
+        /// <summary>A save clicked in a save list's delete mode (yes = the file is deleted).</summary>
+        public const string DeleteSaveConfirm = "確定要刪除這個存檔？";
 
         // ----- Game-over dialog -----
 
@@ -74,6 +77,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         /// <summary>儲存 failed to write the file.</summary>
         public static string SaveFailed(string reason) => $"(Save) 存檔失敗：{reason}";
+
+        /// <summary>Deleting a save failed (the file could not be deleted).</summary>
+        public static string DeleteSaveFailed(string reason) => $"(Delete) 刪除存檔失敗：{reason}";
 
         /// <summary>放棄 when the game is already over.</summary>
         public const string ResignGameOver = "(Resign) 對局已經結束";
