@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Application.Session;
-using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Diagnostics;
@@ -83,7 +82,7 @@ namespace Launcher
                 ControlStyles.UserPaint |
                 ControlStyles.OptimizedDoubleBuffer, true);
 
-            this.Text = SystemSettings.WindowTitle;
+            this.Text = WindowSettings.WindowTitle;
 
             // The window opens at a normal desktop size (1080p) rather than
             // the UI's own (smaller) DesignSize — content is scaled up to

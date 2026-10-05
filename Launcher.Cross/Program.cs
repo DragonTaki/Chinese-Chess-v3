@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,7 +15,6 @@ using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
 using Chinese_Chess_v3.Composition;
-using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Platform;
@@ -54,7 +53,7 @@ namespace Launcher.Cross
             // UILayoutConstants.DefaultWindowSize/MinimumWindowSize.
             var options = WindowOptions.Default with
             {
-                Title = SystemSettings.WindowTitle,
+                Title = WindowSettings.WindowTitle,
                 Size = new Vector2D<int>(
                     (int)UILayoutConstants.DefaultWindowSize.X,
                     (int)UILayoutConstants.DefaultWindowSize.Y),

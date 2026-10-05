@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/01
-// Version: v1.1
+// Update Date: 2026/10/05
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -21,16 +21,14 @@ using Engine.Configs;
 namespace Chinese_Chess_v3.Game.Configs
 {
     /// <summary>
-    /// Game-level system defaults: fixed values the player never changes (paths, the
-    /// window title, the random table). The single place for them - callers reference
-    /// these instead of repeating literals. Engine-level ones are in
-    /// <see cref="EnginePaths"/>; the player's own settings are <c>PlayerSettings</c>.
+    /// The logic layer's system defaults: fixed values the player never changes (paths, save
+    /// file names, the random table). Callers reference these instead of repeating literals.
+    /// Engine-level ones are in <see cref="EnginePaths"/>, the display's in its own constants
+    /// (e.g. the window title, <c>Game.UI.Constants.WindowSettings</c>); the player's own
+    /// settings are <c>PlayerSettings</c>.
     /// </summary>
     public static class SystemSettings
     {
-        /// <summary>Window title (both launchers).</summary>
-        public const string WindowTitle = "Chinese Chess v3 - created by @DragonTaki";
-
         #region Per-user data
 
         /// <summary>Folder name of the game under the per-user application data folder.</summary>
