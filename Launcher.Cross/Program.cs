@@ -18,17 +18,15 @@ using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 
-using Engine.Logging;
 using Engine.Platform;
 using Engine.Platform.Skia;
 using Engine.Styles;
-using Engine.Timing;
 
 namespace Launcher.Cross
 {
     /// <summary>
     /// Cross-platform entry point for the Chinese Chess application — same
-    /// DI wiring as <c>Launcher.Program</c>, backed by SkiaSharp (rendering)
+    /// shared DI wiring and startup (<c>Chinese_Chess_v3.Composition</c>) as <c>Launcher.Program</c>, backed by SkiaSharp (rendering)
     /// and Silk.NET (windowing/input) instead of GDI+/WinForms, so it also
     /// runs on macOS/Linux.
     /// </summary>
@@ -40,8 +38,9 @@ namespace Launcher.Cross
             GraphicsBackend.Factory = new SkiaGraphicsFactory();
 
             // Must run before any static class touches a custom font key
-            // (e.g. DefaultStyles.DefaultButtonStyle below, which triggers
-            // UILayoutStyles's static constructor) — otherwise FontManager
+            // (e.g. DefaultStyles.DefaultButtonStyle in AppStartup.BuildServices
+            // below, which triggers UILayoutStyles's static constructor) —
+            // otherwise FontManager
             // hasn't registered "NotoSerif"/"MoeLI" yet, StyleHelper.GetFont
             // silently falls back to GraphicsBackend.Factory.GetSystemFontFamily
             // with that same string as a *system* font name, and since no
@@ -64,18 +63,9 @@ namespace Launcher.Cross
 
             AppControl.ExitCallback = window.Close;
 
-            // Player settings: loaded once at startup from settings.ini
-            // in the per-user data folder (created / repaired there as needed) and
-            // registered in DI below for the screens that read them.
-            var playerSettings = PlayerSettingsFile.Load();
-            AppLogger.CurrentUser = playerSettings.PlayerName;
-            playerSettings.ApplyDebugOptions();  // [debug] switches -> Engine DebugOptions (the settings screen re-applies on change)
-            TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
-            DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
-
-            var services = new ServiceCollection().AddChineseChess(playerSettings);
-
-            var sp = services.BuildServiceProvider();
+            // Settings, the shared DI registrations, and the settings pushed to the engine
+            // (Composition/AppStartup.cs).
+            var sp = AppStartup.BuildServices();
 
             using var app = new CrossPlatformApp(sp, window);
             window.Run();

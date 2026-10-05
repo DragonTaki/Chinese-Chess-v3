@@ -26,5 +26,14 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         /// </summary>
         /// <param name="settings">The live settings.</param>
         void Apply(PlayerSettings settings);
+
+        /// <summary>
+        /// Applies only the parts of <paramref name="settings"/> that do not need the game: the
+        /// debug switches, the player name of the log greeting, the mouse wheel's scroll step and
+        /// the frame rate. Used at startup, where the game is still created on first use and
+        /// takes its rules and player names from the settings itself.
+        /// </summary>
+        /// <param name="settings">The live settings.</param>
+        void ApplyToEngine(PlayerSettings settings);
     }
 }

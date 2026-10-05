@@ -27,8 +27,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// (<see cref="PlayerSettings.ApplyDebugOptions"/>), the player name onto the log greeting
     /// (<see cref="AppLogger.CurrentUser"/>), the wheel step onto the shared
     /// <see cref="ScrollInputHandler"/> and the frame rate onto the engine's frame timer
-    /// (<see cref="TimerSettings.GameAnimationFPS"/>). The launchers push these once at startup
-    /// themselves; this applies the settings screen's later changes. It is in the UI layer
+    /// (<see cref="TimerSettings.GameAnimationFPS"/>). The shared startup applies the parts that
+    /// don't need the game once (<see cref="ApplyToEngine"/>; the game takes its rules and names
+    /// from the settings when it is created); the settings screen applies its later changes
+    /// with <see cref="Apply"/>. It is in the UI layer
     /// because the scroll handler is an engine UI service.
     /// </summary>
     public sealed class SettingsApplier : ISettingsApplier
@@ -55,6 +57,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 settings.ApplyTo(gameManager.DefaultRuleSets);
                 settings.ApplyPlayerNamesTo(gameManager);
             }
+
+            ApplyToEngine(settings);
+        }
+
+        /// <inheritdoc/>
+        public void ApplyToEngine(PlayerSettings settings)
+        {
+            ArgumentNullException.ThrowIfNull(settings);
 
             settings.ApplyDebugOptions();
 

@@ -13,14 +13,10 @@ using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 
 using Chinese_Chess_v3.Composition;
-using Chinese_Chess_v3.Game.Configs;
-using Chinese_Chess_v3.Game.UI.Constants;
 
-using Engine.Logging;
 using Engine.Platform;
 using Engine.Platform.WinForms;
 using Engine.Styles;
-using Engine.Timing;
 
 namespace Launcher
 {
@@ -48,8 +44,9 @@ namespace Launcher
             AppControl.ExitCallback = Application.Exit;
 
             // Must run before any static class touches a custom font key
-            // (e.g. DefaultStyles.DefaultButtonStyle below, which triggers
-            // UILayoutStyles's static constructor) — otherwise FontManager
+            // (e.g. DefaultStyles.DefaultButtonStyle in AppStartup.BuildServices
+            // below, which triggers UILayoutStyles's static constructor) —
+            // otherwise FontManager
             // hasn't registered "NotoSerif"/"MoeLI" yet and StyleHelper.GetFont
             // silently falls back to a *system* font of that same name instead
             // (see FontManager.LoadFonts's caller in Launcher.Cross.Program for
@@ -57,24 +54,9 @@ namespace Launcher
             // MainForm's constructor, which runs too late).
             FontManager.LoadFonts();
 
-            // Push Game-level config into Engine (Engine must not read
-            // Game.Configs directly — see Engine/Logging/AppLogger.cs).
-            // Player settings: loaded once at startup from settings.ini
-            // in the per-user data folder (created / repaired there as needed) and
-            // registered in DI below for the screens that read them.
-            var playerSettings = PlayerSettingsFile.Load();
-            AppLogger.CurrentUser = playerSettings.PlayerName;
-            playerSettings.ApplyDebugOptions();  // [debug] switches -> Engine DebugOptions (the settings screen re-applies on change)
-            TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
-            DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
-
-            // Create service collection for DI: the shared registrations, then the
-            // WinForms main form
-            var services = new ServiceCollection().AddChineseChess(playerSettings);
-            services.AddSingleton<MainForm>();
-
-            // Build the service provider
-            var sp = services.BuildServiceProvider();
+            // Settings, the shared DI registrations plus the WinForms main form, and the
+            // settings pushed to the engine (Composition/AppStartup.cs).
+            var sp = AppStartup.BuildServices(services => services.AddSingleton<MainForm>());
 
             // Initialize WinForms configuration
             ApplicationConfiguration.Initialize();

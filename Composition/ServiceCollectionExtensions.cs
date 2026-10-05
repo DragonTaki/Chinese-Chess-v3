@@ -64,7 +64,8 @@ namespace Chinese_Chess_v3.Composition
 
             // Register core UI services and factories
             services.AddSingleton<IUiFactory, UiFactory>();
-            services.AddSingleton<IScrollInputHandler>(_ => new ScrollInputHandler { WheelStep = playerSettings.WheelScrollStep });
+            // The wheel step is set at startup by ISettingsApplier.ApplyToEngine (AppStartup).
+            services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
             services.AddSingleton(playerSettings);
 
             // Register utility services
