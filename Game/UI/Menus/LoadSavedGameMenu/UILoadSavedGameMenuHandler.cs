@@ -29,7 +29,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
     /// <see cref="SavedGameCatalog.LoadAll"/> (the same loader as the game screen's list), shows
     /// them grouped by mode, newest first within a group (<see cref="SavedGameCatalog.Group"/>),
     /// and starts a clicked save on the game screen the way the game screen's list does
-    /// (<see cref="GameManager.LoadSavedGame"/>).
+    /// (<see cref="GameManager.LoadSavedGame"/>); in delete mode (<see cref="IsDeleteMode"/>) a
+    /// clicked save is deleted after asking.
     /// <see cref="IScreen"/>: the main menu calls <see cref="OnEnter"/>/<see cref="OnExit"/>
     /// when it opens/closes the submenu.
     /// </summary>
@@ -37,8 +38,22 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
     {
         public UILoadSavedGameMenuHandler() { }
 
-        /// <summary>Submenu opened: reload the files, so games saved meanwhile appear.</summary>
-        public void OnEnter() => Reload();
+        /// <summary>
+        /// Whether the list is in delete mode: a clicked save asks to be deleted
+        /// (<see cref="SavedGameCatalog.ConfirmDelete"/>) instead of being loaded. Off each time
+        /// the submenu is opened.
+        /// </summary>
+        public bool IsDeleteMode { get; private set; }
+
+        /// <summary>The saved-game catalog registered in DI.</summary>
+        private SavedGameCatalog Catalog => _factory.ServiceProvider.GetRequiredService<SavedGameCatalog>();
+
+        /// <summary>Submenu opened: delete mode off, then the files reloaded, so games saved meanwhile appear.</summary>
+        public void OnEnter()
+        {
+            IsDeleteMode = false;
+            Reload();
+        }
 
         public void OnExit() { }
 
@@ -54,8 +69,28 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             Element.ShowGroups(SavedGameCatalog.Group(saves));
         }
 
+        /// <summary>The delete-mode toggle clicked: switches delete mode on or off.</summary>
+        public void ToggleDeleteMode()
+        {
+            IsDeleteMode = !IsDeleteMode;
+            Element.SetDeleteMode(IsDeleteMode);
+        }
+
         /// <summary>
-        /// A save clicked: started the way a new game is (<see cref="GameSession.TryStart"/>:
+        /// A save clicked: in delete mode, asks and deletes it, then reloads the list (delete
+        /// mode stays on); otherwise starts it (<see cref="StartSave"/>).
+        /// </summary>
+        public void ClickSave(SavedGame saved)
+        {
+            ArgumentNullException.ThrowIfNull(saved);
+            if (IsDeleteMode)
+                Catalog.ConfirmDelete(saved, Reload);
+            else
+                StartSave(saved);
+        }
+
+        /// <summary>
+        /// Starts a save the way a new game is (<see cref="GameSession.TryStart"/>:
         /// game screen, restart and views reset, then the save replayed with
         /// <see cref="GameManager.LoadSavedGame"/>; a bad save is logged) - the same steps as the
         /// game screen's list (<c>UICategoryListMenuHandler.StartItem</c>).

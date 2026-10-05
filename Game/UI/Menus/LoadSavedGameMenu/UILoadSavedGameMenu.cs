@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Core.Saves;
@@ -37,9 +38,17 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
     /// The rows are rebuilt each time the submenu is shown (<see cref="ShowGroups"/>), so
     /// games saved meanwhile appear.
     /// </para>
+    /// <para>
+    /// Above the first header is the delete-mode toggle (刪除存檔 / 結束刪除): while it is on, a
+    /// clicked save asks to be deleted instead of being loaded (the handler's
+    /// <see cref="UILoadSavedGameMenuHandler.IsDeleteMode"/>).
+    /// </para>
     /// </summary>
     public class UILoadSavedGameMenu : UIMenu<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>
     {
+        /// <summary>The delete-mode toggle row of the current build (null while there is no save).</summary>
+        private UIButton _deleteToggle;
+
         public UILoadSavedGameMenu() { }
 
         protected override void OnBeforeInit(IUiFactory factory)
@@ -63,22 +72,28 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
         protected override void BuildButtons() { }
 
         /// <summary>
-        /// Replaces every row with a header per group of <paramref name="groups"/> (in the
-        /// given order) followed by its saves' buttons, or with the disabled 沒有存檔 row
-        /// when there is no save.
+        /// Replaces every row with the delete-mode toggle (刪除存檔 / 結束刪除, a header-height
+        /// button) and a header per group of <paramref name="groups"/> (in the given order)
+        /// followed by its saves' buttons, or with the disabled 沒有存檔 row when there is no save.
         /// </summary>
         /// <param name="groups">The categories in display order, each with its saves in display order.</param>
         public void ShowGroups(IReadOnlyList<(string Header, IReadOnlyList<SavedGame> Saves)> groups)
         {
             ArgumentNullException.ThrowIfNull(groups);
             ClearRows();
+            _deleteToggle = null;
 
-            bool any = false;
+            bool any = groups.Any(group => group.Saves != null && group.Saves.Count > 0);
+            if (any)
+            {
+                _deleteToggle = CreateRow(UILayoutSheet.LoadSavedGameMenu.Header, UILayoutStyles.LoadSavedGameMenu.ButtonStyle, Handler.ToggleDeleteMode);
+                SetDeleteMode(Handler.IsDeleteMode);
+            }
+
             foreach (var (header, saves) in groups)
             {
                 if (saves == null || saves.Count == 0)
                     continue;
-                any = true;
 
                 var headerRow = CreateRow(UILayoutSheet.LoadSavedGameMenu.Header, UILayoutStyles.LoadSavedGameMenu.HeaderStyle, null);
                 headerRow.Text = header;
@@ -86,7 +101,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
                 foreach (var saved in saves)
                 {
                     var target = saved;
-                    var button = CreateRow(UILayoutSheet.LoadSavedGameMenu.Item, UILayoutStyles.LoadSavedGameMenu.ButtonStyle, () => Handler.StartSave(target));
+                    var button = CreateRow(UILayoutSheet.LoadSavedGameMenu.Item, UILayoutStyles.LoadSavedGameMenu.ButtonStyle, () => Handler.ClickSave(target));
                     button.Text = ButtonText(saved);
                 }
             }
@@ -100,6 +115,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu
             }
 
             Handler.UpdateScrollContentHeight();
+        }
+
+        /// <summary>Shows the delete-mode toggle's label for <paramref name="on"/> (if the toggle is there).</summary>
+        public void SetDeleteMode(bool on)
+        {
+            if (_deleteToggle == null)
+                return;
+            _deleteToggle.Text = on ? GameMenuTexts.DeleteModeOn : GameMenuTexts.DeleteModeOff;
         }
 
         /// <summary>

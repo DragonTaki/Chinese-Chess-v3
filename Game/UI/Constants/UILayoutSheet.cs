@@ -342,7 +342,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
                 UILayoutConstants.LoadSavedGameMenu.RowGap);
 
-            /// <summary>A category header: full width, shorter than a save.</summary>
+            /// <summary>A category header, and the delete-mode toggle: full width, shorter than a save.</summary>
             public static readonly UILayoutStyle Header = Menus.Button(UILayoutConstants.LoadSavedGameMenu.HeaderHeight);
 
             /// <summary>A save's button, and the 沒有存檔 row.</summary>
