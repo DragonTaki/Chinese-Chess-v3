@@ -109,6 +109,7 @@ namespace Launcher.Cross
 
             services.AddSingleton<NavigationManager>();
             services.AddSingleton<INavigator, Navigator>();
+            services.AddSingleton<IAppLifetime, AppLifetime>();
             services.AddSingleton<UIRootNode>();
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));

@@ -21,7 +21,6 @@ using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
 using Engine.Diagnostics;
 using Engine.Network;
-using Engine.Platform;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
@@ -175,11 +174,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         }
 
         /// <summary>
-        /// Exit the application.
+        /// Exit the application (the <see cref="IAppLifetime"/> registered in DI).
         /// </summary>
-        public static void ExitApplication()
+        public void ExitApplication()
         {
-            AppControl.ExitCallback?.Invoke();
+            _factory.ServiceProvider.GetRequiredService<IAppLifetime>().Exit();
         }
 
         public Dictionary<UIMainMenuType, UIElement> Submenus => _submenus;
