@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,18 +15,20 @@ using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 
+using Engine.Configs;
 using Engine.Logging;
 
 namespace Chinese_Chess_v3.Game.Application.Settings
 {
     /// <summary>
     /// A settings screen's logic (遊戲設定 / 單機規則設定 alike), apart from the view that draws it.
-    /// An edit changes the <b>live</b> <see cref="PlayerSettings"/> (the instance registered in
-    /// DI) at once and is applied at once (<see cref="ISettingsApplier"/>): the hint settings are
-    /// read from it every frame by the board, the player names and the DEBUG tab's switches are
-    /// pushed to where they are used, and each game kind's rule / clock settings are copied onto
-    /// the rules new games of that kind start with (<see cref="GameManager.DefaultRuleSets"/>), so
-    /// a game started after the edit already plays by them. Every edit is also written to
+    /// An edit changes the <b>live</b> <see cref="PlayerSettings"/> (the areas registered in DI and
+    /// in the settings file) at once and is applied at once (<see cref="SettingsFile.ApplyAll"/>:
+    /// every area puts its values into effect - the hint settings are read by the board, the
+    /// player names and the DEBUG tab's switches are pushed to where they are used, and each game
+    /// kind's rule / clock settings are copied onto the rules new games of that kind start with
+    /// (<see cref="GameManager.DefaultRuleSets"/>), so a game started after the edit already plays
+    /// by them). Every edit is also written to
     /// <c>settings.ini</c> at once (there is no save or discard button): switches, dropdowns and
     /// number fields when the value is set, a slider when the mouse is released (not on every
     /// drag step), a text field when its edit ends (<see cref="CommitEdit"/>). A failed write is
@@ -46,8 +48,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
     public sealed class SettingsScreenModel
     {
         private readonly IDialogService _dialogs;
-        private readonly ISettingsApplier _applier;
-        private readonly string _settingsFilePath;
+        private readonly SettingsFile _file;
 
         /// <summary>Whether an edit is applied but not written yet (a slider drag or text edit in progress).</summary>
         private bool _unsaved;
@@ -57,17 +58,14 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 
         /// <param name="screen">Which settings screen this is.</param>
         /// <param name="live">The live settings (the DI instance).</param>
+        /// <param name="file">The settings file holding <paramref name="live"/>'s areas: applies and writes them after each edit.</param>
         /// <param name="dialogs">The confirm dialogs (save failed, 恢復初始).</param>
-        /// <param name="applier">Pushes the settings to where they are used after each edit.</param>
-        /// <param name="settingsFilePath">Where the settings are written (null: <see cref="SystemSettings.PlayerSettingsFilePath"/>).</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="screen"/> is not a <see cref="SettingsScreen"/>.</exception>
-        public SettingsScreenModel(SettingsScreen screen, PlayerSettings live, IDialogService dialogs, ISettingsApplier applier,
-            string settingsFilePath = null)
+        public SettingsScreenModel(SettingsScreen screen, PlayerSettings live, SettingsFile file, IDialogService dialogs)
         {
             Live = live ?? throw new ArgumentNullException(nameof(live));
+            _file = file ?? throw new ArgumentNullException(nameof(file));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
-            _applier = applier ?? throw new ArgumentNullException(nameof(applier));
-            _settingsFilePath = settingsFilePath ?? SystemSettings.PlayerSettingsFilePath;
             Screen = screen;
             Pages = SettingsMenuContent.PagesFor(screen);
         }
@@ -186,10 +184,10 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 });
         }
 
-        /// <summary>After an edit: push the live settings to where they are used, then let the view refresh.</summary>
+        /// <summary>After an edit: every area puts its values into effect, then the view refreshes.</summary>
         private void ApplyChange()
         {
-            _applier.Apply(Live);
+            _file.ApplyAll();
             ValuesChanged?.Invoke();
         }
 
@@ -200,13 +198,13 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         private void SaveNow()
         {
             _unsaved = false;
-            if (PlayerSettingsFile.Save(Live, _settingsFilePath))
+            if (_file.Save())
             {
                 _saveFailureShown = false;
                 return;
             }
 
-            AppLogger.Log($"(Settings) Could not save {_settingsFilePath}", LogLevel.ERROR);
+            AppLogger.Log($"(Settings) Could not save {_file.FilePath}", LogLevel.ERROR);
             if (_saveFailureShown)
                 return;
             _saveFailureShown = true;

@@ -36,7 +36,7 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         /// <see cref="GameManager.HasUnsavedChanges"/>.
         /// </summary>
         /// <param name="game">The game to save.</param>
-        /// <param name="unnamedPlayerName">The name of a local player without one (the player's name, <see cref="PlayerSettings.PlayerName"/>).</param>
+        /// <param name="unnamedPlayerName">The name of a local player without one (the player's name, <see cref="PlayerNameSettings.PlayerName"/>).</param>
         /// <param name="redName">Red's name (null: from the game).</param>
         /// <param name="blackName">Black's name (null: from the game).</param>
         /// <param name="time">The save time in the file name and tags (null: now).</param>

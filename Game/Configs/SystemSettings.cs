@@ -60,7 +60,7 @@ namespace Chinese_Chess_v3.Game.Configs
 
         /// <summary>
         /// The player's own puzzles when the settings do not override it
-        /// (<c>PlayerSettings.EndgameUserFolder</c> empty): <c>Endgames</c> in
+        /// (<c>FolderSettings.EndgameUserFolder</c> empty): <c>Endgames</c> in
         /// <see cref="UserDataFolder"/>.
         /// </summary>
         public static string DefaultUserEndgameFolder => Path.Combine(UserDataFolder, EndgamesFolderName);
@@ -77,7 +77,7 @@ namespace Chinese_Chess_v3.Game.Configs
 
         /// <summary>
         /// The player's own openings when the settings do not override it
-        /// (<c>PlayerSettings.OpeningUserFolder</c> empty): <c>Openings</c> in
+        /// (<c>FolderSettings.OpeningUserFolder</c> empty): <c>Openings</c> in
         /// <see cref="UserDataFolder"/>.
         /// </summary>
         public static string DefaultUserOpeningFolder => Path.Combine(UserDataFolder, OpeningsFolderName);

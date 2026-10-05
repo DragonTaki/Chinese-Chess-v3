@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -34,7 +34,7 @@ namespace Chinese_Chess_v3.Game.Application.Boards
     public sealed class BoardViewModel : IDisposable
     {
         private readonly GameManager _game;
-        private readonly PlayerSettings _settings;
+        private readonly HintSettings _settings;
         private readonly Action<Action> _post;
 
         // Legal destinations of the selected piece, taken from the game once per selection.
@@ -53,7 +53,7 @@ namespace Chinese_Chess_v3.Game.Application.Boards
         /// <param name="settings">The live player settings (which board hints are shown).</param>
         /// <param name="post">Runs an action on the view's thread (e.g. the board element's
         /// <c>Post</c>; it may drop the action once the view is gone).</param>
-        public BoardViewModel(GameManager game, PlayerSettings settings, Action<Action> post)
+        public BoardViewModel(GameManager game, HintSettings settings, Action<Action> post)
         {
             _game = game ?? throw new ArgumentNullException(nameof(game));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -93,7 +93,7 @@ namespace Chinese_Chess_v3.Game.Application.Boards
 
         /// <summary>
         /// Where the move-hint rings go: the selected piece's legal destinations while
-        /// <see cref="PlayerSettings.ShowLegalMoveHints"/> is on; otherwise, and when nothing is
+        /// <see cref="HintSettings.ShowLegalMoveHints"/> is on; otherwise, and when nothing is
         /// selected, empty.
         /// </summary>
         public IReadOnlyList<(int x, int y)> LegalTargets =>
@@ -101,7 +101,7 @@ namespace Chinese_Chess_v3.Game.Application.Boards
 
         /// <summary>
         /// Where the hanging-piece rings go: the face-up hanging pieces' squares and colours while
-        /// <see cref="PlayerSettings.ShowHangingPieceHints"/> is on; otherwise empty. A face-down
+        /// <see cref="HintSettings.ShowHangingPieceHints"/> is on; otherwise empty. A face-down
         /// piece's ring would show its colour; the Core never reports one as hanging anyway
         /// (<c>BoardAnalysis</c>), this only makes sure. Built on each read from the pieces'
         /// current squares.

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -21,13 +21,13 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
     /// </summary>
     public sealed class EndgameCatalog
     {
-        private readonly PlayerSettings _settings;
+        private readonly FolderSettings _settings;
 
         /// <summary>Creates the catalog; nothing is loaded until <c>List.Reload</c>.</summary>
         /// <param name="settings">The player's settings (the user folder); null for the defaults.</param>
-        public EndgameCatalog(PlayerSettings settings)
+        public EndgameCatalog(FolderSettings settings)
         {
-            _settings = settings ?? PlayerSettings.Defaults;
+            _settings = settings ?? new FolderSettings();
             List = new CategoryListModel<EndgamePuzzle>(LoadAll);
         }
 
@@ -35,7 +35,7 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         public static string BuiltInFolder => SystemSettings.BuiltInEndgameFolder;
 
         /// <summary>
-        /// The player's own puzzles: <see cref="PlayerSettings.ResolvedEndgameUserFolder"/>
+        /// The player's own puzzles: <see cref="FolderSettings.ResolvedEndgameUserFolder"/>
         /// (<c>[endgame] user_folder</c> in settings.ini; empty there means
         /// <see cref="SystemSettings.DefaultUserEndgameFolder"/>, <c>Endgames</c> in the
         /// game's per-user data folder). Created by <see cref="EndgameLoader.LoadAll"/> when missing.

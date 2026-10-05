@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v3.0
+// Version: v3.1
 /* ----- ----- ----- ----- */
 
 using System.Linq;
@@ -13,6 +13,7 @@ using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Configs;
 
+using Engine.Configs;
 using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 
@@ -46,9 +47,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 var services = _factory.ServiceProvider;
                 _model = new SettingsScreenModel(
                     Element.Screen,
-                    services.GetService<PlayerSettings>() ?? PlayerSettings.Defaults,
-                    services.GetRequiredService<IDialogService>(),
-                    services.GetRequiredService<ISettingsApplier>());
+                    services.GetRequiredService<PlayerSettings>(),
+                    services.GetRequiredService<SettingsFile>(),
+                    services.GetRequiredService<IDialogService>());
                 _model.ValuesChanged += OnValuesChanged;
             }
 

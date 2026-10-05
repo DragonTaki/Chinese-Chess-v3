@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -29,13 +29,13 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         /// <summary>The section of the openings Player2 practises.</summary>
         public const string SecondMoverSection = "後手";
 
-        private readonly PlayerSettings _settings;
+        private readonly FolderSettings _settings;
 
         /// <summary>Creates the catalog; nothing is loaded until <c>List.Reload</c>.</summary>
         /// <param name="settings">The player's settings (the user folder); null for the defaults.</param>
-        public OpeningCatalog(PlayerSettings settings)
+        public OpeningCatalog(FolderSettings settings)
         {
-            _settings = settings ?? PlayerSettings.Defaults;
+            _settings = settings ?? new FolderSettings();
             List = new CategoryListModel<OpeningLine>(LoadAll, SectionOf);
         }
 
@@ -43,7 +43,7 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
         public static string BuiltInFolder => SystemSettings.BuiltInOpeningFolder;
 
         /// <summary>
-        /// The player's own openings: <see cref="PlayerSettings.ResolvedOpeningUserFolder"/>
+        /// The player's own openings: <see cref="FolderSettings.ResolvedOpeningUserFolder"/>
         /// (<c>[opening] user_folder</c> in settings.ini; empty there means
         /// <see cref="SystemSettings.DefaultUserOpeningFolder"/>, <c>Openings</c> in the
         /// game's per-user data folder). Created by <see cref="OpeningLoader.LoadAll"/> when missing.

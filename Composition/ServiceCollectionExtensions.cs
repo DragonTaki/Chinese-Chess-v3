@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/05
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -38,6 +38,7 @@ using Chinese_Chess_v3.Game.UI.Sidebars;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
+using Engine.Configs;
 using Engine.Network;
 using Engine.Randomization;
 using Engine.UI.Core.Elements;
@@ -57,18 +58,26 @@ namespace Chinese_Chess_v3.Composition
         /// Registers every service, view model, presenter and UI module the game uses.
         /// </summary>
         /// <param name="services">The service collection to add the services to.</param>
-        /// <param name="playerSettings">The player settings loaded at startup (registered as the single live instance).</param>
+        /// <param name="playerSettings">The player's settings areas (registered as the single live instances).</param>
+        /// <param name="settingsFile">The settings file those areas are registered in (the settings screens save through it).</param>
         /// <returns>The updated <see cref="IServiceCollection"/> to allow chaining.</returns>
-        public static IServiceCollection AddChineseChess(this IServiceCollection services, PlayerSettings playerSettings)
+        public static IServiceCollection AddChineseChess(this IServiceCollection services, PlayerSettings playerSettings, SettingsFile settingsFile)
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(playerSettings);
+            ArgumentNullException.ThrowIfNull(settingsFile);
 
             // Register core UI services and factories
             services.AddSingleton<IUiFactory, UiFactory>();
-            // The wheel step is set at startup by ISettingsApplier.ApplyToEngine (AppStartup).
+            // Its wheel step is the engine-wide InputOptions value, set by the [input] settings area.
             services.AddSingleton<IScrollInputHandler, ScrollInputHandler>();
+
+            // The player's settings: the set, each area the logic layer reads, and the file.
             services.AddSingleton(playerSettings);
+            services.AddSingleton(playerSettings.Names);
+            services.AddSingleton(playerSettings.Hints);
+            services.AddSingleton(playerSettings.Folders);
+            services.AddSingleton(settingsFile);
 
             // Register utility services
             services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
@@ -82,13 +91,25 @@ namespace Chinese_Chess_v3.Composition
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<NetworkManager>();
-            services.AddSingleton(sp =>
+            // The game: created on first use with the rules and names in the settings; later
+            // changes reach it when the [player] / [rules.*] areas apply (only once it exists).
+            var game = new Lazy<GameManager>(() =>
             {
-                var settings = sp.GetRequiredService<PlayerSettings>();
-                var game = new GameManager(settings.CreateRuleSets());
-                settings.ApplyPlayerNamesTo(game);
-                return game;
+                var created = new GameManager(playerSettings.Rules.CreateRuleSets());
+                playerSettings.Names.ApplyPlayerNamesTo(created);
+                return created;
             });
+            services.AddSingleton(_ => game.Value);
+            playerSettings.Names.Applied += () =>
+            {
+                if (game.IsValueCreated)
+                    playerSettings.Names.ApplyPlayerNamesTo(game.Value);
+            };
+            playerSettings.Rules.Applied += () =>
+            {
+                if (game.IsValueCreated)
+                    playerSettings.Rules.ApplyTo(game.Value.DefaultRuleSets);
+            };
             // The game log's sentences (from the game's log entries); the sidebar hands it the log box.
             services.AddSingleton<GameLogComposer>();
             // The game flow; takes the game through a factory so the GameManager is still created on first use.
@@ -98,13 +119,9 @@ namespace Chinese_Chess_v3.Composition
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
             // Each board view's view model (created per board element).
-            services.AddSingleton(sp => new BoardViewModelFactory(() => sp.GetRequiredService<GameManager>(),
-                sp.GetService<PlayerSettings>() ?? PlayerSettings.Defaults));
+            services.AddSingleton(sp => new BoardViewModelFactory(() => sp.GetRequiredService<GameManager>(), playerSettings.Hints));
             // What the game screen's info board shows (names, sides, clock texts); read live from the game.
             services.AddSingleton<InfoBoardViewModel>();
-            // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
-            services.AddSingleton<IDisplaySettingsApplier>(sp => new DisplaySettingsApplier(sp.GetRequiredService<IScrollInputHandler>()));
-            services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IDisplaySettingsApplier>()));
             // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's
             // switched-off categories are kept while the game runs.
             services.AddSingleton<EndgameCatalog>();

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/05
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -47,7 +47,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private readonly GameSession _session;
         private readonly IDialogService _dialogs;
         private readonly INavigator _navigator;
-        private readonly PlayerSettings _settings;
+        private readonly PlayerNameSettings _settings;
         private readonly GameLogComposer _gameLog;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <param name="navigator">Goes back to the main menu.</param>
         /// <param name="settings">The live player settings (the player's name for a save's unnamed players).</param>
         /// <param name="gameLog">The game log the presenter's own lines go to.</param>
-        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerSettings settings, GameLogComposer gameLog)
+        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerNameSettings settings, GameLogComposer gameLog)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));

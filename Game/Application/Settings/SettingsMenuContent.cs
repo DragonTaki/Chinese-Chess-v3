@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/05
-// Version: v2.2
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,6 +15,9 @@ using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
+
+using Engine.Configs;
+using Engine.Timing;
 
 namespace Chinese_Chess_v3.Game.Application.Settings
 {
@@ -408,11 +411,11 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                         () => UnimplementedSettings.DisplayModeIndex, v => UnimplementedSettings.DisplayModeIndex = v),
                     Placeholder(SettingsTexts.VSync, () => UnimplementedSettings.VSync, v => UnimplementedSettings.VSync = v),
                     new SettingsChoiceItem(SettingsTexts.Fps, SettingsTexts.FpsOptions,
-                        s => Math.Max(0, PlayerSettings.FpsOptions.ToList().IndexOf(s.Fps)), (s, i) => s.Fps = PlayerSettings.FpsOptions[i]),
+                        s => Math.Max(0, FrameRateSettings.FpsOptions.ToList().IndexOf(s.FrameRate.Fps)), (s, i) => s.FrameRate.Fps = FrameRateSettings.FpsOptions[i]),
                     Placeholder(SettingsTexts.UiScale, UiScaleMin, UiScaleMax, UiScaleStep, SettingsTexts.Percent,
                         () => UnimplementedSettings.UiScalePercent, v => UnimplementedSettings.UiScalePercent = v),
-                    new SettingsNumberItem(SettingsTexts.WheelScrollStep, s => s.WheelScrollStep, (s, v) => s.WheelScrollStep = v,
-                        PlayerSettings.WheelScrollStepMin, PlayerSettings.WheelScrollStepMax, 1f, SettingsTexts.PlainNumber)),
+                    new SettingsNumberItem(SettingsTexts.WheelScrollStep, s => s.Input.WheelScrollStep, (s, v) => s.Input.WheelScrollStep = v,
+                        InputSettings.WheelScrollStepMin, InputSettings.WheelScrollStepMax, 1f, SettingsTexts.PlainNumber)),
             }),
 
             new SettingsMenuPage(SettingsTexts.TabSound, new[]
@@ -430,16 +433,16 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             new SettingsMenuPage(SettingsTexts.TabGame, new[]
             {
                 Section(
-                    new SettingsTextItem(SettingsTexts.PlayerName, s => s.PlayerName, (s, v) => s.PlayerName = v,
-                        PlayerSettings.PlayerNameMaxLength, SettingsTexts.PlayerNamePlaceholder),
-                    new SettingsTextItem(SettingsTexts.Player1Name, s => s.Player1Name, (s, v) => s.Player1Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player1)),
-                    new SettingsTextItem(SettingsTexts.Player2Name, s => s.Player2Name, (s, v) => s.Player2Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player2)),
-                    new SettingsTextItem(SettingsTexts.Player3Name, s => s.Player3Name, (s, v) => s.Player3Name = v,
-                        PlayerSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player3)),
-                    new SettingsToggleItem(SettingsTexts.LegalMoveHints, s => s.ShowLegalMoveHints, (s, v) => s.ShowLegalMoveHints = v),
-                    new SettingsToggleItem(SettingsTexts.HangingPieceHints, s => s.ShowHangingPieceHints, (s, v) => s.ShowHangingPieceHints = v),
+                    new SettingsTextItem(SettingsTexts.PlayerName, s => s.Names.PlayerName, (s, v) => s.Names.PlayerName = v,
+                        PlayerNameSettings.PlayerNameMaxLength, SettingsTexts.PlayerNamePlaceholder),
+                    new SettingsTextItem(SettingsTexts.Player1Name, s => s.Names.Player1Name, (s, v) => s.Names.Player1Name = v,
+                        PlayerNameSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player1)),
+                    new SettingsTextItem(SettingsTexts.Player2Name, s => s.Names.Player2Name, (s, v) => s.Names.Player2Name = v,
+                        PlayerNameSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player2)),
+                    new SettingsTextItem(SettingsTexts.Player3Name, s => s.Names.Player3Name, (s, v) => s.Names.Player3Name = v,
+                        PlayerNameSettings.PlayerNameMaxLength, GameTexts.DefaultPlayerName(PlayerSide.Player3)),
+                    new SettingsToggleItem(SettingsTexts.LegalMoveHints, s => s.Hints.ShowLegalMoveHints, (s, v) => s.Hints.ShowLegalMoveHints = v),
+                    new SettingsToggleItem(SettingsTexts.HangingPieceHints, s => s.Hints.ShowHangingPieceHints, (s, v) => s.Hints.ShowHangingPieceHints = v),
                     Placeholder(SettingsTexts.MoveAnimationSpeed, SettingsTexts.MoveAnimationSpeedOptions,
                         () => UnimplementedSettings.MoveAnimationSpeedIndex, v => UnimplementedSettings.MoveAnimationSpeedIndex = v),
                     Placeholder(SettingsTexts.BoardStyle, SettingsTexts.BoardStyleOptions,
@@ -455,19 +458,19 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             {
                 new SettingsMenuSection(SettingsTexts.SectionDebugLog, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(SettingsTexts.DebugLog, s => s.VerboseLog, (s, v) => s.VerboseLog = v),
-                    new SettingsToggleItem(SettingsTexts.ConsoleTrace, s => s.ConsoleTrace, (s, v) => s.ConsoleTrace = v),
+                    new SettingsToggleItem(SettingsTexts.DebugLog, s => s.Debug.VerboseLog, (s, v) => s.Debug.VerboseLog = v),
+                    new SettingsToggleItem(SettingsTexts.ConsoleTrace, s => s.Debug.ConsoleTrace, (s, v) => s.Debug.ConsoleTrace = v),
                 }),
                 new SettingsMenuSection(SettingsTexts.SectionDebugVisual, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(SettingsTexts.LabelBackgrounds, s => s.LabelBackgrounds, (s, v) => s.LabelBackgrounds = v),
-                    new SettingsToggleItem(SettingsTexts.LayoutOutlines, s => s.LayoutOutlines, (s, v) => s.LayoutOutlines = v),
-                    new SettingsToggleItem(SettingsTexts.StarEffectFrames, s => s.StarEffectFrames, (s, v) => s.StarEffectFrames = v),
+                    new SettingsToggleItem(SettingsTexts.LabelBackgrounds, s => s.Debug.LabelBackgrounds, (s, v) => s.Debug.LabelBackgrounds = v),
+                    new SettingsToggleItem(SettingsTexts.LayoutOutlines, s => s.Debug.LayoutOutlines, (s, v) => s.Debug.LayoutOutlines = v),
+                    new SettingsToggleItem(SettingsTexts.StarEffectFrames, s => s.Debug.StarEffectFrames, (s, v) => s.Debug.StarEffectFrames = v),
                 }),
                 new SettingsMenuSection(SettingsTexts.SectionDebugPerformance, new SettingsMenuItem[]
                 {
-                    new SettingsToggleItem(SettingsTexts.ShowFps, s => s.ShowFps, (s, v) => s.ShowFps = v),
-                    new SettingsToggleItem(SettingsTexts.ShowNetworkLatency, s => s.ShowNetworkLatency, (s, v) => s.ShowNetworkLatency = v),
+                    new SettingsToggleItem(SettingsTexts.ShowFps, s => s.Debug.ShowFps, (s, v) => s.Debug.ShowFps = v),
+                    new SettingsToggleItem(SettingsTexts.ShowNetworkLatency, s => s.Debug.ShowNetworkLatency, (s, v) => s.Debug.ShowNetworkLatency = v),
                 }),
             }),
         };
@@ -559,7 +562,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 
         private static SettingsMenuPage RulePage(GameKind kind)
         {
-            RuleSettings R(PlayerSettings s) => s.RulesFor(kind);
+            RuleSettings R(PlayerSettings s) => s.Rules.RulesFor(kind);
 
             var rules = RuleSettings.OptionsFor(kind)
                 .Select(option => (SettingsMenuItem)new SettingsToggleItem(OptionName(option), s => R(s).Get(option), (s, v) => R(s).Set(option, v)))
