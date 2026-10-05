@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -45,6 +45,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private readonly GameSession _session;
         private readonly IDialogService _dialogs;
         private readonly INavigator _navigator;
+        private readonly PlayerSettings _settings;
 
         /// <summary>
         /// Set while 回到主畫面 resigns the game itself: that ending is not announced (the
@@ -60,11 +61,13 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <param name="session">The game flow (restart; the game being played).</param>
         /// <param name="dialogs">The confirm dialogs.</param>
         /// <param name="navigator">Goes back to the main menu.</param>
-        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator)
+        /// <param name="settings">The live player settings (the player's name for a save's unnamed players).</param>
+        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerSettings settings)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _navigator = navigator ?? throw new ArgumentNullException(nameof(navigator));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             Game.GameOver += OnGameOver;
             _session.GameReset += OnGameReset;
@@ -228,7 +231,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
 
             try
             {
-                string path = GameSaveFiles.Save(game);
+                string path = GameSaveFiles.Save(game, _settings.PlayerName);
                 AppLogger.Log($"(Save) Saved to {path}", LogLevel.DEBUG);
             }
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)

@@ -31,21 +31,26 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <paramref name="time"/> (null: now); when that file already exists (two saves in one
         /// second) <c>_2</c>, <c>_3</c>, ... is added before <c>.pgn</c>. Player names default
         /// to the local players' names (<see cref="GameManager.NameOf"/>, mapped to the colour
-        /// each plays), or <see cref="Settings.CurrentUser"/> for an unnamed one. Clears
+        /// each plays), or <paramref name="unnamedPlayerName"/> for an unnamed one. Clears
         /// <see cref="GameManager.HasUnsavedChanges"/>.
         /// </summary>
+        /// <param name="game">The game to save.</param>
+        /// <param name="unnamedPlayerName">The name of a local player without one (the player's name, <see cref="PlayerSettings.PlayerName"/>).</param>
+        /// <param name="redName">Red's name (null: from the game).</param>
+        /// <param name="blackName">Black's name (null: from the game).</param>
+        /// <param name="time">The save time in the file name and tags (null: now).</param>
         /// <returns>The full path of the written file.</returns>
         /// <exception cref="InvalidOperationException">The game cannot be saved (<see cref="GameManager.CanSave"/>).</exception>
         /// <exception cref="IOException">The file cannot be written (also <see cref="UnauthorizedAccessException"/>).</exception>
-        public static string Save(GameManager game, string redName = null, string blackName = null, DateTime? time = null)
+        public static string Save(GameManager game, string unnamedPlayerName, string redName = null, string blackName = null, DateTime? time = null)
         {
             ArgumentNullException.ThrowIfNull(game);
             var now = time ?? DateTime.Now;
             string path = UniquePath(SystemSettings.SaveFilePath(game, now));
             var redSide = game.ColorOf(PlayerSide.Player1) == PieceColor.Red ? PlayerSide.Player1 : PlayerSide.Player2;
             var blackSide = redSide == PlayerSide.Player1 ? PlayerSide.Player2 : PlayerSide.Player1;
-            redName ??= game.NameOf(redSide) ?? Settings.CurrentUser;
-            blackName ??= game.NameOf(blackSide) ?? Settings.CurrentUser;
+            redName ??= game.NameOf(redSide) ?? unnamedPlayerName;
+            blackName ??= game.NameOf(blackSide) ?? unnamedPlayerName;
             return game.SaveGame(path, redName, blackName, now);
         }
 

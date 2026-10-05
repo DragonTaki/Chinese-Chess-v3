@@ -58,8 +58,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
             settings.ApplyDebugOptions();
 
-            Configs.Settings.CurrentUser = settings.PlayerName;
-            AppLogger.CurrentUser = Configs.Settings.CurrentUser;
+            AppLogger.CurrentUser = settings.PlayerName;
 
             if (_scroll is ScrollInputHandler scroll)
                 scroll.WheelStep = settings.WheelScrollStep;

@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -89,8 +89,7 @@ namespace Launcher
             // in the per-user data folder (created / repaired there as needed) and
             // registered in DI below for the screens that read them.
             var playerSettings = PlayerSettingsFile.Load();
-            Settings.CurrentUser = playerSettings.PlayerName;
-            AppLogger.CurrentUser = Settings.CurrentUser;
+            AppLogger.CurrentUser = playerSettings.PlayerName;
             playerSettings.ApplyDebugOptions();  // [debug] switches -> Engine DebugOptions (the settings screen re-applies on change)
             TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
