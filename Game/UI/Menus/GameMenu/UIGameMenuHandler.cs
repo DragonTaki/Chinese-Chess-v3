@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/04
-// Version: v2.2
+// Update Date: 2026/10/05
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -75,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         /// <summary>Whether the saved-game list is shown (in the board's place).</summary>
         public bool IsSavedGameListOpen => _savedGameMenu != null && Element.Children.Contains(_savedGameMenu);
 
-        public void UIGameMenuAction(UIGameMenuType selectedAction)
+        public void UIGameMenuAction(GameMenuOption selectedAction)
         {
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"UIGameMenu: selected: {selectedAction}");
@@ -84,28 +84,28 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             switch (selectedAction)
             {
                 // Game controls.
-                case UIGameMenuType.Restart:
+                case GameMenuOption.Restart:
                     presenter.Controls.Restart();
                     break;
-                case UIGameMenuType.Undo:
+                case GameMenuOption.Undo:
                     presenter.Controls.UndoRound();
                     break;
-                case UIGameMenuType.Surrender:
+                case GameMenuOption.Surrender:
                     presenter.Controls.ResignSideToMove();
                     break;
 
                 // Navigation and files.
-                case UIGameMenuType.SaveGame:
+                case GameMenuOption.SaveGame:
                     presenter.Navigation.SaveGame();
                     break;
-                case UIGameMenuType.LoadLayout:
+                case GameMenuOption.LoadLayout:
                     presenter.Navigation.LoadGame();
                     break;
-                case UIGameMenuType.ReturnToMain:
+                case GameMenuOption.ReturnToMain:
                     presenter.Navigation.ReturnToMain();
                     break;
 
-                case UIGameMenuType.Default:
+                case GameMenuOption.Default:
                 default:
                     // Like any button but 載入, closes the saved-game list.
                     presenter.CloseSavedGameList();

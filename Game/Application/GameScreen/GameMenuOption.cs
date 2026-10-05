@@ -1,15 +1,16 @@
 /* ----- ----- ----- ----- */
-// UIGameMenuType.cs
+// GameMenuOption.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2025/05/16
-// Version: v1.0
+// Update Date: 2026/10/05
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
-namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
+namespace Chinese_Chess_v3.Game.Application.GameScreen
 {
-    public enum UIGameMenuType
+    /// <summary>The options of the game screen's menu (<see cref="GameMenuOptions"/>).</summary>
+    public enum GameMenuOption
     {
         Default,
         Restart,      // 重新開始 (Restart)

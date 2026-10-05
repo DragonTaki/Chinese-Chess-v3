@@ -7,6 +7,7 @@
 // Version: v1.4
 /* ----- ----- ----- ----- */
 
+using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Sidebars;
@@ -47,7 +48,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 
         protected override void BuildButtons()
         {
-            var menuEntries = UIGameMenuOptions.Create(Handler.UIGameMenuAction);
+            var menuEntries = GameMenuOptions.Create(Handler.UIGameMenuAction);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {
