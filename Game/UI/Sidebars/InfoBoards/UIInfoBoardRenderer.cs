@@ -3,12 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/10/01
-// Version: v2.2
+// Update Date: 2026/10/05
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
 
+using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -57,6 +58,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             private LayoutF _layout;
             protected readonly IFont _nameFont;
             protected readonly IFont _timerFont;
+            // Writes the clock texts.
+            private readonly ClockFormatter _clockFormatter = new();
 
             public ClassicInfoBoard()
             {
@@ -196,7 +199,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                 var game = element.GameManager;
                 PlayerTimer timer = (side == PlayerSide.Player1 ? game.Player1 : game.Player2).Timer;
                 DrawPlayerSection(g, x, y, width, height,
-                    NameWithCheck(element, side), timer.GetTotalTimeString(), timer.GetStepTimeString(),
+                    NameWithCheck(element, side), _clockFormatter.GetTotalTimeString(timer), _clockFormatter.GetStepTimeString(timer),
                     game.CurrentTurn == side);
             }
 
