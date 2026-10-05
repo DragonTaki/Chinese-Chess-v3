@@ -1,28 +1,28 @@
 /* ----- ----- ----- ----- */
-// BoardOrientation.cs
+// BoardPerspective.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/02
-// Update Date: 2026/10/02
-// Version: v1.0
+// Update Date: 2026/10/05
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 
-namespace Chinese_Chess_v3.Game.UI.Boards
+namespace Chinese_Chess_v3.Game.Application.Boards
 {
     /// <summary>
     /// Which way up the board is drawn: the player's own side (己方,
     /// <see cref="GameManager.LocalSide"/>) is always at the bottom. Core coordinates are
     /// absolute FEN coordinates (red at the bottom, high y), so on the Full board the view is
     /// rotated 180 degrees when 己方 plays black. Half boards are never rotated. Pure (reads
-    /// Core only, no UI state), so it can be checked in isolation; <see cref="UIBoard"/> uses
-    /// it for both drawing (<see cref="UIBoard.GridToPixel"/>) and clicking
-    /// (<see cref="UIBoard.TryPixelToGrid"/>).
+    /// Core only, no UI state), so it can be checked in isolation. Works in squares (grid
+    /// coordinates); the board view (<c>UIBoard</c>) converts to and from pixels and uses it
+    /// for both drawing (<c>UIBoard.GridToPixel</c>) and clicking (<c>UIBoard.TryPixelToGrid</c>).
     /// </summary>
-    public static class BoardOrientation
+    public static class BoardPerspective
     {
         /// <summary>
         /// Whether a <paramref name="boardType"/> board is drawn rotated 180 degrees when 己方

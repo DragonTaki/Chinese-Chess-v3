@@ -3,12 +3,13 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/21
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
 
+using Chinese_Chess_v3.Game.Application.Boards;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
@@ -164,12 +165,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// <summary>
         /// Whether the board is drawn rotated 180 degrees so the player's own side (己方,
         /// <c>GameManager.LocalSide</c>) is at the bottom: the Full board when 己方 plays black
-        /// (<see cref="BoardOrientation"/>). Read live from the game, so it follows every new
+        /// (<see cref="BoardPerspective"/>). Read live from the game, so it follows every new
         /// game (an opening practised as 後手 after a 先手 one, a black-to-move endgame...).
         /// Grid lines, palaces and cannon/soldier marks are 180-degree symmetric; pieces and
         /// rings go through <see cref="GridToPixel"/>, clicks through <see cref="TryPixelToGrid"/>.
         /// </summary>
-        public bool IsFlipped => BoardOrientation.IsFlipped(_gameManager);
+        public bool IsFlipped => BoardPerspective.IsFlipped(_gameManager);
 
         /// <summary>
         /// Absolute position where a piece on square (<paramref name="x"/>, <paramref name="y"/>)
@@ -179,7 +180,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         public Vector2F GridToPixel(float x, float y)
         {
             var board = _gameManager.Board;
-            var (viewX, viewY) = BoardOrientation.Map(x, y, board.Columns, board.Rows, IsFlipped);
+            var (viewX, viewY) = BoardPerspective.Map(x, y, board.Columns, board.Rows, IsFlipped);
             return ViewToPixel(viewX, viewY);
         }
 
@@ -231,7 +232,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
             var board = _gameManager.Board;
             bool hit = BoardHitTest.TryPixelToGrid(ViewToPixel(0, 0), GridCellSize, board.Columns, board.Rows,
                 PieceRadius, ClickAreaEdgeAdjust, pixelX, pixelY, out int viewX, out int viewY);
-            (gridX, gridY) = BoardOrientation.Map(viewX, viewY, board.Columns, board.Rows, hit && IsFlipped);
+            (gridX, gridY) = BoardPerspective.Map(viewX, viewY, board.Columns, board.Rows, hit && IsFlipped);
             return hit;
         }
 
