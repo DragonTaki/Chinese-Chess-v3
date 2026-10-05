@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2025/10/23
+// Update Date: 2026/10/05
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -18,14 +18,15 @@ using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Infrastructure;
 
-namespace Launcher
+namespace Chinese_Chess_v3.Composition
 {
     /// <summary>
     /// Responsible for initializing and connecting all UI components.
     /// <para>
     /// Acts as the bootstrapper for the UI system: the root node, the main menu screen,
     /// the navigation system, and dialog management (the other screens, e.g. GameMenu, are
-    /// created on demand when navigated to).
+    /// created on demand when navigated to). Shared by both launchers (WinForms and
+    /// Skia/Silk.NET); each calls it once and then attaches its own window to the root.
     /// </para>
     /// </summary>
     public static class UIInitializer

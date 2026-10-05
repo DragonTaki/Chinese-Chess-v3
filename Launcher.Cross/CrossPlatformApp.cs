@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -16,6 +16,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SilkWindowInterface = Silk.NET.Windowing.IWindow;
 
+using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.UI.Constants;
 

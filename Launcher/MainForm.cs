@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/04
+// Update Date: 2026/10/05
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;

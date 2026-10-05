@@ -14,38 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
-using Chinese_Chess_v3.Game.Application.Catalogs;
-using Chinese_Chess_v3.Game.Application.GameScreen;
-using Chinese_Chess_v3.Game.Application.InfoBoards;
-using Chinese_Chess_v3.Game.Application.MainMenu;
-using Chinese_Chess_v3.Game.Application.Services;
-using Chinese_Chess_v3.Game.Application.Session;
-using Chinese_Chess_v3.Game.Application.Settings;
+using Chinese_Chess_v3.Composition;
 using Chinese_Chess_v3.Game.Configs;
-using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Constants;
-using Chinese_Chess_v3.Game.UI.Dialogs;
-using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
-using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
-using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
-using Chinese_Chess_v3.Game.UI.Navigation;
-using Chinese_Chess_v3.Game.UI.Sidebars;
-using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
-using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
-using Engine.UI.Core.Elements;
-using Engine.UI.Core.Interfaces;
-using Engine.UI.Infrastructure;
-using Engine.UI.Input;
-using Engine.Randomization;
-using Engine.Network;
 using Engine.Logging;
 using Engine.Platform;
 using Engine.Platform.Skia;
@@ -101,96 +73,12 @@ namespace Launcher.Cross
             TimerSettings.GameAnimationFPS = playerSettings.Fps;  // the frame timer follows later changes itself
             DefaultStyles.DefaultButtonStyle = UILayoutStyles.MainMenu.Button.Style;
 
-            var services = new ServiceCollection();
-
-            services.AddSingleton<IUiFactory, UiFactory>();
-            services.AddSingleton<IScrollInputHandler>(_ => new ScrollInputHandler { WheelStep = playerSettings.WheelScrollStep });
-            services.AddSingleton(playerSettings);
-
-            services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
-
-            services.AddSingleton<NavigationManager>();
-            services.AddSingleton<INavigator, Navigator>();
-            services.AddSingleton<IAppLifetime, AppLifetime>();
-            services.AddSingleton<UIRootNode>();
-            services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
-                () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
-            services.AddSingleton<IDialogService, DialogService>();
-            services.AddSingleton<NetworkManager>();
-            services.AddSingleton(sp =>
-            {
-                var settings = sp.GetRequiredService<PlayerSettings>();
-                var game = new GameManager(settings.CreateRuleSets());
-                settings.ApplyPlayerNamesTo(game);
-                return game;
-            });
-            // The game flow; takes the game through a factory so the GameManager is still created on first use.
-            services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
-            // The game screen's decisions; created with the game screen (its handler resolves it).
-            services.AddSingleton<GameScreenPresenter>();
-            // The main menu's decisions; created with the main menu (its handler resolves it).
-            services.AddSingleton<MainMenuPresenter>();
-            // What the game screen's info board shows (names, sides, clock texts); read live from the game.
-            services.AddSingleton<InfoBoardViewModel>();
-            // Pushes the settings screens' edits to the game and engine; takes the game through a factory like the session.
-            services.AddSingleton<ISettingsApplier>(sp => new SettingsApplier(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IScrollInputHandler>()));
-            // The lists' catalogs (殘局闖關, 開局練習, the saved games); single instances, so a list's
-            // switched-off categories are kept while the game runs.
-            services.AddSingleton<EndgameCatalog>();
-            services.AddSingleton<OpeningCatalog>();
-            services.AddSingleton<SavedGameCatalog>();
-
-            services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
-            services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
-            services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
-            services.AddSingletonUiModule<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>();
-            services.AddSingletonUiModule<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>();
-            services.AddSingletonUiModule<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>();
-            services.AddSingletonUiModule<UISavedGameMenu, UISavedGameMenuHandler, UISavedGameMenuRenderer>();
-            services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
-
-            services.AddTransientUiModule<UIBoard,     UIBoardHandler,     UIBoardRenderer>();
-            services.AddTransientUiModule<UISidebar,   UISidebarHandler,   UISidebarRenderer>();
-            services.AddTransientUiModule<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
-            services.AddTransientUiModule<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();
-            // Two settings submenus (遊戲設定, 規則設定 - each its own instance with its own
-            // Scope): transient, so each CreateDIElement gets a new element, handler and renderer.
-            services.AddTransientUiModule<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>();
+            var services = new ServiceCollection().AddChineseChess(playerSettings);
 
             var sp = services.BuildServiceProvider();
 
             using var app = new CrossPlatformApp(sp, window);
             window.Run();
-        }
-    }
-
-    /// <summary>
-    /// Cross-platform counterpart to <c>Launcher.ServiceCollectionExtensions</c>
-    /// (identical logic — kept as a separate copy for the same reason as
-    /// <see cref="UIInitializer"/>).
-    /// </summary>
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceCollection AddSingletonUiModule<TModule, THandler, TRenderer>(this IServiceCollection services)
-            where TModule : class
-            where THandler : class
-            where TRenderer : class
-        {
-            services.AddSingleton<TModule>();
-            services.AddSingleton<THandler>();
-            services.AddSingleton<TRenderer>();
-            return services;
-        }
-
-        public static IServiceCollection AddTransientUiModule<TModule, THandler, TRenderer>(this IServiceCollection services)
-            where TModule : class
-            where THandler : class
-            where TRenderer : class
-        {
-            services.AddTransient<TModule>();
-            services.AddTransient<THandler>();
-            services.AddTransient<TRenderer>();
-            return services;
         }
     }
 }
