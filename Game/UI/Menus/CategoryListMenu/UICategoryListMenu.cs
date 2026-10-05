@@ -212,7 +212,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
         {
             ApplyCategoryState(section, category, shown);
             foreach (var (button, item) in _itemButtons)
-                if (string.Equals(SectionOf(item), section, StringComparison.Ordinal)
+                // Compared as keys (null = no section = empty), as the toggle passes them.
+                if (string.Equals(SectionOf(item) ?? string.Empty, section ?? string.Empty, StringComparison.Ordinal)
                     && string.Equals(CategoryOf(item), category, StringComparison.Ordinal))
                     button.LayoutRules.Display = shown ? DisplayMode.Normal : DisplayMode.None;
 
