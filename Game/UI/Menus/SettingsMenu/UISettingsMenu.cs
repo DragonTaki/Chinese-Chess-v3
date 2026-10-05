@@ -32,8 +32,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// selected tab's sections: a header each and one row per setting, its name at the left and
     /// its control at the right (a switch, a dropdown, a slider or a text field,
     /// by <see cref="SettingsItemKind"/>). The logic - what a control edits, saving, resetting -
-    /// is the handler's (<see cref="UISettingsMenuHandler"/>); what is listed is
-    /// <see cref="SettingsMenuContent"/>.
+    /// is the <see cref="SettingsScreenModel"/>, which the handler (<see cref="UISettingsMenuHandler"/>)
+    /// binds to; what is listed is <see cref="SettingsMenuContent"/>.
     /// <para>
     /// A tab's rows are rebuilt when it is shown (<see cref="ShowPage"/>); an edit only
     /// refreshes the controls (<see cref="RefreshValues"/>).
