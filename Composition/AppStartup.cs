@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/06
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -41,6 +42,9 @@ namespace Chinese_Chess_v3.Composition
         /// <returns>The built service provider.</returns>
         public static IServiceProvider BuildServices(Action<IServiceCollection> addPlatformServices = null)
         {
+            // The rules layer's log lines go to the engine's logger.
+            CoreLogBridge.Attach();
+
             // Player settings: one entry reads settings.ini (in the per-user data folder, created /
             // repaired there as needed) and hands each area its values. The areas are registered
             // here, in file order; each lives in its own layer.
