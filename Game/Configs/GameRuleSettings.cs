@@ -158,7 +158,7 @@ namespace Chinese_Chess_v3.Game.Configs
                     }
                 }
                 yield return SettingsKey.Enum(section, "win_condition", () => r.HalfCrossWinCondition, v => r.HalfCrossWinCondition = v, d.HalfCrossWinCondition,
-                    "勝負方式：Points（計分，預設：車／將／帥 2 分、其他 1 分，名次比超分＝得分－該隊起始棋子數，同分先達成者在前）、Annihilation（全滅：存活者第一，其餘依出局先後）、ScoreBalance（得失分：殘存棋子分數＋吃子分數，維基分值）或 FirstTo200（先得 200 分，維基分值）。");
+                    "勝負方式：Points（計分，預設：每顆子 1 分（將帥也是），名次比超分＝得分－該隊起始棋子數，同分先達成者在前）、Annihilation（全滅：存活者第一，其餘依出局先後）、ScoreBalance（得失分：殘存棋子分數＋吃子分數，維基分值）或 FirstTo200（先得 200 分，維基分值）。");
             }
         }
 
