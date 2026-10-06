@@ -8,9 +8,12 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Globalization;
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
+
+using Engine.Localization;
 
 namespace Chinese_Chess_v3.Game.Application.Texts
 {
@@ -22,88 +25,88 @@ namespace Chinese_Chess_v3.Game.Application.Texts
     public static class SettingsTexts
     {
         /// <summary>The save failed (details are in the log).</summary>
-        public const string SettingsSaveFailed = "設定檔寫入失敗，請查看紀錄。";
+        public static string SettingsSaveFailed => Lang.Get("settings.settings_save_failed");
 
         /// <summary>The footer button resetting the shown tab to the defaults.</summary>
-        public const string ResetTab = "恢復初始";
+        public static string ResetTab => Lang.Get("settings.reset_tab");
 
         /// <summary>The confirmation before resetting the shown tab.</summary>
-        public const string ResetTabToDefaults = "將目前分頁恢復成預設值？";
+        public static string ResetTabToDefaults => Lang.Get("settings.reset_tab_to_defaults");
 
         /// <summary>A setting's button text: name, then its value.</summary>
-        public static string SettingText(string name, string value) => $"{name}：{value}";
+        public static string SettingText(string name, string value) => Lang.Get("settings.setting_text", name, value);
 
-        public const string On = "開";
-        public const string Off = "關";
+        public static string On => Lang.Get("settings.on");
+        public static string Off => Lang.Get("settings.off");
 
         /// <summary>
         /// <c>SettingText</c>, <c>On</c> and <c>Off</c> were the old button texts (<c>名稱：開</c>);
         /// the tabbed screens show a switch instead. Kept, unused.
         /// </summary>
-        public const string SectionRules = "── 規則（下一局開始生效）──";
-        public const string SectionDarkChess = "── 暗棋規則（下一局開始生效）──";
-        public const string SectionTimer = "── 計時（下一局開始生效）──";
-        public const string SectionHints = "── 提示（立即生效）──";
-        public const string SectionOther = "── 其他 ──";
+        public static string SectionRules => Lang.Get("settings.section_rules");
+        public static string SectionDarkChess => Lang.Get("settings.section_dark_chess");
+        public static string SectionTimer => Lang.Get("settings.section_timer");
+        public static string SectionHints => Lang.Get("settings.section_hints");
+        public static string SectionOther => Lang.Get("settings.section_other");
 
-        public const string GeneralCanSeeGeneral = "無視王見王規則";
-        public const string GeneralCanLeavePalace = "將帥無視九宮範圍";
-        public const string AdvisorCanLeavePalace = "士無視九宮範圍";
-        public const string ElephantEyeBlocks = "象眼可被塞";
-        public const string HorseLegBlocks = "馬腳可被蹩";
+        public static string GeneralCanSeeGeneral => Lang.Get("settings.general_can_see_general");
+        public static string GeneralCanLeavePalace => Lang.Get("settings.general_can_leave_palace");
+        public static string AdvisorCanLeavePalace => Lang.Get("settings.advisor_can_leave_palace");
+        public static string ElephantEyeBlocks => Lang.Get("settings.elephant_eye_blocks");
+        public static string HorseLegBlocks => Lang.Get("settings.horse_leg_blocks");
 
-        public const string HiddenChess = "暗棋（蓋子）";
-        public const string CanCaptureHiddenPiece = "暗吃";
-        public const string CaptureHiddenStrongerSuicide = "吃更大暗棋會自殺";
-        public const string AllowChainCapture = "連吃";
-        public const string ChariotRushHorseDiagonal = "車衝馬斜";
-        public const string CannonMustJump = "砲需隔一子吃棋";
-        public const string CaptureOwnPiece = "可吃己方棋子";
-        public const string Suicide = "可撞大子自殺";
+        public static string HiddenChess => Lang.Get("settings.hidden_chess");
+        public static string CanCaptureHiddenPiece => Lang.Get("settings.can_capture_hidden_piece");
+        public static string CaptureHiddenStrongerSuicide => Lang.Get("settings.capture_hidden_stronger_suicide");
+        public static string AllowChainCapture => Lang.Get("settings.allow_chain_capture");
+        public static string ChariotRushHorseDiagonal => Lang.Get("settings.chariot_rush_horse_diagonal");
+        public static string CannonMustJump => Lang.Get("settings.cannon_must_jump");
+        public static string CaptureOwnPiece => Lang.Get("settings.capture_own_piece");
+        public static string Suicide => Lang.Get("settings.suicide");
 
-        public const string StepTimer = "限制步時";
-        public const string LoseOnTimeUp = "超時判負";
-        public const string TimerMode = "計時方式";
-        public const string TimerModeCountDown = "倒數";
-        public const string TimerModeCountUp = "正數";
-        public const string TimerPreset = "計時預設";
-        public const string TimerPresetCustom = "自訂";
-        public const string TotalTime = "局時";
-        public const string StepTime = "步時";
-        public const string Increment = "加秒";
+        public static string StepTimer => Lang.Get("settings.step_timer");
+        public static string LoseOnTimeUp => Lang.Get("settings.lose_on_time_up");
+        public static string TimerMode => Lang.Get("settings.timer_mode");
+        public static string TimerModeCountDown => Lang.Get("settings.timer_mode_count_down");
+        public static string TimerModeCountUp => Lang.Get("settings.timer_mode_count_up");
+        public static string TimerPreset => Lang.Get("settings.timer_preset");
+        public static string TimerPresetCustom => Lang.Get("settings.timer_preset_custom");
+        public static string TotalTime => Lang.Get("settings.total_time");
+        public static string StepTime => Lang.Get("settings.step_time");
+        public static string Increment => Lang.Get("settings.increment");
 
         /// <summary>The value of a time-limit setting while the clocks count up (正數 only measures time).</summary>
-        public const string NotWithCountUp = "正數不限時";
+        public static string NotWithCountUp => Lang.Get("settings.not_with_count_up");
 
-        public const string LegalMoveHints = "可走位置提示";
-        public const string HangingPieceHints = "無根子提示";
+        public static string LegalMoveHints => Lang.Get("settings.legal_move_hints");
+        public static string HangingPieceHints => Lang.Get("settings.hanging_piece_hints");
 
         // DEBUG tab (除錯功能): one section per kind of debug feature.
-        public const string SectionDebugLog = "── 紀錄（立即生效）──";
-        public const string SectionDebugVisual = "── 視覺除錯（立即生效）──";
-        public const string SectionDebugPerformance = "── 效能與連線（立即生效）──";
-        public const string DebugLog = "除錯訊息";
-        public const string ConsoleTrace = "主控台追蹤訊息";
-        public const string LabelBackgrounds = "標籤紅色背景";
-        public const string LayoutOutlines = "排版外框";
-        public const string StarEffectFrames = "星空特效範圍框";
-        public const string ShowFps = "顯示 FPS";
-        public const string ShowNetworkLatency = "顯示網路延遲";
+        public static string SectionDebugLog => Lang.Get("settings.section_debug_log");
+        public static string SectionDebugVisual => Lang.Get("settings.section_debug_visual");
+        public static string SectionDebugPerformance => Lang.Get("settings.section_debug_performance");
+        public static string DebugLog => Lang.Get("settings.debug_log");
+        public static string ConsoleTrace => Lang.Get("settings.console_trace");
+        public static string LabelBackgrounds => Lang.Get("settings.label_backgrounds");
+        public static string LayoutOutlines => Lang.Get("settings.layout_outlines");
+        public static string StarEffectFrames => Lang.Get("settings.star_effect_frames");
+        public static string ShowFps => Lang.Get("settings.show_fps");
+        public static string ShowNetworkLatency => Lang.Get("settings.show_network_latency");
 
         // Tabs of 遊戲設定.
-        public const string TabDisplay = "畫面";
-        public const string TabSound = "聲音";
-        public const string TabGame = "遊戲";
-        public const string TabDebug = "開發人員選項";
+        public static string TabDisplay => Lang.Get("settings.tab_display");
+        public static string TabSound => Lang.Get("settings.tab_sound");
+        public static string TabGame => Lang.Get("settings.tab_game");
+        public static string TabDebug => Lang.Get("settings.tab_debug");
 
         /// <summary>A rules screen tab: the game kind's name (as on the new-game menu).</summary>
         public static string GameKindName(GameKind kind) => kind switch
         {
-            GameKind.Traditional => "傳統大盤",
-            GameKind.Flip => "揭棋大盤",
-            GameKind.DarkHalf => "暗棋半盤",
-            GameKind.OpenHalf => "明棋半盤",
-            GameKind.ThreeKingdoms => "三國半盤",
+            GameKind.Traditional => Lang.Get("game_kind.traditional"),
+            GameKind.Flip => Lang.Get("game_kind.flip"),
+            GameKind.DarkHalf => Lang.Get("game_kind.dark_half"),
+            GameKind.OpenHalf => Lang.Get("game_kind.open_half"),
+            GameKind.ThreeKingdoms => Lang.Get("game_kind.three_kingdoms"),
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
@@ -112,61 +115,61 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// shown (the author asked on 2026-10-02 for no 未實作 mark in the settings screens; which
         /// items do nothing is only in the code). Kept, unused.
         /// </summary>
-        public static string NotImplemented(string name) => $"{name}（未實作）";
+        public static string NotImplemented(string name) => Lang.Get("settings.not_implemented", name);
 
         /// <summary>A time-limit switch while the clocks count up: its name with <see cref="NotWithCountUp"/>.</summary>
-        public static string WithCountUpNote(string name) => $"{name}（{NotWithCountUp}）";
+        public static string WithCountUpNote(string name) => Lang.Get("settings.with_count_up_note", name, NotWithCountUp);
 
         // 畫面 (display; all but the wheel step are not implemented yet).
-        public const string Resolution = "解析度";
+        public static string Resolution => Lang.Get("settings.resolution");
         public static readonly string[] ResolutionOptions = { "1280 × 720", "1600 × 900", "1920 × 1080", "2560 × 1440" };
-        public const string DisplayMode = "顯示模式";
-        public static readonly string[] DisplayModeOptions = { "視窗", "全螢幕", "無邊框" };
-        public const string VSync = "垂直同步";
-        public const string Fps = "FPS";
+        public static string DisplayMode => Lang.Get("settings.display_mode");
+        public static string[] DisplayModeOptions => new[] { Lang.Get("settings.display_mode_options.0"), Lang.Get("settings.display_mode_options.1"), Lang.Get("settings.display_mode_options.2") };
+        public static string VSync => Lang.Get("settings.vsync");
+        public static string Fps => Lang.Get("settings.fps");
         public static readonly string[] FpsOptions = { "30", "60", "120", "144" };
-        public const string UiScale = "UI 縮放";
-        public const string WheelScrollStep = "滾輪捲動量";
+        public static string UiScale => Lang.Get("settings.ui_scale");
+        public static string WheelScrollStep => Lang.Get("settings.wheel_scroll_step");
 
         // 聲音 (sound; not implemented yet: there is no sound system).
-        public const string MasterVolume = "主音量";
-        public const string MusicVolume = "音樂";
-        public const string EffectsVolume = "音效";
-        public const string Mute = "靜音";
+        public static string MasterVolume => Lang.Get("settings.master_volume");
+        public static string MusicVolume => Lang.Get("settings.music_volume");
+        public static string EffectsVolume => Lang.Get("settings.effects_volume");
+        public static string Mute => Lang.Get("settings.mute");
 
         // 遊戲 (game).
-        public const string PlayerName = "玩家名稱";
-        public const string PlayerNamePlaceholder = "（未命名）";
-        public const string Player1Name = "玩家一名稱";
-        public const string Player2Name = "玩家二名稱";
-        public const string Player3Name = "玩家三名稱";
+        public static string PlayerName => Lang.Get("settings.player_name");
+        public static string PlayerNamePlaceholder => Lang.Get("settings.player_name_placeholder");
+        public static string Player1Name => Lang.Get("settings.player1_name");
+        public static string Player2Name => Lang.Get("settings.player2_name");
+        public static string Player3Name => Lang.Get("settings.player3_name");
 
-        public const string MoveAnimationSpeed = "走子動畫速度";
-        public static readonly string[] MoveAnimationSpeedOptions = { "慢", "普通", "快", "關閉" };
-        public const string BoardStyle = "棋盤樣式";
-        public static readonly string[] BoardStyleOptions = { "預設", "木紋", "簡約" };
-        public const string PieceStyle = "棋子樣式";
-        public static readonly string[] PieceStyleOptions = { "預設", "傳統", "簡約" };
-        public const string Language = "語言";
-        public static readonly string[] LanguageOptions = { "繁體中文", "English" };
+        public static string MoveAnimationSpeed => Lang.Get("settings.move_animation_speed");
+        public static string[] MoveAnimationSpeedOptions => new[] { Lang.Get("settings.move_animation_speed_options.0"), Lang.Get("settings.move_animation_speed_options.1"), Lang.Get("settings.move_animation_speed_options.2"), Lang.Get("settings.move_animation_speed_options.3") };
+        public static string BoardStyle => Lang.Get("settings.board_style");
+        public static string[] BoardStyleOptions => new[] { Lang.Get("settings.board_style_options.0"), Lang.Get("settings.board_style_options.1"), Lang.Get("settings.board_style_options.2") };
+        public static string PieceStyle => Lang.Get("settings.piece_style");
+        public static string[] PieceStyleOptions => new[] { Lang.Get("settings.piece_style_options.0"), Lang.Get("settings.piece_style_options.1"), Lang.Get("settings.piece_style_options.2") };
+        public static string Language => Lang.Get("settings.language");
+        public static string[] LanguageOptions => new[] { Lang.Get("settings.language_options.0"), Lang.Get("settings.language_options.1") };
 
         // 三國半盤 rule options.
 
         /// <summary>A 自訂分隊 menu row: the piece's colour and character, e.g. 紅俥 隊伍.</summary>
         public static string TeamOf(PieceColor color, PieceType type) =>
-            $"{(color == PieceColor.Red ? "紅" : "黑")}{PieceConstants.GetPieceText(type, color)} 隊伍";
-        public const string HalfCrossWinCondition = "勝負方式";
-        public const string HalfCrossWinPoints = "計分（預設）";
-        public const string HalfCrossWinAnnihilation = "全滅";
-        public const string HalfCrossWinScoreBalance = "得失分";
-        public const string HalfCrossWinFirstTo200 = "先得 200 分";
+            Lang.Get("settings.team_of", Lang.Get(color == PieceColor.Red ? "color.red" : "color.black"), PieceConstants.GetPieceText(type, color));
+        public static string HalfCrossWinCondition => Lang.Get("settings.half_cross_win_condition");
+        public static string HalfCrossWinPoints => Lang.Get("settings.half_cross_win_points");
+        public static string HalfCrossWinAnnihilation => Lang.Get("settings.half_cross_win_annihilation");
+        public static string HalfCrossWinScoreBalance => Lang.Get("settings.half_cross_win_score_balance");
+        public static string HalfCrossWinFirstTo200 => Lang.Get("settings.half_cross_win_first_to200");
 
         // Number values.
-        public const string MinutesUnit = "分鐘";
-        public const string SecondsUnit = "秒";
-        public static string Minutes(float value) => $"{value:0} 分鐘";
-        public static string Seconds(float value) => $"{value:0} 秒";
-        public static string Percent(float value) => $"{value:0}%";
+        public static string MinutesUnit => Lang.Get("settings.minutes_unit");
+        public static string SecondsUnit => Lang.Get("settings.seconds_unit");
+        public static string Minutes(float value) => Lang.Get("settings.value.minutes", value.ToString("0", CultureInfo.InvariantCulture));
+        public static string Seconds(float value) => Lang.Get("settings.value.seconds", value.ToString("0", CultureInfo.InvariantCulture));
+        public static string Percent(float value) => Lang.Get("settings.value.percent", value.ToString("0", CultureInfo.InvariantCulture));
         public static string PlainNumber(float value) => $"{value:0.#}";
     }
 }

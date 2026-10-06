@@ -12,6 +12,8 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Menus;
 
+using Engine.Localization;
+
 namespace Chinese_Chess_v3.Game.Application.GameScreen
 {
     /// <summary>
@@ -27,9 +29,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             return new List<MenuEntry<GameMenuOption>>
             {
-                new MenuEntry<GameMenuOption>(GameMenuOption.SaveGame,     "儲存遊戲",   () => onSelect(GameMenuOption.SaveGame)),
-                new MenuEntry<GameMenuOption>(GameMenuOption.LoadLayout,   "載入佈局",   () => onSelect(GameMenuOption.LoadLayout)),
-                new MenuEntry<GameMenuOption>(GameMenuOption.ReturnToMain, "回到主畫面", () => onSelect(GameMenuOption.ReturnToMain)),
+                new MenuEntry<GameMenuOption>(GameMenuOption.SaveGame, Lang.Get("menu.game.save_game"), () => onSelect(GameMenuOption.SaveGame)),
+                new MenuEntry<GameMenuOption>(GameMenuOption.LoadLayout, Lang.Get("menu.game.load_layout"), () => onSelect(GameMenuOption.LoadLayout)),
+                new MenuEntry<GameMenuOption>(GameMenuOption.ReturnToMain, Lang.Get("menu.game.return_to_main"), () => onSelect(GameMenuOption.ReturnToMain)),
             };
         }
     }

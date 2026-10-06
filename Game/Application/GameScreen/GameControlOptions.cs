@@ -12,6 +12,8 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Menus;
 
+using Engine.Localization;
+
 namespace Chinese_Chess_v3.Game.Application.GameScreen
 {
     /// <summary>
@@ -27,9 +29,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             return new List<MenuEntry<GameControlOption>>
             {
-                new MenuEntry<GameControlOption>(GameControlOption.Restart, "重新開始", () => onSelect(GameControlOption.Restart)),
-                new MenuEntry<GameControlOption>(GameControlOption.Undo,    "撤銷上步", () => onSelect(GameControlOption.Undo)),
-                new MenuEntry<GameControlOption>(GameControlOption.Resign,  "放棄對局", () => onSelect(GameControlOption.Resign)),
+                new MenuEntry<GameControlOption>(GameControlOption.Restart, Lang.Get("menu.game_control.restart"), () => onSelect(GameControlOption.Restart)),
+                new MenuEntry<GameControlOption>(GameControlOption.Undo, Lang.Get("menu.game_control.undo"), () => onSelect(GameControlOption.Undo)),
+                new MenuEntry<GameControlOption>(GameControlOption.Resign, Lang.Get("menu.game_control.resign"), () => onSelect(GameControlOption.Resign)),
             };
         }
     }

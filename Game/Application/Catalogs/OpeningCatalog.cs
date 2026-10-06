@@ -13,6 +13,8 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core.Openings;
 using Chinese_Chess_v3.Game.Core.Players;
 
+using Engine.Localization;
+
 namespace Chinese_Chess_v3.Game.Application.Catalogs
 {
     /// <summary>
@@ -24,10 +26,10 @@ namespace Chinese_Chess_v3.Game.Application.Catalogs
     public sealed class OpeningCatalog
     {
         /// <summary>The section of the openings Player1 (the first mover) practises.</summary>
-        public const string FirstMoverSection = "先手";
+        public static string FirstMoverSection => Lang.Get("opening.section.first_mover");
 
         /// <summary>The section of the openings Player2 practises.</summary>
-        public const string SecondMoverSection = "後手";
+        public static string SecondMoverSection => Lang.Get("opening.section.second_mover");
 
         private readonly FolderSettings _settings;
 

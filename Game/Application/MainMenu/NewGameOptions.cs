@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Chinese_Chess_v3.Game.Application.Menus;
 using Chinese_Chess_v3.Game.Core;
 
+using Engine.Localization;
+
 namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
     /// <summary>The new-game menu (開新一局): one entry per <see cref="GameKind"/>, in button order.</summary>
@@ -25,11 +27,11 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         {
             return new List<MenuEntry<GameKind>>
             {
-                new MenuEntry<GameKind>(GameKind.Traditional,   "傳統大盤", () => startNewGame(GameKind.Traditional)),
-                new MenuEntry<GameKind>(GameKind.Flip,          "揭棋大盤", () => startNewGame(GameKind.Flip)),
-                new MenuEntry<GameKind>(GameKind.DarkHalf,      "暗棋半盤", () => startNewGame(GameKind.DarkHalf)),
-                new MenuEntry<GameKind>(GameKind.OpenHalf,      "明棋半盤", () => startNewGame(GameKind.OpenHalf)),
-                new MenuEntry<GameKind>(GameKind.ThreeKingdoms, "三國半盤", () => startNewGame(GameKind.ThreeKingdoms)),
+                new MenuEntry<GameKind>(GameKind.Traditional, Lang.Get("game_kind.traditional"), () => startNewGame(GameKind.Traditional)),
+                new MenuEntry<GameKind>(GameKind.Flip, Lang.Get("game_kind.flip"), () => startNewGame(GameKind.Flip)),
+                new MenuEntry<GameKind>(GameKind.DarkHalf, Lang.Get("game_kind.dark_half"), () => startNewGame(GameKind.DarkHalf)),
+                new MenuEntry<GameKind>(GameKind.OpenHalf, Lang.Get("game_kind.open_half"), () => startNewGame(GameKind.OpenHalf)),
+                new MenuEntry<GameKind>(GameKind.ThreeKingdoms, Lang.Get("game_kind.three_kingdoms"), () => startNewGame(GameKind.ThreeKingdoms)),
             };
         }
 
