@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core.Endgames;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
@@ -48,8 +49,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.EndgameMenu
 
         protected override string LogLabel => "Endgame";
 
-        protected override string EmptyMessageText =>
-            $"找不到殘局題目。\n可以把題目檔（.pgn）放到：\n{UserFolder}";
+        protected override string EmptyMessageText => MenuTexts.NoEndgames(UserFolder);
 
         /// <summary>The puzzle's position, with the side to move from its FEN; the solution is not played.</summary>
         protected override void StartInSession(GameSession session, EndgamePuzzle puzzle) =>

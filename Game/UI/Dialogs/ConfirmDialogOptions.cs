@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Services;
+using Chinese_Chess_v3.Game.Application.Texts;
 
 using Engine.UI.Widgets;
 
@@ -30,19 +31,6 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 { ConfirmDialogType.GameOver,      new[] { ConfirmDialogResult.Restart, ConfirmDialogResult.ReturnToMain, ConfirmDialogResult.Close } },
             };
 
-        private static readonly Dictionary<ConfirmDialogResult, string> LabelMap =
-            new()
-            {
-                { ConfirmDialogResult.None,   "<　>" },
-                { ConfirmDialogResult.Ok,     "確認" },
-                { ConfirmDialogResult.Cancel, "取消" },
-                { ConfirmDialogResult.Yes,    "是" },
-                { ConfirmDialogResult.No,     "否" },
-                { ConfirmDialogResult.Restart,      "重新開始" },
-                { ConfirmDialogResult.ReturnToMain, "回到主畫面" },
-                { ConfirmDialogResult.Close,        "關閉" }
-            };
-
         /// <summary>
         /// Generate corresponding button items according to ConfirmDialogType
         /// </summary>
@@ -55,7 +43,7 @@ namespace Chinese_Chess_v3.Game.UI.Dialogs
                 : new[] { ConfirmDialogResult.Ok };
 
             return results.Select(result => new ButtonEntry<ConfirmDialogResult>(
-                LabelMap[result],
+                MenuTexts.DialogButton(result),
                 result,
                 () => onSelect(result)
             )).ToList();

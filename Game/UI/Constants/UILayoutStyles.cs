@@ -391,8 +391,6 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public const string CategoryOnMark = "●";
             public const string CategoryOffMark = "○";
 
-            /// <summary>Shown for items without a category (empty <c>PgnGameFile.Category</c>).</summary>
-            public const string UncategorizedName = "未分類";
 
             /// <summary>An item button, and a category toggle that is on.</summary>
             public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle

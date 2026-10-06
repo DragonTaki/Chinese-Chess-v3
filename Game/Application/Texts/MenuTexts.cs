@@ -10,6 +10,8 @@
 using System;
 using System.Globalization;
 
+using Chinese_Chess_v3.Game.Application.Services;
+
 using Engine.Localization;
 
 namespace Chinese_Chess_v3.Game.Application.Texts
@@ -45,6 +47,28 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>The game screen's list when there is no saved game; <paramref name="folder"/> = the saves folder.</summary>
         public static string NoSavedGames(string folder) =>
             Lang.Get("menu.no_saved_games", folder);
+
+        /// <summary>The endgame list when there is no puzzle; <paramref name="folder"/> = the player's puzzle folder.</summary>
+        public static string NoEndgames(string folder) => Lang.Get("menu.no_endgames", folder);
+
+        /// <summary>The opening list when there is no opening; <paramref name="folder"/> = the player's opening folder.</summary>
+        public static string NoOpenings(string folder) => Lang.Get("menu.no_openings", folder);
+
+        /// <summary>A list's category for items without one (empty <c>PgnGameFile.Category</c>).</summary>
+        public static string Uncategorized => Lang.Get("menu.uncategorized");
+
+        /// <summary>A confirm dialog's button text for <paramref name="result"/>; <c>None</c> has the placeholder <c>&lt;　&gt;</c>.</summary>
+        public static string DialogButton(ConfirmDialogResult result) => result switch
+        {
+            ConfirmDialogResult.Ok => Lang.Get("dialog.button.ok"),
+            ConfirmDialogResult.Cancel => Lang.Get("dialog.button.cancel"),
+            ConfirmDialogResult.Yes => Lang.Get("dialog.button.yes"),
+            ConfirmDialogResult.No => Lang.Get("dialog.button.no"),
+            ConfirmDialogResult.Restart => Lang.Get("dialog.button.restart"),
+            ConfirmDialogResult.ReturnToMain => Lang.Get("dialog.button.return_to_main"),
+            ConfirmDialogResult.Close => Lang.Get("dialog.button.close"),
+            _ => "<　>",
+        };
 
         /// <summary>The main menu's list: the disabled row shown when there is no save.</summary>
         public static string NoSavedGamesRow => Lang.Get("menu.no_saved_games_row");

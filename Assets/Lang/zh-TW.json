@@ -231,5 +231,15 @@
   "menu.game_control.undo": "撤銷上步",
   "menu.game_control.resign": "放棄對局",
   "opening.section.first_mover": "先手",
-  "opening.section.second_mover": "後手"
+  "opening.section.second_mover": "後手",
+  "menu.no_endgames": "找不到殘局題目。\n可以把題目檔（.pgn）放到：\n{0}",
+  "menu.no_openings": "找不到開局。\n可以把開局檔（.pgn）放到：\n{0}",
+  "menu.uncategorized": "未分類",
+  "dialog.button.ok": "確認",
+  "dialog.button.cancel": "取消",
+  "dialog.button.yes": "是",
+  "dialog.button.no": "否",
+  "dialog.button.restart": "重新開始",
+  "dialog.button.return_to_main": "回到主畫面",
+  "dialog.button.close": "關閉"
 }

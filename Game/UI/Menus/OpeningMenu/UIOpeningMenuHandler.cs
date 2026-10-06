@@ -9,6 +9,7 @@
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core.Openings;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
@@ -40,8 +41,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.OpeningMenu
 
         protected override string LogLabel => "Opening";
 
-        protected override string EmptyMessageText =>
-            $"找不到開局。\n可以把開局檔（.pgn）放到：\n{UserFolder}";
+        protected override string EmptyMessageText => MenuTexts.NoOpenings(UserFolder);
 
         protected override void StartInSession(GameSession session, OpeningLine opening) =>
             session.StartOpening(opening, LogLabel);

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core.Pgn;
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -238,7 +239,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu
             if (!_categoryButtons.TryGetValue((section ?? string.Empty, category), out var button))
                 return;
 
-            string name = category.Length == 0 ? UILayoutStyles.CategoryListMenu.UncategorizedName : category;
+            string name = category.Length == 0 ? MenuTexts.Uncategorized : category;
             string mark = shown ? UILayoutStyles.CategoryListMenu.CategoryOnMark : UILayoutStyles.CategoryListMenu.CategoryOffMark;
             button.Text = $"{mark} {name}";
             button.Style = shown ? UILayoutStyles.CategoryListMenu.ButtonStyle : UILayoutStyles.CategoryListMenu.CategoryOff.Style;
