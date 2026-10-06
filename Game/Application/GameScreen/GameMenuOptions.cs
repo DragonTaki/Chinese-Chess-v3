@@ -14,7 +14,10 @@ using Chinese_Chess_v3.Game.Application.Menus;
 
 namespace Chinese_Chess_v3.Game.Application.GameScreen
 {
-    /// <summary>The game screen's menu, in button order (the UI builds one button per entry).</summary>
+    /// <summary>
+    /// The game screen's menu (the left column: navigation and files), in button order (the UI
+    /// builds one button per entry). The game controls are in the sidebar (<see cref="GameControlOptions"/>).
+    /// </summary>
     public static class GameMenuOptions
     {
         /// <summary>The menu's entries; choosing one calls <paramref name="onSelect"/> with its option.</summary>
@@ -24,11 +27,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             return new List<MenuEntry<GameMenuOption>>
             {
-                new MenuEntry<GameMenuOption>(GameMenuOption.Restart,      "重新開始",   () => onSelect(GameMenuOption.Restart)),
-                new MenuEntry<GameMenuOption>(GameMenuOption.Undo,         "撤銷上步",   () => onSelect(GameMenuOption.Undo)),
                 new MenuEntry<GameMenuOption>(GameMenuOption.SaveGame,     "儲存遊戲",   () => onSelect(GameMenuOption.SaveGame)),
                 new MenuEntry<GameMenuOption>(GameMenuOption.LoadLayout,   "載入佈局",   () => onSelect(GameMenuOption.LoadLayout)),
-                new MenuEntry<GameMenuOption>(GameMenuOption.Surrender,    "放棄對局",   () => onSelect(GameMenuOption.Surrender)),
                 new MenuEntry<GameMenuOption>(GameMenuOption.ReturnToMain, "回到主畫面", () => onSelect(GameMenuOption.ReturnToMain)),
             };
         }

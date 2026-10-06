@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/10/05
-// Version: v1.3
+// Update Date: 2026/10/06
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -14,6 +14,7 @@ using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Game.UI.Constants;
+using Chinese_Chess_v3.Game.UI.Sidebars.GameControls;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
@@ -26,12 +27,14 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
 {
     /// <summary>
     /// The sidebar (right column of the game screen): a container that holds the info
-    /// board (<see cref="UIInfoBoard"/>) and the logger box (<see cref="UILoggerBox"/>),
+    /// board (<see cref="UIInfoBoard"/>), the game controls (<see cref="UIGameControls"/>,
+    /// author 2026-10-05) and the logger box (<see cref="UILoggerBox"/>),
     /// and stores the current turn and whether to highlight it.
     /// </summary>
     public class UISidebar : UIContainer<UISidebar, UISidebarHandler, UISidebarRenderer>, IResettable
     {
         internal UIInfoBoard InfoBoard { get; private set; }
+        internal UIGameControls GameControls { get; private set; }
         internal UILoggerBox LoggerBox { get; private set; }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
             // Declared size (pre-layout fallback), then the layout rules.
             Layout = UILayoutConstants.Sidebar.Layout;
 
-            // Right column of the game screen: info board on top, logger box at the bottom
+            // Right column of the game screen: info board on top, game controls, logger box at the bottom
             // (see UILayoutSheet.GameScreen.Sidebar).
             LayoutRules.Apply(UILayoutSheet.GameScreen.Sidebar);
         }
@@ -68,6 +71,12 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars
                 InfoBoard = _factory.CreateDIElement<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
             if (!Children.Contains(InfoBoard))
                 AddChild(InfoBoard);
+
+            // Between the info board and the logger box (the column's flex order is the child order).
+            if (GameControls == null)
+                GameControls = _factory.CreateDIElement<UIGameControls, UIGameControlsHandler, UIGameControlsRenderer>();
+            if (!Children.Contains(GameControls))
+                AddChild(GameControls);
 
             if (LoggerBox == null)
                 LoggerBox = _factory.CreateDIElement<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();

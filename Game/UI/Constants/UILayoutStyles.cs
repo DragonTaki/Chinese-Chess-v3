@@ -121,6 +121,29 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
+        /// The sidebar's game controls (<c>UIGameControls</c>): the main menu button's look with a
+        /// smaller font so two fit in a row. Placeholder size for the author to tune.
+        /// </summary>
+        public static class GameControls
+        {
+            public static class Button
+            {
+                public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
+
+                public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
+                {
+                    Font = Font,
+                    TextBrush = MainMenu.Button.TextBrush,
+                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    OuterBorder = MainMenu.Button.Border.Outer,
+                    InnerBorder = MainMenu.Button.Border.Inner,
+                    Margin = MainMenu.Button.Border.Margin,
+                    CornerRadius = MainMenu.Button.Border.CornerRadius
+                };
+            }
+        }
+
+        /// <summary>
         /// The settings screens (<c>UISettingsMenu</c>). Box looks as the main menu buttons
         /// (gold borders) with the category menus' dimmed variant for what is not selected or
         /// only shows a value; fonts, colours and the dimmed section header are placeholders for

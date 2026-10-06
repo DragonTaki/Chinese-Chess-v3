@@ -55,6 +55,23 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             }
 
             /// <summary>
+            /// Encapsulates Sidebar:GameControls related setting values: the game controls
+            /// (重新開始, 撤銷上步, 放棄對局...) between the info board and the logger box, two buttons
+            /// per row. Placeholder sizes for the author to tune.
+            /// </summary>
+            public static class GameControls
+            {
+                // Buttons per row
+                public const int Columns = 2;
+                // Gap between buttons, both ways
+                public const float Gap = 10.0f;
+                // Button height
+                public const float ButtonHeight = 50.0f;
+                // Button width: the row's width shared by the columns
+                public static readonly float ButtonWidth = (Sidebar.Size.X - Margin * 2.0f - Gap * (Columns - 1)) / Columns;
+            }
+
+            /// <summary>
             /// Encapsulates Sidebar:Logger related setting values.
             /// </summary>
             public static class LoggerBox

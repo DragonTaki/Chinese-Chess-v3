@@ -460,8 +460,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>
             /// <c>UISidebar</c>: fixed-width column pinned to the right edge, full height; a
-            /// flex column inset by the margin, with the fixed info board at the top and the
-            /// logger box growing into the rest, one margin apart.
+            /// flex column inset by the margin, with the fixed info board at the top, the game
+            /// controls under it and the logger box growing into the rest, one margin apart.
             /// </summary>
             public static readonly UILayoutStyle Sidebar = new()
             {
@@ -484,6 +484,35 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 PositionMode = PositionMode.Flow,
                 Width = LayoutSize.Stretch,
                 Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.InfoBoard.Size.Y),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>
+            /// <c>UIGameControls</c>: flex item of the sidebar column between the info board and the
+            /// logger box, full width, as tall as its rows; a wrapping flex row of the control buttons.
+            /// </summary>
+            public static readonly UILayoutStyle GameControls = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Row,
+                FlexWrap = FlexWrap.Wrap,
+                JustifyContent = JustifyContent.Start,
+                AlignItems = FlexAlign.Start,
+                AlignContent = AlignContent.Start,
+                ColumnGap = UILayoutConstants.Sidebar.GameControls.Gap,
+                RowGap = UILayoutConstants.Sidebar.GameControls.Gap,
+            };
+
+            /// <summary>A game control button: fixed column width and height, not shrinkable.</summary>
+            public static readonly UILayoutStyle GameControlButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.Sidebar.GameControls.ButtonWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.GameControls.ButtonHeight),
                 FlexShrink = 0f,
             };
 

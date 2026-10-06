@@ -23,8 +23,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
 {
     /// <summary>
     /// Binds the UIGameMenu (the game screen's left menu) to the <see cref="GameScreenPresenter"/>,
-    /// which makes the decisions: each button calls a presenter command (game controls:
-    /// 撤銷上步, 放棄對局, 重新開始; navigation and files: 儲存遊戲, 載入佈局, 回到主畫面), and the
+    /// which makes the decisions: each button calls a presenter command (navigation and files:
+    /// 儲存遊戲, 載入佈局, 回到主畫面; the game controls are in the sidebar, <c>UIGameControls</c>), and the
     /// presenter's events drive the views (reset on a restart, the saved-game list shown /
     /// hidden in the board's place, the game-over dialog brought up on the UI thread).
     /// </summary>
@@ -83,17 +83,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
             var presenter = Presenter;
             switch (selectedAction)
             {
-                // Game controls.
-                case GameMenuOption.Restart:
-                    presenter.Controls.Restart();
-                    break;
-                case GameMenuOption.Undo:
-                    presenter.Controls.UndoRound();
-                    break;
-                case GameMenuOption.Surrender:
-                    presenter.Controls.ResignSideToMove();
-                    break;
-
                 // Navigation and files.
                 case GameMenuOption.SaveGame:
                     presenter.Navigation.SaveGame();
