@@ -145,6 +145,47 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             }
 
             /// <summary>
+            /// The HalfCross board (三國半盤, 9×5): half a xiangqi board, pieces on the line
+            /// crossings like the Full board (no palace, river or marks), so the grid area is
+            /// (Columns − 1) × (Rows − 1) cells. Placeholder values for the author to tune; the
+            /// board element takes this size's aspect ratio (<c>UILayoutSheet.GameScreen.HalfCrossBoard</c>).
+            /// </summary>
+            public static class HalfCross
+            {
+                // Authored size of the board element (its aspect ratio): the grid plus a margin.
+                public static readonly Vector2F Size = new Vector2F(820.0f, 460.0f);
+
+                /// <summary>Encapsulates Board:HalfCross:Grid related setting values.</summary>
+                public static class Grid
+                {
+                    // Distance between neighbouring lines
+                    public const float CellSize = 90.0f;
+
+                    /// <summary>The pixel size of the grid area: from the first line to the last, at the authored size.</summary>
+                    public static readonly Vector2F GridAreaSize = new Vector2F(
+                        (BoardConstants.HalfCross.Columns - 1) * CellSize,
+                        (BoardConstants.HalfCross.Rows - 1) * CellSize
+                    );
+                }
+
+                /// <summary>
+                /// Encapsulates Board:HalfCross:ClickArea related setting values: as
+                /// <see cref="Board.ClickArea"/>, for the HalfCross board. 0 = exactly the drawn
+                /// extent; for the author to tune.
+                /// </summary>
+                public static class ClickArea
+                {
+                    public const float Left = 0.0f;
+                    public const float Top = 0.0f;
+                    public const float Right = 0.0f;
+                    public const float Bottom = 0.0f;
+
+                    /// <summary>The four edges together.</summary>
+                    public static readonly PaddingF EdgeAdjust = new PaddingF(Left, Top, Right, Bottom);
+                }
+            }
+
+            /// <summary>
             /// Encapsulates Board:Piece related setting values: the sizes a piece is drawn
             /// at, at the board's authored size (scaled by <c>UIBoard.DetailScale</c>).
             /// Colors and the font face are in <see cref="PieceSettings"/>.

@@ -32,8 +32,11 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         // ----- New-game menu -----
 
-        /// <summary>A new-game mode whose game cannot be started yet (揭棋大盤, 三國半盤); <paramref name="mode"/> = its button text.</summary>
+        /// <summary>A new-game mode whose game cannot be started yet; <paramref name="mode"/> = its button text.</summary>
         public static string NewGameModeUnavailable(string mode) => $"「{mode}」尚未完成，目前無法開始。";
+
+        /// <summary>三國半盤 with 收軍 chosen as its way of winning (its rules are not decided yet).</summary>
+        public const string RecallUnavailable = "三國半盤的「收軍」勝負方式規則尚未決定，目前無法開始；請在規則設定換成其他勝負方式。";
 
         // ----- Saved-game lists (載入 on the game screen, 讀取存檔 on the main menu) -----
 

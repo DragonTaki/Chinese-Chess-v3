@@ -8,9 +8,11 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Families.ThreeKingdoms;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 
@@ -54,6 +56,32 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
         /// <summary>The side shown in the right half: the other one of <see cref="LeftSide"/>.</summary>
         public PlayerSide RightSide => LeftSide == PlayerSide.Player1 ? PlayerSide.Player2 : PlayerSide.Player1;
 
+        /// <summary>Whether a 三國 game is shown: three columns (<see cref="Sides"/>) with teams and points.</summary>
+        public bool IsThreeKingdoms => _game.Board.ThreeKingdoms != null;
+
+        /// <summary>The players shown, left to right: <see cref="LeftSide"/> and <see cref="RightSide"/>; 三國 Player1..Player3 in turn order.</summary>
+        public IReadOnlyList<PlayerSide> Sides => IsThreeKingdoms
+            ? new[] { PlayerSide.Player1, PlayerSide.Player2, PlayerSide.Player3 }
+            : new[] { LeftSide, RightSide };
+
+        /// <summary>三國: the team (1..3) <paramref name="side"/> claimed; 0 before it has one.</summary>
+        public int TeamOf(PlayerSide side) => _game.TeamOf(side);
+
+        /// <summary>三國: whether <paramref name="side"/> no longer plays (resigned or out).</summary>
+        public bool IsInactive(PlayerSide side) => !_game.IsStillPlaying(side);
+
+        /// <summary>三國: the line under <paramref name="side"/>'s name (<see cref="GameTexts.ThreeKingdomsStatus"/>).</summary>
+        public string ThreeKingdomsStatus(PlayerSide side)
+        {
+            var rules = _game.Rules;
+            int team = _game.TeamOf(side);
+            int? threshold = rules.HalfCrossWinCondition == HalfCrossWinCondition.Points && team != 0
+                ? ThreeKingdomsTeams.Threshold(team) : null;
+            bool resigned = _game.HasResigned(side);
+            return GameTexts.ThreeKingdomsStatus(team, _game.ScoreOf(side), threshold,
+                resigned, !resigned && !_game.IsStillPlaying(side));
+        }
+
         /// <summary>The side to move (its half is highlighted).</summary>
         public PlayerSide CurrentTurn => _game.CurrentTurn;
 
@@ -74,12 +102,20 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
         /// <returns>The name to draw.</returns>
         public string GetPlayerName(PlayerSide side)
         {
-            string name = side == PlayerSide.Player2 ? Player2Name : Player1Name;
+            string name = side switch
+            {
+                PlayerSide.Player1 => Player1Name,
+                PlayerSide.Player2 => Player2Name,
+                _ => null,
+            };
             if (name != null)
                 return name;
             name = _game.NameOf(side);
             if (name != null)
                 return name;
+            // 三國's players own teams, not colours.
+            if (IsThreeKingdoms)
+                return GameTexts.DefaultPlayerName(side);
 
             return GameTexts.InfoBoardColorName(side, _game.ColorOf(side));
         }
@@ -101,8 +137,7 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
         /// <summary><paramref name="side"/>'s step time (<see cref="ClockFormatter.GetStepTimeString"/>).</summary>
         public string StepTimeText(PlayerSide side) => Clock.GetStepTimeString(TimerOf(side));
 
-        // The clock of Player1, or else Player2 (the info board shows two players).
-        private PlayerTimer TimerOf(PlayerSide side) =>
-            (side == PlayerSide.Player1 ? _game.Player1 : _game.Player2).Timer;
+        // The clock of the player (Player1 for a side that is not one).
+        private PlayerTimer TimerOf(PlayerSide side) => (_game.PlayerOf(side) ?? _game.Player1).Timer;
     }
 }

@@ -149,8 +149,8 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 
         /// <summary>
         /// A new-game submenu button: starts that game kind's game on the game screen, or, for a
-        /// kind without a game yet (揭棋大盤, 三國半盤, <see cref="GameSession.CanStartNew"/>),
-        /// says so and stays on the menu.
+        /// kind without a game yet (<see cref="GameSession.CanStartNew"/>; 三國半盤 with 收軍 chosen,
+        /// <see cref="GameSession.IsRecallChosen"/>), says so and stays on the menu.
         /// </summary>
         /// <param name="kind">The chosen game kind.</param>
         public void StartNewGame(GameKind kind)
@@ -162,6 +162,13 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             {
                 AppLogger.Log($"(NewGame) {kind} is not implemented yet; staying on the new-game menu", LogLevel.WARN);
                 _dialogs.ShowConfirm(MenuTexts.NewGameModeUnavailable(NewGameOptions.LabelOf(kind)), ConfirmDialogType.Ok, _ => { });
+                return;
+            }
+
+            if (kind == GameKind.ThreeKingdoms && _session.IsRecallChosen)
+            {
+                AppLogger.Log("(NewGame) 三國 with 收軍 is not decided yet; staying on the new-game menu", LogLevel.WARN);
+                _dialogs.ShowConfirm(MenuTexts.RecallUnavailable, ConfirmDialogType.Ok, _ => { });
                 return;
             }
 

@@ -149,10 +149,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public const string Language = "語言";
         public static readonly string[] LanguageOptions = { "繁體中文", "English" };
 
-        // 三國半盤 rule options (not implemented yet: no gameplay reads them).
-        public const string HalfCrossTeamVariant = "分隊";
-        public const string HalfCrossTeamStandard = "第一種（帥將兵卒／仕相俥傌炮／士象車馬包）";
-        public const string HalfCrossTeamHandicap = "第二種（讓子用）";
+        // 三國半盤 rule options.
         public const string HalfCrossWinCondition = "勝負方式";
         public const string HalfCrossWinPoints = "計分（預設）";
         public const string HalfCrossWinAnnihilation = "全滅";

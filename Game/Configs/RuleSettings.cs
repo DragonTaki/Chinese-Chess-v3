@@ -151,10 +151,7 @@ namespace Chinese_Chess_v3.Game.Configs
 
         #endregion
 
-        #region Three Kingdoms (未實作: stored only, no gameplay reads them yet)
-
-        /// <summary>三國 分隊. Default: from <see cref="Rules.HalfCrossTeamVariant"/> (Standard)</summary>
-        public HalfCrossTeamVariant HalfCrossTeamVariant { get; set; } = RuleDefaults.HalfCrossTeamVariant;
+        #region Three Kingdoms
 
         /// <summary>三國 勝負方式. Default: from <see cref="Rules.HalfCrossWinCondition"/> (Points)</summary>
         public HalfCrossWinCondition HalfCrossWinCondition { get; set; } = RuleDefaults.HalfCrossWinCondition;
@@ -279,7 +276,6 @@ namespace Chinese_Chess_v3.Game.Configs
             rules.IsAllowChainCapture = IsAllowChainCapture;
             rules.IsChariotRushHorseDiagonal = IsChariotRushHorseDiagonal;
             rules.IsCannonMustJumpToCapture = IsCannonMustJumpToCapture;
-            rules.HalfCrossTeamVariant = HalfCrossTeamVariant;
             rules.HalfCrossWinCondition = HalfCrossWinCondition;
         }
 

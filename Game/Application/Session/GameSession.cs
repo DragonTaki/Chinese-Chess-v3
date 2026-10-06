@@ -56,20 +56,27 @@ namespace Chinese_Chess_v3.Game.Application.Session
         /// </summary>
         public event Action GameReset;
 
-        /// <summary>Whether <see cref="StartNew"/> can start <paramref name="kind"/> (三國 cannot yet).</summary>
+        /// <summary>Whether <see cref="StartNew"/> can start <paramref name="kind"/> (every kind can).</summary>
         public static bool CanStartNew(GameKind kind) => kind switch
         {
-            GameKind.Traditional or GameKind.Flip or GameKind.DarkHalf or GameKind.OpenHalf => true,
-            GameKind.ThreeKingdoms => false,
+            GameKind.Traditional or GameKind.Flip or GameKind.DarkHalf or GameKind.OpenHalf or GameKind.ThreeKingdoms => true,
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
         /// <summary>
+        /// Whether the 三國 rules pick 收軍 (<see cref="HalfCrossWinCondition.Recall"/>), whose rules
+        /// the author has not decided yet: such a game cannot be started.
+        /// </summary>
+        public bool IsRecallChosen =>
+            Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossWinCondition == HalfCrossWinCondition.Recall;
+
+        /// <summary>
         /// Starts a new game of <paramref name="kind"/> on the game screen (<see cref="Start"/>):
         /// 傳統大盤 the standard position, 揭棋大盤 a dealt 揭棋 game (<see cref="GameManager.StartJieqi"/>),
-        /// 暗棋／明棋半盤 a shuffled HalfCenter game (<see cref="GameManager.StartHalfCenter"/>).
+        /// 暗棋／明棋半盤 a shuffled HalfCenter game (<see cref="GameManager.StartHalfCenter"/>),
+        /// 三國半盤 a dealt 三國 game (<see cref="GameManager.StartThreeKingdoms"/>; the caller checks
+        /// <see cref="IsRecallChosen"/> first, as 收軍 cannot be played yet).
         /// </summary>
-        /// <exception cref="NotSupportedException"><paramref name="kind"/> cannot be played yet (<see cref="CanStartNew"/>).</exception>
         public void StartNew(GameKind kind)
         {
             Action<GameManager> setUp = kind switch
@@ -78,7 +85,7 @@ namespace Chinese_Chess_v3.Game.Application.Session
                 GameKind.DarkHalf => game => game.StartHalfCenter(hiddenChess: true, HalfCenterDealer.Create()),
                 GameKind.OpenHalf => game => game.StartHalfCenter(hiddenChess: false, HalfCenterDealer.Create()),
                 GameKind.Flip => game => game.StartJieqi(JieqiDealer.Create()),
-                GameKind.ThreeKingdoms => throw new NotSupportedException($"A {kind} game cannot be started yet"),
+                GameKind.ThreeKingdoms => game => game.StartThreeKingdoms(ThreeKingdomsDealer.Create()),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
             };
             Start(setUp);

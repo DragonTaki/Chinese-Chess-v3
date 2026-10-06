@@ -138,10 +138,8 @@ namespace Chinese_Chess_v3.Game.Configs
 
             if (kind == GameKind.ThreeKingdoms)
             {
-                yield return SettingsKey.Enum(section, "team_setup", () => r.HalfCrossTeamVariant, v => r.HalfCrossTeamVariant = v, d.HalfCrossTeamVariant,
-                    "分隊（未實作，目前只記錄）：Standard（第一種：帥將兵卒／仕相俥傌炮／士象車馬包）或 Handicap（第二種，讓子用：兵卒／帥仕相將士象／俥傌炮車馬包）。");
                 yield return SettingsKey.Enum(section, "win_condition", () => r.HalfCrossWinCondition, v => r.HalfCrossWinCondition = v, d.HalfCrossWinCondition,
-                    "勝負方式（未實作，目前只記錄）：Points（計分，預設：車／將／帥 2 分、其他 1 分，將帥隊吃到 12 分、其他兩隊 10 分獲勝）、Annihilation（全滅）、Recall（收軍）、ScoreBalance（得失分）或 FirstTo200（先得 200 分）。");
+                    "勝負方式：Points（計分，預設：車／將／帥 2 分、其他 1 分，名次比超過門檻的分數：將帥隊 12 分、其他兩隊 10 分）、Annihilation（全滅：存活者第一，其餘依出局先後）、Recall（收軍：規則未定，選了無法開始）、ScoreBalance（得失分：殘存棋子分數＋吃子分數，維基分值）或 FirstTo200（先得 200 分，維基分值）。");
             }
         }
 

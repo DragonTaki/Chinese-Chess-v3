@@ -41,6 +41,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 _composite
                     .Add(new ClassicBoard())
                     .Add(new HalfCenterBoard())
+                    .Add(new HalfCrossBoard())
                     .Add(new UIPieceRenderer());
             }
         }
@@ -329,6 +330,69 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 _boardPen?.Dispose();
                 _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, lineWidth);
                 _boardPenScale = scale;
+            }
+        }
+
+        /// <summary>
+        /// The HalfCross board (三國半盤, 9x5): half a xiangqi board — the same background and line
+        /// style as the Full board, Columns x Rows line crossings (pieces stand on them; no palace,
+        /// river or marks) and the same double outer frame.
+        /// </summary>
+        private class HalfCrossBoard : UIRenderer<UIBoard, UIBoardHandler, UIBoardRenderer>
+        {
+            // Grid pen, rebuilt (and the old one disposed) only when the detail scale changes.
+            private IPen _boardPen;
+            private float _boardPenScale = float.NaN;
+
+            public override void OnRender(IGraphics g, UIBoard element)
+            {
+                if (element.BoardType != BoardType.HalfCross)
+                    return;
+
+                GraphicsHelper.ApplyHighQualitySettings(g);
+
+                Vector2F origin = element.GridOrigin;
+                float cell = element.GridCellSize;
+                float scale = element.DetailScale;
+                float lineWidth = UILayoutConstants.Board.Grid.LineWidth * scale;
+                if (_boardPen == null || _boardPenScale != scale)
+                {
+                    _boardPen?.Dispose();
+                    _boardPen = GraphicsBackend.Factory.CreatePen(Color.Black, lineWidth);
+                    _boardPenScale = scale;
+                }
+
+                RectangleF fullArea = element.GetCurrentAbsoluteBounds();
+                using (IBrush backgroundBrush = UIBoardStyles.CreateBoardBackgroundBrush(fullArea))
+                {
+                    g.FillRectangle(backgroundBrush, fullArea);
+                }
+
+                int columns = BoardConstants.HalfCross.Columns;
+                int rows = BoardConstants.HalfCross.Rows;
+                float width = (columns - 1) * cell;
+                float height = (rows - 1) * cell;
+
+                // Inner lines (the outermost ones are the frame below).
+                for (int i = 1; i < columns - 1; i++)
+                {
+                    float x = origin.X + i * cell;
+                    g.DrawLine(_boardPen, x, origin.Y, x, origin.Y + height);
+                }
+                for (int j = 1; j < rows - 1; j++)
+                {
+                    float y = origin.Y + j * cell;
+                    g.DrawLine(_boardPen, origin.X, y, origin.X + width, y);
+                }
+
+                // Double outer frame, like the Full board's.
+                float gap = lineWidth * 2;
+                g.DrawRectangle(_boardPen, new RectangleF(
+                    origin.X - lineWidth / 2, origin.Y - lineWidth / 2,
+                    width + lineWidth, height + lineWidth));
+                g.DrawRectangle(_boardPen, new RectangleF(
+                    origin.X - gap - lineWidth / 2, origin.Y - gap - lineWidth / 2,
+                    width + 2 * gap + lineWidth, height + 2 * gap + lineWidth));
             }
         }
     }

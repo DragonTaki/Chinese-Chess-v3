@@ -500,9 +500,6 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         private static readonly TimerMode[] TimerModes = { TimerMode.CountDown, TimerMode.CountUp };
         private static readonly string[] TimerModeTexts = { SettingsTexts.TimerModeCountDown, SettingsTexts.TimerModeCountUp };
 
-        private static readonly HalfCrossTeamVariant[] TeamVariants = { HalfCrossTeamVariant.Standard, HalfCrossTeamVariant.Handicap };
-        private static readonly string[] TeamVariantTexts = { SettingsTexts.HalfCrossTeamStandard, SettingsTexts.HalfCrossTeamHandicap };
-
         private static readonly HalfCrossWinCondition[] WinConditions =
         {
             HalfCrossWinCondition.Points, HalfCrossWinCondition.Annihilation, HalfCrossWinCondition.Recall,
@@ -569,10 +566,8 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 .ToList();
             if (kind == GameKind.ThreeKingdoms)
             {
-                rules.Add(EnumChoice(SettingsTexts.HalfCrossTeamVariant, TeamVariants, TeamVariantTexts,
-                    s => R(s).HalfCrossTeamVariant, (s, v) => R(s).HalfCrossTeamVariant = v, isImplemented: false));
                 rules.Add(EnumChoice(SettingsTexts.HalfCrossWinCondition, WinConditions, WinConditionTexts,
-                    s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v, isImplemented: false));
+                    s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v));
             }
 
             var timer = new SettingsMenuItem[]

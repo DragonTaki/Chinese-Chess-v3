@@ -135,8 +135,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             if (!game.IsGameOver)
                 return;
 
+            string message = info.Ranking != null
+                ? GameTexts.ThreeKingdomsResult(info.Ranking, game.NameOf, game.TeamOf, game.RankingScoreOf, info.Reason)
+                : GameTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type);
             _dialogs.ShowConfirm(
-                GameTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type),
+                message,
                 ConfirmDialogType.GameOver,
                 result =>
                 {
@@ -215,7 +218,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             }
 
             var side = game.CurrentTurn;
-            Log(GameTexts.Resigned(side, game.ColorOf(side)));
+            // 三國's 棄權 is logged by the Core (the game goes on for the others).
+            if (game.Board.ThreeKingdoms == null)
+                Log(GameTexts.Resigned(side, game.ColorOf(side)));
             // Not an unsaved change: the game is over, nothing is left to save (the Core logs the result).
             game.Resign(side);
         }

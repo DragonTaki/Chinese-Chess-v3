@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/06
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -54,6 +54,10 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
         {
             GameLogEvent.HalfCenterStarted e => GameTexts.HalfCenterStarted(e.IsHiddenChess),
             GameLogEvent.JieqiStarted => GameTexts.JieqiStarted,
+            GameLogEvent.ThreeKingdomsStarted e => GameTexts.ThreeKingdomsStarted(e.WinCondition),
+            GameLogEvent.TeamClaimed e => GameTexts.TeamClaimed(e.Side, e.Team),
+            GameLogEvent.TurnSkipped e => GameTexts.TurnSkipped(e.Side),
+            GameLogEvent.PlayerForfeited e => GameTexts.PlayerForfeited(e.Side, e.TimeUp),
             GameLogEvent.EndgameStarted e => GameTexts.EndgameStarted(e.Title, e.Goal),
             GameLogEvent.OpeningStarted e => GameTexts.OpeningStarted(e.Title, e.Ecco),
             GameLogEvent.SavedGameStarted e => GameTexts.SavedGameStarted(e.Title, e.IsRestart),
@@ -78,6 +82,7 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
         {
             MoveLineStyle.Notation => GameTexts.MoveLine(move),
             MoveLineStyle.DarkChess => GameTexts.DarkChessLine(move, moverColor),
+            MoveLineStyle.ThreeKingdoms => GameTexts.ThreeKingdomsLine(move),
             MoveLineStyle.Plain => null,
             _ => throw new ArgumentOutOfRangeException(nameof(style), style, "Unknown move line style"),
         };

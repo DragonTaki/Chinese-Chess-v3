@@ -410,12 +410,32 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 AlignY = Alignment.Center,
             };
 
+            /// <summary>
+            /// <c>UIBoard</c> while a 三國 game (HalfCross, 9×5) is shown: as <see cref="HalfCenterBoard"/>,
+            /// at the HalfCross board's own aspect ratio (<c>UILayoutConstants.Board.HalfCross.Size</c>).
+            /// </summary>
+            public static readonly UILayoutStyle HalfCrossBoard = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.GameMenu.Size.X,
+                Right = UILayoutConstants.Sidebar.Size.X,
+                Top = UILayoutConstants.Board.Position.Y,
+                Bottom = 0f,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Stretch,
+                AspectRatio = UILayoutConstants.Board.HalfCross.Size.X / UILayoutConstants.Board.HalfCross.Size.Y,
+                AspectFit = AspectFit.Contain,
+                AlignX = Alignment.Center,
+                AlignY = Alignment.Center,
+            };
+
             /// <summary>The <c>UIBoard</c> style for a game on <paramref name="type"/>.</summary>
-            /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+            /// <exception cref="NotSupportedException">Not a playable board type.</exception>
             public static UILayoutStyle BoardFor(BoardType type) => type switch
             {
                 BoardType.Full => Board,
                 BoardType.HalfCenter => HalfCenterBoard,
+                BoardType.HalfCross => HalfCrossBoard,
                 _ => throw new NotSupportedException($"No board layout for {type} yet"),
             };
 

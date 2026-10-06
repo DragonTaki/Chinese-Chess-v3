@@ -79,14 +79,16 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         // rectangle instead of UILayoutConstants.Board.Grid, so pieces and clicks stay
         // aligned with the drawn grid whenever the layout resizes or moves the board.
         // Per board type: Full puts pieces on the line crossings of a 9x10 grid, HalfCenter
-        // in the cells of an 8x4 grid (UILayoutConstants.Board.HalfCenter).
+        // in the cells of an 8x4 grid (UILayoutConstants.Board.HalfCenter), HalfCross on the
+        // crossings of a 9x5 grid (UILayoutConstants.Board.HalfCross).
 
         /// <summary>The authored size of the board element for <see cref="BoardType"/>.</summary>
-        /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+        /// <exception cref="NotSupportedException">Not a playable board type.</exception>
         public Vector2F AuthoredSize => BoardType switch
         {
             BoardType.Full => UILayoutConstants.Board.Size,
             BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Size,
+            BoardType.HalfCross => UILayoutConstants.Board.HalfCross.Size,
             _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
         };
 
@@ -130,6 +132,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         {
             BoardType.Full => UILayoutConstants.Board.Grid.CellSize,
             BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Grid.CellSize,
+            BoardType.HalfCross => UILayoutConstants.Board.HalfCross.Grid.CellSize,
             _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
         } * GridScale;
 
@@ -147,6 +150,7 @@ namespace Chinese_Chess_v3.Game.UI.Boards
                 {
                     BoardType.Full => UILayoutConstants.Board.Grid.GridAreaSize,
                     BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.Grid.GridAreaSize,
+                    BoardType.HalfCross => UILayoutConstants.Board.HalfCross.Grid.GridAreaSize,
                     _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
                 } * GridScale;
                 return new Vector2F(
@@ -201,11 +205,12 @@ namespace Chinese_Chess_v3.Game.UI.Boards
         /// (<c>UILayoutConstants.Board.ClickArea</c> / <c>Board.HalfCenter.ClickArea</c>), in
         /// design-space units, not scaled with the board.
         /// </summary>
-        /// <exception cref="NotSupportedException">The board type has no board drawing yet (HalfCross).</exception>
+        /// <exception cref="NotSupportedException">Not a playable board type.</exception>
         public PaddingF ClickAreaEdgeAdjust => BoardType switch
         {
             BoardType.Full => UILayoutConstants.Board.ClickArea.EdgeAdjust,
             BoardType.HalfCenter => UILayoutConstants.Board.HalfCenter.ClickArea.EdgeAdjust,
+            BoardType.HalfCross => UILayoutConstants.Board.HalfCross.ClickArea.EdgeAdjust,
             _ => throw new NotSupportedException($"No board drawing for {BoardType} yet"),
         };
 

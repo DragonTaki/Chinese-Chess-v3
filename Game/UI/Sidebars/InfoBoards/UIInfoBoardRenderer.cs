@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/10/05
-// Version: v2.3
+// Update Date: 2026/10/06
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -42,7 +42,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             if (_composite.ListCount == 0)
             {
                 _composite
-                    .Add(new ClassicInfoBoard());
+                    .Add(new ClassicInfoBoard())
+                    .Add(new ThreeKingdomsInfoBoard());
             }
         }
 
@@ -66,6 +67,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             public override void OnRender(IGraphics g, UIInfoBoard element)
             {
+                // Two players only (三國: ThreeKingdomsInfoBoard).
+                if (element.ViewModel.IsThreeKingdoms)
+                    return;
                 if (_handler == null)
                     _handler = element.Handler;
 
@@ -227,6 +231,99 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
                     nameFormat.Alignment = TextAlign.Center;
                     nameFormat.LineAlignment = TextAlign.Near;
                     g.DrawString(playerName, _nameFont, nameBrush, new RectangleF(x, y + 10.0f, width, 30.0f), nameFormat);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 三國's info board: three columns, Player1..Player3 in turn order, each with the player's
+        /// name, its team and points (<c>InfoBoardViewModel.ThreeKingdomsStatus</c>) and its clocks.
+        /// The column of the player to move has a gold rim; a column is filled by its team's colour
+        /// (grey before the player has a team) and dimmed once the player no longer plays.
+        /// </summary>
+        private class ThreeKingdomsInfoBoard : UIRenderer<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>
+        {
+            private readonly IFont _nameFont = UIInfoBoardSettings.NameFont;
+            private readonly IFont _timerFont = UIInfoBoardSettings.TimerFont;
+
+            public override void OnRender(IGraphics g, UIInfoBoard element)
+            {
+                var viewModel = element.ViewModel;
+                if (!viewModel.IsThreeKingdoms)
+                    return;
+
+                LayoutF layout = element.GetCurrentAbsoluteBounds();
+                GraphicsHelper.ApplyHighQualitySettings(g);
+
+                const int inset = 4;
+                using IGraphicsPath shield = ShieldPath.Create(layout.Width, layout.Height);
+                using (var translate = GraphicsBackend.Factory.CreateMatrix())
+                {
+                    translate.Translate(layout.X, layout.Y);
+                    shield.Transform(translate);
+                }
+
+                var sides = viewModel.Sides;
+                float columnWidth = layout.Width / sides.Count;
+                for (int i = 0; i < sides.Count; i++)
+                {
+                    var side = sides[i];
+                    float x = layout.X + i * columnWidth;
+                    bool active = viewModel.CurrentTurn == side;
+
+                    // Rim (gold for the player to move), then the team's fill inside it.
+                    using (IRegion rim = GraphicsBackend.Factory.CreateRegion(shield))
+                    using (IBrush rimBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? Color.Gold : Color.Gray))
+                    {
+                        rim.Intersect(new RectangleF(x, layout.Y, columnWidth, layout.Height));
+                        g.FillRegion(rimBrush, rim);
+                    }
+                    using (IRegion fill = GraphicsBackend.Factory.CreateRegion(shield))
+                    using (IBrush fillBrush = GraphicsBackend.Factory.CreateSolidBrush(
+                        viewModel.IsInactive(side) ? Color.FromArgb(60, 60, 60) : TeamColor(viewModel.TeamOf(side))))
+                    {
+                        fill.Intersect(new RectangleF(x + inset, layout.Y + inset, columnWidth - 2 * inset, layout.Height - 2 * inset));
+                        g.FillRegion(fillBrush, fill);
+                    }
+
+                    DrawColumn(g, x, layout.Y, columnWidth, viewModel, side, active);
+                }
+            }
+
+            /// <summary>A team's fill: 帥將兵卒 (or the first team) green, the red pieces' team dark red, the black pieces' black.</summary>
+            private static Color TeamColor(int team) => team switch
+            {
+                1 => Color.DarkGreen,
+                2 => Color.DarkRed,
+                3 => Color.Black,
+                _ => Color.DimGray,
+            };
+
+            private void DrawColumn(IGraphics g, float x, float y, float width, InfoBoardViewModel viewModel, PlayerSide side, bool active)
+            {
+                using (IBrush textBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.White))
+                using (IStringFormat format = GraphicsBackend.Factory.CreateStringFormat())
+                {
+                    format.Alignment = TextAlign.Center;
+                    format.LineAlignment = TextAlign.Near;
+                    g.DrawString(viewModel.GetPlayerName(side), _nameFont, textBrush, new RectangleF(x, y + 8.0f, width, 28.0f), format);
+                    g.DrawString(viewModel.ThreeKingdomsStatus(side), _nameFont, textBrush, new RectangleF(x, y + 36.0f, width, 28.0f), format);
+                }
+
+                DrawClock(g, new RectangleF(x + 10.0f, y + 68.0f, width - 20.0f, 40.0f), viewModel.TotalTimeText(side), active);
+                DrawClock(g, new RectangleF(x + 10.0f, y + 113.0f, width - 20.0f, 40.0f), viewModel.StepTimeText(side), active);
+            }
+
+            private void DrawClock(IGraphics g, RectangleF rect, string text, bool active)
+            {
+                using (IBrush background = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
+                    g.FillRectangle(background, rect);
+                using (IBrush textBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? Color.Gold : Color.DeepSkyBlue))
+                using (IStringFormat format = GraphicsBackend.Factory.CreateStringFormat())
+                {
+                    format.Alignment = TextAlign.Center;
+                    format.LineAlignment = TextAlign.Center;
+                    g.DrawString(text, _timerFont, textBrush, rect, format);
                 }
             }
         }

@@ -8,6 +8,7 @@
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
@@ -103,6 +104,86 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         /// <summary>A 揭棋 game was dealt.</summary>
         public const string JieqiStarted = "(Jieqi) 新局：揭棋大盤";
+
+        /// <summary>A 三國 game was dealt.</summary>
+        public static string ThreeKingdomsStarted(HalfCrossWinCondition winCondition) =>
+            $"(ThreeKingdoms) 新局：三國半盤（{WinConditionName(winCondition)}）";
+
+        /// <summary>三國: a player claimed a team.</summary>
+        public static string TeamClaimed(PlayerSide side, int team) =>
+            $"(Faction) {DefaultPlayerName(side)} 執{TeamName(team)}";
+
+        /// <summary>三國: a player with no action is skipped.</summary>
+        public static string TurnSkipped(PlayerSide side) => $"(Turn) {DefaultPlayerName(side)} 無法行動，跳過";
+
+        /// <summary>三國: a player resigned (棄權) or ran out of time; the others play on.</summary>
+        public static string PlayerForfeited(PlayerSide side, bool timeUp) =>
+            $"(Forfeit) {DefaultPlayerName(side)} {(timeUp ? "超時，視為棄權" : "棄權")}：棋子留在盤上，之後的回合跳過";
+
+        /// <summary>
+        /// 三國's line (e.g. <c>第1回合 玩家一：翻開(3,1) 紅俥</c>): by player, as the players own
+        /// teams, not colours.
+        /// </summary>
+        public static string ThreeKingdomsLine(MoveRecord move)
+        {
+            string head = $"第{move.MoveNumber}回合 {DefaultPlayerName(move.Side)}：";
+            if (move.Kind == MoveKind.Flip)
+                return head + $"翻開({move.FromX},{move.FromY}) {PieceText(move.Revealed)}";
+            return head + $"{PieceText(move.Piece)}({move.FromX},{move.FromY})→({move.ToX},{move.ToY})"
+                + (move.Captured != null ? $"，吃{PieceText(move.Captured)}" : "");
+        }
+
+        /// <summary>三國's teams by their pieces (DARK-CHESS-RULES §1.2), e.g. 帥將兵卒隊.</summary>
+        public static string TeamName(int team) => team switch
+        {
+            0 => "未定",
+            1 => "帥將兵卒隊",
+            2 => "仕相俥傌炮隊",
+            3 => "士象車馬包隊",
+            _ => $"第{team}隊",
+        };
+
+        /// <summary>The way of winning's name (勝負方式).</summary>
+        public static string WinConditionName(HalfCrossWinCondition condition) => condition switch
+        {
+            HalfCrossWinCondition.Points => "計分",
+            HalfCrossWinCondition.Annihilation => "全滅",
+            HalfCrossWinCondition.Recall => "收軍",
+            HalfCrossWinCondition.ScoreBalance => "得失分",
+            HalfCrossWinCondition.FirstTo200 => "先得 200 分",
+            _ => condition.ToString(),
+        };
+
+        /// <summary>
+        /// 三國's game-over dialog message: every player's place with its name, team and points,
+        /// first place first, then why the game ended.
+        /// </summary>
+        /// <param name="ranking">The players, first place first (<c>GameOverInfo.Ranking</c>).</param>
+        /// <param name="nameOf">A player's name (<c>GameManager.NameOf</c>); null for <see cref="DefaultPlayerName"/>.</param>
+        /// <param name="teamOf">A player's team (<c>GameManager.TeamOf</c>).</param>
+        /// <param name="rankingScoreOf">The number the players are ranked by (計分: points above the threshold).</param>
+        public static string ThreeKingdomsResult(IReadOnlyList<PlayerSide> ranking, Func<PlayerSide, string> nameOf,
+            Func<PlayerSide, int> teamOf, Func<PlayerSide, int> rankingScoreOf, GameOverReason reason)
+        {
+            var lines = new List<string>();
+            for (int i = 0; i < ranking.Count; i++)
+            {
+                var side = ranking[i];
+                lines.Add($"第{i + 1}名 {nameOf(side) ?? DefaultPlayerName(side)}（{TeamName(teamOf(side))}）{rankingScoreOf(side)} 分");
+            }
+            lines.Add(ThreeKingdomsReasonText(reason));
+            return string.Join("\n", lines);
+        }
+
+        /// <summary>Why a 三國 game ended.</summary>
+        public static string ThreeKingdomsReasonText(GameOverReason reason) => reason switch
+        {
+            GameOverReason.NoPiecesLeft => "只剩一方還有棋子",
+            GameOverReason.Resign => "其他玩家棄權",
+            GameOverReason.Stalemate => "所有人都無法行動",
+            GameOverReason.ScoreReached => "已有玩家先得 200 分",
+            _ => reason.ToString(),
+        };
 
         /// <summary>An endgame puzzle was set up.</summary>
         public static string EndgameStarted(string title, string goal) => $"(Endgame) {title} ({goal})";
@@ -247,6 +328,17 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             // Player1 always moves first.
             _ => side == PlayerSide.Player1 ? "先手玩家" : "後手玩家",
         };
+
+        /// <summary>
+        /// 三國's info-board line under a player's name: its team and points (計分: the points and
+        /// the team's threshold), or 未定 before it has a team; 棄權 / 出局 when it no longer plays.
+        /// </summary>
+        public static string ThreeKingdomsStatus(int team, int score, int? threshold, bool resigned, bool isOut)
+        {
+            string points = threshold != null ? $"{score}/{threshold}分" : $"{score}分";
+            string state = resigned ? "（棄權）" : isOut ? "（出局）" : "";
+            return team == 0 ? $"未定 {points}{state}" : $"{TeamName(team)} {points}{state}";
+        }
 
         /// <summary>The name of an unnamed local player: 玩家一／玩家二／玩家三 (Player1..Player3, by turn order).</summary>
         public static string DefaultPlayerName(PlayerSide side) => side switch
