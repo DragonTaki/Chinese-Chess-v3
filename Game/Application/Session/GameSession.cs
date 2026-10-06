@@ -70,6 +70,9 @@ namespace Chinese_Chess_v3.Game.Application.Session
         public bool IsRecallChosen =>
             Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossWinCondition == HalfCrossWinCondition.Recall;
 
+        /// <summary>Whether the 三國 自訂分隊 leaves a team without pieces: such a game cannot be started.</summary>
+        public bool IsTeamSplitInvalid => !Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossTeams.IsValid;
+
         /// <summary>
         /// Starts a new game of <paramref name="kind"/> on the game screen (<see cref="Start"/>):
         /// 傳統大盤 the standard position, 揭棋大盤 a dealt 揭棋 game (<see cref="GameManager.StartJieqi"/>),

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Families.ThreeKingdoms;
 using Chinese_Chess_v3.Game.Core.Players;
 
 namespace Chinese_Chess_v3.Game.Configs
@@ -156,6 +157,9 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>三國 勝負方式. Default: from <see cref="Rules.HalfCrossWinCondition"/> (Points)</summary>
         public HalfCrossWinCondition HalfCrossWinCondition { get; set; } = RuleDefaults.HalfCrossWinCondition;
 
+        /// <summary>三國 自訂分隊 (every colour and type's team). Default: from <see cref="Rules.HalfCrossTeams"/> (Standard)</summary>
+        public ThreeKingdomsTeamSplit HalfCrossTeams { get; set; } = RuleDefaults.HalfCrossTeams;
+
         #endregion
 
         #region Options per kind
@@ -277,6 +281,7 @@ namespace Chinese_Chess_v3.Game.Configs
             rules.IsChariotRushHorseDiagonal = IsChariotRushHorseDiagonal;
             rules.IsCannonMustJumpToCapture = IsCannonMustJumpToCapture;
             rules.HalfCrossWinCondition = HalfCrossWinCondition;
+            rules.HalfCrossTeams = HalfCrossTeams;
         }
 
         #endregion

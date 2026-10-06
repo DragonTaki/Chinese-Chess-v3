@@ -14,6 +14,7 @@ using System.Linq;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Families.ThreeKingdoms;
 using Chinese_Chess_v3.Game.Core.Players;
 
 using Engine.Configs;
@@ -568,6 +569,17 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             {
                 rules.Add(EnumChoice(SettingsTexts.HalfCrossWinCondition, WinConditions, WinConditionTexts,
                     s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v));
+                // 自訂分隊: each colour and type's team.
+                var teamTexts = new[] { 1, 2, 3 }.Select(GameTexts.TeamNumber).ToArray();
+                foreach (var color in ThreeKingdomsTeamSplit.Colors)
+                {
+                    foreach (var type in ThreeKingdomsTeamSplit.Types)
+                    {
+                        var (c, t) = (color, type);
+                        rules.Add(new SettingsChoiceItem(SettingsTexts.TeamOf(c, t), teamTexts,
+                            s => R(s).HalfCrossTeams.TeamOf(c, t) - 1, (s, index) => R(s).HalfCrossTeams = R(s).HalfCrossTeams.With(c, t, index + 1)));
+                    }
+                }
             }
 
             var timer = new SettingsMenuItem[]

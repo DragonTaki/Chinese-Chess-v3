@@ -35,6 +35,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>A new-game mode whose game cannot be started yet; <paramref name="mode"/> = its button text.</summary>
         public static string NewGameModeUnavailable(string mode) => $"「{mode}」尚未完成，目前無法開始。";
 
+        /// <summary>三國半盤 whose 自訂分隊 leaves a team without pieces.</summary>
+        public const string TeamSplitInvalid = "三國半盤的自訂分隊有隊伍沒有任何棋子，目前無法開始；請在規則設定讓每隊至少一顆子。";
+
         /// <summary>三國半盤 with 收軍 chosen as its way of winning (its rules are not decided yet).</summary>
         public const string RecallUnavailable = "三國半盤的「收軍」勝負方式規則尚未決定，目前無法開始；請在規則設定換成其他勝負方式。";
 

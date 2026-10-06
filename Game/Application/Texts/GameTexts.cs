@@ -13,6 +13,7 @@ using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
+using Chinese_Chess_v3.Game.Core.Families.ThreeKingdoms;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
 
@@ -110,8 +111,8 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             $"(ThreeKingdoms) 新局：三國半盤（{WinConditionName(winCondition)}）";
 
         /// <summary>三國: a player claimed a team.</summary>
-        public static string TeamClaimed(PlayerSide side, int team) =>
-            $"(Faction) {DefaultPlayerName(side)} 執{TeamName(team)}";
+        public static string TeamClaimed(PlayerSide side, int team, ThreeKingdomsTeamSplit split) =>
+            $"(Faction) {DefaultPlayerName(side)} 執{TeamName(team, split)}";
 
         /// <summary>三國: a player with no action is skipped.</summary>
         public static string TurnSkipped(PlayerSide side) => $"(Turn) {DefaultPlayerName(side)} 無法行動，跳過";
@@ -133,13 +134,20 @@ namespace Chinese_Chess_v3.Game.Application.Texts
                 + (move.Captured != null ? $"，吃{PieceText(move.Captured)}" : "");
         }
 
-        /// <summary>三國's teams by their pieces (DARK-CHESS-RULES §1.2), e.g. 帥將兵卒隊.</summary>
-        public static string TeamName(int team) => team switch
+        /// <summary>
+        /// A 三國 team by its pieces under <paramref name="split"/> (自訂分隊), by type with red before
+        /// black, e.g. 帥將兵卒隊 / 仕相俥傌炮隊 / 士象車馬包隊 for the default split; 未定 for team 0.
+        /// </summary>
+        public static string TeamName(int team, ThreeKingdomsTeamSplit split) => team == 0
+            ? "未定"
+            : string.Concat(split.PiecesOf(team).Select(p => PieceConstants.GetPieceText(p.type, p.color))) + "隊";
+
+        /// <summary>A team's number in the settings menu (自訂分隊).</summary>
+        public static string TeamNumber(int team) => team switch
         {
-            0 => "未定",
-            1 => "帥將兵卒隊",
-            2 => "仕相俥傌炮隊",
-            3 => "士象車馬包隊",
+            1 => "第一隊",
+            2 => "第二隊",
+            3 => "第三隊",
             _ => $"第{team}隊",
         };
 
@@ -163,13 +171,13 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <param name="teamOf">A player's team (<c>GameManager.TeamOf</c>).</param>
         /// <param name="rankingScoreOf">The number the players are ranked by (計分: points above the threshold).</param>
         public static string ThreeKingdomsResult(IReadOnlyList<PlayerSide> ranking, Func<PlayerSide, string> nameOf,
-            Func<PlayerSide, int> teamOf, Func<PlayerSide, int> rankingScoreOf, GameOverReason reason)
+            Func<PlayerSide, int> teamOf, Func<PlayerSide, int> rankingScoreOf, ThreeKingdomsTeamSplit split, GameOverReason reason)
         {
             var lines = new List<string>();
             for (int i = 0; i < ranking.Count; i++)
             {
                 var side = ranking[i];
-                lines.Add($"第{i + 1}名 {nameOf(side) ?? DefaultPlayerName(side)}（{TeamName(teamOf(side))}）{rankingScoreOf(side)} 分");
+                lines.Add($"第{i + 1}名 {nameOf(side) ?? DefaultPlayerName(side)}（{TeamName(teamOf(side), split)}）{rankingScoreOf(side)} 分");
             }
             lines.Add(ThreeKingdomsReasonText(reason));
             return string.Join("\n", lines);
@@ -333,11 +341,11 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// 三國's info-board line under a player's name: its team and points (計分: the points and
         /// the team's threshold), or 未定 before it has a team; 棄權 / 出局 when it no longer plays.
         /// </summary>
-        public static string ThreeKingdomsStatus(int team, int score, int? threshold, bool resigned, bool isOut)
+        public static string ThreeKingdomsStatus(int team, ThreeKingdomsTeamSplit split, int score, int? threshold, bool resigned, bool isOut)
         {
             string points = threshold != null ? $"{score}/{threshold}分" : $"{score}分";
             string state = resigned ? "（棄權）" : isOut ? "（出局）" : "";
-            return team == 0 ? $"未定 {points}{state}" : $"{TeamName(team)} {points}{state}";
+            return team == 0 ? $"未定 {points}{state}" : $"{TeamName(team, split)} {points}{state}";
         }
 
         /// <summary>The name of an unnamed local player: 玩家一／玩家二／玩家三 (Player1..Player3, by turn order).</summary>

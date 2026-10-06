@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Families.ThreeKingdoms;
 
 using Engine.Configs;
 
@@ -92,6 +93,8 @@ namespace Chinese_Chess_v3.Game.Configs
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
+        private static readonly int[] TeamNumbers = { 1, 2, 3 };
+
         /// <summary>The kind's name in the file's comments (the new-game menu's name).</summary>
         private static string KindName(GameKind kind) => kind switch
         {
@@ -138,6 +141,22 @@ namespace Chinese_Chess_v3.Game.Configs
 
             if (kind == GameKind.ThreeKingdoms)
             {
+                bool first = true;
+                foreach (var color in ThreeKingdomsTeamSplit.Colors)
+                {
+                    foreach (var type in ThreeKingdomsTeamSplit.Types)
+                    {
+                        var (c, t) = (color, type);
+                        string comment = first
+                            ? "自訂分隊：每種顏色與兵種各屬第幾隊（1／2／3）；每隊至少一顆子（否則無法開局），門檻＝該隊的棋子數。預設：第 1 隊 帥將兵卒（12 子）、第 2 隊 仕相俥傌炮（10 子）、第 3 隊 士象車馬包（10 子）。"
+                            : null;
+                        first = false;
+                        var key = SettingsKey.IntOneOf(section, $"team_{c.ToString().ToLowerInvariant()}_{t.ToString().ToLowerInvariant()}",
+                            () => r.HalfCrossTeams.TeamOf(c, t), v => r.HalfCrossTeams = r.HalfCrossTeams.With(c, t, v),
+                            d.HalfCrossTeams.TeamOf(c, t), TeamNumbers, comment == null ? Array.Empty<string>() : new[] { comment });
+                        yield return key;
+                    }
+                }
                 yield return SettingsKey.Enum(section, "win_condition", () => r.HalfCrossWinCondition, v => r.HalfCrossWinCondition = v, d.HalfCrossWinCondition,
                     "勝負方式：Points（計分，預設：車／將／帥 2 分、其他 1 分，名次比超過門檻的分數：將帥隊 12 分、其他兩隊 10 分）、Annihilation（全滅：存活者第一，其餘依出局先後）、Recall（收軍：規則未定，選了無法開始）、ScoreBalance（得失分：殘存棋子分數＋吃子分數，維基分值）或 FirstTo200（先得 200 分，維基分值）。");
             }

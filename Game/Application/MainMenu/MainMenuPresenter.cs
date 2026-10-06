@@ -172,6 +172,13 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
                 return;
             }
 
+            if (kind == GameKind.ThreeKingdoms && _session.IsTeamSplitInvalid)
+            {
+                AppLogger.Log("(NewGame) 三國 team split leaves a team without pieces; staying on the new-game menu", LogLevel.WARN);
+                _dialogs.ShowConfirm(MenuTexts.TeamSplitInvalid, ConfirmDialogType.Ok, _ => { });
+                return;
+            }
+
             // Game screen, restart (views reset, log cleared), then the chosen mode's game.
             _session.StartNew(kind);
         }

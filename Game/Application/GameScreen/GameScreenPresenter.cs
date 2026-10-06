@@ -136,7 +136,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
                 return;
 
             string message = info.Ranking != null
-                ? GameTexts.ThreeKingdomsResult(info.Ranking, game.NameOf, game.TeamOf, game.RankingScoreOf, info.Reason)
+                ? GameTexts.ThreeKingdomsResult(info.Ranking, game.NameOf, game.TeamOf, game.RankingScoreOf, game.Rules.HalfCrossTeams, info.Reason)
                 : GameTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type);
             _dialogs.ShowConfirm(
                 message,

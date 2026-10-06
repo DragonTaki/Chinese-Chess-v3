@@ -76,9 +76,9 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
             var rules = _game.Rules;
             int team = _game.TeamOf(side);
             int? threshold = rules.HalfCrossWinCondition == HalfCrossWinCondition.Points && team != 0
-                ? ThreeKingdomsTeams.Threshold(team) : null;
+                ? rules.HalfCrossTeams.PieceCount(team) : null;
             bool resigned = _game.HasResigned(side);
-            return GameTexts.ThreeKingdomsStatus(team, _game.ScoreOf(side), threshold,
+            return GameTexts.ThreeKingdomsStatus(team, rules.HalfCrossTeams, _game.ScoreOf(side), threshold,
                 resigned, !resigned && !_game.IsStillPlaying(side));
         }
 

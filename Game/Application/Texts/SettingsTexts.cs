@@ -10,6 +10,7 @@
 using System;
 
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Pieces;
 
 namespace Chinese_Chess_v3.Game.Application.Texts
 {
@@ -150,6 +151,10 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static readonly string[] LanguageOptions = { "繁體中文", "English" };
 
         // 三國半盤 rule options.
+
+        /// <summary>A 自訂分隊 menu row: the piece's colour and character, e.g. 紅俥 隊伍.</summary>
+        public static string TeamOf(PieceColor color, PieceType type) =>
+            $"{(color == PieceColor.Red ? "紅" : "黑")}{PieceConstants.GetPieceText(type, color)} 隊伍";
         public const string HalfCrossWinCondition = "勝負方式";
         public const string HalfCrossWinPoints = "計分（預設）";
         public const string HalfCrossWinAnnihilation = "全滅";

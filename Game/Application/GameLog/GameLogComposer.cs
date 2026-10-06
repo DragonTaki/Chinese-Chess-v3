@@ -55,7 +55,7 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
             GameLogEvent.HalfCenterStarted e => GameTexts.HalfCenterStarted(e.IsHiddenChess),
             GameLogEvent.JieqiStarted => GameTexts.JieqiStarted,
             GameLogEvent.ThreeKingdomsStarted e => GameTexts.ThreeKingdomsStarted(e.WinCondition),
-            GameLogEvent.TeamClaimed e => GameTexts.TeamClaimed(e.Side, e.Team),
+            GameLogEvent.TeamClaimed e => GameTexts.TeamClaimed(e.Side, e.Team, e.Split),
             GameLogEvent.TurnSkipped e => GameTexts.TurnSkipped(e.Side),
             GameLogEvent.PlayerForfeited e => GameTexts.PlayerForfeited(e.Side, e.TimeUp),
             GameLogEvent.EndgameStarted e => GameTexts.EndgameStarted(e.Title, e.Goal),
