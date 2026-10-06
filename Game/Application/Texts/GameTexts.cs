@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/06
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -74,6 +74,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>儲存 off the Full board (only Full-board games can be saved).</summary>
         public const string SaveUnavailableBoardType = "(Save) 無法存檔：只有大盤對局可以存檔";
 
+        /// <summary>儲存 in a 揭棋 game (face-down pieces cannot be written to a saved game).</summary>
+        public const string SaveUnavailableJieqi = "(Save) 無法存檔：揭棋對局目前不能存檔";
+
         /// <summary>儲存 without a start position (e.g. a cleared board).</summary>
         public const string SaveUnavailableNoStartPosition = "(Save) 無法存檔：這個盤面沒有開局局面（例如清空的棋盤）";
 
@@ -97,6 +100,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>A shuffled HalfCenter game was dealt.</summary>
         public static string HalfCenterStarted(bool isHiddenChess) =>
             isHiddenChess ? "(DarkChess) 新局：暗棋半盤" : "(DarkChess) 新局：明棋半盤";
+
+        /// <summary>A 揭棋 game was dealt.</summary>
+        public const string JieqiStarted = "(Jieqi) 新局：揭棋大盤";
 
         /// <summary>An endgame puzzle was set up.</summary>
         public static string EndgameStarted(string title, string goal) => $"(Endgame) {title} ({goal})";

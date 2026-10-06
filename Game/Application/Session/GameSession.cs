@@ -56,20 +56,18 @@ namespace Chinese_Chess_v3.Game.Application.Session
         /// </summary>
         public event Action GameReset;
 
-        /// <summary>Whether <see cref="StartNew"/> can start <paramref name="kind"/> (揭棋 and 三國 cannot yet).</summary>
+        /// <summary>Whether <see cref="StartNew"/> can start <paramref name="kind"/> (三國 cannot yet).</summary>
         public static bool CanStartNew(GameKind kind) => kind switch
         {
-            GameKind.Traditional or GameKind.DarkHalf or GameKind.OpenHalf => true,
-            // 揭棋: Board.IsJieqi has no start position yet; 三國: its own rule system is
-            // still being specified.
-            GameKind.Flip or GameKind.ThreeKingdoms => false,
+            GameKind.Traditional or GameKind.Flip or GameKind.DarkHalf or GameKind.OpenHalf => true,
+            GameKind.ThreeKingdoms => false,
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
         /// <summary>
         /// Starts a new game of <paramref name="kind"/> on the game screen (<see cref="Start"/>):
-        /// 傳統大盤 the standard position, 暗棋／明棋半盤 a shuffled HalfCenter game
-        /// (<see cref="GameManager.StartHalfCenter"/>).
+        /// 傳統大盤 the standard position, 揭棋大盤 a dealt 揭棋 game (<see cref="GameManager.StartJieqi"/>),
+        /// 暗棋／明棋半盤 a shuffled HalfCenter game (<see cref="GameManager.StartHalfCenter"/>).
         /// </summary>
         /// <exception cref="NotSupportedException"><paramref name="kind"/> cannot be played yet (<see cref="CanStartNew"/>).</exception>
         public void StartNew(GameKind kind)
@@ -79,7 +77,8 @@ namespace Chinese_Chess_v3.Game.Application.Session
                 GameKind.Traditional => game => game.ResetBoardToDefault(),
                 GameKind.DarkHalf => game => game.StartHalfCenter(hiddenChess: true, HalfCenterDealer.Create()),
                 GameKind.OpenHalf => game => game.StartHalfCenter(hiddenChess: false, HalfCenterDealer.Create()),
-                GameKind.Flip or GameKind.ThreeKingdoms => throw new NotSupportedException($"A {kind} game cannot be started yet"),
+                GameKind.Flip => game => game.StartJieqi(JieqiDealer.Create()),
+                GameKind.ThreeKingdoms => throw new NotSupportedException($"A {kind} game cannot be started yet"),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
             };
             Start(setUp);

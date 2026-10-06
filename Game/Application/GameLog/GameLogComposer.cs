@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.0
+// Update Date: 2026/10/06
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -53,6 +53,7 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
         public static string Compose(GameLogEvent entry) => entry switch
         {
             GameLogEvent.HalfCenterStarted e => GameTexts.HalfCenterStarted(e.IsHiddenChess),
+            GameLogEvent.JieqiStarted => GameTexts.JieqiStarted,
             GameLogEvent.EndgameStarted e => GameTexts.EndgameStarted(e.Title, e.Goal),
             GameLogEvent.OpeningStarted e => GameTexts.OpeningStarted(e.Title, e.Ecco),
             GameLogEvent.SavedGameStarted e => GameTexts.SavedGameStarted(e.Title, e.IsRestart),

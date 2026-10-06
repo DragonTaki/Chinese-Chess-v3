@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/05
-// Version: v1.3
+// Update Date: 2026/10/06
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -230,7 +230,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             var game = Game;
             if (!game.CanSave)
             {
-                Log(game.Board.Type != BoardType.Full ? GameTexts.SaveUnavailableBoardType : GameTexts.SaveUnavailableNoStartPosition);
+                Log(game.Board.Type != BoardType.Full ? GameTexts.SaveUnavailableBoardType
+                    : game.Board.IsJieqi ? GameTexts.SaveUnavailableJieqi
+                    : GameTexts.SaveUnavailableNoStartPosition);
                 return;
             }
 
