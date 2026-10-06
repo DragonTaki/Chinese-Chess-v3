@@ -4,3 +4,6 @@
 [submodule "StarAnimation"]
 	path = StarAnimation
 	url = ../Star-Animation.git
+[submodule "Game/Core"]
+	path = Game/Core
+	url = ../Chinese-Chess-Rules.git
