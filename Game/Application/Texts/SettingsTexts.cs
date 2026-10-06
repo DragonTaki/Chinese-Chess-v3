@@ -158,7 +158,6 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public const string HalfCrossWinCondition = "勝負方式";
         public const string HalfCrossWinPoints = "計分（預設）";
         public const string HalfCrossWinAnnihilation = "全滅";
-        public const string HalfCrossWinRecall = "收軍";
         public const string HalfCrossWinScoreBalance = "得失分";
         public const string HalfCrossWinFirstTo200 = "先得 200 分";
 

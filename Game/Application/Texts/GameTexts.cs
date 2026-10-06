@@ -119,7 +119,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         /// <summary>三國: a player resigned (棄權) or ran out of time; the others play on.</summary>
         public static string PlayerForfeited(PlayerSide side, bool timeUp) =>
-            $"(Forfeit) {DefaultPlayerName(side)} {(timeUp ? "超時，視為棄權" : "棄權")}：棋子留在盤上，之後的回合跳過";
+            $"(Forfeit) {DefaultPlayerName(side)} {(timeUp ? "超時退出" : "棄權")}：棋子留在盤上只能被吃，之後的回合跳過";
 
         /// <summary>
         /// 三國's line (e.g. <c>第1回合 玩家一：翻開(3,1) 紅俥</c>): by player, as the players own
@@ -156,7 +156,6 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         {
             HalfCrossWinCondition.Points => "計分",
             HalfCrossWinCondition.Annihilation => "全滅",
-            HalfCrossWinCondition.Recall => "收軍",
             HalfCrossWinCondition.ScoreBalance => "得失分",
             HalfCrossWinCondition.FirstTo200 => "先得 200 分",
             _ => condition.ToString(),
@@ -187,7 +186,8 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static string ThreeKingdomsReasonText(GameOverReason reason) => reason switch
         {
             GameOverReason.NoPiecesLeft => "只剩一方還有棋子",
-            GameOverReason.Resign => "其他玩家棄權",
+            GameOverReason.Resign => "其他玩家棄權或超時退出",
+            GameOverReason.TimeUp => "其他玩家超時退出",
             GameOverReason.Stalemate => "所有人都無法行動",
             GameOverReason.ScoreReached => "已有玩家先得 200 分",
             _ => reason.ToString(),
@@ -341,10 +341,10 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// 三國's info-board line under a player's name: its team and points (計分: the points and
         /// the team's threshold), or 未定 before it has a team; 棄權 / 出局 when it no longer plays.
         /// </summary>
-        public static string ThreeKingdomsStatus(int team, ThreeKingdomsTeamSplit split, int score, int? threshold, bool resigned, bool isOut)
+        public static string ThreeKingdomsStatus(int team, ThreeKingdomsTeamSplit split, int score, int? threshold, bool resigned, bool timedOut, bool isOut)
         {
             string points = threshold != null ? $"{score}/{threshold}分" : $"{score}分";
-            string state = resigned ? "（棄權）" : isOut ? "（出局）" : "";
+            string state = resigned ? "（棄權）" : timedOut ? "（超時）" : isOut ? "（出局）" : "";
             return team == 0 ? $"未定 {points}{state}" : $"{TeamName(team, split)} {points}{state}";
         }
 

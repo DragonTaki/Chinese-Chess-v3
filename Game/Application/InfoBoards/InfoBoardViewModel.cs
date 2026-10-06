@@ -78,8 +78,9 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
             int? threshold = rules.HalfCrossWinCondition == HalfCrossWinCondition.Points && team != 0
                 ? rules.HalfCrossTeams.PieceCount(team) : null;
             bool resigned = _game.HasResigned(side);
+            bool timedOut = _game.HasTimedOut(side);
             return GameTexts.ThreeKingdomsStatus(team, rules.HalfCrossTeams, _game.ScoreOf(side), threshold,
-                resigned, !resigned && !_game.IsStillPlaying(side));
+                resigned, timedOut, !resigned && !timedOut && !_game.IsStillPlaying(side));
         }
 
         /// <summary>The side to move (its half is highlighted).</summary>

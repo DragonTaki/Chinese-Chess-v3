@@ -63,13 +63,6 @@ namespace Chinese_Chess_v3.Game.Application.Session
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
 
-        /// <summary>
-        /// Whether the 三國 rules pick 收軍 (<see cref="HalfCrossWinCondition.Recall"/>), whose rules
-        /// the author has not decided yet: such a game cannot be started.
-        /// </summary>
-        public bool IsRecallChosen =>
-            Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossWinCondition == HalfCrossWinCondition.Recall;
-
         /// <summary>Whether the 三國 自訂分隊 leaves a team without pieces: such a game cannot be started.</summary>
         public bool IsTeamSplitInvalid => !Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossTeams.IsValid;
 
@@ -78,7 +71,7 @@ namespace Chinese_Chess_v3.Game.Application.Session
         /// 傳統大盤 the standard position, 揭棋大盤 a dealt 揭棋 game (<see cref="GameManager.StartJieqi"/>),
         /// 暗棋／明棋半盤 a shuffled HalfCenter game (<see cref="GameManager.StartHalfCenter"/>),
         /// 三國半盤 a dealt 三國 game (<see cref="GameManager.StartThreeKingdoms"/>; the caller checks
-        /// <see cref="IsRecallChosen"/> first, as 收軍 cannot be played yet).
+        /// <see cref="IsTeamSplitInvalid"/> first).
         /// </summary>
         public void StartNew(GameKind kind)
         {

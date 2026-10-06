@@ -503,12 +503,12 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 
         private static readonly HalfCrossWinCondition[] WinConditions =
         {
-            HalfCrossWinCondition.Points, HalfCrossWinCondition.Annihilation, HalfCrossWinCondition.Recall,
+            HalfCrossWinCondition.Points, HalfCrossWinCondition.Annihilation,
             HalfCrossWinCondition.ScoreBalance, HalfCrossWinCondition.FirstTo200,
         };
         private static readonly string[] WinConditionTexts =
         {
-            SettingsTexts.HalfCrossWinPoints, SettingsTexts.HalfCrossWinAnnihilation, SettingsTexts.HalfCrossWinRecall,
+            SettingsTexts.HalfCrossWinPoints, SettingsTexts.HalfCrossWinAnnihilation,
             SettingsTexts.HalfCrossWinScoreBalance, SettingsTexts.HalfCrossWinFirstTo200,
         };
 
