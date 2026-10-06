@@ -16,6 +16,7 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Configs;
+using Engine.Localization;
 using Engine.Styles;
 
 namespace Chinese_Chess_v3.Composition
@@ -44,6 +45,10 @@ namespace Chinese_Chess_v3.Composition
         {
             // The rules layer's log lines go to the engine's logger.
             CoreLogBridge.Attach();
+
+            // Texts: the bundled language files (only the default language exists yet; the
+            // language setting is still a placeholder).
+            Lang.Load(EnginePaths.LangFolder);
 
             // Player settings: one entry reads settings.ini (in the per-user data folder, created /
             // repaired there as needed) and hands each area its values. The areas are registered
