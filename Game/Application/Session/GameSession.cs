@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/06
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -77,8 +77,8 @@ namespace Chinese_Chess_v3.Game.Application.Session
             Action<GameManager> setUp = kind switch
             {
                 GameKind.Traditional => game => game.ResetBoardToDefault(),
-                GameKind.DarkHalf => game => game.StartHalfCenter(hiddenChess: true),
-                GameKind.OpenHalf => game => game.StartHalfCenter(hiddenChess: false),
+                GameKind.DarkHalf => game => game.StartHalfCenter(hiddenChess: true, HalfCenterDealer.Create()),
+                GameKind.OpenHalf => game => game.StartHalfCenter(hiddenChess: false, HalfCenterDealer.Create()),
                 GameKind.Flip or GameKind.ThreeKingdoms => throw new NotSupportedException($"A {kind} game cannot be started yet"),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
             };
