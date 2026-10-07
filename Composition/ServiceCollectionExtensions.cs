@@ -35,6 +35,7 @@ using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 using Chinese_Chess_v3.Game.UI.Navigation;
 using Chinese_Chess_v3.Game.UI.Sidebars;
+using Chinese_Chess_v3.Game.UI.Sidebars.GameControls;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 
@@ -139,10 +140,11 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
-            services.AddTransientUiModule<UIBoard,     UIBoardHandler,     UIBoardRenderer>();
-            services.AddTransientUiModule<UISidebar,   UISidebarHandler,   UISidebarRenderer>();
-            services.AddTransientUiModule<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>();
-            services.AddTransientUiModule<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>();
+            services.AddTransientUiModule<UIBoard,        UIBoardHandler,        UIBoardRenderer>();
+            services.AddTransientUiModule<UISidebar,      UISidebarHandler,      UISidebarRenderer>();
+            services.AddTransientUiModule<UIGameControls, UIGameControlsHandler, UIGameControlsRenderer>();
+            services.AddTransientUiModule<UIInfoBoard,    UIInfoBoardHandler,    UIInfoBoardRenderer>();
+            services.AddTransientUiModule<UILoggerBox,    UILoggerBoxHandler,    UILoggerBoxRenderer>();
             // Two settings submenus (遊戲設定, 規則設定 - each its own instance with its own
             // Scope): transient, so each CreateDIElement gets a new element, handler and renderer.
             services.AddTransientUiModule<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>();
