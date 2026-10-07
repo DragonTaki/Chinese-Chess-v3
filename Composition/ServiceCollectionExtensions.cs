@@ -91,7 +91,8 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton(sp => new DialogManager<UIConfirmDialog>(
                 () => new UIConfirmDialog(new UIConfirmDialogRenderer(), sp.GetRequiredService<IUiFactory>())));
             services.AddSingleton<IDialogService, DialogService>();
-            services.AddSingleton<NetworkManager>();
+            // The built-in server over TLS (address / trust from the environment overrides, ServerEndpoint).
+            services.AddSingleton(_ => new NetworkManager());
             // The game: created on first use with the rules and names in the settings; later
             // changes reach it when the [player] / [rules.*] areas apply (only once it exists).
             var game = new Lazy<GameManager>(() =>
