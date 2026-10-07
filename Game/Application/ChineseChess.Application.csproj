@@ -11,5 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\ChineseChess.Core.csproj" />
     <ProjectReference Include="..\..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\..\Network\ChineseChess.Network.csproj" />
   </ItemGroup>
 </Project>

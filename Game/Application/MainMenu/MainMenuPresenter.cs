@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
+// Update Date: 2026/10/07
 // Version: v1.0
 /* ----- ----- ----- ----- */
 
@@ -15,10 +15,10 @@ using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Network;
 
 using Engine.Diagnostics;
 using Engine.Logging;
-using Engine.Network;
 
 namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
@@ -194,7 +194,10 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             }
         }
 
-        /// <summary>多人連線: connects if not connected, otherwise reconnects.</summary>
+        /// <summary>
+        /// 多人連線: opens the connection to the server if not connected, otherwise reconnects. It
+        /// does not log in: logging in takes the account, which the login screen will ask for.
+        /// </summary>
         private void ConnectMultiplayer()
         {
             if (!_network.IsConnected)

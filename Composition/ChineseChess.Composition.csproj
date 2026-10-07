@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Game\Core\ChineseChess.Core.csproj" />
     <ProjectReference Include="..\Engine\Engine.csproj" />
     <ProjectReference Include="..\Engine\Engine.UI.csproj" />
+    <ProjectReference Include="..\Network\ChineseChess.Network.csproj" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0" />
   </ItemGroup>
 </Project>

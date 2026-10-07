@@ -7,3 +7,6 @@
 [submodule "Game/Core"]
 	path = Game/Core
 	url = ../Chinese-Chess-Rules.git
+[submodule "Net-Client"]
+	path = Net-Client
+	url = ../Net-Client.git

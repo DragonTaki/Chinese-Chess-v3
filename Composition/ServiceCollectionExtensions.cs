@@ -3,7 +3,7 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
+// Update Date: 2026/10/07
 // Version: v1.1
 /* ----- ----- ----- ----- */
 
@@ -38,9 +38,9 @@ using Chinese_Chess_v3.Game.UI.Sidebars;
 using Chinese_Chess_v3.Game.UI.Sidebars.GameControls;
 using Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards;
 using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
+using Chinese_Chess_v3.Network;
 
 using Engine.Configs;
-using Engine.Network;
 using Engine.Randomization;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
