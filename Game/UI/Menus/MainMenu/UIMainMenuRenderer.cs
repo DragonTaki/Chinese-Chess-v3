@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/08
 // Update Date: 2026/10/12
-// Version: v1.6
+// Version: v1.7
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -20,16 +20,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 {
     public class UIMainMenuRenderer : UIMenuRenderer<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>
     {
-        /// <summary>
-        /// How far the submenu's frame is drawn to the left of the submenu's left edge, towards the main
-        /// menu's frame (author 2026-10-12: the two frames were too far apart; the distance between their
-        /// lines was twice the frame's inset, about 24, now about a third less). Only the frame moves,
-        /// never the submenu's content.
-        /// </summary>
-        private const float FrameOverlap = 8f;
-
-        /// <summary>How far the pointer sticks out of the frame's left line, towards the main menu button (28 plus the frame's margin, less the overlap so the point stays where it was).</summary>
-        private const float PointerDepth = 28f + FrameStyle.EdgeMargin - FrameOverlap;
+        /// <summary>How far the pointer sticks out of the frame's left outline, towards the main menu button (<see cref="MenuFrameLayout"/>).</summary>
+        private const float PointerDepth = MenuFrameLayout.TailDepth;
 
         /// <summary>Half of the pointer's height, along the submenu's left edge.</summary>
         private const float PointerHalfHeight = 24f;
@@ -100,8 +92,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 return false;
 
             option = current;
+            // The frame (not the content) starts where MenuFrameLayout puts it, so the gap between the two outlines is the same in every style
             var panel = submenu.GetCurrentAbsoluteBounds();
-            bounds = new RectangleF(panel.X - FrameOverlap, panel.Y, panel.Width + FrameOverlap, panel.Height);
+            float inset = FrameStyles.Of(DebugOptions.MenuFrameStyle).Inset;
+            var mainPanel = element.GetPanelAbsoluteBounds();
+            float left = MenuFrameLayout.FrameLeft(mainPanel.Position.X + mainPanel.Size.X, inset);
+            bounds = new RectangleF(left, panel.Y, panel.Position.X + panel.Size.X - left, panel.Height);
             var buttonBounds = button.GetCurrentAbsoluteBounds();
             float centreY = buttonBounds.Y + buttonBounds.Height / 2f;
 
