@@ -156,6 +156,13 @@ namespace Launcher
             _timerMgr.StartTimers();
         }
 
+        /// <summary>
+        /// Tab is a keyboard input of the UI (it moves the text-field focus, <c>UIKey.Tab</c>), not
+        /// WinForms' control navigation, so KeyDown receives it.
+        /// </summary>
+        protected override bool IsInputKey(Keys keyData) =>
+            keyData == Keys.Tab || base.IsInputKey(keyData);
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
