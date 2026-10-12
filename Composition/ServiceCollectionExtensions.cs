@@ -31,6 +31,7 @@ using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.Online.Login;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
@@ -133,7 +134,7 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
-            // The online screens' decisions (the screens come later; nothing resolves these yet).
+            // The online screens' decisions; created with their screens (the handlers resolve them).
             services.AddSingleton<LoginPresenter>();
             services.AddSingleton<LobbyPresenter>();
             services.AddSingleton<OnlineMenuPresenter>();
@@ -157,6 +158,8 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingletonUiModule<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>();
             services.AddSingletonUiModule<UISavedGameMenu, UISavedGameMenuHandler, UISavedGameMenuRenderer>();
             services.AddSingletonUiModule<UIGameMenu,     UIGameMenuHandler,     UIGameMenuRenderer>();
+            // 多人連線's screens (shown by the Navigator; single long-lived instances, like their presenters).
+            services.AddSingletonUiModule<UILoginMenu,    UILoginMenuHandler,    UILoginMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
             services.AddTransientUiModule<UIBoard,        UIBoardHandler,        UIBoardRenderer>();

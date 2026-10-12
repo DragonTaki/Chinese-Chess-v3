@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
-// Update Date: 2026/10/02
-// Version: v1.4
+// Update Date: 2026/10/12
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -347,6 +347,102 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>A save's button, and the 沒有存檔 row.</summary>
             public static readonly UILayoutStyle Item = Menus.Button(UILayoutConstants.LoadSavedGameMenu.ItemHeight);
+        }
+
+        /// <summary>
+        /// The online screens (<c>UILoginMenu</c>, <c>UIOnlineMenu</c>, <c>UIRoomMenu</c>): each
+        /// covers the root, its panel is the left column the main menu and a submenu take together,
+        /// and its scroll container is one flex column of blocks: section headers (as the settings
+        /// screens'), text lines (height from their text), setting-like rows (name left, control
+        /// right), rows of buttons (wrapping) and groups of these (a page, a lobby room).
+        /// </summary>
+        public static class OnlineMenu
+        {
+            /// <summary>The screen menu's <c>PanelWidth</c>.</summary>
+            public static readonly float PanelWidth = UILayoutConstants.OnlineMenu.Size.X;
+
+            /// <summary>The screen: covers the whole root.</summary>
+            public static readonly UILayoutStyle Screen = Menus.Screen;
+
+            /// <summary>The scroll container: inset like a submenu's inside the panel, a flex column that clips its blocks.</summary>
+            public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.OnlineMenu.MarginX, UILayoutConstants.OnlineMenu.MarginY,
+                UILayoutConstants.OnlineMenu.RowGap, PanelWidth) with
+            {
+                Overflow = OverflowMode.Hidden,
+            };
+
+            /// <summary>A section header (the screen's title, 房間列表, 座位…): as the settings screens' headers.</summary>
+            public static readonly UILayoutStyle Header = SettingsMenu.Header;
+
+            /// <summary>A text line (status, error, a seat, a summary): full width, height from its (wrapped) text.</summary>
+            public static readonly UILayoutStyle Line = CategoryListMenu.SectionHeading;
+
+            /// <summary>A field or switch row (帳號, 密碼, 記住帳密, 房號): as a setting's row.</summary>
+            public static readonly UILayoutStyle Row = SettingsMenu.Item with
+            {
+                ColumnGap = UILayoutConstants.OnlineMenu.RowButtonGap,
+            };
+
+            /// <summary>A row of buttons: full width, height from its buttons, a flex row that wraps.</summary>
+            public static readonly UILayoutStyle ButtonRow = CategoryListMenu.ButtonRows with
+            {
+                ColumnGap = UILayoutConstants.OnlineMenu.ButtonGap,
+                RowGap = UILayoutConstants.OnlineMenu.ButtonGap,
+            };
+
+            /// <summary>A button of a row of buttons.</summary>
+            public static readonly UILayoutStyle Button = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.OnlineMenu.ButtonWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.OnlineMenu.ButtonHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>
+            /// A group of blocks (a page of the online menu, the lobby's room list, a room's lines):
+            /// full width, height from its content, a flex column with the column's gap.
+            /// </summary>
+            public static readonly UILayoutStyle Group = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Column,
+                JustifyContent = JustifyContent.Start,
+                AlignItems = FlexAlign.Stretch,
+                RowGap = UILayoutConstants.OnlineMenu.RowGap,
+            };
+
+            /// <summary>A block of lines (a lobby room, the settings summary): a group with the line gap.</summary>
+            public static readonly UILayoutStyle LineGroup = Group with
+            {
+                RowGap = UILayoutConstants.OnlineMenu.LineGap,
+            };
+
+            /// <summary>A text field in a row (account, password, room number).</summary>
+            public static readonly UILayoutStyle Field = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.OnlineMenu.FieldWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.ValueHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>A switch in a row (記住帳密).</summary>
+            public static readonly UILayoutStyle Toggle = SettingsMenu.Toggle;
+
+            /// <summary>A row's own button (加入).</summary>
+            public static readonly UILayoutStyle RowButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.OnlineMenu.RowButtonWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.OnlineMenu.RowButtonHeight),
+                FlexShrink = 0f,
+            };
         }
 
         /// <summary>

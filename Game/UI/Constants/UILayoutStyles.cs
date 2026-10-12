@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2026/10/02
-// Version: v2.2
+// Update Date: 2026/10/12
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -320,6 +320,69 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 TextInset = UILayoutConstants.SettingsMenu.TextFieldInset,
                 DisabledOpacity = 0.4f,
             };
+        }
+
+        /// <summary>
+        /// The online screens (<c>UILoginMenu</c>, <c>UIOnlineMenu</c>, <c>UIRoomMenu</c>): the
+        /// settings screens' buttons, headers, rows and controls, plus the colours of their text
+        /// lines. The new colours are placeholders for the author to tune.
+        /// </summary>
+        public static class OnlineMenu
+        {
+            /// <summary>Every button of a row of buttons, and a row's own button (加入).</summary>
+            public static readonly IButtonDrawStyle ButtonStyle = SettingsMenu.ButtonStyle;
+
+            /// <summary>
+            /// A button that cannot be pressed now (登入 while a login runs, 準備 outside a waiting
+            /// room): dimmed like an off category toggle, at the buttons' font. Not used for the game
+            /// kinds and modes that are not wired yet: those keep the normal look (author §8.26).
+            /// </summary>
+            public static readonly IButtonDrawStyle DisabledButtonStyle = new DoubleBorderRoundedStyle
+            {
+                Font = SettingsMenu.ButtonFont,
+                TextBrush = CategoryListMenu.CategoryOff.TextBrush,
+                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                OuterBorder = CategoryListMenu.CategoryOff.Outer,
+                InnerBorder = CategoryListMenu.CategoryOff.Inner,
+                Margin = MainMenu.Button.Border.Margin,
+                CornerRadius = MainMenu.Button.Border.CornerRadius
+            };
+
+            /// <summary>A section header (the screen's title, 房間列表, 座位…).</summary>
+            public static readonly IButtonDrawStyle HeaderStyle = SettingsMenu.HeaderStyle;
+
+            /// <summary>A row's name.</summary>
+            public static readonly IFont RowFont = SettingsMenu.ItemFont;
+
+            /// <summary>Colour of a row's name.</summary>
+            public static readonly IBrush RowTextBrush = SettingsMenu.ItemTextBrush;
+
+            /// <summary>A text line.</summary>
+            public static readonly IFont LineFont = SettingsMenu.ValueFont;
+
+            /// <summary>A plain text line (the account, a summary, a lobby room's settings).</summary>
+            public static readonly Color LineColor = CategoryListMenu.EmptyMessage.Color;
+
+            /// <summary>A status line (連線中…, 對局進行中, the last result) and this player's own seat.</summary>
+            public static readonly Color StatusColor = CategoryListMenu.SectionHeading.Color;
+
+            /// <summary>An error line.</summary>
+            public static readonly Color ErrorColor = StyleHelper.GetColor("#E87A6A", 1.0f);  // #E87A6A
+
+            /// <summary>A free seat (等待玩家…).</summary>
+            public static readonly Color EmptySeatColor = StyleHelper.GetColor("#FCFAF2", 0.45f);  // #FCFAF2
+
+            /// <summary>The text fields (account, password, room number).</summary>
+            public static readonly TextFieldStyle FieldStyle = SettingsMenu.TextFieldStyle;
+
+            /// <summary>The text fields' font.</summary>
+            public static readonly IFont FieldFont = SettingsMenu.ValueFont;
+
+            /// <summary>The 記住帳密 switch.</summary>
+            public static readonly ToggleSwitchStyle ToggleStyle = SettingsMenu.ToggleStyle;
+
+            /// <summary>What the password field shows for each typed character.</summary>
+            public const char PasswordMask = '●';
         }
 
         /// <summary>
