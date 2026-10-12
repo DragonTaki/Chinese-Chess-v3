@@ -4,12 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Menus;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
@@ -82,6 +83,10 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 list.Add(new MenuEntry<GameKind>(kind, SettingsTexts.GameKindName(kind), () => ChooseKind(kind)));
             return list;
         }
+
+        /// <summary>The game kinds grouped by board (大盤, 小盤, 其他), every button with its normal look.</summary>
+        /// <returns>The groups, in display order.</returns>
+        public IReadOnlyList<BoardGroup> GroupedKinds() => BoardGroups.Create(ChooseKind);
 
         /// <summary>The modes, every one with its normal look.</summary>
         /// <returns>The entries, in button order.</returns>

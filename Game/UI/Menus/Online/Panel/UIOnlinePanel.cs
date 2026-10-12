@@ -4,13 +4,16 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.UI.Constants;
 
+using Engine.Platform;
 using Engine.UI.Core.Elements;
+using Engine.UI.Core.Handlers;
+using Engine.UI.Core.Renderers;
 using Engine.UI.Core.Interfaces;
 
 namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
@@ -78,8 +81,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             KindsPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
             AddHeader(KindsPage, presenter.ChooseKindTitle);
             var kinds = AddGroup(KindsPage, UILayoutSheet.OnlineMenu.Choices);
-            foreach (var entry in presenter.GameKinds())
-                AddButton(kinds, UILayoutSheet.Submenu.Button, entry.Label, entry.Action);
+            foreach (var group in presenter.GroupedKinds())
+            {
+                var block = AddGroup(kinds, UILayoutSheet.Submenu.Group);
+                AddGroupHeading(block, group.Title);
+                var row = AddGroup(block, UILayoutSheet.Submenu.GroupRow);
+                foreach (var entry in group.Entries)
+                    AddButton(row, UILayoutSheet.Submenu.GroupButton, entry.Label, entry.Action);
+            }
 
             ModesPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
             AddHeader(ModesPage, presenter.ChooseModeTitle);
@@ -91,6 +100,18 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             BuildLobby(LobbyPage);
 
             ShowPage(presenter.Page);
+        }
+
+        /// <summary>A board group's heading label (not a button), as the other submenus draw it.</summary>
+        private void AddGroupHeading(UIOnlineGroup parent, string title)
+        {
+            var heading = _factory.CreateElement<UILabel, UILabelHandler, UILabelRenderer>();
+            heading.Font = UILayoutStyles.CategoryListMenu.SectionHeading.Font;
+            heading.ForeColor = UILayoutStyles.CategoryListMenu.SectionHeading.Color;
+            heading.TextAlign = ContentAlign.MiddleLeft;
+            heading.Text = UILayoutStyles.CategoryListMenu.SectionHeading.Format(title);
+            heading.LayoutRules.Apply(UILayoutSheet.Submenu.GroupHeading);
+            parent.AddChild(heading);
         }
 
         /// <summary>Shows <paramref name="page"/> only.</summary>

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/25
-// Version: v2.0
+// Update Date: 2026/10/12
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -58,6 +58,20 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     new Vector2F(0.0f, 0.0f),  // The scroll container is already inset by the margin
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
                 public const float Spacing = 40.0f;
+            }
+
+            /// <summary>
+            /// Encapsulates Submenu board group related setting values (placeholders): a heading above a
+            /// row of two mode buttons.
+            /// </summary>
+            public static class BoardGroup
+            {
+                // Between a group's heading and its button row
+                public const float HeadingGap = 12.0f;
+                // Between the left and the right button
+                public const float ColumnGap = Button.Spacing;
+                // Each of the two columns
+                public static readonly float ButtonWidth = (ScrollContainer.Size.X - ColumnGap) / 2.0f;
             }
         }
     }

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/12
-// Version: v1.8
+// Version: v1.9
 /* ----- ----- ----- ----- */
 
 using System;
@@ -154,6 +154,52 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>Each submenu button.</summary>
             public static readonly UILayoutStyle Button = Menus.Button(UILayoutConstants.Submenu.Button.Size.Y);
+
+            /// <summary>One board group: full width, height from its content, a flex column (heading, then the button row).</summary>
+            public static readonly UILayoutStyle Group = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Column,
+                JustifyContent = JustifyContent.Start,
+                AlignItems = FlexAlign.Stretch,
+                RowGap = UILayoutConstants.Submenu.BoardGroup.HeadingGap,
+            };
+
+            /// <summary>A group's heading label: full width, height from its text.</summary>
+            public static readonly UILayoutStyle GroupHeading = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+            };
+
+            /// <summary>A group's two-column button row: left column first, a blank right slot stays empty.</summary>
+            public static readonly UILayoutStyle GroupRow = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Auto,
+                FlexShrink = 0f,
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Row,
+                JustifyContent = JustifyContent.Start,
+                AlignItems = FlexAlign.Start,
+                ColumnGap = UILayoutConstants.Submenu.BoardGroup.ColumnGap,
+            };
+
+            /// <summary>Each mode button of a group row: one column wide, the submenu button's height.</summary>
+            public static readonly UILayoutStyle GroupButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(UILayoutConstants.Submenu.BoardGroup.ButtonWidth),
+                Height = LayoutSize.Fixed(UILayoutConstants.Submenu.Button.Size.Y),
+                FlexShrink = 0f,
+            };
         }
 
         /// <summary>
