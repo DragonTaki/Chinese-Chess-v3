@@ -3,19 +3,19 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/07
-// Version: v1.0
+// Update Date: 2026/10/12
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 
+using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
-using Chinese_Chess_v3.Network;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -24,8 +24,8 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
     /// <summary>
     /// The main menu's decisions, apart from the views that draw it: which submenu is open
-    /// (clicking an open submenu's button again closes it), connecting / reconnecting for
-    /// 多人連線, asking before 離開遊戲 and exiting, which settings screen each settings entry
+    /// (clicking an open submenu's button again closes it), entering 多人連線 (the online
+    /// session's login screen or online menu), asking before 離開遊戲 and exiting, which settings screen each settings entry
     /// opens, and starting a game from the new-game submenu (開新一局).
     /// <para>
     /// The views bind to it: the menu's buttons call <see cref="Select"/>; the main menu shows a
@@ -51,19 +51,19 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         private readonly GameSession _session;
         private readonly IDialogService _dialogs;
         private readonly IAppLifetime _lifetime;
-        private readonly NetworkManager _network;
+        private readonly OnlineSession _online;
 
         /// <summary>Creates the presenter (a single long-lived instance, like the main menu it drives).</summary>
         /// <param name="session">The game flow (starts a new game).</param>
         /// <param name="dialogs">The confirm dialogs.</param>
         /// <param name="lifetime">Exits the application.</param>
-        /// <param name="network">The multiplayer connection.</param>
-        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, NetworkManager network)
+        /// <param name="online">The online session (多人連線).</param>
+        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, OnlineSession online)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _lifetime = lifetime ?? throw new ArgumentNullException(nameof(lifetime));
-            _network = network ?? throw new ArgumentNullException(nameof(network));
+            _online = online ?? throw new ArgumentNullException(nameof(online));
         }
 
         // ----- Events and state for the views -----
@@ -99,7 +99,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 
         /// <summary>
         /// A main menu button: opens its submenu (closing the open one; the open one's own
-        /// button closes it), connects (多人連線), or asks before exiting (離開遊戲).
+        /// button closes it), enters 多人連線, or asks before exiting (離開遊戲).
         /// </summary>
         /// <param name="option">The clicked option.</param>
         public void Select(MainMenuOption option)
@@ -119,7 +119,9 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
                     break;
 
                 case MainMenuOption.Multiplayer:
-                    ConnectMultiplayer();
+                    // Logged in → the online menu (or the room); otherwise the login screen
+                    // (logging in with the remembered login first, if there is one).
+                    _online.EnterMultiplayer();
                     break;
 
                 case MainMenuOption.Exit:
@@ -192,18 +194,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
                 CurrentSubmenu = option;
                 SubmenuOpened?.Invoke(option);
             }
-        }
-
-        /// <summary>
-        /// 多人連線: opens the connection to the server if not connected, otherwise reconnects. It
-        /// does not log in: logging in takes the account, which the login screen will ask for.
-        /// </summary>
-        private void ConnectMultiplayer()
-        {
-            if (!_network.IsConnected)
-                _ = _network.ConnectAsync();
-            else
-                _network.Reconnect();
         }
 
         /// <summary>離開遊戲: asks first; yes exits the application, no stays (the dialog has already closed).</summary>

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/05
-// Version: v2.3
+// Update Date: 2026/10/12
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -100,7 +100,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         /// <summary>
         /// A main menu button: passed to the presenter (<see cref="MainMenuPresenter.Select"/>),
-        /// which opens / closes a submenu, connects, or asks before exiting.
+        /// which opens / closes a submenu, enters 多人連線, or asks before exiting.
         /// </summary>
         public void SwitchSubmenu(MainMenuOption selectedMenu) => Presenter.Select(selectedMenu);
 
