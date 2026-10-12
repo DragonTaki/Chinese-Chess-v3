@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/05
-// Version: v3.1
+// Update Date: 2026/10/12
+// Version: v3.2
 /* ----- ----- ----- ----- */
 
 using System.Linq;
@@ -30,7 +30,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
     /// <see cref="IScreen"/>: the main menu calls <see cref="OnEnter"/>/<see cref="OnExit"/>
     /// when it opens/closes the screen.
     /// </summary>
-    public class UISettingsMenuHandler : UIMenuHandler<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>, IScreen
+    public class UISettingsMenuHandler : UIMenuHandler<UISettingsMenu, UISettingsMenuHandler, UISettingsMenuRenderer>, IScreen, ISettingsRowEditor
     {
         /// <summary>The screen's logic, created when the screen is first opened (for <see cref="UISettingsMenu.Screen"/>).</summary>
         private SettingsScreenModel _model;

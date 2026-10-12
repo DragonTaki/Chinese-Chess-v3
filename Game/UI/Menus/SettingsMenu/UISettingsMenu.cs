@@ -3,13 +3,12 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/05
-// Version: v2.3
+// Update Date: 2026/10/12
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
@@ -17,7 +16,6 @@ using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.CategoryListMenu;
 
-using Engine.Platform;
 using Engine.Styles;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Handlers;
@@ -131,7 +129,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                 }
 
                 foreach (var item in section.Items)
-                    AddPageElement(CreateRow(item, settings));
+                    AddPageElement(CreateRow(item));
             }
 
             RefreshValues(settings);
@@ -147,112 +145,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 
         #region Rows
 
-        /// <summary>A setting's row: the name, and the control of the item's kind.</summary>
-        /// <exception cref="ArgumentOutOfRangeException">The item is of an unknown kind.</exception>
-        private UILabeledRow CreateRow(SettingsMenuItem item, PlayerSettings settings)
-        {
-            var row = _factory.CreateElement<UILabeledRow, UILabeledRowHandler, UILabeledRowRenderer>();
-            row.Font = UILayoutStyles.SettingsMenu.ItemFont;
-            row.TextBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
-            row.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Item);
-            _refreshers.Add(s => row.Text = item.RowText(s));
-
-            switch (item)
-            {
-                case SettingsToggleItem toggle:
-                    var toggleSwitch = _factory.CreateElement<UIToggleSwitch, UIToggleSwitchHandler, UIToggleSwitchRenderer>();
-                    toggleSwitch.Style = UILayoutStyles.SettingsMenu.ToggleStyle;
-                    toggleSwitch.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Toggle);
-                    toggleSwitch.Handler.ValueChanged = value => Handler.SetToggle(toggle, value);
-                    row.AddChild(toggleSwitch);
-                    _refreshers.Add(s =>
-                    {
-                        toggleSwitch.IsOn = toggle.Get(s);
-                        toggleSwitch.IsEnabled = toggle.IsAvailable(s);
-                    });
-                    break;
-
-                case SettingsChoiceItem choice:
-                    var dropdown = _factory.CreateElement<UIDropdown, UIDropdownHandler, UIDropdownRenderer>();
-                    dropdown.Style = UILayoutStyles.SettingsMenu.DropdownStyle;
-                    dropdown.Font = UILayoutStyles.SettingsMenu.ValueFont;
-                    dropdown.SetOptions(choice.Options);
-                    dropdown.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Dropdown(DropdownWidth(choice)));
-                    dropdown.Handler.SelectionChanged = index => Handler.SetChoice(choice, index);
-                    row.AddChild(dropdown);
-                    _refreshers.Add(s => dropdown.SelectedIndex = choice.GetIndex(s));
-                    break;
-
-                case SettingsNumberItem number:
-                    var slider = _factory.CreateElement<UISlider, UISliderHandler, UISliderRenderer>();
-                    slider.Style = UILayoutStyles.SettingsMenu.SliderStyle;
-                    slider.Font = UILayoutStyles.SettingsMenu.ValueFont;
-                    slider.SetRange(number.Min, number.Max, number.Step);
-                    slider.ValueFormatter = number.FormatValue;
-                    slider.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Slider);
-                    slider.Handler.ValueChanged = value => Handler.SetNumber(number, value);
-                    slider.Handler.ValueCommitted = _ => Handler.CommitEdit();
-                    row.AddChild(slider);
-                    _refreshers.Add(s => slider.Value = number.Get(s));
-                    break;
-
-                case SettingsIntegerItem integer:
-                    var numberField = _factory.CreateElement<UINumberField, UINumberFieldHandler, UINumberFieldRenderer>();
-                    numberField.Style = UILayoutStyles.SettingsMenu.TextFieldStyle;
-                    numberField.Font = UILayoutStyles.SettingsMenu.ValueFont;
-                    numberField.UnitBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
-                    numberField.Unit = integer.Unit;
-                    numberField.Min = integer.Min;
-                    numberField.Max = integer.Max;
-                    numberField.LayoutRules.Apply(UILayoutSheet.SettingsMenu.NumberField);
-                    numberField.Handler.ValueCommitted = value => Handler.SetInteger(integer, value);
-                    row.AddChild(numberField);
-                    // Not while typing: the field itself is the source then.
-                    _refreshers.Add(s =>
-                    {
-                        if (!numberField.IsFocused)
-                            numberField.Value = integer.Get(s);
-                    });
-                    break;
-
-                case SettingsTextItem text:
-                    var field = _factory.CreateElement<UITextField, UITextFieldHandler, UITextFieldRenderer>();
-                    field.Style = UILayoutStyles.SettingsMenu.TextFieldStyle;
-                    field.Font = UILayoutStyles.SettingsMenu.ValueFont;
-                    field.MaxLength = text.MaxLength;
-                    field.Placeholder = text.Placeholder;
-                    field.LayoutRules.Apply(UILayoutSheet.SettingsMenu.TextField);
-                    field.Handler.TextChanged = value => Handler.SetText(text, value);
-                    field.Handler.TextCommitted = _ => Handler.CommitEdit();
-                    row.AddChild(field);
-                    // Not while typing: the field itself is the source then.
-                    _refreshers.Add(s =>
-                    {
-                        if (!field.IsFocused)
-                            field.Text = text.Get(s);
-                    });
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(item), item.Kind, "Unknown settings item kind");
-            }
-
-            return row;
-        }
-
-        /// <summary>
-        /// Width of a choice's dropdown: its longest choice's text with the text padding on both
-        /// sides, plus the ▼ arrow and its inset; at least a number's width and at most
-        /// <see cref="UILayoutConstants.SettingsMenu.ValueMaxWidth"/>.
-        /// </summary>
-        private static float DropdownWidth(SettingsChoiceItem choice)
-        {
-            using var g = GraphicsBackend.Factory.CreateMeasurementContext();
-            float longest = choice.Options.Max(option => g.MeasureString(option, UILayoutStyles.SettingsMenu.ValueFont).Width);
-            float width = longest + UILayoutConstants.SettingsMenu.ValueTextPaddingX * 2f
-                + UILayoutConstants.SettingsMenu.DropdownArrowWidth + UILayoutConstants.SettingsMenu.DropdownArrowInset;
-            return Math.Clamp(width, UILayoutConstants.SettingsMenu.ValueWidth, UILayoutConstants.SettingsMenu.ValueMaxWidth);
-        }
+        /// <summary>A setting's row (<see cref="SettingsRowBuilder"/>): its edits go to the handler, its refreshers to this tab's.</summary>
+        private UILabeledRow CreateRow(SettingsMenuItem item) => SettingsRowBuilder.Create(_factory, item, Handler, _refreshers);
 
         private UIButton CreateButton(UILayoutStyle rules, IButtonDrawStyle style, Action onClick)
         {
