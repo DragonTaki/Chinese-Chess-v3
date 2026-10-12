@@ -1,0 +1,206 @@
+/* ----- ----- ----- ----- */
+// OnlineMenuPresenter.cs
+// Do not distribute or modify
+// Author: DragonTaki (https://github.com/DragonTaki)
+// Create Date: 2026/10/12
+// Update Date: 2026/10/12
+// Version: v1.0
+/* ----- ----- ----- ----- */
+
+using System;
+using System.Collections.Generic;
+
+using Chinese_Chess_v3.Game.Application.Menus;
+using Chinese_Chess_v3.Game.Application.Texts;
+using Chinese_Chess_v3.Game.Core;
+
+using Engine.Diagnostics;
+
+namespace Chinese_Chess_v3.Game.Application.Online
+{
+    /// <summary>
+    /// The online menu's decisions (ONLINE-PLAY §8.1: the game kind first, then the mode, like
+    /// JJ象棋): its pages (<see cref="OnlineMenuPage"/>; the custom rooms' lobby is the last page,
+    /// driven by <see cref="LobbyPresenter"/>), the logged-in account, 登出, and 重新連線 after the
+    /// connection was lost here. Every game kind and mode is listed with the normal look; only
+    /// 傳統 and 自訂房間 are wired, choosing another does nothing yet (author §8.26: no greying, no
+    /// 尚未開放 label).
+    /// </summary>
+    public sealed class OnlineMenuPresenter
+    {
+        private static readonly GameKind[] KindOrder =
+        {
+            GameKind.Traditional, GameKind.Flip, GameKind.DarkHalf, GameKind.OpenHalf, GameKind.ThreeKingdoms,
+        };
+
+        private static readonly OnlineMode[] ModeOrder =
+        {
+            OnlineMode.Ranked, OnlineMode.Evaluation, OnlineMode.Arena, OnlineMode.CustomRoom,
+        };
+
+        private readonly OnlineSession _session;
+        private readonly LobbyPresenter _lobby;
+
+        /// <summary>Creates the presenter (a single long-lived instance, like the screen it drives).</summary>
+        /// <param name="session">The online session.</param>
+        /// <param name="lobby">The lobby page's presenter.</param>
+        public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby)
+        {
+            _session = session ?? throw new ArgumentNullException(nameof(session));
+            _lobby = lobby ?? throw new ArgumentNullException(nameof(lobby));
+            _session.StateChanged += () => Changed?.Invoke();
+            _session.ErrorRaised += _ => Changed?.Invoke();
+        }
+
+        // ----- Texts and lists -----
+
+        /// <summary>The game kind page's title.</summary>
+        public string ChooseKindTitle => OnlineTexts.ChooseGameKind;
+
+        /// <summary>The mode page's title.</summary>
+        public string ChooseModeTitle => OnlineTexts.ChooseMode;
+
+        /// <summary>The 登出 button's text.</summary>
+        public string LogoutText => OnlineTexts.Logout;
+
+        /// <summary>The 重新連線 button's text.</summary>
+        public string ReconnectText => OnlineTexts.Reconnect;
+
+        /// <summary>The back button's text.</summary>
+        public string BackText => OnlineTexts.Back;
+
+        /// <summary>The logged-in account's line.</summary>
+        public string AccountText => OnlineTexts.LoggedInAs(_session.Username);
+
+        /// <summary>The game kinds, every one with its normal look (the new-game menu's names).</summary>
+        /// <returns>The entries, in button order.</returns>
+        public IReadOnlyList<MenuEntry<GameKind>> GameKinds()
+        {
+            var list = new List<MenuEntry<GameKind>>();
+            foreach (GameKind kind in KindOrder)
+                list.Add(new MenuEntry<GameKind>(kind, SettingsTexts.GameKindName(kind), () => ChooseKind(kind)));
+            return list;
+        }
+
+        /// <summary>The modes, every one with its normal look.</summary>
+        /// <returns>The entries, in button order.</returns>
+        public IReadOnlyList<MenuEntry<OnlineMode>> Modes()
+        {
+            var list = new List<MenuEntry<OnlineMode>>();
+            foreach (OnlineMode mode in ModeOrder)
+                list.Add(new MenuEntry<OnlineMode>(mode, OnlineTexts.ModeName(mode), () => ChooseMode(mode)));
+            return list;
+        }
+
+        // ----- State -----
+
+        /// <summary>The page shown.</summary>
+        public OnlineMenuPage Page { get; private set; } = OnlineMenuPage.GameKinds;
+
+        /// <summary>The chosen game kind (the mode page's and the lobby's).</summary>
+        public GameKind SelectedKind { get; private set; } = GameKind.Traditional;
+
+        /// <summary>Whether the connection was lost here and 重新連線 is offered.</summary>
+        public bool CanReconnect => _session.CanReconnect;
+
+        /// <summary>Whether a reconnect runs.</summary>
+        public bool IsBusy => _session.IsBusy;
+
+        /// <summary>The last error sentence (e.g. the connection was lost, the room was lost), or null.</summary>
+        public string ErrorSentence => _session.LastError;
+
+        /// <summary>The view shows <see cref="Page"/>.</summary>
+        public event Action<OnlineMenuPage> PageChanged;
+
+        /// <summary>The view redraws (account, error, reconnect offered).</summary>
+        public event Action Changed;
+
+        // ----- Commands -----
+
+        /// <summary>Whether choosing <paramref name="kind"/> does something yet.</summary>
+        /// <param name="kind">A game kind.</param>
+        /// <returns>True for 傳統 only so far.</returns>
+        public static bool IsWired(GameKind kind) => kind == GameKind.Traditional;
+
+        /// <summary>Whether choosing <paramref name="mode"/> does something yet.</summary>
+        /// <param name="mode">A mode.</param>
+        /// <returns>True for 自訂房間 only so far.</returns>
+        public static bool IsWired(OnlineMode mode) => mode == OnlineMode.CustomRoom;
+
+        /// <summary>A game kind: its modes (a kind not wired yet does nothing).</summary>
+        /// <param name="kind">The chosen kind.</param>
+        public void ChooseKind(GameKind kind)
+        {
+            if (!IsWired(kind))
+            {
+                if (DebugOptions.ConsoleTrace)
+                    Console.WriteLine($"OnlineMenu: {kind} is not wired yet");
+                return;
+            }
+            SelectedKind = kind;
+            ShowPage(OnlineMenuPage.Modes);
+        }
+
+        /// <summary>A mode: 自訂房間 opens the lobby (a mode not wired yet does nothing).</summary>
+        /// <param name="mode">The chosen mode.</param>
+        public void ChooseMode(OnlineMode mode)
+        {
+            if (!IsWired(mode))
+            {
+                if (DebugOptions.ConsoleTrace)
+                    Console.WriteLine($"OnlineMenu: {mode} is not wired yet");
+                return;
+            }
+            _lobby.Kind = SelectedKind;
+            ShowPage(OnlineMenuPage.Lobby);
+        }
+
+        /// <summary>Back: lobby → modes → game kinds → the main menu (still logged in).</summary>
+        public void Back()
+        {
+            switch (Page)
+            {
+                case OnlineMenuPage.Lobby:
+                    ShowPage(OnlineMenuPage.Modes);
+                    break;
+                case OnlineMenuPage.Modes:
+                    ShowPage(OnlineMenuPage.GameKinds);
+                    break;
+                default:
+                    _session.LeaveToMainMenu();
+                    break;
+            }
+        }
+
+        /// <summary>The screen is shown (or hidden: false): the lobby refreshes itself only while its page is on display.</summary>
+        /// <param name="shown">Whether the screen is on display.</param>
+        public void SetShown(bool shown)
+        {
+            if (shown && Page == OnlineMenuPage.Lobby)
+                _lobby.Activate();
+            else
+                _lobby.Deactivate();
+        }
+
+        /// <summary>重新連線 (offered after the connection was lost here).</summary>
+        public void Reconnect() => _session.Reconnect();
+
+        /// <summary>登出: back to the main menu, the remembered login forgotten.</summary>
+        public void Logout()
+        {
+            _lobby.Deactivate();
+            ShowPage(OnlineMenuPage.GameKinds);
+            _session.Logout();
+        }
+
+        private void ShowPage(OnlineMenuPage page)
+        {
+            Page = page;
+            if (page == OnlineMenuPage.Lobby)
+                _lobby.Activate();
+            else
+                _lobby.Deactivate();
+            PageChanged?.Invoke(page);
+        }
+    }
+}

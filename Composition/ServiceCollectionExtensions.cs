@@ -17,6 +17,7 @@ using Chinese_Chess_v3.Game.Application.GameLog;
 using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Application.MainMenu;
+using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Settings;
@@ -102,6 +103,9 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<IDialogService, DialogService>();
             // The built-in server over TLS (address / trust from the environment overrides, ServerEndpoint).
             services.AddSingleton(_ => new NetworkManager());
+            // The typed online API over it, and online play's flow (its events re-posted to the UI thread).
+            services.AddSingleton(sp => new OnlineChannel(sp.GetRequiredService<NetworkManager>()));
+            services.AddSingleton<OnlineSession>();
             // The game: created on first use with the rules and names in the settings; later
             // changes reach it when the [player] / [rules.*] areas apply (only once it exists).
             var game = new Lazy<GameManager>(() =>
@@ -129,6 +133,11 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
+            // The online screens' decisions (the screens come later; nothing resolves these yet).
+            services.AddSingleton<LoginPresenter>();
+            services.AddSingleton<LobbyPresenter>();
+            services.AddSingleton<OnlineMenuPresenter>();
+            services.AddSingleton<RoomPresenter>();
             // Each board view's view model (created per board element).
             services.AddSingleton(sp => new BoardViewModelFactory(() => sp.GetRequiredService<GameManager>(), playerSettings.Hints));
             // What the game screen's info board shows (names, sides, clock texts); read live from the game.

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/05
-// Version: v2.3
+// Update Date: 2026/10/12
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -480,8 +480,8 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 
         #region 單機規則設定
 
-        /// <summary>The name of an on/off rule option.</summary>
-        private static string OptionName(RuleOption option) => option switch
+        /// <summary>The name of an on/off rule option (also the online room settings' lines).</summary>
+        internal static string OptionName(RuleOption option) => option switch
         {
             RuleOption.GeneralCanSeeGeneral => SettingsTexts.GeneralCanSeeGeneral,
             RuleOption.GeneralCanLeavePalace => SettingsTexts.GeneralCanLeavePalace,
