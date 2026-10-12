@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/12
-// Version: v2.5
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -467,6 +467,9 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 {
                     new SettingsToggleItem(SettingsTexts.LabelBackgrounds, s => s.Debug.LabelBackgrounds, (s, v) => s.Debug.LabelBackgrounds = v),
                     new SettingsToggleItem(SettingsTexts.LayoutOutlines, s => s.Debug.LayoutOutlines, (s, v) => s.Debug.LayoutOutlines = v),
+                    EnumChoice(SettingsTexts.MenuFrameStyle, Enum.GetValues<FrameStyleKind>(),
+                        Enum.GetValues<FrameStyleKind>().Select(SettingsTexts.FrameStyleName).ToArray(),
+                        s => s.Debug.MenuFrameStyle, (s, v) => s.Debug.MenuFrameStyle = v),
                     new SettingsToggleItem(SettingsTexts.StarEffectFrames, s => s.Debug.StarEffectFrames, (s, v) => s.Debug.StarEffectFrames = v),
                 }),
                 new SettingsMenuSection(SettingsTexts.SectionDebugPerformance, new SettingsMenuItem[]

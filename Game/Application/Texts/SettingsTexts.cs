@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -13,6 +13,7 @@ using System.Globalization;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
 
+using Engine.Configs;
 using Engine.Localization;
 
 namespace Chinese_Chess_v3.Game.Application.Texts
@@ -90,6 +91,21 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static string LabelBackgrounds => Lang.Get("settings.label_backgrounds");
         public static string LayoutOutlines => Lang.Get("settings.layout_outlines");
         public static string StarEffectFrames => Lang.Get("settings.star_effect_frames");
+        public static string MenuFrameStyle => Lang.Get("settings.menu_frame_style");
+
+        /// <summary>A main menu frame style's name in the dropdown.</summary>
+        public static string FrameStyleName(FrameStyleKind kind) => kind switch
+        {
+            FrameStyleKind.ThinLine => Lang.Get("settings.frame_style.thin_line"),
+            FrameStyleKind.DoubleLine => Lang.Get("settings.frame_style.double_line"),
+            FrameStyleKind.Rounded => Lang.Get("settings.frame_style.rounded"),
+            FrameStyleKind.CornerBrackets => Lang.Get("settings.frame_style.corner_brackets"),
+            FrameStyleKind.SoftGlow => Lang.Get("settings.frame_style.soft_glow"),
+            FrameStyleKind.FilledPanel => Lang.Get("settings.frame_style.filled_panel"),
+            FrameStyleKind.None => Lang.Get("settings.frame_style.none"),
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown frame style"),
+        };
+
         public static string ShowFps => Lang.Get("settings.show_fps");
         public static string ShowNetworkLatency => Lang.Get("settings.show_network_latency");
 
