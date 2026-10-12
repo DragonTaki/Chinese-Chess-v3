@@ -1,0 +1,19 @@
+<!--
+ChineseChess.Ai.csproj
+Do not distribute or modify
+Author: DragonTaki (https://github.com/DragonTaki)
+Create Date: 2026/10/12
+Update Date: 2026/10/12
+Version: v1.0
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Chinese_Chess_v3.Game.Ai</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Core/ChineseChess.Core.csproj" />
+  </ItemGroup>
+</Project>
