@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -98,6 +98,12 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         /// <summary>The 離開房間 button's text.</summary>
         public string LeaveText => OnlineTexts.LeaveRoom;
+
+        /// <summary>The header above the seats.</summary>
+        public string SeatsTitle => OnlineTexts.Seats;
+
+        /// <summary>The header above the room's settings.</summary>
+        public string SettingsTitle => OnlineTexts.RoomSettings;
 
         // ----- State -----
 

@@ -33,6 +33,7 @@ using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Login;
 using Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu;
+using Chinese_Chess_v3.Game.UI.Menus.Online.Room;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
@@ -162,6 +163,7 @@ namespace Chinese_Chess_v3.Composition
             // 多人連線's screens (shown by the Navigator; single long-lived instances, like their presenters).
             services.AddSingletonUiModule<UILoginMenu,    UILoginMenuHandler,    UILoginMenuRenderer>();
             services.AddSingletonUiModule<UIOnlineMenu,   UIOnlineMenuHandler,   UIOnlineMenuRenderer>();
+            services.AddSingletonUiModule<UIRoomMenu,     UIRoomMenuHandler,     UIRoomMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
             services.AddTransientUiModule<UIBoard,        UIBoardHandler,        UIBoardRenderer>();

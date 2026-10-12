@@ -14,6 +14,7 @@ using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Login;
 using Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu;
+using Chinese_Chess_v3.Game.UI.Menus.Online.Room;
 
 using Engine.UI.Core.Bases;
 using Engine.UI.Infrastructure;
@@ -49,6 +50,9 @@ namespace Chinese_Chess_v3.Game.UI.Navigation
                 case ScreenId.OnlineMenu:
                     _navigationManager.Show<UIOnlineMenu, UIOnlineMenuHandler, UIOnlineMenuRenderer>();
                     break;
+                case ScreenId.Room:
+                    _navigationManager.Show<UIRoomMenu, UIRoomMenuHandler, UIRoomMenuRenderer>();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen");
             }
@@ -62,6 +66,7 @@ namespace Chinese_Chess_v3.Game.UI.Navigation
                 ScreenId.Game => _navigationManager.GetScreen<UIGameMenu>(),
                 ScreenId.Login => _navigationManager.GetScreen<UILoginMenu>(),
                 ScreenId.OnlineMenu => _navigationManager.GetScreen<UIOnlineMenu>(),
+                ScreenId.Room => _navigationManager.GetScreen<UIRoomMenu>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen"),
             };
             // A screen another Show replaced is off the root (Parent null) but may still be IsVisible.
