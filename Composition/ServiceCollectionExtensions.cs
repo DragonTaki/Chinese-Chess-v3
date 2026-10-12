@@ -41,7 +41,9 @@ using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 using Chinese_Chess_v3.Network;
 
 using Engine.Configs;
+using Engine.Platform.Credentials;
 using Engine.Randomization;
+using Engine.Security;
 using Engine.Timing;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
@@ -85,6 +87,10 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
             // Work posted from other threads (e.g. the network receive loop); the launchers drain it once per frame.
             services.AddSingleton<IMainThreadQueue, MainThreadQueue>();
+            // The OS-protected secret store (Windows DPAPI under the per-user data folder, macOS Keychain,
+            // none elsewhere): keeps the server's long-lived login token for the automatic login.
+            services.AddSingleton<ICredentialStore>(_ =>
+                PlatformCredentialStore.Create(SystemSettings.UserDataFolder, SystemSettings.AppDataFolderName));
 
             // Register managers and core systems
             services.AddSingleton<NavigationManager>();
