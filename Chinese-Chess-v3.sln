@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseChess.Network", "Net
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Platform.Credentials", "Engine\Engine.Platform.Credentials.csproj", "{805B028C-16BB-4E42-916A-583C76969479}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.UiGallery", "Engine\UiGallery\Engine.UiGallery.csproj", "{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -223,6 +225,18 @@ Global
 		{805B028C-16BB-4E42-916A-583C76969479}.Release|x64.Build.0 = Release|Any CPU
 		{805B028C-16BB-4E42-916A-583C76969479}.Release|x86.ActiveCfg = Release|Any CPU
 		{805B028C-16BB-4E42-916A-583C76969479}.Release|x86.Build.0 = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|x64.Build.0 = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Debug|x86.Build.0 = Debug|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|x64.ActiveCfg = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|x64.Build.0 = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|x86.ActiveCfg = Release|Any CPU
+		{455D7FC7-B22B-44CA-97F7-C2B66063E4BD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/08
 // Update Date: 2026/10/12
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -20,8 +20,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 {
     public class UIMainMenuRenderer : UIMenuRenderer<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>
     {
-        /// <summary>How far the pointer sticks out of the submenu's left edge, towards the main menu button.</summary>
-        private const float PointerDepth = 28f;
+        /// <summary>How far the pointer sticks out of the submenu's left edge, towards the main menu button (the frame's own margin is added, as the frame is drawn that far inside the edge).</summary>
+        private const float PointerDepth = 28f + FrameStyle.EdgeMargin;
 
         /// <summary>Half of the pointer's height, along the submenu's left edge.</summary>
         private const float PointerHalfHeight = 24f;

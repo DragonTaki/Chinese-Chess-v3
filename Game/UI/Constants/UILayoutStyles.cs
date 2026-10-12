@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
 // Update Date: 2026/10/12
-// Version: v2.7
+// Version: v2.8
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -16,6 +16,21 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 {
     public static class UILayoutStyles
     {
+        /// <summary>
+        /// A submenu button box in <see cref="UIPalette"/> colours: the main menu button's double border
+        /// and corners, a solid fill.
+        /// </summary>
+        private static IButtonDrawStyle PaletteBox(IFont font, Color fill, Color border, Color text) => new DoubleBorderRoundedStyle
+        {
+            Font = font,
+            TextBrush = StyleHelper.GetBrush(text, 1.0f),
+            BackgroundBrushFactory = new SolidBrushFactory(fill),
+            OuterBorder = new BorderStyle { Width = MainMenu.Button.Border.Outer.Width, Color = border },
+            InnerBorder = new BorderStyle { Width = MainMenu.Button.Border.Inner.Width, Color = border },
+            Margin = MainMenu.Button.Border.Margin,
+            CornerRadius = MainMenu.Button.Border.CornerRadius
+        };
+
         public static class Overlay
         {
             public static class Dialog
@@ -182,64 +197,28 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>Tab texts, dropdowns, sliders' values and the text field.</summary>
             public static readonly IFont ValueFont = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
 
-            /// <summary>Colour of a row's name (as the main menu buttons' text).</summary>
-            public static readonly IBrush ItemTextBrush = MainMenu.Button.TextBrush;
+            /// <summary>Colour of a row's name (the palette's label text).</summary>
+            public static readonly IBrush ItemTextBrush = StyleHelper.GetBrush(UIPalette.LabelText, 1.0f);
 
             /// <summary>The save / back buttons.</summary>
-            public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
-            {
-                Font = ButtonFont,
-                TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            public static readonly IButtonDrawStyle ButtonStyle = PaletteBox(ButtonFont, UIPalette.ButtonFill, UIPalette.ButtonBorder, UIPalette.ButtonText);
 
-            /// <summary>A section header: a button box with dimmed borders and a smaller font (it does nothing when clicked).</summary>
-            public static readonly IButtonDrawStyle HeaderStyle = new DoubleBorderRoundedStyle
-            {
-                Font = HeaderFont,
-                TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = CategoryListMenu.CategoryOff.Outer,
-                InnerBorder = CategoryListMenu.CategoryOff.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            /// <summary>A section header: a box in the palette's header colours and a smaller font (it does nothing when clicked).</summary>
+            public static readonly IButtonDrawStyle HeaderStyle = PaletteBox(HeaderFont, UIPalette.HeaderFill, UIPalette.HeaderBorder, UIPalette.HeaderText);
 
             /// <summary>
-            /// Bright gold borders: the selected tab of the tab bar (<see cref="TabBarStyle"/>). It was
+            /// The palette's button look: the selected tab of the tab bar (<see cref="TabBarStyle"/>). It was
             /// also the choice buttons' look until they became dropdowns (2026-10-02; see <see cref="DropdownStyle"/>).
             /// </summary>
-            public static readonly IButtonDrawStyle ChoiceStyle = new DoubleBorderRoundedStyle
-            {
-                Font = ValueFont,
-                TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            public static readonly IButtonDrawStyle ChoiceStyle = PaletteBox(ValueFont, UIPalette.ButtonFill, UIPalette.ButtonBorder, UIPalette.ButtonText);
 
-            /// <summary>The tab bar: unselected tabs dimmed, the selected one bright with a gold bar under it.</summary>
+            /// <summary>The tab bar: unselected tabs dimmed, the selected one bright with an amber bar under it.</summary>
             public static readonly TabBarStyle TabBarStyle = new TabBarStyle
             {
-                TabStyle = new DoubleBorderRoundedStyle
-                {
-                    Font = ValueFont,
-                    TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                    OuterBorder = CategoryListMenu.CategoryOff.Outer,
-                    InnerBorder = CategoryListMenu.CategoryOff.Inner,
-                    Margin = MainMenu.Button.Border.Margin,
-                    CornerRadius = MainMenu.Button.Border.CornerRadius
-                },
+                TabStyle = PaletteBox(ValueFont, UIPalette.TabFill, UIPalette.TabBorder, UIPalette.TabText),
                 SelectedTabStyle = ChoiceStyle,
                 TabGap = UILayoutConstants.SettingsMenu.TabGap,
-                IndicatorColor = StyleHelper.GetColor("#F9BF45", 1.0f),  // #F9BF45
+                IndicatorColor = UIPalette.TabIndicator,
                 IndicatorHeight = UILayoutConstants.SettingsMenu.TabIndicatorHeight,
                 IndicatorInset = UILayoutConstants.SettingsMenu.TabIndicatorInset,
             };
@@ -356,16 +335,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// room): dimmed like an off category toggle, at the buttons' font. Not used for the game
             /// kinds and modes that are not wired yet: those keep the normal look (author §8.26).
             /// </summary>
-            public static readonly IButtonDrawStyle DisabledButtonStyle = new DoubleBorderRoundedStyle
-            {
-                Font = SettingsMenu.ButtonFont,
-                TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = CategoryListMenu.CategoryOff.Outer,
-                InnerBorder = CategoryListMenu.CategoryOff.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            public static readonly IButtonDrawStyle DisabledButtonStyle = PaletteBox(SettingsMenu.ButtonFont, UIPalette.ButtonDisabledFill, UIPalette.ButtonDisabledBorder, UIPalette.ButtonDisabledText);
 
             /// <summary>A section header (the screen's title, 房間列表, 座位…).</summary>
             public static readonly IButtonDrawStyle HeaderStyle = SettingsMenu.HeaderStyle;
@@ -386,10 +356,10 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static readonly Color StatusColor = CategoryListMenu.SectionHeading.Color;
 
             /// <summary>An error line.</summary>
-            public static readonly Color ErrorColor = StyleHelper.GetColor("#E87A6A", 1.0f);  // #E87A6A
+            public static readonly Color ErrorColor = UIPalette.ErrorText;
 
             /// <summary>A free seat (等待玩家…).</summary>
-            public static readonly Color EmptySeatColor = StyleHelper.GetColor("#FCFAF2", 0.45f);  // #FCFAF2
+            public static readonly Color EmptySeatColor = UIPalette.MutedText;
 
             /// <summary>The text fields (account, password, room number).</summary>
             public static readonly TextFieldStyle FieldStyle = SettingsMenu.TextFieldStyle;
@@ -437,16 +407,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static readonly IButtonDrawStyle HeaderStyle = SettingsMenu.HeaderStyle;
 
             /// <summary>The 沒有存檔 row: a save's box with dimmed text and borders, like a category toggle that is off (it does nothing when clicked).</summary>
-            public static readonly IButtonDrawStyle EmptyRowStyle = new DoubleBorderRoundedStyle
-            {
-                Font = SettingsMenu.ButtonFont,
-                TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = CategoryListMenu.CategoryOff.Outer,
-                InnerBorder = CategoryListMenu.CategoryOff.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            public static readonly IButtonDrawStyle EmptyRowStyle = PaletteBox(SettingsMenu.ButtonFont, UIPalette.ButtonDisabledFill, UIPalette.ButtonDisabledBorder, UIPalette.ButtonDisabledText);
         }
 
         /// <summary>
@@ -487,22 +448,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
 
             /// <summary>An item button, and a category toggle that is on.</summary>
-            public static readonly IButtonDrawStyle ButtonStyle = new DoubleBorderRoundedStyle
-            {
-                Font = ButtonFont,
-                TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
-                Margin = MainMenu.Button.Border.Margin,
-                CornerRadius = MainMenu.Button.Border.CornerRadius
-            };
+            public static readonly IButtonDrawStyle ButtonStyle = PaletteBox(ButtonFont, UIPalette.ButtonFill, UIPalette.ButtonBorder, UIPalette.ButtonText);
 
-            /// <summary>A category toggle that is off: same box, dimmed text and borders.</summary>
+            /// <summary>A category toggle that is off: same box in the palette's disabled colours.</summary>
             public static class CategoryOff
             {
-                public static readonly IBrush TextBrush = StyleHelper.GetBrush("#FCFAF2", 0.45f);  // #FCFAF2
+                public static readonly IBrush TextBrush = StyleHelper.GetBrush(UIPalette.ButtonDisabledText, 1.0f);
 
+                /// <summary>Dimmed gold borders (the settings text field's box still uses them).</summary>
                 public static readonly BorderStyle Outer = new BorderStyle
                 {
                     Width = 4.0f,
@@ -515,23 +468,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
                 };
 
-                public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
-                {
-                    Font = ButtonFont,
-                    TextBrush = TextBrush,
-                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                    OuterBorder = Outer,
-                    InnerBorder = Inner,
-                    Margin = MainMenu.Button.Border.Margin,
-                    CornerRadius = MainMenu.Button.Border.CornerRadius
-                };
+                public static readonly IButtonDrawStyle Style = PaletteBox(ButtonFont, UIPalette.ButtonDisabledFill, UIPalette.ButtonDisabledBorder, UIPalette.ButtonDisabledText);
             }
 
             /// <summary>A section heading (開局練習: 先手 / 後手), shown as <c>── 先手 ──</c>.</summary>
             public static class SectionHeading
             {
                 public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
-                public static readonly Color Color = StyleHelper.GetColor("#F9BF45", 1.0f);  // #F9BF45
+                public static readonly Color Color = UIPalette.SectionHeadingText;
 
                 public const string Prefix = "── ";
                 public const string Suffix = " ──";
@@ -543,7 +487,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static class EmptyMessage
             {
                 public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 20, FontStyleFlags.Bold);
-                public static readonly Color Color = StyleHelper.GetColor("#FCFAF2", 1.0f);  // #FCFAF2
+                public static readonly Color Color = UIPalette.LabelText;
             }
         }
     }

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/01
-// Version: v2.1
+// Update Date: 2026/10/12
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -60,6 +60,13 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 /// container without scrolling: 9 * 60 + 8 * 25 = 740 &lt;= 760 (840 - 2 * 40).
                 /// </summary>
                 public const float Spacing = 25.0f;
+
+                /// <summary>
+                /// Smallest gap between two buttons. The actual gap is computed from the number of
+                /// buttons (<c>MenuSpacing.Gap</c>, at most <see cref="Spacing"/>) so that all of them
+                /// fit the scroll container: ten buttons need (760 - 10 * 60) / 9 = 17.77.
+                /// </summary>
+                public const float MinSpacing = 8.0f;
             }
         }
     }

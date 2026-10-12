@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/15
 // Update Date: 2026/10/12
-// Version: v1.5
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -80,6 +80,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 ScrollContainer.AddChild(button);
                 Buttons.Add(button);
             }
+
+            // The gap that shows every button (down to the last) in the scroll container.
+            ButtonSpacing = MenuSpacing.Gap(UILayoutConstants.MainMenu.ScrollContainer.Size.Y, menuEntries.Count,
+                UILayoutConstants.MainMenu.Button.Size.Y, UILayoutConstants.MainMenu.Button.Spacing,
+                UILayoutConstants.MainMenu.Button.MinSpacing);
+            ScrollContainer.LayoutRules.RowGap = ButtonSpacing;
         }
     }
 }
