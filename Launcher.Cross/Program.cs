@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -62,9 +62,12 @@ namespace Launcher.Cross
 
             AppControl.ExitCallback = window.Close;
 
-            // Settings, the shared DI registrations, and the settings pushed to the engine
-            // (Composition/AppStartup.cs).
-            var sp = AppStartup.BuildServices();
+            // Settings, the shared DI registrations plus the Silk clipboard (its keyboard is attached
+            // once the window has loaded, CrossPlatformApp.OnLoad), and the settings pushed to the
+            // engine (Composition/AppStartup.cs).
+            var sp = AppStartup.BuildServices(services => services
+                .AddSingleton<SilkClipboard>()
+                .AddSingleton<IClipboard>(provider => provider.GetRequiredService<SilkClipboard>()));
 
             using var app = new CrossPlatformApp(sp, window);
             window.Run();

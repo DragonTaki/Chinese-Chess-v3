@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -45,6 +45,7 @@ using Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes;
 using Chinese_Chess_v3.Network;
 
 using Engine.Configs;
+using Engine.Platform;
 using Engine.Platform.Credentials;
 using Engine.Randomization;
 using Engine.Security;
@@ -95,6 +96,9 @@ namespace Chinese_Chess_v3.Composition
             // none elsewhere): keeps the server's long-lived login token for the automatic login.
             services.AddSingleton<ICredentialStore>(_ =>
                 PlatformCredentialStore.Create(SystemSettings.UserDataFolder, SystemSettings.AppDataFolderName));
+            // The clipboard text fields paste from: depends on the windowing backend, so each launcher
+            // registers its own after this (the later registration wins); none pastes nothing.
+            services.AddSingleton<IClipboard, UnsupportedClipboard>();
 
             // Register managers and core systems
             services.AddSingleton<NavigationManager>();

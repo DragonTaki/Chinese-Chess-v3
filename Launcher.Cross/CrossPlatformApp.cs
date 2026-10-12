@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
 // Update Date: 2026/10/12
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -127,10 +127,12 @@ namespace Launcher.Cross
             _mainThreadQueue = _sp.GetRequiredService<IMainThreadQueue>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
-            _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
+            _inputMgr = new UIInputManager(_rootCanvas, scrollHandler, _sp.GetRequiredService<IClipboard>());
 
             _inputContext = _window.CreateInput();
             var keyboard = _inputContext.Keyboards.Count > 0 ? _inputContext.Keyboards[0] : null;
+            // The clipboard (registered at start-up, Program.Main) reads through this keyboard.
+            _sp.GetRequiredService<SilkClipboard>().Attach(keyboard);
             _inputAdapter = new SilkInputAdapter(_inputMgr, _inputContext.Mice[0], _window, keyboard);
 
             _bgStar = new StarAnimationApp();

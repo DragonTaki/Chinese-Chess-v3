@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/10/12
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -62,7 +62,7 @@ namespace Launcher
             _mainThreadQueue = _sp.GetRequiredService<IMainThreadQueue>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
-            _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
+            _inputMgr = new UIInputManager(_rootCanvas, scrollHandler, _sp.GetRequiredService<IClipboard>());
 
             WireInputEvents();
             InitTimer();

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/05
-// Version: v1.0
+// Update Date: 2026/10/12
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -54,9 +54,11 @@ namespace Launcher
             // MainForm's constructor, which runs too late).
             FontManager.LoadFonts();
 
-            // Settings, the shared DI registrations plus the WinForms main form, and the
-            // settings pushed to the engine (Composition/AppStartup.cs).
-            var sp = AppStartup.BuildServices(services => services.AddSingleton<MainForm>());
+            // Settings, the shared DI registrations plus the WinForms main form and clipboard, and
+            // the settings pushed to the engine (Composition/AppStartup.cs).
+            var sp = AppStartup.BuildServices(services => services
+                .AddSingleton<MainForm>()
+                .AddSingleton<IClipboard, WinFormsClipboard>());
 
             // Initialize WinForms configuration
             ApplicationConfiguration.Initialize();
