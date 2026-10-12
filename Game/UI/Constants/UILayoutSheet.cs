@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/12
-// Version: v1.5
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -138,7 +138,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static readonly UILayoutStyle Button = Menus.Button(UILayoutConstants.MainMenu.Button.Size.Y);
         }
 
-        /// <summary>The main menu's submenus (<c>UINewGameMenu</c>, <c>UILoadGameMenu</c>).</summary>
+        /// <summary>The main menu's submenus (<c>UIKindMenu</c>, <c>UILoadGameMenu</c>).</summary>
         public static class Submenu
         {
             /// <summary>

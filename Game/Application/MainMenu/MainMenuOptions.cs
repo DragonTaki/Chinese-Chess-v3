@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2026/10/05
-// Version: v1.3
+// Update Date: 2026/10/12
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -27,11 +27,12 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         {
             return new List<MenuEntry<MainMenuOption>>
             {
-                new MenuEntry<MainMenuOption>(MainMenuOption.NewGame, Lang.Get("menu.main.new_game"), () => onSelect(MainMenuOption.NewGame)),
+                new MenuEntry<MainMenuOption>(MainMenuOption.SinglePlayer, Lang.Get("menu.main.single_player"), () => onSelect(MainMenuOption.SinglePlayer)),
+                new MenuEntry<MainMenuOption>(MainMenuOption.VsComputer, Lang.Get("menu.main.vs_computer"), () => onSelect(MainMenuOption.VsComputer)),
+                new MenuEntry<MainMenuOption>(MainMenuOption.Multiplayer, Lang.Get("menu.main.multiplayer"), () => onSelect(MainMenuOption.Multiplayer)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.LoadGame, Lang.Get("menu.main.load_game"), () => onSelect(MainMenuOption.LoadGame)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.EndgameChallenge, Lang.Get("menu.main.endgame_challenge"), () => onSelect(MainMenuOption.EndgameChallenge)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.OpeningPractice, Lang.Get("menu.main.opening_practice"), () => onSelect(MainMenuOption.OpeningPractice)),
-                new MenuEntry<MainMenuOption>(MainMenuOption.Multiplayer, Lang.Get("menu.main.multiplayer"), () => onSelect(MainMenuOption.Multiplayer)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.Help, Lang.Get("menu.main.help"), () => onSelect(MainMenuOption.Help)),
                 // The rules of local games only (a network game does not use them), right above 遊戲設定.
                 new MenuEntry<MainMenuOption>(MainMenuOption.RuleSettings,     MenuTexts.LocalRuleSettings, () => onSelect(MainMenuOption.RuleSettings)),

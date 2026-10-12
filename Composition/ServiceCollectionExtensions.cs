@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -27,10 +27,10 @@ using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
-using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Login;
 using Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Room;
@@ -157,7 +157,6 @@ namespace Chinese_Chess_v3.Composition
 
             // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
-            services.AddSingletonUiModule<UINewGameMenu,  UINewGameMenuHandler,  UINewGameMenuRenderer>();
             services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
             services.AddSingletonUiModule<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>();
             services.AddSingletonUiModule<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>();
@@ -170,6 +169,7 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingletonUiModule<UIRoomMenu,     UIRoomMenuHandler,     UIRoomMenuRenderer>();
 
             // Register transient UI modules with handlers and renderers
+            services.AddTransientUiModule<UIKindMenu,     UIKindMenuHandler,     UIKindMenuRenderer>();
             services.AddTransientUiModule<UIBoard,        UIBoardHandler,        UIBoardRenderer>();
             services.AddTransientUiModule<UISidebar,      UISidebarHandler,      UISidebarRenderer>();
             services.AddTransientUiModule<UIGameControls, UIGameControlsHandler, UIGameControlsRenderer>();

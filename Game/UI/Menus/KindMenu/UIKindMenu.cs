@@ -1,10 +1,10 @@
 /* ----- ----- ----- ----- */
-// UINewGameMenu.cs
+// UIKindMenu.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/05
-// Version: v1.2
+// Update Date: 2026/10/12
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
@@ -16,11 +16,22 @@ using Engine.UI.Core.Handlers;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Core.Renderers;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
+namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
 {
-    public class UINewGameMenu : UIMenu<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>
+    /// <summary>The flow selected by a game-kind submenu.</summary>
+    public enum KindMenuPurpose
     {
-        public UINewGameMenu() { }
+        SinglePlayer,
+        VsComputer,
+        Online,
+    }
+
+    public class UIKindMenu : UIMenu<UIKindMenu, UIKindMenuHandler, UIKindMenuRenderer>
+    {
+        public UIKindMenu() { }
+
+        /// <summary>The submenu's flow; set before it is first shown.</summary>
+        public KindMenuPurpose Purpose { get; set; }
 
         protected override void OnBeforeInit(IUiFactory factory)
         {
@@ -41,7 +52,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.NewGameMenu
 
         protected override void BuildButtons()
         {
-            var menuEntries = NewGameOptions.Create(Handler.StartNewGame);
+            var menuEntries = NewGameOptions.Create(Handler.ChooseKind);
 
             for (int i = 0; i < menuEntries.Count; i++)
             {

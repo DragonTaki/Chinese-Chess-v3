@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -26,12 +26,12 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
     /// The main menu's decisions, apart from the views that draw it: which submenu is open
     /// (clicking an open submenu's button again closes it), entering 多人連線 (the online
     /// session's login screen or online menu), asking before 離開遊戲 and exiting, which settings screen each settings entry
-    /// opens, and starting a game from the new-game submenu (開新一局).
+    /// opens, and choosing a game kind from a purpose-specific submenu.
     /// <para>
     /// The views bind to it: the menu's buttons call <see cref="Select"/>; the main menu shows a
     /// submenu on <see cref="SubmenuOpened"/> and hides it on <see cref="SubmenuClosed"/>, and
-    /// calls <see cref="CloseSubmenu"/> when it is left. The new-game submenu's buttons call
-    /// <see cref="StartNewGame"/>.
+    /// calls <see cref="CloseSubmenu"/> when it is left. The single-player submenu's buttons call
+    /// <see cref="StartSinglePlayer"/>.
     /// </para>
     /// </summary>
     public sealed class MainMenuPresenter
@@ -39,7 +39,9 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <summary>The options that open a submenu inside the main menu, in the order the menu creates them.</summary>
         private static readonly MainMenuOption[] SubmenuOptionList =
         {
-            MainMenuOption.NewGame,
+            MainMenuOption.SinglePlayer,
+            MainMenuOption.VsComputer,
+            MainMenuOption.Multiplayer,
             MainMenuOption.LoadGame,
             MainMenuOption.EndgameChallenge,
             MainMenuOption.OpeningPractice,
@@ -99,7 +101,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 
         /// <summary>
         /// A main menu button: opens its submenu (closing the open one; the open one's own
-        /// button closes it), enters 多人連線, or asks before exiting (離開遊戲).
+        /// button closes it), or asks before exiting.
         /// </summary>
         /// <param name="option">The clicked option.</param>
         public void Select(MainMenuOption option)
@@ -116,12 +118,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             switch (option)
             {
                 case MainMenuOption.Default:
-                    break;
-
-                case MainMenuOption.Multiplayer:
-                    // Logged in → the online menu (or the room); otherwise the login screen
-                    // (logging in with the remembered login first, if there is one).
-                    _online.EnterMultiplayer();
                     break;
 
                 case MainMenuOption.Exit:
@@ -150,12 +146,12 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         }
 
         /// <summary>
-        /// A new-game submenu button: starts that game kind's game on the game screen, or, for a
+        /// A single-player submenu button: starts that game kind's game on the game screen, or, for a
         /// kind without a game yet (<see cref="GameSession.CanStartNew"/>; 三國半盤 whose 自訂分隊 leaves a
         /// team empty, <see cref="GameSession.IsTeamSplitInvalid"/>), says so and stays on the menu.
         /// </summary>
         /// <param name="kind">The chosen game kind.</param>
-        public void StartNewGame(GameKind kind)
+        public void StartSinglePlayer(GameKind kind)
         {
             if (DebugOptions.ConsoleTrace)
                 Console.WriteLine($"NewGameMenu: selected: {kind}");
@@ -176,6 +172,22 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 
             // Game screen, restart (views reset, log cleared), then the chosen mode's game.
             _session.StartNew(kind);
+        }
+
+        /// <summary>A computer-game kind button; this flow is not wired yet.</summary>
+        /// <param name="kind">The chosen game kind.</param>
+        public void StartVsComputer(GameKind kind) { }
+
+        /// <summary>Enters the online session for Traditional; other kinds are not wired yet.</summary>
+        /// <param name="kind">The chosen game kind.</param>
+        public void ChooseOnlineKind(GameKind kind)
+        {
+            if (kind == GameKind.Traditional)
+            {
+                // Logged in → the online menu (or the room); otherwise the login screen
+                // (logging in with the remembered login first, if there is one).
+                _online.EnterMultiplayer();
+            }
         }
 
         // ----- Decisions -----

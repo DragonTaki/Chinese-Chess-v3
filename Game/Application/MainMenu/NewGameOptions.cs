@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/05
-// Version: v1.2
+// Update Date: 2026/10/12
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -17,7 +17,7 @@ using Engine.Localization;
 
 namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
-    /// <summary>The new-game menu (開新一局): one entry per <see cref="GameKind"/>, in button order.</summary>
+    /// <summary>The shared game-kind submenu: one entry per <see cref="GameKind"/>, in button order.</summary>
     public static class NewGameOptions
     {
         /// <summary>The menu's entries; choosing one calls <paramref name="startNewGame"/> with its game kind.</summary>

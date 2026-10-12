@@ -1,3 +1,5 @@
+// Update Date: 2026/10/12
+// Version: v1.1
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -219,7 +221,8 @@
   "settings.value.seconds": "{0} 秒",
   "settings.value.percent": "{0}%",
   "settings.setting_text": "{0}：{1}",
-  "menu.main.new_game": "開新一局",
+  "menu.main.single_player": "單機遊戲",
+  "menu.main.vs_computer": "人機對戰",
   "menu.main.load_game": "讀取存檔",
   "menu.main.endgame_challenge": "殘局闖關",
   "menu.main.opening_practice": "開局練習",

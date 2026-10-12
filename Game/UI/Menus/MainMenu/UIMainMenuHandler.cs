@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/10/12
-// Version: v2.4
+// Version: v2.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -13,9 +13,9 @@ using System.Collections.Generic;
 using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
-using Chinese_Chess_v3.Game.UI.Menus.NewGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
@@ -66,7 +66,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
             return option switch
             {
-                MainMenuOption.NewGame => factory.CreateDIElement<UINewGameMenu, UINewGameMenuHandler, UINewGameMenuRenderer>(),
+                MainMenuOption.SinglePlayer => CreateKindMenu(factory, KindMenuPurpose.SinglePlayer),
+                MainMenuOption.VsComputer => CreateKindMenu(factory, KindMenuPurpose.VsComputer),
+                MainMenuOption.Multiplayer => CreateKindMenu(factory, KindMenuPurpose.Online),
                 // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
                 MainMenuOption.LoadGame => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>(),
                 MainMenuOption.EndgameChallenge => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>(),
@@ -74,6 +76,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 MainMenuOption.Help => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Not a submenu option"),
             };
+        }
+
+        /// <summary>Creates a kind submenu with its purpose set before it is first shown.</summary>
+        private static UIElement CreateKindMenu(IUiFactory factory, KindMenuPurpose purpose)
+        {
+            var menu = factory.CreateDIElement<UIKindMenu, UIKindMenuHandler, UIKindMenuRenderer>();
+            menu.Purpose = purpose;
+            return menu;
         }
 
         /// <summary>
@@ -100,7 +110,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         /// <summary>
         /// A main menu button: passed to the presenter (<see cref="MainMenuPresenter.Select"/>),
-        /// which opens / closes a submenu, enters 多人連線, or asks before exiting.
+        /// which opens / closes a submenu, or asks before exiting.
         /// </summary>
         public void SwitchSubmenu(MainMenuOption selectedMenu) => Presenter.Select(selectedMenu);
 
