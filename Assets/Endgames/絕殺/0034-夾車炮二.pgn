@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "夾車炮二"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "9/CC7/3k5/9/9/9/9/5p1R1/4p4/5K3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。雙炮與俥交替將軍，殺棋。"]
+[Source "中文維基百科〈车夹炮〉车夹炮2（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. h2h7 1-0

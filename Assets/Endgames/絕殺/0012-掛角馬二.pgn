@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "掛角馬二"]
+[Category "絕殺"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "3ak1b2/4a2N1/9/3N5/4R4/9/9/1c7/3rA4/2B1KAB2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。馬在對方九宮的上角（士角）將軍，配合其他子殺棋。"]
+[Source "中文維基百科〈挂角马〉挂角马1（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. d6f7 1-0

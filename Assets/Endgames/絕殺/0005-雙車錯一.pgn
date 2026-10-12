@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "雙車錯一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "4k4/6R2/9/9/9/1RB6/2r6/9/4A4/3K1A3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。兩俥上下或左右交錯，輪流將軍，黑將無處可逃。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例一（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. b4b9 1-0

@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "臥槽馬三"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "3ak1b2/4a4/9/5N3/9/5R3/9/1c7/3rA4/2B1KAB2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。馬到對方底象前一格（二路橫線與三或七路直線的交點），封住將的出路，配合其他子殺棋。"]
+[Source "中文維基百科〈卧槽马〉卧槽马1（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. f6g8 1-0

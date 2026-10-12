@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "炮碾丹砂一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "4kCbC1/5R1N1/9/9/9/9/9/9/R3A4/2BA1KB2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。沉底炮在俥的掩護下沿底線連續吃子，最後殺棋。"]
+[Source "中文維基百科〈炮碾丹砂〉炮七平四、絕殺（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. a1a9 1-0

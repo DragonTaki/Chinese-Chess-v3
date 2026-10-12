@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "雙馬飲泉三"]
+[Category "絕殺"]
+[Difficulty "3"]
+[Goal "紅先勝"]
+[FEN "3k2b2/4a1N2/3N5/9/3R5/9/4r4/1c7/4A4/2B1KAB2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。兩匹馬互相配合，一馬控制將門，另一馬將軍，殺棋。"]
+[Source "中文維基百科〈卧槽马〉雙馬飲泉4（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. d7b8 1-0

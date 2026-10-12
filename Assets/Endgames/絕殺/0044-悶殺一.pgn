@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "悶殺一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "5c3/4rk3/5a3/9/9/9/9/5A3/9/cr1AKC3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。利用將軍或獻子，使黑方自己的子堵住將的出路而被殺。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例1-2（來源圖例就是題目盤面；Core 驗證為唯一的1步殺）"]
+
+1. f2e1 1-0

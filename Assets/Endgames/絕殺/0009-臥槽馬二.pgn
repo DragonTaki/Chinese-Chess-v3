@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "臥槽馬二"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "N2ak4/5P3/4b4/9/9/9/4c4/4B4/1r2A4/3AK4 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。馬到對方底象前一格（二路橫線與三或七路直線的交點），封住將的出路，配合其他子殺棋。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例二（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. a9c8 1-0

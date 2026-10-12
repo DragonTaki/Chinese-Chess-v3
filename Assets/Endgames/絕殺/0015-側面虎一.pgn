@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "側面虎一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "3a1a3/9/5k3/6NR1/9/9/9/1r2B4/9/3AK1B2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。馬在對方卒林線的三或七路（高釣馬），配合同側的俥殺棋。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例一（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. h6h7 1-0

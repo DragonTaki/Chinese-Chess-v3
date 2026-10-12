@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "大膽穿心一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "1R1ak1P2/R3a4/4b4/4C4/9/9/9/9/4A4/2BAK1B2 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。俥在其他子配合下強行吃掉中心士再殺棋（用兵叫小刀剜心）。"]
+[Source "中文維基百科〈大刀剜心〉大刀剜心（來源圖例就是題目盤面；Core 驗證為唯一的1步殺）"]
+
+1. a8e8 1-0

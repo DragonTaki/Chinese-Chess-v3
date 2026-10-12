@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "大膽穿心二"]
+[Category "絕殺"]
+[Difficulty "3"]
+[Goal "紅先勝"]
+[FEN "4R1b2/1R2ak3/9/9/9/2B6/9/4B4/2r2r3/4K4 w"]
+[Format "ICCS"]
+[Description "紅先，2步殺。俥在其他子配合下強行吃掉中心士再殺棋（用兵叫小刀剜心）。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例一（來源圖例就是題目盤面；Core 驗證為唯一的2步殺）"]
+
+1. b8e8 f8f7 2. e9f9 1-0

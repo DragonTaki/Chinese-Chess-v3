@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "天地炮一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "2b1ka3/1C2a4/c3b4/4C4/9/9/9/4B4/2r1Ar3/3K5 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。中路的天炮加上沉底的地炮，借士象當炮架殺棋。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. b8b9 1-0

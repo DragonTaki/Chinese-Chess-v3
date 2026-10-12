@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "重炮三"]
+[Category "絕殺"]
+[Difficulty "3"]
+[Goal "紅先勝"]
+[FEN "2bak1b2/4a2C1/9/9/9/9/9/9/7cC/2BAKAB1c w"]
+[Format "ICCS"]
+[Description "紅先，2步殺。兩炮與黑將同線，前炮當後炮的炮架，後炮將軍。"]
+[Source "中文維基百科〈重炮〉重炮2（終局圖例逆推3手而得；Core 驗證為唯一的2步殺）"]
+
+1. i1i9 g9e7 2. h8h9 1-0

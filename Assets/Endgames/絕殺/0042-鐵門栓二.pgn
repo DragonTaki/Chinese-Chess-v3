@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "鐵門栓二"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "2bak4/4a4/4bR3/4C4/9/9/9/9/9/2BA1K3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。中炮鎮住中路，俥或兵（有保護）堵在將門上將軍，黑士被中炮牽制不能吃。"]
+[Source "中文維基百科〈铁门闩〉铁门闩1（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. f7f9 1-0

@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "雙車錯三"]
+[Category "絕殺"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "7R1/R8/3k5/9/9/9/9/5p3/4p4/5K3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。兩俥上下或左右交錯，輪流將軍，黑將無處可逃。"]
+[Source "中文維基百科〈双车错〉双车错2（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. h9h7 1-0

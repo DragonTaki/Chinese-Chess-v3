@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "悶宮一"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "4ka3/4aRC2/4b4/9/9/9/5pP2/4B4/2r1Ar3/3K5 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。黑將在原位被自己的中士與底士堵住，紅方只用一炮將死。"]
+[Source "維基教科書〈中國象棋/基本殺法列表〉棋例（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. g8g9 1-0

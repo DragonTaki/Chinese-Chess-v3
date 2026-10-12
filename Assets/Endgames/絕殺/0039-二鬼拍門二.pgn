@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "二鬼拍門二"]
+[Category "絕殺"]
+[Difficulty "2"]
+[Goal "紅先勝"]
+[FEN "2b1kab2/3P1P3/9/9/9/9/9/9/3p2p2/5K3 w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。兩個兵（或俥）佔住九宮的兩條肋道，鎖住黑將，再殺棋。"]
+[Source "中文維基百科〈二鬼拍门〉二鬼拍門1（來源圖例就是題目盤面；Core 驗證為唯一的1步殺）"]
+
+1. f8f9 1-0

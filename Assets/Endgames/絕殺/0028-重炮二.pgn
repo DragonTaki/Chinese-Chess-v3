@@ -1,0 +1,11 @@
+[Game "Chinese Chess"]
+[Title "重炮二"]
+[Category "絕殺"]
+[Difficulty "1"]
+[Goal "紅先勝"]
+[FEN "2bakab2/9/9/C8/9/4C4/9/9/7c1/2BAKAB1c w"]
+[Format "ICCS"]
+[Description "紅先，1步殺。兩炮與黑將同線，前炮當後炮的炮架，後炮將軍。"]
+[Source "中文維基百科〈重炮〉重炮1（終局圖例逆推1手而得；Core 驗證為唯一的1步殺）"]
+
+1. a6e6 1-0
