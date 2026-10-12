@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/07
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -42,6 +42,7 @@ using Chinese_Chess_v3.Network;
 
 using Engine.Configs;
 using Engine.Randomization;
+using Engine.Timing;
 using Engine.UI.Core.Elements;
 using Engine.UI.Core.Interfaces;
 using Engine.UI.Infrastructure;
@@ -82,6 +83,8 @@ namespace Chinese_Chess_v3.Composition
 
             // Register utility services
             services.AddSingleton<RandomTable>(new RandomTable(size: SystemSettings.RandomTableSize, seed: SystemSettings.RandomTableSeed));
+            // Work posted from other threads (e.g. the network receive loop); the launchers drain it once per frame.
+            services.AddSingleton<IMainThreadQueue, MainThreadQueue>();
 
             // Register managers and core systems
             services.AddSingleton<NavigationManager>();

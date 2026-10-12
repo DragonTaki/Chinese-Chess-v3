@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/10/05
-// Version: v1.3
+// Update Date: 2026/10/12
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -41,6 +41,7 @@ namespace Launcher
         private readonly UIRootNode _rootCanvas;
         private NavigationManager _navigationManager;
         private readonly GameSession _gameSession;
+        private readonly IMainThreadQueue _mainThreadQueue;
 
         private StarAnimationApp _bgStar;
 
@@ -58,6 +59,7 @@ namespace Launcher
 
             _navigationManager = _sp.GetRequiredService<NavigationManager>();
             _gameSession = _sp.GetRequiredService<GameSession>();
+            _mainThreadQueue = _sp.GetRequiredService<IMainThreadQueue>();
 
             var scrollHandler = _sp.GetRequiredService<IScrollInputHandler>();
             _inputMgr = new UIInputManager(_rootCanvas, scrollHandler);
@@ -140,6 +142,9 @@ namespace Launcher
             GlobalTime.Timer = _timerMgr;
             _timerMgr.OnAnimationFrame += () =>
             {
+                // Work other threads posted (e.g. network messages) runs first, on this (UI) thread,
+                // so this frame's update already sees it.
+                _mainThreadQueue?.Drain();
                 _bgStar?.Update();
                 _rootCanvas?.Update();
                 // Right after the UI update, where the board's update used to advance the clocks.
