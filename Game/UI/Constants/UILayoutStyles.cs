@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
 // Update Date: 2026/10/12
-// Version: v2.3
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -323,7 +323,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The online screens (<c>UILoginMenu</c>, <c>UIOnlineMenu</c>, <c>UIRoomMenu</c>): the
+        /// The Multiplayer panel and room screen: the
         /// settings screens' buttons, headers, rows and controls, plus the colours of their text
         /// lines. The new colours are placeholders for the author to tune.
         /// </summary>

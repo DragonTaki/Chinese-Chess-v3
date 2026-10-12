@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -25,11 +25,11 @@ using Engine.UI.Models;
 namespace Chinese_Chess_v3.Game.UI.Menus.Online
 {
     /// <summary>
-    /// The base of the online screens (登入, the online menu with its lobby page, the room): a
+    /// Shared blocks for the Multiplayer panel and room screen. The default layout is a
     /// screen-sized menu whose panel is the left column the main menu and a submenu take together
     /// (<see cref="UILayoutSheet.OnlineMenu"/>), with one scrolling column of blocks. It only
     /// builds and shows: every text comes finished from the screen's presenter (the logic layer),
-    /// which its handler binds to.
+    /// which its handler binds to; the panel overrides the default screen layout.
     /// <para>
     /// The helpers add a block to a parent (the scroll container or a <see cref="UIOnlineGroup"/>);
     /// buttons are also listed in the menu's buttons, which the menu renderer draws.

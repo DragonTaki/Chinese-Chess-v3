@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// UIOnlineMenu.Lobby.cs
+// UIOnlinePanel.Lobby.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
@@ -19,16 +19,16 @@ using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
 using Engine.UI.Core.Elements;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
+namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
     /// <summary>
-    /// The online menu's lobby page (自訂房間): 重新整理 and 建立房間 with the new room's settings
-    /// as one line, the room number field with its 加入, the lobby's error line, the waiting rooms
-    /// (each its line, 加入 while a seat is free, and its settings as one line) or 目前沒有房間,
+    /// The online menu's lobby page (custom rooms): refresh and create room with the new room's settings
+    /// as one line, the room number field with its join, the lobby's error line, the waiting rooms
+    /// (each its line, join while a seat is free, and its settings as one line) or no rooms,
     /// then the new room's settings editor - the local rule settings' rows
     /// (<see cref="SettingsRowBuilder"/>) over the lobby's own settings instance.
     /// </summary>
-    public partial class UIOnlineMenu
+    public partial class UIOnlinePanel
     {
         /// <summary>The room number field.</summary>
         internal UITextField RoomNumberField { get; private set; }
@@ -39,7 +39,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
         /// <summary>The lobby's error (a bad room number, the server's answer).</summary>
         internal UILabel LobbyErrorLine { get; private set; }
 
-        /// <summary>目前沒有房間.</summary>
+        /// <summary>no rooms.</summary>
         internal UILabel EmptyRoomsLine { get; private set; }
 
         /// <summary>The waiting rooms (rebuilt when the list changes).</summary>
@@ -87,7 +87,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
 
         /// <summary>Shows <paramref name="rooms"/> (rebuilt only when they differ from the shown ones).</summary>
         /// <param name="rooms">The waiting rooms.</param>
-        /// <param name="joinText">The 加入 buttons' text.</param>
+        /// <param name="joinText">The join buttons' text.</param>
         public void ShowRooms(IReadOnlyList<LobbyRoomRow> rooms, string joinText)
         {
             var key = new StringBuilder();
@@ -101,7 +101,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             foreach (var room in rooms)
             {
                 var block = AddGroup(_roomList, UILayoutSheet.OnlineMenu.LineGroup);
-                var row = AddRow(block, room.Text);
+                SetLine(AddLine(block, UILayoutStyles.OnlineMenu.LineColor), room.Text);
+                var row = AddRow(block, string.Empty);
                 if (room.CanJoin)
                     AddButton(row, UILayoutSheet.OnlineMenu.RowButton, joinText, room.Join);
                 SetLine(AddLine(block, UILayoutStyles.OnlineMenu.LineColor), room.SummaryText);

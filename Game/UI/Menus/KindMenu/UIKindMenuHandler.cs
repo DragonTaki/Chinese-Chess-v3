@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
 // Update Date: 2026/10/12
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
@@ -38,9 +38,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
                     break;
                 case KindMenuPurpose.VsComputer:
                     Presenter.StartVsComputer(kind);
-                    break;
-                case KindMenuPurpose.Online:
-                    Presenter.ChooseOnlineKind(kind);
                     break;
             }
         }

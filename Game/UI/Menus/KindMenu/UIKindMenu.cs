@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
 // Update Date: 2026/10/12
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
@@ -23,7 +23,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
     {
         SinglePlayer,
         VsComputer,
-        Online,
     }
 
     public class UIKindMenu : UIMenu<UIKindMenu, UIKindMenuHandler, UIKindMenuRenderer>

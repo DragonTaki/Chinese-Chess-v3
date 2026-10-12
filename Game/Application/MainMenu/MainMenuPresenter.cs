@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -25,7 +25,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
     /// <summary>
     /// The main menu's decisions, apart from the views that draw it: which submenu is open
     /// (clicking an open submenu's button again closes it), entering 多人連線 (the online
-    /// session's login screen or online menu), asking before 離開遊戲 and exiting, which settings screen each settings entry
+    /// session's pages inside the right panel), asking before 離開遊戲 and exiting, which settings screen each settings entry
     /// opens, and choosing a game kind from a purpose-specific submenu.
     /// <para>
     /// The views bind to it: the menu's buttons call <see cref="Select"/>; the main menu shows a
@@ -54,18 +54,23 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         private readonly IDialogService _dialogs;
         private readonly IAppLifetime _lifetime;
         private readonly OnlineSession _online;
+        private readonly OnlineMenuPresenter _onlinePanel;
 
         /// <summary>Creates the presenter (a single long-lived instance, like the main menu it drives).</summary>
         /// <param name="session">The game flow (starts a new game).</param>
         /// <param name="dialogs">The confirm dialogs.</param>
         /// <param name="lifetime">Exits the application.</param>
-        /// <param name="online">The online session (多人連線).</param>
-        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, OnlineSession online)
+        /// <param name="online">The online session.</param>
+        /// <param name="onlinePanel">The Multiplayer panel pages.</param>
+        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, OnlineSession online, OnlineMenuPresenter onlinePanel)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _lifetime = lifetime ?? throw new ArgumentNullException(nameof(lifetime));
             _online = online ?? throw new ArgumentNullException(nameof(online));
+            _onlinePanel = onlinePanel ?? throw new ArgumentNullException(nameof(onlinePanel));
+            _online.PanelRequested += Shown;
+            _online.PanelClosed += CloseSubmenu;
         }
 
         // ----- Events and state for the views -----
@@ -178,16 +183,17 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <param name="kind">The chosen game kind.</param>
         public void StartVsComputer(GameKind kind) { }
 
-        /// <summary>Enters the online session for Traditional; other kinds are not wired yet.</summary>
-        /// <param name="kind">The chosen game kind.</param>
-        public void ChooseOnlineKind(GameKind kind)
+        /// <summary>Consumes a session request after entering the main menu, or while it is already shown.</summary>
+        public void Shown()
         {
-            if (kind == GameKind.Traditional)
-            {
-                // Logged in → the online menu (or the room); otherwise the login screen
-                // (logging in with the remembered login first, if there is one).
-                _online.EnterMultiplayer();
-            }
+            if (_online.TakePanelPage() is not OnlineMenuPage page)
+                return;
+            _onlinePanel.OpenPage(page);
+            if (CurrentSubmenu == MainMenuOption.Multiplayer)
+                return;
+            CloseSubmenu();
+            CurrentSubmenu = MainMenuOption.Multiplayer;
+            SubmenuOpened?.Invoke(MainMenuOption.Multiplayer);
         }
 
         // ----- Decisions -----
@@ -205,6 +211,8 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             {
                 CurrentSubmenu = option;
                 SubmenuOpened?.Invoke(option);
+                if (option == MainMenuOption.Multiplayer)
+                    _online.EnterMultiplayer();
             }
         }
 

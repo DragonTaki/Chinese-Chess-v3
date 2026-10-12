@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -19,8 +19,8 @@ using Engine.Diagnostics;
 namespace Chinese_Chess_v3.Game.Application.Online
 {
     /// <summary>
-    /// The online menu's decisions (ONLINE-PLAY §8.1: the game kind first, then the mode, like
-    /// JJ象棋): its pages (<see cref="OnlineMenuPage"/>; the custom rooms' lobby is the last page,
+    /// The Multiplayer panel's decisions: login, then kinds, modes and lobby. Its pages
+    /// (<see cref="OnlineMenuPage"/>; the custom rooms' lobby is the last page,
     /// driven by <see cref="LobbyPresenter"/>), the logged-in account, 登出, and 重新連線 after the
     /// connection was lost here. Every game kind and mode is listed with the normal look; only
     /// 傳統 and 自訂房間 are wired, choosing another does nothing yet (author §8.26: no greying, no
@@ -40,8 +40,9 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         private readonly OnlineSession _session;
         private readonly LobbyPresenter _lobby;
+        private bool _shown;
 
-        /// <summary>Creates the presenter (a single long-lived instance, like the screen it drives).</summary>
+        /// <summary>Creates the presenter (a single long-lived instance, like the panel it drives).</summary>
         /// <param name="session">The online session.</param>
         /// <param name="lobby">The lobby page's presenter.</param>
         public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby)
@@ -95,7 +96,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
         // ----- State -----
 
         /// <summary>The page shown.</summary>
-        public OnlineMenuPage Page { get; private set; } = OnlineMenuPage.GameKinds;
+        public OnlineMenuPage Page { get; private set; } = OnlineMenuPage.Login;
 
         /// <summary>The chosen game kind (the mode page's and the lobby's).</summary>
         public GameKind SelectedKind { get; private set; } = GameKind.Traditional;
@@ -155,7 +156,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             ShowPage(OnlineMenuPage.Lobby);
         }
 
-        /// <summary>Back: lobby → modes → game kinds → the main menu (still logged in).</summary>
+        /// <summary>Back: lobby to modes to kinds, then closes the panel (still logged in).</summary>
         public void Back()
         {
             switch (Page)
@@ -167,15 +168,18 @@ namespace Chinese_Chess_v3.Game.Application.Online
                     ShowPage(OnlineMenuPage.GameKinds);
                     break;
                 default:
+                    if (Page == OnlineMenuPage.Login)
+                        _session.CancelLogin();
                     _session.LeaveToMainMenu();
                     break;
             }
         }
 
-        /// <summary>The screen is shown (or hidden: false): the lobby refreshes itself only while its page is on display.</summary>
-        /// <param name="shown">Whether the screen is on display.</param>
+        /// <summary>The panel is shown (or hidden: false): the lobby refreshes itself only while its page is on display.</summary>
+        /// <param name="shown">Whether the panel is on display.</param>
         public void SetShown(bool shown)
         {
+            _shown = shown;
             if (shown && Page == OnlineMenuPage.Lobby)
                 _lobby.Activate();
             else
@@ -185,18 +189,21 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>重新連線 (offered after the connection was lost here).</summary>
         public void Reconnect() => _session.Reconnect();
 
-        /// <summary>登出: back to the main menu, the remembered login forgotten.</summary>
+        /// <summary>Logout returns to the login page and forgets the remembered login.</summary>
         public void Logout()
         {
             _lobby.Deactivate();
-            ShowPage(OnlineMenuPage.GameKinds);
             _session.Logout();
         }
+
+        /// <summary>Shows a page requested by the session when the main menu opens its panel.</summary>
+        /// <param name="page">The requested page.</param>
+        public void OpenPage(OnlineMenuPage page) => ShowPage(page);
 
         private void ShowPage(OnlineMenuPage page)
         {
             Page = page;
-            if (page == OnlineMenuPage.Lobby)
+            if (_shown && page == OnlineMenuPage.Lobby)
                 _lobby.Activate();
             else
                 _lobby.Deactivate();

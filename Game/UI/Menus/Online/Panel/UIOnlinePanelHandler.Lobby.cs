@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// UIOnlineMenuHandler.Lobby.cs
+// UIOnlinePanelHandler.Lobby.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
@@ -13,7 +13,7 @@ using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
+namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
     /// <summary>
     /// Binds the online menu's lobby page to the <see cref="LobbyPresenter"/>: the buttons and the
@@ -22,7 +22,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
     /// The presenter refreshes the list by itself while the page is on display
     /// (<see cref="OnlineMenuPresenter.SetShown"/>).
     /// </summary>
-    public partial class UIOnlineMenuHandler : ISettingsRowEditor
+    public partial class UIOnlinePanelHandler : ISettingsRowEditor
     {
         /// <summary>The lobby's decisions (the <see cref="LobbyPresenter"/> registered in DI).</summary>
         internal LobbyPresenter Lobby => _factory.ServiceProvider.GetRequiredService<LobbyPresenter>();
@@ -40,13 +40,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             Element.RoomNumberField.Handler.Submitted = _ => JoinByNumber();
         }
 
-        /// <summary>重新整理.</summary>
+        /// <summary>refresh.</summary>
         public void RefreshRooms() => Lobby.Refresh();
 
-        /// <summary>建立房間 with the editor's settings.</summary>
+        /// <summary>create room with the editor's settings.</summary>
         public void CreateRoom() => Lobby.Create();
 
-        /// <summary>加入 (button or Enter) with the room number field.</summary>
+        /// <summary>join (button or Enter) with the room number field.</summary>
         public void JoinByNumber() => Lobby.JoinByNumber();
 
         /// <summary>Shows the lobby's state, while its page is the one on display.</summary>
@@ -59,9 +59,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             var lobby = Lobby;
             if (!menu.RoomNumberField.IsFocused)
                 menu.RoomNumberField.Text = lobby.RoomNumber ?? string.Empty;
-            UIOnlineMenu.SetLine(menu.NewRoomSummaryLine, lobby.NewRoomSummaryText);
-            UIOnlineMenu.SetLine(menu.LobbyErrorLine, lobby.ErrorSentence);
-            UIOnlineMenu.SetLine(menu.EmptyRoomsLine, lobby.EmptyText);
+            UIOnlinePanel.SetLine(menu.NewRoomSummaryLine, lobby.NewRoomSummaryText);
+            UIOnlinePanel.SetLine(menu.LobbyErrorLine, lobby.ErrorSentence);
+            UIOnlinePanel.SetLine(menu.EmptyRoomsLine, lobby.EmptyText);
             menu.ShowRooms(lobby.Rooms, lobby.JoinText);
             menu.ShowRoomSettings(lobby.RoomSettingsSections, this);
             menu.RefreshRoomSettings(lobby.RoomSettingsValues);

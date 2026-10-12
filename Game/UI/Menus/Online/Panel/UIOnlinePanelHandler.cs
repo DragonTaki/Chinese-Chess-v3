@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// UIOnlineMenuHandler.cs
+// UIOnlinePanelHandler.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
@@ -14,19 +14,19 @@ using Engine.UI.Core.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
+namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
     /// <summary>
-    /// Binds the <see cref="UIOnlineMenu"/> to the <see cref="OnlineMenuPresenter"/>, which makes
-    /// the decisions (the pages, 登出, 重新連線, back): the buttons call its commands, the screen
+    /// Binds the <see cref="UIOnlinePanel"/> to the <see cref="OnlineMenuPresenter"/>, which makes
+    /// the decisions (the pages, logout, reconnect, back): the buttons call its commands, the screen
     /// shows the page on <see cref="OnlineMenuPresenter.PageChanged"/> and redraws on
     /// <see cref="OnlineMenuPresenter.Changed"/>.
     /// <see cref="IScreen"/>: shown / left → <see cref="OnlineMenuPresenter.SetShown"/> (the lobby
     /// refreshes itself only while it is on display).
     /// </summary>
-    public partial class UIOnlineMenuHandler : UIMenuHandler<UIOnlineMenu, UIOnlineMenuHandler, UIOnlineMenuRenderer>, IScreen
+    public partial class UIOnlinePanelHandler : UIMenuHandler<UIOnlinePanel, UIOnlinePanelHandler, UIOnlinePanelRenderer>, IScreen
     {
-        public UIOnlineMenuHandler() { }
+        public UIOnlinePanelHandler() { }
 
         /// <summary>The online menu's decisions (the <see cref="OnlineMenuPresenter"/> registered in DI).</summary>
         internal OnlineMenuPresenter Presenter => _factory.ServiceProvider.GetRequiredService<OnlineMenuPresenter>();
@@ -39,31 +39,42 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             presenter.PageChanged += page =>
             {
                 Element?.ShowPage(page);
+                if (page == OnlineMenuPage.Login)
+                    Login.Shown();
                 Refresh();
             };
             InitLobby();
+            InitLogin();
         }
 
-        /// <summary>重新連線.</summary>
+        /// <summary>reconnect.</summary>
         public void Reconnect() => Presenter.Reconnect();
 
-        /// <summary>登出.</summary>
+        /// <summary>logout.</summary>
         public void Logout() => Presenter.Logout();
 
-        /// <summary>返回: the previous page, or the main menu from the game kinds.</summary>
-        public void Back() => Presenter.Back();
+        /// <summary>back: the previous page, or the main menu from the game kinds.</summary>
+        public void Back()
+        {
+            if (Presenter.Page == OnlineMenuPage.Login)
+                Login.Back();
+            else
+                Presenter.Back();
+        }
 
         public void OnEnter()
         {
             var presenter = Presenter;
             presenter.SetShown(true);
             Element.ShowPage(presenter.Page);
+            if (presenter.Page == OnlineMenuPage.Login)
+                Login.Shown();
             Refresh();
         }
 
         public void OnExit() => Presenter.SetShown(false);
 
-        /// <summary>Shows the presenter's state: the account, 重新連線, the error, and the lobby page's.</summary>
+        /// <summary>Shows the presenter's state: the account, reconnect, the error, and the lobby page's.</summary>
         private void Refresh()
         {
             var menu = Element;
@@ -71,22 +82,29 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
                 return;
 
             var presenter = Presenter;
-            UIOnlineMenu.SetLine(menu.AccountLine, presenter.AccountText);
-            UIOnlineMenu.SetShown(menu.ReconnectButton, presenter.CanReconnect);
-            UIOnlineMenu.SetEnabled(menu.ReconnectButton, !presenter.IsBusy);
+            UIOnlinePanel.SetLine(menu.AccountLine, presenter.AccountText);
+            UIOnlinePanel.SetShown(menu.ReconnectButton, presenter.CanReconnect);
+            UIOnlinePanel.SetEnabled(menu.ReconnectButton, !presenter.IsBusy);
             // On the lobby page the lobby's own error line may already show the same sentence.
             string error = presenter.ErrorSentence;
             if (presenter.Page == OnlineMenuPage.Lobby && error == Lobby.ErrorSentence)
                 error = null;
-            UIOnlineMenu.SetLine(menu.ErrorLine, error);
+            UIOnlinePanel.SetLine(menu.ErrorLine, error);
+            RefreshLogin();
             RefreshLobby();
             menu.RefreshLayout();
         }
 
-        /// <summary>Subscribes to the lobby (<c>UIOnlineMenuHandler.Lobby.cs</c>).</summary>
+        /// <summary>Subscribes to the lobby (<c>UIOnlinePanelHandler.Lobby.cs</c>).</summary>
         partial void InitLobby();
 
-        /// <summary>Shows the lobby's state (<c>UIOnlineMenuHandler.Lobby.cs</c>).</summary>
+        /// <summary>Shows the lobby's state (<c>UIOnlinePanelHandler.Lobby.cs</c>).</summary>
         partial void RefreshLobby();
+
+        /// <summary>Subscribes to the login presenter.</summary>
+        partial void InitLogin();
+
+        /// <summary>Refreshes the login fields and state.</summary>
+        partial void RefreshLogin();
     }
 }

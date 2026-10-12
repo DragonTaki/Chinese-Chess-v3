@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/12
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,8 +12,6 @@ using System;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
-using Chinese_Chess_v3.Game.UI.Menus.Online.Login;
-using Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Room;
 
 using Engine.UI.Core.Bases;
@@ -44,12 +42,6 @@ namespace Chinese_Chess_v3.Game.UI.Navigation
                 case ScreenId.Game:
                     _navigationManager.Show<UIGameMenu, UIGameMenuHandler, UIGameMenuRenderer>();
                     break;
-                case ScreenId.Login:
-                    _navigationManager.Show<UILoginMenu, UILoginMenuHandler, UILoginMenuRenderer>();
-                    break;
-                case ScreenId.OnlineMenu:
-                    _navigationManager.Show<UIOnlineMenu, UIOnlineMenuHandler, UIOnlineMenuRenderer>();
-                    break;
                 case ScreenId.Room:
                     _navigationManager.Show<UIRoomMenu, UIRoomMenuHandler, UIRoomMenuRenderer>();
                     break;
@@ -64,8 +56,6 @@ namespace Chinese_Chess_v3.Game.UI.Navigation
             {
                 ScreenId.MainMenu => _navigationManager.GetScreen<UIMainMenu>(),
                 ScreenId.Game => _navigationManager.GetScreen<UIGameMenu>(),
-                ScreenId.Login => _navigationManager.GetScreen<UILoginMenu>(),
-                ScreenId.OnlineMenu => _navigationManager.GetScreen<UIOnlineMenu>(),
                 ScreenId.Room => _navigationManager.GetScreen<UIRoomMenu>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen"),
             };

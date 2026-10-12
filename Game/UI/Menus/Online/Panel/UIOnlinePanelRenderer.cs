@@ -1,5 +1,5 @@
 /* ----- ----- ----- ----- */
-// UILoginMenuRenderer.cs
+// UIOnlinePanelRenderer.cs
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
@@ -9,10 +9,10 @@
 
 using Engine.UI.Core.Renderers;
 
-namespace Chinese_Chess_v3.Game.UI.Menus.Online.Login
+namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
-    public class UILoginMenuRenderer : UIMenuRenderer<UILoginMenu, UILoginMenuHandler, UILoginMenuRenderer>
+    public class UIOnlinePanelRenderer : UIMenuRenderer<UIOnlinePanel, UIOnlinePanelHandler, UIOnlinePanelRenderer>
     {
-        public UILoginMenuRenderer() : base() { }
+        public UIOnlinePanelRenderer() : base() { }
     }
 }

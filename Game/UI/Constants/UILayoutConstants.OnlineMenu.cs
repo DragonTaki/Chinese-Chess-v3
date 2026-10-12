@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -19,8 +19,8 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         // ----- ----- ----- -----
 
         /// <summary>
-        /// The online screens (多人連線: <c>UILoginMenu</c>, <c>UIOnlineMenu</c> with its lobby page,
-        /// <c>UIRoomMenu</c>): a screen-sized menu whose panel is the left column the main menu and
+        /// Shared online block sizes and the room screen layout: a screen-sized menu
+        /// whose panel is the left column the main menu and
         /// an open submenu take together, holding one scrolling column of headers, text lines,
         /// setting-like rows (name left, control right) and rows of buttons.
         /// All values are placeholders for the author to tune where the app can be seen.

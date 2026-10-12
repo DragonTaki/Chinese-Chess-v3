@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.Application.Online
@@ -29,9 +29,12 @@ namespace Chinese_Chess_v3.Game.Application.Online
         CustomRoom,
     }
 
-    /// <summary>The page the online menu shows.</summary>
+    /// <summary>The page shown inside the Multiplayer submenu panel.</summary>
     public enum OnlineMenuPage
     {
+        /// <summary>The login form, also shown while the remembered login connects.</summary>
+        Login,
+
         /// <summary>選擇玩法: the game kinds.</summary>
         GameKinds,
 

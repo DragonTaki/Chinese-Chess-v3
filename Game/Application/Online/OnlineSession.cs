@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -235,21 +235,47 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>An error sentence to show (<see cref="LastError"/>): a failed login, a lost connection, a server error.</summary>
         public event Action<string> ErrorRaised;
 
+        /// <summary>The page to open when the main menu next enters; consumed once by its presenter.</summary>
+        public OnlineMenuPage? PendingPanelPage { get; private set; }
+
+        /// <summary>The main menu is on display and can consume the requested panel page.</summary>
+        public event Action PanelRequested;
+
+        /// <summary>The panel's back command closes the submenu.</summary>
+        public event Action PanelClosed;
+
+        /// <summary>Consumes the pending page, including a request made while another screen was leaving.</summary>
+        public OnlineMenuPage? TakePanelPage()
+        {
+            OnlineMenuPage? page = PendingPanelPage;
+            PendingPanelPage = null;
+            return page;
+        }
+
+        /// <summary>Returns to the main menu with the Multiplayer panel on the requested page.</summary>
+        /// <param name="page">The panel page.</param>
+        public void ShowPanel(OnlineMenuPage page)
+        {
+            PendingPanelPage = page;
+            _navigator.Show(ScreenId.MainMenu);
+            PanelRequested?.Invoke();
+        }
+
         // ----- Entering and logging in -----
 
         /// <summary>
-        /// 多人連線 (ONLINE-PLAY §8.20): logged in → the online menu (the room while seated); a
-        /// remembered login → logs in with it (the login screen shows 連線中…), then the online
-        /// menu, or the login screen with the reason when it fails (an invalid token is
-        /// forgotten); otherwise → the login screen.
+        /// Opens the Multiplayer panel: logged in shows kinds; a remembered login connects on
+        /// the login page; otherwise the login form. A restored seat still opens the room screen.
         /// </summary>
         public void EnterMultiplayer()
         {
             switch (State)
             {
                 case OnlineState.LoggedIn:
+                    ShowPanel(OnlineMenuPage.GameKinds);
+                    return;
                 case OnlineState.ConnectionLost:
-                    _navigator.Show(ScreenId.OnlineMenu);
+                    ShowPanel(OnlineMenuPage.Lobby);
                     return;
                 case OnlineState.InRoom:
                 case OnlineState.InGame:
@@ -257,7 +283,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
                     _navigator.Show(ScreenId.Room);
                     return;
                 case OnlineState.LoggingIn:
-                    _navigator.Show(ScreenId.Login);
+                    ShowPanel(OnlineMenuPage.Login);
                     return;
             }
 
@@ -267,13 +293,13 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 Username = RememberedAccount;
                 StartLogin(LoginCredentials.WithToken(token), LoginPurpose.RememberedToken);
             }
-            _navigator.Show(ScreenId.Login);
+            ShowPanel(OnlineMenuPage.Login);
         }
 
         /// <summary>
         /// The login screen's 登入: logs in with the email and password; <paramref name="remember"/>
         /// keeps the returned login token for the automatic login (otherwise any remembered one is
-        /// forgotten). Success → the online menu; failure → <see cref="LastError"/>.
+        /// forgotten). Success opens the panel's kinds; failure → <see cref="LastError"/>.
         /// </summary>
         /// <param name="email">The account's email.</param>
         /// <param name="password">The password.</param>
@@ -324,7 +350,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>
         /// 登出: the server revokes the login token, takes this player out of its room at once (a
         /// running game is resigned) and closes the connection; the remembered login is forgotten;
-        /// back to the main menu.
+        /// back to the Multiplayer panel's login page.
         /// </summary>
         public void Logout()
         {
@@ -346,7 +372,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             StatusSentence = null;
             SetError(null, raise: false);
             SetState(OnlineState.LoggedOut);
-            _navigator.Show(ScreenId.MainMenu);
+            ShowPanel(OnlineMenuPage.Login);
 
             // The server closes the connection after its reply; close it here if it does not.
             Schedule(LogoutCloseTime, () =>
@@ -356,8 +382,13 @@ namespace Chinese_Chess_v3.Game.Application.Online
             });
         }
 
-        /// <summary>Back to the main menu, staying logged in (多人連線 comes back to the online menu).</summary>
-        public void LeaveToMainMenu() => _navigator.Show(ScreenId.MainMenu);
+        /// <summary>Closes the Multiplayer submenu, staying logged in.</summary>
+        public void LeaveToMainMenu()
+        {
+            PendingPanelPage = null;
+            _navigator.Show(ScreenId.MainMenu);
+            PanelClosed?.Invoke();
+        }
 
         // ----- Lobby and room -----
 
@@ -404,7 +435,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             _channel.LeaveRoom();
             ClearRoom();
             SetState(OnlineState.LoggedIn);
-            _navigator.Show(ScreenId.OnlineMenu);
+            ShowPanel(OnlineMenuPage.Lobby);
         }
 
         /// <summary>Asks to move a piece (FEN coordinates); see <see cref="OnlineChannel.SendMove"/>.</summary>
@@ -546,7 +577,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             if (purpose != LoginPurpose.AutoReconnect)
             {
                 ClearRoom();
-                _navigator.Show(ScreenId.OnlineMenu);
+                ShowPanel(purpose == LoginPurpose.ManualReconnect ? OnlineMenuPage.Lobby : OnlineMenuPage.GameKinds);
                 return;
             }
 
@@ -559,7 +590,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 ClearRoom();
                 SetError(OnlineTexts.RoomLostAfterDisconnect);
                 StateChanged?.Invoke();
-                _navigator.Show(ScreenId.OnlineMenu);
+                ShowPanel(OnlineMenuPage.Lobby);
             });
         }
 
@@ -626,7 +657,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             AccountId = null;
             SetError(reason == null ? null : OnlineTexts.LoginFailure(reason));
             SetState(OnlineState.LoggedOut, force: true);
-            _navigator.Show(ScreenId.Login);
+            ShowPanel(OnlineMenuPage.Login);
         }
 
         /// <summary>Forgets the remembered login (the token and its account) on this machine.</summary>
@@ -680,7 +711,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             });
         }
 
-        /// <summary>The seat is no longer held: the room is gone; the online menu offers 重新連線.</summary>
+        /// <summary>The seat is no longer held: the room is gone; the lobby panel offers 重新連線.</summary>
         private void GiveUpReconnect()
         {
             AppLogger.Log("(Online) Reconnect gave up: the seat is no longer held", LogLevel.WARN);
@@ -688,7 +719,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             StatusSentence = null;
             SetError(OnlineTexts.RoomLostAfterDisconnect);
             SetState(OnlineState.ConnectionLost, force: true);
-            _navigator.Show(ScreenId.OnlineMenu);
+            ShowPanel(OnlineMenuPage.Lobby);
         }
 
         // ----- Channel events (on the UI thread) -----
@@ -781,7 +812,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             StatusSentence = null;
             SetError(OnlineTexts.ReplacedByNewLogin, raise: false);
             SetState(OnlineState.LoggedOut, force: true);
-            _navigator.Show(ScreenId.MainMenu);
+            ShowPanel(OnlineMenuPage.Login);
             _dialogs.ShowConfirm(OnlineTexts.ReplacedByNewLogin, ConfirmDialogType.Ok, _ => { });
             ErrorRaised?.Invoke(LastError);
         }

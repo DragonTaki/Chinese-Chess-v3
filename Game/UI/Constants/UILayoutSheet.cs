@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/12
-// Version: v1.6
+// Version: v1.7
 /* ----- ----- ----- ----- */
 
 using System;
@@ -350,7 +350,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The online screens (<c>UILoginMenu</c>, <c>UIOnlineMenu</c>, <c>UIRoomMenu</c>): each
+        /// The online panel and room screen share block rules. The room screen
         /// covers the root, its panel is the left column the main menu and a submenu take together,
         /// and its scroll container is one flex column of blocks: section headers (as the settings
         /// screens'), text lines (height from their text), setting-like rows (name left, control
@@ -368,6 +368,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static readonly UILayoutStyle ScrollContainer = Menus.ScrollContainer(
                 UILayoutConstants.OnlineMenu.MarginX, UILayoutConstants.OnlineMenu.MarginY,
                 UILayoutConstants.OnlineMenu.RowGap, PanelWidth) with
+            {
+                Overflow = OverflowMode.Hidden,
+            };
+
+            /// <summary>The right-hand submenu's clipped scrolling column; blocks keep the online row gaps.</summary>
+            public static readonly UILayoutStyle PanelScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
+                UILayoutConstants.OnlineMenu.RowGap) with
             {
                 Overflow = OverflowMode.Hidden,
             };
@@ -415,6 +423,12 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 JustifyContent = JustifyContent.Start,
                 AlignItems = FlexAlign.Stretch,
                 RowGap = UILayoutConstants.OnlineMenu.RowGap,
+            };
+
+            /// <summary>Kinds and modes: the same vertical button spacing as the other submenus.</summary>
+            public static readonly UILayoutStyle Choices = Group with
+            {
+                RowGap = UILayoutConstants.Submenu.Button.Spacing,
             };
 
             /// <summary>A block of lines (a lobby room, the settings summary): a group with the line gap.</summary>

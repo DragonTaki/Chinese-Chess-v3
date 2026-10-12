@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/10/12
-// Version: v2.5
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -17,6 +17,7 @@ using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
+using Chinese_Chess_v3.Game.UI.Menus.Online.Panel;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
 
 using Engine.UI.Core.Elements;
@@ -68,7 +69,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             {
                 MainMenuOption.SinglePlayer => CreateKindMenu(factory, KindMenuPurpose.SinglePlayer),
                 MainMenuOption.VsComputer => CreateKindMenu(factory, KindMenuPurpose.VsComputer),
-                MainMenuOption.Multiplayer => CreateKindMenu(factory, KindMenuPurpose.Online),
+                MainMenuOption.Multiplayer => factory.CreateDIElement<UIOnlinePanel, UIOnlinePanelHandler, UIOnlinePanelRenderer>(),
                 // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
                 MainMenuOption.LoadGame => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>(),
                 MainMenuOption.EndgameChallenge => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>(),
@@ -145,7 +146,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         public MainMenuOption? CurrentSubmenu => Presenter.CurrentSubmenu;
 
 
-        public void OnEnter() { }
+        public void OnEnter() => Presenter.Shown();
 
         /// <summary>Leaving the main menu: closes the open submenu and forgets it (<see cref="MainMenuPresenter.CloseSubmenu"/>).</summary>
         public void OnExit() => Presenter.CloseSubmenu();
