@@ -3,9 +3,12 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/15
-// Update Date: 2026/10/05
-// Version: v1.4
+// Update Date: 2026/10/12
+// Version: v1.5
 /* ----- ----- ----- ----- */
+
+using System.Collections.Generic;
+using System.Drawing;
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.UI.Constants;
@@ -20,7 +23,17 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 {
     public class UIMainMenu : UIMenu<UIMainMenu, UIMainMenuHandler, UIMainMenuRenderer>
     {
+        private readonly Dictionary<MainMenuOption, UIButton> _optionButtons = new();
+        private readonly Dictionary<MainMenuOption, Color> _optionColors = new();
+
         public UIMainMenu() { }
+
+        /// <summary>The button of <paramref name="option"/>, or null if it has none.</summary>
+        public UIButton ButtonOf(MainMenuOption option) => _optionButtons.GetValueOrDefault(option);
+
+        /// <summary>The colour of <paramref name="option"/>'s button (the colour of the submenu it opens).</summary>
+        public Color ColorOf(MainMenuOption option) => _optionColors.GetValueOrDefault(option);
+
         protected override void OnBeforeInit(IUiFactory factory)
         {
             ButtonSpacing = UILayoutConstants.MainMenu.Button.Spacing;
@@ -46,6 +59,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             var menuEntries = MainMenuOptions.Create(Handler.SwitchSubmenu);
             Vector2F btnStartPos = UILayoutConstants.MainMenu.Button.Position; // TODO: btnStartPos is unused; remove it or use it
 
+            // One colour per button, blue to red (author §8.40)
+            var colors = MenuAccent.Gradient(menuEntries.Count);
+
             for (int i = 0; i < menuEntries.Count; i++)
             {
                 var entry = menuEntries[i].ToButtonEntry();
@@ -53,6 +69,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
                 button.Text = entry.Label;
                 button.Handler.Action = entry.OnClick;
+                button.Style = UILayoutStyles.MainMenu.Button.StyleFor(colors[i]);
+                _optionButtons[menuEntries[i].Id] = button;
+                _optionColors[menuEntries[i].Id] = colors[i];
 
                 // Stacked by the scroll container's flex column (Gap = Button.Spacing).
                 button.Size = UILayoutConstants.MainMenu.Button.Size;

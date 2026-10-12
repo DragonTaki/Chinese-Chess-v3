@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
 // Update Date: 2026/10/12
-// Version: v2.5
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -117,6 +117,80 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     Margin = Border.Margin,
                     CornerRadius = Border.CornerRadius
                 };
+
+                /// <summary>
+                /// A main menu button's own look (author §8.40): <see cref="Style"/> with the
+                /// borders and the background tint in <paramref name="accent"/>, derived the same way
+                /// as the submenus' <see cref="Accent"/>.
+                /// </summary>
+                /// <param name="accent">The button's colour.</param>
+                /// <returns>A new style; nothing is shared with other buttons.</returns>
+                public static IButtonDrawStyle StyleFor(Color accent) => new DoubleBorderRoundedStyle
+                {
+                    Font = Font,
+                    TextBrush = TextBrush,
+                    BackgroundBrushFactory = new LinearGradientBrushFactory(
+                        StyleHelper.GetColor(accent, 0.35f), StyleHelper.GetColor(accent, 0.2f), GradientDirection.Vertical),
+                    OuterBorder = new BorderStyle { Width = Border.Outer.Width, Color = StyleHelper.GetColor(accent, 0.85f) },
+                    InnerBorder = new BorderStyle { Width = Border.Inner.Width, Color = StyleHelper.GetColor(accent, 0.9f) },
+                    Margin = Border.Margin,
+                    CornerRadius = Border.CornerRadius
+                };
+            }
+        }
+
+        /// <summary>
+        /// The colour of the open main menu submenu (the main menu button that opened it): the
+        /// submenus' button styles share these border and background objects, so setting the
+        /// accent recolours them all. Starts as the main menu button's gold (author §8.40).
+        /// </summary>
+        public static class Accent
+        {
+            private const float OuterAlpha = 0.85f;
+            private const float InnerAlpha = 0.9f;
+            private const float DimAlpha = 0.3f;
+            private const float TopTintAlpha = 0.35f;
+            private const float BottomTintAlpha = 0.2f;
+
+            public static readonly BorderStyle Outer = new BorderStyle
+            {
+                Width = 4.0f,
+                Color = StyleHelper.GetColor("#F9BF45", OuterAlpha)  // #F9BF45
+            };
+
+            public static readonly BorderStyle Inner = new BorderStyle
+            {
+                Width = 2.0f,
+                Color = StyleHelper.GetColor("#F9BF45", InnerAlpha)  // #F9BF45
+            };
+
+            /// <summary>Outer border of what is dimmed (off toggles, headers, disabled buttons).</summary>
+            public static readonly BorderStyle OuterDim = new BorderStyle
+            {
+                Width = 4.0f,
+                Color = StyleHelper.GetColor("#F9BF45", DimAlpha)  // #F9BF45
+            };
+
+            public static readonly BorderStyle InnerDim = new BorderStyle
+            {
+                Width = 2.0f,
+                Color = StyleHelper.GetColor("#F9BF45", DimAlpha)  // #F9BF45
+            };
+
+            private static readonly LinearGradientBrushFactory BackgroundFactory =
+                new LinearGradientBrushFactory(MainMenu.Button.Background.TopColor, MainMenu.Button.Background.BottomColor, GradientDirection.Vertical);
+
+            public static IBrushFactory Background => BackgroundFactory;
+
+            /// <summary>Makes <paramref name="color"/> the submenu buttons' colour.</summary>
+            public static void Set(Color color)
+            {
+                Outer.Color = StyleHelper.GetColor(color, OuterAlpha);
+                Inner.Color = StyleHelper.GetColor(color, InnerAlpha);
+                OuterDim.Color = StyleHelper.GetColor(color, DimAlpha);
+                InnerDim.Color = StyleHelper.GetColor(color, DimAlpha);
+                BackgroundFactory.TopColor = StyleHelper.GetColor(color, TopTintAlpha);
+                BackgroundFactory.BottomColor = StyleHelper.GetColor(color, BottomTintAlpha);
             }
         }
 
@@ -171,9 +245,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = ButtonFont,
                 TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
+                BackgroundBrushFactory = Accent.Background,
+                OuterBorder = Accent.Outer,
+                InnerBorder = Accent.Inner,
                 Margin = MainMenu.Button.Border.Margin,
                 CornerRadius = MainMenu.Button.Border.CornerRadius
             };
@@ -183,7 +257,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = HeaderFont,
                 TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                BackgroundBrushFactory = Accent.Background,
                 OuterBorder = CategoryListMenu.CategoryOff.Outer,
                 InnerBorder = CategoryListMenu.CategoryOff.Inner,
                 Margin = MainMenu.Button.Border.Margin,
@@ -198,9 +272,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = ValueFont,
                 TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
+                BackgroundBrushFactory = Accent.Background,
+                OuterBorder = Accent.Outer,
+                InnerBorder = Accent.Inner,
                 Margin = MainMenu.Button.Border.Margin,
                 CornerRadius = MainMenu.Button.Border.CornerRadius
             };
@@ -212,7 +286,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 {
                     Font = ValueFont,
                     TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    BackgroundBrushFactory = Accent.Background,
                     OuterBorder = CategoryListMenu.CategoryOff.Outer,
                     InnerBorder = CategoryListMenu.CategoryOff.Inner,
                     Margin = MainMenu.Button.Border.Margin,
@@ -341,7 +415,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = SettingsMenu.ButtonFont,
                 TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                BackgroundBrushFactory = Accent.Background,
                 OuterBorder = CategoryListMenu.CategoryOff.Outer,
                 InnerBorder = CategoryListMenu.CategoryOff.Inner,
                 Margin = MainMenu.Button.Border.Margin,
@@ -422,7 +496,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = SettingsMenu.ButtonFont,
                 TextBrush = CategoryListMenu.CategoryOff.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                BackgroundBrushFactory = Accent.Background,
                 OuterBorder = CategoryListMenu.CategoryOff.Outer,
                 InnerBorder = CategoryListMenu.CategoryOff.Inner,
                 Margin = MainMenu.Button.Border.Margin,
@@ -472,9 +546,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 Font = ButtonFont,
                 TextBrush = MainMenu.Button.TextBrush,
-                BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
-                OuterBorder = MainMenu.Button.Border.Outer,
-                InnerBorder = MainMenu.Button.Border.Inner,
+                BackgroundBrushFactory = Accent.Background,
+                OuterBorder = Accent.Outer,
+                InnerBorder = Accent.Inner,
                 Margin = MainMenu.Button.Border.Margin,
                 CornerRadius = MainMenu.Button.Border.CornerRadius
             };
@@ -484,23 +558,16 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 public static readonly IBrush TextBrush = StyleHelper.GetBrush("#FCFAF2", 0.45f);  // #FCFAF2
 
-                public static readonly BorderStyle Outer = new BorderStyle
-                {
-                    Width = 4.0f,
-                    Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
-                };
+                // Dimmed borders in the submenu accent colour (see Accent).
+                public static readonly BorderStyle Outer = Accent.OuterDim;
 
-                public static readonly BorderStyle Inner = new BorderStyle
-                {
-                    Width = 2.0f,
-                    Color = StyleHelper.GetColor("#F9BF45", 0.3f)  // #F9BF45
-                };
+                public static readonly BorderStyle Inner = Accent.InnerDim;
 
                 public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
                 {
                     Font = ButtonFont,
                     TextBrush = TextBrush,
-                    BackgroundBrushFactory = MainMenu.Button.Background.BrushFactory,
+                    BackgroundBrushFactory = Accent.Background,
                     OuterBorder = Outer,
                     InnerBorder = Inner,
                     Margin = MainMenu.Button.Border.Margin,

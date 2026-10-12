@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/10/12
-// Version: v2.6
+// Version: v2.7
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Settings;
+using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
@@ -119,6 +120,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         private void ShowSubmenu(MainMenuOption option)
         {
             var submenu = _submenus[option];
+            // The submenu's buttons take the colour of the main menu button that opened it
+            UILayoutStyles.Accent.Set(Element.ColorOf(option));
             submenu.IsVisible = true;
             Element.AddChild(submenu);
             AsScreen(submenu)?.OnEnter();
