@@ -40,6 +40,11 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         private static readonly RuleSettings Defaults = new RuleSettings();
 
+        /// <summary>Whether a room sends <paramref name="option"/> (it has a name on the wire); a room's settings editor shows only these.</summary>
+        /// <param name="option">A rule switch.</param>
+        /// <returns>True when the switch is part of a room's settings.</returns>
+        public static bool IsSent(RuleOption option) => WireNames.ContainsKey(option);
+
         /// <summary>The server's name of a game kind (the enum member's name, e.g. Traditional).</summary>
         /// <param name="kind">The game kind.</param>
         /// <returns>The name.</returns>

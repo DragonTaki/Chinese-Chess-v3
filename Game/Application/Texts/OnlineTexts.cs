@@ -162,6 +162,21 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>The list's text when there is no waiting room.</summary>
         public static string NoRooms => Lang.Get("online.no_rooms");
 
+        /// <summary>The header above the waiting rooms.</summary>
+        public static string RoomList => Lang.Get("online.room_list");
+
+        /// <summary>The header above a new room's settings.</summary>
+        public static string NewRoomSettings => Lang.Get("online.new_room_settings");
+
+        /// <summary>A room settings editor's rule section header (the room's rules, not the local ones).</summary>
+        public static string SectionRules => Lang.Get("online.section_rules");
+
+        /// <summary>A room settings editor's clock section header.</summary>
+        public static string SectionTimer => Lang.Get("online.section_timer");
+
+        /// <summary>A room settings editor's own section header (first mover, pausing).</summary>
+        public static string SectionRoom => Lang.Get("online.section_room");
+
         /// <summary>A room number that is not six digits.</summary>
         public static string InvalidRoomNumber => Lang.Get("online.error.invalid_room_number");
 
@@ -232,6 +247,12 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             "Random" => Lang.Get("online.first_mover.random"),
             _ => firstMover ?? "",
         };
+
+        /// <summary>The header above a room's seats.</summary>
+        public static string Seats => Lang.Get("online.seats");
+
+        /// <summary>The header above a room's settings.</summary>
+        public static string RoomSettings => Lang.Get("online.room_settings");
 
         /// <summary>The room settings' first-mover line name.</summary>
         public static string FirstMover => Lang.Get("online.first_mover");

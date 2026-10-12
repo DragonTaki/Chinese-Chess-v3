@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,11 +12,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Network.Protocol;
 
+using Engine.Localization;
 using Engine.Timing;
 
 namespace Chinese_Chess_v3.Game.Application.Online
@@ -48,6 +50,9 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>The room's settings, one sentence per line.</summary>
         public IReadOnlyList<string> Summary { get; }
 
+        /// <summary>The room's settings as one line (the sentences joined as a list).</summary>
+        public string SummaryText => Lang.JoinList(Summary);
+
         /// <summary>Whether a seat is free.</summary>
         public bool CanJoin { get; }
 
@@ -61,15 +66,25 @@ namespace Chinese_Chess_v3.Game.Application.Online
     /// §8.27), joining by the six-digit room number or from the list, and creating a room. A new
     /// room's settings are edited on <see cref="RoomRules"/> (the same option model as the local rule
     /// settings, starting at the defaults: the room's settings are the game's rules, not the
-    /// player's local ones), <see cref="FirstMover"/> and <see cref="AllowPause"/>.
+    /// player's local ones), <see cref="FirstMover"/> and <see cref="AllowPause"/>; the view's
+    /// editor shows <see cref="RoomSettingsSections"/> (the local rule settings' rows) over
+    /// <see cref="RoomSettingsValues"/> and sends its edits to <see cref="SetToggle"/>,
+    /// <see cref="SetChoice"/>, <see cref="SetNumber"/>, <see cref="SetInteger"/> and <see cref="SetText"/>.
     /// </summary>
     public sealed class LobbyPresenter
     {
         /// <summary>How often the list refreshes itself while the lobby is on display.</summary>
         public static readonly TimeSpan RefreshInterval = TimeSpan.FromSeconds(5);
 
+        /// <summary>How many digits a room number has.</summary>
+        public const int RoomNumberLength = 6;
+
+        // The first mover choices in the editor's order.
+        private static readonly OnlineFirstMover[] FirstMoverOrder = { OnlineFirstMover.Random, OnlineFirstMover.Host, OnlineFirstMover.Guest };
+
         private readonly OnlineSession _session;
         private readonly IMainThreadQueue _mainThread;
+        private readonly Dictionary<GameKind, IReadOnlyList<SettingsMenuSection>> _sections = new();
         private Timer _refreshTimer;
         private string _localError;
 
@@ -111,6 +126,15 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>The list's text when it is empty, otherwise null.</summary>
         public string EmptyText => Rooms.Count == 0 ? OnlineTexts.NoRooms : null;
 
+        /// <summary>The lobby page's title (自訂房間).</summary>
+        public string TitleText => OnlineTexts.ModeName(OnlineMode.CustomRoom);
+
+        /// <summary>The header above the waiting rooms.</summary>
+        public string RoomListTitle => OnlineTexts.RoomList;
+
+        /// <summary>The header above a new room's settings.</summary>
+        public string NewRoomTitle => OnlineTexts.NewRoomSettings;
+
         // ----- State -----
 
         /// <summary>The game kind of the rooms created here (the online menu's choice).</summary>
@@ -125,8 +149,42 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>The room number field.</summary>
         public string RoomNumber { get; set; } = "";
 
-        /// <summary>A new room's rule and clock choices (defaults until edited).</summary>
-        public RuleSettings RoomRules { get; } = new RuleSettings();
+        /// <summary>
+        /// The settings instance a new room's choices are edited in (its own, at the defaults until
+        /// edited; never the player's local settings, never saved). Only its
+        /// <see cref="RoomRules"/> are used.
+        /// </summary>
+        public PlayerSettings RoomSettingsValues { get; } = new PlayerSettings();
+
+        /// <summary>A new room's rule and clock choices for <see cref="Kind"/> (defaults until edited).</summary>
+        public RuleSettings RoomRules => RoomSettingsValues.Rules.RulesFor(Kind);
+
+        /// <summary>
+        /// The new room's settings editor for <see cref="Kind"/>: the local rule settings' rule and
+        /// clock rows a room sends (<see cref="SettingsMenuContent.RoomRuleSections"/>), then
+        /// 先手 and 允許暫停. Its items read and write <see cref="RoomSettingsValues"/>.
+        /// </summary>
+        public IReadOnlyList<SettingsMenuSection> RoomSettingsSections
+        {
+            get
+            {
+                if (!_sections.TryGetValue(Kind, out var sections))
+                {
+                    var list = new List<SettingsMenuSection>(
+                        SettingsMenuContent.RoomRuleSections(Kind, OnlineTexts.SectionRules, OnlineTexts.SectionTimer));
+                    list.Add(new SettingsMenuSection(OnlineTexts.SectionRoom, new SettingsMenuItem[]
+                    {
+                        new SettingsChoiceItem(OnlineTexts.FirstMover,
+                            FirstMoverOrder.Select(f => OnlineTexts.FirstMoverName(OnlineRoomSettings.FirstMoverName(f))).ToArray(),
+                            _ => Math.Max(0, Array.IndexOf(FirstMoverOrder, FirstMover)), (_, index) => FirstMover = FirstMoverOrder[index]),
+                        new SettingsToggleItem(OnlineTexts.AllowPause, _ => AllowPause, (_, on) => AllowPause = on),
+                    }));
+                    sections = list;
+                    _sections[Kind] = sections;
+                }
+                return sections;
+            }
+        }
 
         /// <summary>A new room's first mover.</summary>
         public OnlineFirstMover FirstMover { get; set; } = OnlineFirstMover.Random;
@@ -165,11 +223,11 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>重新整理: asks for the list now.</summary>
         public void Refresh() => _session.RequestRoomList();
 
-        /// <summary>加入 with the room number field: six digits, otherwise an error sentence.</summary>
+        /// <summary>加入 with the room number field: <see cref="RoomNumberLength"/> digits, otherwise an error sentence.</summary>
         public void JoinByNumber()
         {
             string number = RoomNumber?.Trim() ?? "";
-            if (number.Length != 6 || !number.All(c => c >= '0' && c <= '9'))
+            if (number.Length != RoomNumberLength || !number.All(c => c >= '0' && c <= '9'))
             {
                 _localError = OnlineTexts.InvalidRoomNumber;
                 Changed?.Invoke();
@@ -194,6 +252,60 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         /// <summary>A new room's settings, one sentence per line.</summary>
         public IReadOnlyList<string> NewRoomSummary => OnlineRoomSettings.Summary(BuildSettings());
+
+        /// <summary>A new room's settings as one line (the sentences joined as a list).</summary>
+        public string NewRoomSummaryText => Lang.JoinList(NewRoomSummary);
+
+        /// <summary>The editor's switch flipped (<see cref="RoomSettingsSections"/>).</summary>
+        /// <param name="item">The switch's setting.</param>
+        /// <param name="value">On or off.</param>
+        public void SetToggle(SettingsToggleItem item, bool value)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            item.Set(RoomSettingsValues, value);
+            Changed?.Invoke();
+        }
+
+        /// <summary>The editor's dropdown chose an option (kept within the options).</summary>
+        /// <param name="item">The dropdown's setting.</param>
+        /// <param name="index">The option.</param>
+        public void SetChoice(SettingsChoiceItem item, int index)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            item.SetIndex(RoomSettingsValues, Math.Clamp(index, 0, item.Options.Count - 1));
+            Changed?.Invoke();
+        }
+
+        /// <summary>The editor's slider moved (kept within its range).</summary>
+        /// <param name="item">The slider's setting.</param>
+        /// <param name="value">The value.</param>
+        public void SetNumber(SettingsNumberItem item, float value)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            item.Set(RoomSettingsValues, Math.Clamp(value, item.Min, item.Max));
+            Changed?.Invoke();
+        }
+
+        /// <summary>The editor's text field edited (cut to its longest length).</summary>
+        /// <param name="item">The field's setting.</param>
+        /// <param name="value">The text.</param>
+        public void SetText(SettingsTextItem item, string value)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            value ??= string.Empty;
+            item.Set(RoomSettingsValues, value.Length > item.MaxLength ? value.Substring(0, item.MaxLength) : value);
+            Changed?.Invoke();
+        }
+
+        /// <summary>The editor's number field ended an edit (kept within its range).</summary>
+        /// <param name="item">The field's setting.</param>
+        /// <param name="value">The value.</param>
+        public void SetInteger(SettingsIntegerItem item, int value)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            item.Set(RoomSettingsValues, Math.Clamp(value, item.Min, item.Max));
+            Changed?.Invoke();
+        }
 
         /// <summary>建立房間 with the current settings (then the room screen, or an error sentence).</summary>
         public void Create()

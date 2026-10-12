@@ -4,13 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/12
-// Version: v2.4
+// Version: v2.5
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
@@ -558,14 +559,32 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             });
         }
 
-        private static SettingsMenuPage RulePage(GameKind kind)
+        private static SettingsMenuPage RulePage(GameKind kind) =>
+            new(SettingsTexts.GameKindName(kind), RuleSections(kind, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer));
+
+        /// <summary>
+        /// An online custom room's rule and clock sections for <paramref name="kind"/>, editing
+        /// <c>Rules.RulesFor(kind)</c> of the settings instance given to the items (the lobby's own,
+        /// not the player's): only the rule switches a room sends (<see cref="OnlineRoomSettings.IsSent"/>),
+        /// without 三國's choices and 超時判負 (not room settings: the server decides them).
+        /// </summary>
+        /// <param name="kind">The room's game kind.</param>
+        /// <param name="rulesHeader">The rule section's header.</param>
+        /// <param name="timerHeader">The clock section's header.</param>
+        /// <returns>The sections (the rule one only when the kind has a switch a room sends).</returns>
+        public static IReadOnlyList<SettingsMenuSection> RoomRuleSections(GameKind kind, string rulesHeader, string timerHeader) =>
+            RuleSections(kind, forRoom: true, rulesHeader, timerHeader);
+
+        /// <summary>One game kind's rule options, then its clock settings (<paramref name="forRoom"/>: an online room's subset).</summary>
+        private static List<SettingsMenuSection> RuleSections(GameKind kind, bool forRoom, string rulesHeader, string timerHeader)
         {
             RuleSettings R(PlayerSettings s) => s.Rules.RulesFor(kind);
 
             var rules = RuleSettings.OptionsFor(kind)
+                .Where(option => !forRoom || OnlineRoomSettings.IsSent(option))
                 .Select(option => (SettingsMenuItem)new SettingsToggleItem(OptionName(option), s => R(s).Get(option), (s, v) => R(s).Set(option, v)))
                 .ToList();
-            if (kind == GameKind.ThreeKingdoms)
+            if (kind == GameKind.ThreeKingdoms && !forRoom)
             {
                 rules.Add(EnumChoice(SettingsTexts.HalfCrossWinCondition, WinConditions, WinConditionTexts,
                     s => R(s).HalfCrossWinCondition, (s, v) => R(s).HalfCrossWinCondition = v));
@@ -582,7 +601,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 }
             }
 
-            var timer = new SettingsMenuItem[]
+            var timer = new List<SettingsMenuItem>
             {
                 EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
                 PresetChoice(R),
@@ -593,14 +612,15 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 new SettingsIntegerItem(SettingsTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
                     RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, SettingsTexts.SecondsUnit),
                 CountDownToggle(SettingsTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v),
-                CountDownToggle(SettingsTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v),
             };
+            if (!forRoom)
+                timer.Add(CountDownToggle(SettingsTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v));
 
             var sections = new List<SettingsMenuSection>();
             if (rules.Count > 0)
-                sections.Add(new SettingsMenuSection(SettingsTexts.SectionRules, rules));
-            sections.Add(new SettingsMenuSection(SettingsTexts.SectionTimer, timer));
-            return new SettingsMenuPage(SettingsTexts.GameKindName(kind), sections);
+                sections.Add(new SettingsMenuSection(rulesHeader, rules));
+            sections.Add(new SettingsMenuSection(timerHeader, timer));
+            return sections;
         }
 
         /// <summary>單機規則設定's tabs: one per game kind, in new-game menu order.</summary>

@@ -74,15 +74,19 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             UIOnlineMenu.SetLine(menu.AccountLine, presenter.AccountText);
             UIOnlineMenu.SetShown(menu.ReconnectButton, presenter.CanReconnect);
             UIOnlineMenu.SetEnabled(menu.ReconnectButton, !presenter.IsBusy);
-            UIOnlineMenu.SetLine(menu.ErrorLine, presenter.ErrorSentence);
+            // On the lobby page the lobby's own error line may already show the same sentence.
+            string error = presenter.ErrorSentence;
+            if (presenter.Page == OnlineMenuPage.Lobby && error == Lobby.ErrorSentence)
+                error = null;
+            UIOnlineMenu.SetLine(menu.ErrorLine, error);
             RefreshLobby();
             menu.RefreshLayout();
         }
 
-        /// <summary>Subscribes to the lobby (nothing yet).</summary>
+        /// <summary>Subscribes to the lobby (<c>UIOnlineMenuHandler.Lobby.cs</c>).</summary>
         partial void InitLobby();
 
-        /// <summary>Shows the lobby's state (nothing yet).</summary>
+        /// <summary>Shows the lobby's state (<c>UIOnlineMenuHandler.Lobby.cs</c>).</summary>
         partial void RefreshLobby();
     }
 }

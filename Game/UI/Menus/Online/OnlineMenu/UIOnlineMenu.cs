@@ -83,7 +83,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.OnlineMenu
             RefreshLayout();
         }
 
-        /// <summary>Builds the lobby page's blocks into <paramref name="page"/> (nothing yet).</summary>
+        /// <summary>Builds the lobby page's blocks into <paramref name="page"/> (<c>UIOnlineMenu.Lobby.cs</c>).</summary>
         partial void BuildLobby(UIOnlineGroup page);
     }
 }
