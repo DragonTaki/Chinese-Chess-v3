@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/06
-// Version: v1.3
+// Update Date: 2026/10/12
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -69,6 +69,8 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             GameOverReason.TimeUp => Lang.Get("game.over.reason.time_up"),
             GameOverReason.Resign => Lang.Get("game.over.reason.resign"),
             GameOverReason.NoPiecesLeft => Lang.Get("game.over.reason.no_pieces_left"),
+            GameOverReason.Disconnect => Lang.Get("game.over.reason.disconnect"),
+            GameOverReason.Other => Lang.Get("game.over.reason.other"),
             _ => reason.ToString(),
         };
 
@@ -191,6 +193,8 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             GameOverReason.TimeUp => Lang.Get("three_kingdoms.reason.time_up"),
             GameOverReason.Stalemate => Lang.Get("three_kingdoms.reason.stalemate"),
             GameOverReason.ScoreReached => Lang.Get("three_kingdoms.reason.score_reached"),
+            GameOverReason.Disconnect => Lang.Get("game.over.reason.disconnect"),
+            GameOverReason.Other => Lang.Get("game.over.reason.other"),
             _ => reason.ToString(),
         };
 

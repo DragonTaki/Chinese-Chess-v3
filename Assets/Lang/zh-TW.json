@@ -8,6 +8,8 @@
   "game.dialog.delete_save_failed": "刪除存檔失敗：{0}",
   "game.over.draw": "和棋\n{0}",
   "game.over.win": "{0}（{1}）獲勝\n{2}",
+  "game.over.reason.disconnect": "斷線",
+  "game.over.reason.other": "對局已結束",
   "game.over.reason.checkmate": "將死",
   "game.over.reason.stalemate": "困斃（對方無子可走）",
   "game.over.reason.stalemate_dark_chess": "對方無法行動",
