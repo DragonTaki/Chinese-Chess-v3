@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/07
 // Update Date: 2026/10/12
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -184,6 +184,12 @@ namespace Chinese_Chess_v3.Network.Protocol
 
         /// <summary>The player who moved.</summary>
         public int Mover { get; init; }
+
+        /// <summary>The square moved from ([x, y]); null when omitted by the server.</summary>
+        public int[] From { get; init; }
+
+        /// <summary>The square moved to ([x, y]); null when omitted by the server.</summary>
+        public int[] To { get; init; }
 
         /// <summary>The move's record.</summary>
         public MoveRecordDto Record { get; init; }

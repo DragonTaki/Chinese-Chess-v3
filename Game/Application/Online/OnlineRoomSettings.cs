@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -97,6 +97,31 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 FirstMover = FirstMoverName(firstMover),
                 AllowPause = allowPause,
             };
+        }
+
+        /// <summary>Builds a game's rules solely from the server's settings and code defaults.</summary>
+        /// <param name="start">The server's start or resume packet.</param>
+        /// <returns>A new rule set, independent of the player's local settings.</returns>
+        public static Rules RulesFrom(StartGameDto start)
+        {
+            ArgumentNullException.ThrowIfNull(start);
+            var settings = new RuleSettings();
+            foreach (var pair in WireNames)
+            {
+                if (start.Rules != null && start.Rules.TryGetValue(pair.Value, out bool value))
+                    settings.Set(pair.Key, value);
+            }
+
+            if (start.Timer is TimerSettingsDto timer)
+            {
+                settings.TimerMode = timer.Mode == RoomNames.TimerCountUp ? TimerMode.CountUp : TimerMode.CountDown;
+                settings.TotalTimeMinutes = timer.TotalMinutes;
+                settings.StepTimeSeconds = timer.StepSeconds;
+                settings.StepTimerEnabled = timer.StepTimer;
+                settings.IncrementSeconds = timer.IncrementSeconds;
+            }
+            settings.EndGameWhenTimesUp = settings.TimerMode == TimerMode.CountDown;
+            return settings.CreateRules();
         }
 
         /// <summary>The game kind a room's settings name, or null when this client does not know it.</summary>
