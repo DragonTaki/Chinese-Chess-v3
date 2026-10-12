@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/11/01
-// Update Date: 2026/10/07
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -24,6 +24,7 @@ namespace Chinese_Chess_v3.Network
         public string RoomId { get; set; } = "";
         public string Token { get; set; } = "";    // Used for authentication
         public string Data { get; set; } = "";
+        public string RefreshToken { get; set; }   // A login token (successful remembered / token login), or null
 
         public static Packet Create(PacketType type, string senderId, string roomId, string data)
         {
@@ -50,12 +51,13 @@ namespace Chinese_Chess_v3.Network
                 RoomId = envelope.RoomId,
                 Data = envelope.Data,
                 Token = envelope.Token,
+                RefreshToken = envelope.RefreshToken,
             };
         }
 
         /// <summary>The envelope to send for this packet.</summary>
         /// <returns>The envelope.</returns>
         public Envelope ToEnvelope()
-            => Envelope.Create(PacketTypeNames.ToName(Type), SenderId, RoomId, Data, Token);
+            => Envelope.Create(PacketTypeNames.ToName(Type), SenderId, RoomId, Data, Token, RefreshToken);
     }
 }

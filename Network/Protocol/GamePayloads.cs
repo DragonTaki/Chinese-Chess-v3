@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/07
-// Update Date: 2026/10/07
-// Version: v1.0
+// Update Date: 2026/10/12
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -206,5 +206,11 @@ namespace Chinese_Chess_v3.Network.Protocol
 
         /// <summary>Why (e.g. Resign, TimeUp, Disconnect, Checkmate).</summary>
         public string Reason { get; init; }
+
+        /// <summary>
+        /// The game's id (optional field; a game that ended while this player was away is reported
+        /// right after its next login, with the id telling which game it was).
+        /// </summary>
+        public string GameId { get; init; }
     }
 }

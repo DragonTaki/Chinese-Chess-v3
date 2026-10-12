@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/11/01
-// Update Date: 2026/10/07
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Network
@@ -20,6 +20,7 @@ namespace Chinese_Chess_v3.Network
         // Auth
         AuthRequest,      // Authentication request
         AuthResponse,     // Authentication response
+        Logout,           // Log out (revokes the login token; the server replies Logout and closes)
 
         // Room
         RoomList,         // The open rooms

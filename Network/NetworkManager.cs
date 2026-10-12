@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/11/01
-// Update Date: 2026/10/07
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -39,6 +39,10 @@ namespace Chinese_Chess_v3.Network
         public static readonly TimeSpan HeartbeatTimeout = TimeSpan.FromSeconds(8);
 
         private readonly NetConnection _connection;
+        private readonly object _credentialsLock = new();
+
+        // The credentials the login handshake (also a reconnect's) uses; replaced by the newest login token.
+        private LoginCredentials _credentials;
 
         /// <summary>Creates a disconnected manager for the built-in server (<see cref="ServerEndpoint"/>: TLS, address and trust from the environment overrides).</summary>
         public NetworkManager()
@@ -95,29 +99,54 @@ namespace Chinese_Chess_v3.Network
         public Task<bool> ConnectAsync() => _connection.ConnectAsync();
 
         /// <summary>
-        /// Opens the connection and logs in with the account (version check, then credentials);
-        /// the heartbeat starts once the server accepts. <see cref="Reconnect"/> logs in again
-        /// with the same account. The credentials are kept in memory only, for that.
+        /// Opens the connection and logs in with the account's email and password (no login token
+        /// asked for); see <see cref="LoginAsync(LoginCredentials)"/>.
         /// </summary>
         /// <param name="email">The account's email.</param>
         /// <param name="password">The account's password.</param>
+        /// <returns>The login's result.</returns>
+        public Task<AuthResult> LoginAsync(string email, string password)
+            => LoginAsync(LoginCredentials.WithPassword(email, password));
+
+        /// <summary>
+        /// Opens the connection and logs in (version check, then the email and password or a login
+        /// token); the heartbeat starts once the server accepts. <see cref="Reconnect"/> logs in
+        /// again with the same account: with the password, or, once a login returned a login
+        /// token (<see cref="AuthResult.RefreshToken"/>), with that newest token (a spent token is
+        /// never sent again). The credentials are kept in memory only, for that.
+        /// </summary>
+        /// <param name="credentials">The email and password, or a login token.</param>
         /// <returns>The login's result (<see cref="AuthResult.ReasonConnectFailed"/> when the server
         /// could not be reached, <see cref="AuthResult.ReasonAlreadyConnected"/> while a connection is open).</returns>
-        public async Task<AuthResult> LoginAsync(string email, string password)
+        public async Task<AuthResult> LoginAsync(LoginCredentials credentials)
         {
-            ArgumentNullException.ThrowIfNull(email);
-            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(credentials);
 
             if (_connection.IsConnected)
                 return AuthResult.Failure(AuthResult.ReasonAlreadyConnected);
 
+            lock (_credentialsLock)
+                _credentials = credentials;
+
             AuthResult result = null;
             await _connection.ConnectAsync(async (connection, abandoned) =>
             {
-                using var auth = new AuthManager(connection, AppVersion, email, password);
+                LoginCredentials current;
+                lock (_credentialsLock)
+                    current = _credentials;
+
+                using var auth = new AuthManager(connection, AppVersion, current);
                 AuthResult attempt = await auth.RunAsync(abandoned);
                 result = attempt;
                 LastAuthResult = attempt;
+
+                // The token just used is spent once accepted: a reconnect uses its replacement.
+                if (attempt.Ok && attempt.RefreshToken != null)
+                {
+                    lock (_credentialsLock)
+                        _credentials = LoginCredentials.WithToken(attempt.RefreshToken);
+                }
+
                 try
                 {
                     LoginCompleted?.Invoke(attempt);

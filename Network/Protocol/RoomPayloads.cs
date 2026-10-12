@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/07
-// Update Date: 2026/10/07
-// Version: v1.0
+// Update Date: 2026/10/12
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -98,6 +98,12 @@ namespace Chinese_Chess_v3.Network.Protocol
 
         /// <summary>Whether the player is ready (RoomState only).</summary>
         public bool Ready { get; init; }
+
+        /// <summary>
+        /// Whether the player's connection ended and the seat is held for its return (RoomState
+        /// only: a few seconds in a waiting room; during a game see <see cref="ClocksDto.Away"/>).
+        /// </summary>
+        public bool Away { get; init; }
     }
 
     /// <summary>A room as the clients see it (RoomState; one entry of RoomList).</summary>

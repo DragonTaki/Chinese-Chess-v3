@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/07
-// Update Date: 2026/10/07
-// Version: v1.0
+// Update Date: 2026/10/12
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -24,7 +24,8 @@ namespace Chinese_Chess_v3.Network
     /// <see cref="NetworkManager.LobbyHeartbeatInterval"/>.
     /// <para>
     /// Threads: every event is raised on a network thread, never the UI's. Packet events
-    /// (<see cref="RoomList"/> to <see cref="ServerError"/>) come from the connection's reader, one
+    /// (<see cref="RoomList"/> to <see cref="ServerError"/>, <see cref="ReplacedByNewLogin"/>,
+    /// <see cref="LoggedOut"/>) come from the connection's reader, one
     /// at a time in arrival order; <see cref="LoggedIn"/> / <see cref="LoginFailed"/> from the
     /// login (also the one a reconnect runs again); <see cref="Disconnected"/> from whichever thread
     /// closed the connection. A UI marshals them to its own thread. A handler that throws is logged
@@ -88,18 +89,48 @@ namespace Chinese_Chess_v3.Network
         /// <summary>The server refused a request: the error code (e.g. RoomNotFound, InvalidSettings) and the detail ("" when none).</summary>
         public event Action<string, string> ServerError;
 
+        /// <summary>
+        /// A new login of this account (from the same place) replaced this connection; the server
+        /// closes it right after (<see cref="Disconnected"/> follows). Do not reconnect automatically:
+        /// the account is in use elsewhere.
+        /// </summary>
+        public event Action ReplacedByNewLogin;
+
+        /// <summary>The server confirmed <see cref="Logout"/>; it closes the connection right after (<see cref="Disconnected"/> follows).</summary>
+        public event Action LoggedOut;
+
         /// <summary>The connection ended.</summary>
         public event Action Disconnected;
 
         // ----- Requests -----
 
-        /// <summary>Connects and logs in (see <see cref="NetworkManager.LoginAsync"/>); also raises <see cref="LoggedIn"/> or <see cref="LoginFailed"/>.</summary>
+        /// <summary>
+        /// Connects and logs in with the email and password (see <see cref="LoginAsync(LoginCredentials)"/>).
+        /// </summary>
         /// <param name="email">The account's email.</param>
         /// <param name="password">The account's password.</param>
+        /// <param name="remember">Whether to ask for a login token for next time (<see cref="AuthResult.RefreshToken"/>).</param>
         /// <returns>The login's result.</returns>
-        public async Task<AuthResult> LoginAsync(string email, string password)
+        public Task<AuthResult> LoginAsync(string email, string password, bool remember = false)
+            => LoginAsync(LoginCredentials.WithPassword(email, password, remember));
+
+        /// <summary>
+        /// Connects and logs in with a login token (see <see cref="LoginAsync(LoginCredentials)"/>).
+        /// The token is spent once accepted: keep the result's <see cref="AuthResult.RefreshToken"/>
+        /// instead. Never run two of these with the same token (the server then revokes every token
+        /// of the account); <see cref="AuthResult.ReasonInvalidLoginToken"/> means forget the token.
+        /// </summary>
+        /// <param name="refreshToken">The login token.</param>
+        /// <returns>The login's result.</returns>
+        public Task<AuthResult> LoginWithTokenAsync(string refreshToken)
+            => LoginAsync(LoginCredentials.WithToken(refreshToken));
+
+        /// <summary>Connects and logs in (see <see cref="NetworkManager.LoginAsync(LoginCredentials)"/>); also raises <see cref="LoggedIn"/> or <see cref="LoginFailed"/>.</summary>
+        /// <param name="credentials">The email and password, or a login token.</param>
+        /// <returns>The login's result.</returns>
+        public async Task<AuthResult> LoginAsync(LoginCredentials credentials)
         {
-            AuthResult result = await _network.LoginAsync(email, password).ConfigureAwait(false);
+            AuthResult result = await _network.LoginAsync(credentials).ConfigureAwait(false);
             // A login that never ran (unreachable, already connected) raised nothing yet.
             if (!result.Ok && (result.Reason == AuthResult.ReasonConnectFailed || result.Reason == AuthResult.ReasonAlreadyConnected))
                 Raise(LoginFailed, result.Reason);
@@ -108,6 +139,16 @@ namespace Chinese_Chess_v3.Network
 
         /// <summary>Closes the connection.</summary>
         public void Disconnect() => _network.Disconnect();
+
+        /// <summary>
+        /// Logs out: the server revokes <paramref name="refreshToken"/> (when it is a live login token
+        /// of this account), leaves the room at once (a running game is resigned), replies
+        /// (<see cref="LoggedOut"/>) and closes the connection.
+        /// </summary>
+        /// <param name="refreshToken">The login token to revoke; null or empty when the login was not remembered.</param>
+        /// <returns>True when the request was sent.</returns>
+        public bool Logout(string refreshToken)
+            => Send(PacketType.Logout, ProtocolJson.Serialize(new LogoutDto { RefreshToken = refreshToken ?? "" }));
 
         /// <summary>Asks for the waiting rooms (answered by <see cref="RoomList"/>).</summary>
         /// <returns>True when the request was sent.</returns>
@@ -237,8 +278,16 @@ namespace Chinese_Chess_v3.Network
                     SplitError(packet.Data, out string code, out string detail);
                     Raise(ServerError, code, detail);
                     break;
+                case PacketType.AuthResponse:
+                    // The login's own replies are AuthManager's; after it, only a replacement comes.
+                    if (packet.Data == AuthResult.ReplacedByNewLogin)
+                        Raise(ReplacedByNewLogin);
+                    break;
+                case PacketType.Logout:
+                    Raise(LoggedOut);
+                    break;
                 default:
-                    // Login replies (AuthManager's), the welcome, chat...: not this API's.
+                    // The welcome, chat...: not this API's.
                     break;
             }
         }

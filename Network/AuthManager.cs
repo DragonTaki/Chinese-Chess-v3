@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/11/01
-// Update Date: 2026/10/07
-// Version: v1.1
+// Update Date: 2026/10/12
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -19,7 +19,8 @@ using NetClient;
 namespace Chinese_Chess_v3.Network
 {
     /// <summary>
-    /// Runs the two-step login (version check, then credentials) for one connection attempt.
+    /// Runs the two-step login (version check, then the email and password or a login token, see
+    /// <see cref="LoginCredentials"/>) for one connection attempt.
     /// Subscribed to <see cref="NetConnection.EnvelopeReceived"/> only until the attempt finishes
     /// or is abandoned (the connection goes away, or <see cref="Dispose"/>), so a reconnect never
     /// leaves an old instance reacting to the new connection's packets.
@@ -33,8 +34,7 @@ namespace Chinese_Chess_v3.Network
 
         private readonly NetConnection _connection;
         private readonly string _version;
-        private readonly string _email;
-        private readonly string _password;
+        private readonly LoginCredentials _credentials;
         private readonly object _lock = new();
 
         // Continuations run asynchronously: the attempt can be abandoned from inside
@@ -59,11 +59,19 @@ namespace Chinese_Chess_v3.Network
         /// <param name="email">The account's email (sent as the username).</param>
         /// <param name="password">The account's password.</param>
         public AuthManager(NetConnection connection, string version, string email, string password)
+            : this(connection, version, LoginCredentials.WithPassword(email, password))
+        {
+        }
+
+        /// <summary>Prepares one login on <paramref name="connection"/>.</summary>
+        /// <param name="connection">The open connection to log in on.</param>
+        /// <param name="version">The client version the server checks first.</param>
+        /// <param name="credentials">The email and password, or the login token.</param>
+        public AuthManager(NetConnection connection, string version, LoginCredentials credentials)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _version = version ?? throw new ArgumentNullException(nameof(version));
-            _email = email ?? throw new ArgumentNullException(nameof(email));
-            _password = password ?? throw new ArgumentNullException(nameof(password));
+            _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
         }
 
         /// <summary>
@@ -120,14 +128,22 @@ namespace Chinese_Chess_v3.Network
                         _currentStep = AuthStep.CredentialsSent;
                     }
 
-                    // Step 2: send username/password
-                    var credentialsObj = new
-                    {
-                        type = "credentials",
-                        senderId = _connection.ClientId.ToString(),
-                        username = _email,
-                        password = _password
-                    };
+                    // Step 2: send the login token, or username/password (remember: ask for a login token)
+                    object credentialsObj = _credentials.IsToken
+                        ? new
+                        {
+                            type = "token",
+                            senderId = _connection.ClientId.ToString(),
+                            refreshToken = _credentials.RefreshToken
+                        }
+                        : new
+                        {
+                            type = "credentials",
+                            senderId = _connection.ClientId.ToString(),
+                            username = _credentials.Email,
+                            password = _credentials.Password,
+                            remember = _credentials.Remember
+                        };
                     Send(JsonSerializer.Serialize(credentialsObj));
                 }
                 else if (packet.Type == PacketType.AuthResponse)
@@ -139,7 +155,7 @@ namespace Chinese_Chess_v3.Network
             else if (step == AuthStep.CredentialsSent && packet.Type == PacketType.AuthResponse)
             {
                 Finish(packet.Data == AuthSuccessString
-                    ? AuthResult.Success(packet.Token)
+                    ? AuthResult.Success(packet.Token, packet.RefreshToken)
                     : AuthResult.Failure(packet.Data));
             }
         }
