@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/08
 // Update Date: 2026/10/12
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -31,16 +31,27 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         public UIMainMenuRenderer() : base() { }
 
+        /// <summary>How far the opening in the main menu's frame reaches past the tail's edges.</summary>
+        private const float GapPadding = 4f;
+
         public override void OnRender(IGraphics g, UIMainMenu element)
         {
             base.OnRender(g, element);
             DrawSubmenuFrame(g, element);
         }
 
-        /// <summary>The main menu panel's frame, in the style picked in the developer options (replaces the dashed outline).</summary>
+        /// <summary>
+        /// The main menu panel's frame, in the style picked in the developer options (replaces the dashed
+        /// outline). While a submenu's tail is shown it has an opening on its right edge where the tail
+        /// enters, so the two outlines never cross.
+        /// </summary>
         protected override void DrawOutline(IGraphics g, RectangleF bounds)
         {
-            FrameStyles.Of(DebugOptions.MenuFrameStyle).Draw(g, bounds, PanelFrameColor, null);
+            var style = FrameStyles.Of(DebugOptions.MenuFrameStyle);
+            FrameGap? gap = null;
+            if (TryGetSubmenuFrame(Element, out _, out var submenuBounds, out var tail) && tail is FrameTail t)
+                gap = FrameGap.ForTail(style.ClampedTail(submenuBounds, t), GapPadding);
+            style.Draw(g, bounds, PanelFrameColor, null, gap);
         }
 
         /// <summary>
@@ -52,25 +63,41 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         /// </summary>
         private void DrawSubmenuFrame(IGraphics g, UIMainMenu element)
         {
+            if (!TryGetSubmenuFrame(element, out var option, out var bounds, out var tail))
+                return;
+
+            FrameStyles.Of(DebugOptions.MenuFrameStyle).Draw(g, bounds, element.ColorOf(option), tail);
+        }
+
+        /// <summary>
+        /// The open submenu's frame: the option that opened it, its absolute bounds and the tail (null
+        /// when the button is scrolled out of the menu's viewport). False when no submenu is shown.
+        /// </summary>
+        private static bool TryGetSubmenuFrame(UIMainMenu element, out MainMenuOption option, out RectangleF bounds, out FrameTail? tail)
+        {
+            option = default;
+            bounds = default;
+            tail = null;
+
             var handler = element.Handler;
-            if (handler.CurrentSubmenu is not MainMenuOption option)
-                return;
+            if (handler.CurrentSubmenu is not MainMenuOption current)
+                return false;
 
-            var button = element.ButtonOf(option);
-            if (button == null || !handler.Submenus.TryGetValue(option, out var submenu) || !submenu.IsVisible)
-                return;
+            var button = element.ButtonOf(current);
+            if (button == null || !handler.Submenus.TryGetValue(current, out var submenu) || !submenu.IsVisible)
+                return false;
 
-            RectangleF bounds = submenu.GetCurrentAbsoluteBounds();
+            option = current;
+            bounds = submenu.GetCurrentAbsoluteBounds();
             var buttonBounds = button.GetCurrentAbsoluteBounds();
             float centreY = buttonBounds.Y + buttonBounds.Height / 2f;
 
             // No tail when the button is scrolled out of the menu's viewport
             var clip = element.GetAbsClipRect();
-            FrameTail? tail = centreY < clip.Top || centreY > clip.Bottom
+            tail = centreY < clip.Top || centreY > clip.Bottom
                 ? null
                 : new FrameTail(centreY, PointerDepth, PointerHalfHeight);
-
-            FrameStyles.Of(DebugOptions.MenuFrameStyle).Draw(g, bounds, element.ColorOf(option), tail);
+            return true;
         }
     }
 }

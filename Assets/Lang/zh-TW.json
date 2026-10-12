@@ -163,6 +163,7 @@
   "settings.frame_style.corner_brackets": "角括號",
   "settings.frame_style.soft_glow": "柔光",
   "settings.frame_style.filled_panel": "半透明面板",
+  "settings.frame_style.glow_panel": "柔光＋半透明面板",
   "settings.frame_style.none": "無外框",
   "settings.show_fps": "顯示 FPS",
   "settings.show_network_latency": "顯示網路延遲",

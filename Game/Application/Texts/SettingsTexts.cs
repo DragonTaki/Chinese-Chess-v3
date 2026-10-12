@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -102,6 +102,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             FrameStyleKind.CornerBrackets => Lang.Get("settings.frame_style.corner_brackets"),
             FrameStyleKind.SoftGlow => Lang.Get("settings.frame_style.soft_glow"),
             FrameStyleKind.FilledPanel => Lang.Get("settings.frame_style.filled_panel"),
+            FrameStyleKind.GlowPanel => Lang.Get("settings.frame_style.glow_panel"),
             FrameStyleKind.None => Lang.Get("settings.frame_style.none"),
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown frame style"),
         };
