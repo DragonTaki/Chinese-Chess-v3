@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -17,7 +17,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
     /// <summary>
     /// Binds the <see cref="UIOnlinePanel"/> to the <see cref="LoginPresenter"/>, which makes the
-    /// decisions (logging in, the busy state, the sentences): the fields and the switch write the
+    /// decisions (logging in, the busy state, the sentences): the fields and the checkbox write the
     /// presenter's <see cref="LoginPresenter.Account"/>, <see cref="LoginPresenter.Password"/> and
     /// <see cref="LoginPresenter.Remember"/>; login and Enter call <see cref="LoginPresenter.Submit"/>;
     /// the screen redraws on <see cref="LoginPresenter.Changed"/>.
@@ -42,7 +42,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             Element.AccountField.Handler.Submitted = _ => Submit();
             Element.PasswordField.Handler.TextChanged = text => presenter.Password = text;
             Element.PasswordField.Handler.Submitted = _ => Submit();
-            Element.RememberSwitch.Handler.ValueChanged = on => presenter.Remember = on;
+            Element.RememberCheckbox.Changed += on => presenter.Remember = on;
         }
 
         /// <summary>login (button or Enter).</summary>
@@ -60,12 +60,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
                 menu.AccountField.Text = presenter.Account ?? string.Empty;
             if (!menu.PasswordField.IsFocused)
                 menu.PasswordField.Text = presenter.Password ?? string.Empty;
-            menu.RememberSwitch.IsOn = presenter.Remember;
+            menu.RememberCheckbox.IsChecked = presenter.Remember;
 
             bool idle = !presenter.IsBusy;
             menu.AccountField.IsEnabled = idle;
             menu.PasswordField.IsEnabled = idle;
-            menu.RememberSwitch.IsEnabled = idle;
+            menu.RememberCheckbox.IsEnabled = idle;
             UIOnlinePanel.SetEnabled(menu.SubmitButton, idle);
 
             UIOnlinePanel.SetLine(menu.StatusLine, presenter.StatusSentence);

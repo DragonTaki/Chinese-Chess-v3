@@ -1,5 +1,5 @@
 // Update Date: 2026/10/12
-// Version: v1.1
+// Version: v1.2
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -250,7 +250,7 @@
   "online.login": "登入",
   "online.account": "帳號（Email）",
   "online.password": "密碼",
-  "online.remember_login": "記住帳密",
+  "online.remember_login": "記住帳號密碼",
   "online.connecting": "連線中…",
   "online.reconnecting": "重新連線中…",
   "online.reconnect": "重新連線",

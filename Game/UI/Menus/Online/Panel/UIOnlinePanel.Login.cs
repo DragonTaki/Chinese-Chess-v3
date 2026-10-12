@@ -4,18 +4,20 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/12
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.UI.Core.Elements;
+using Engine.UI.Core.Handlers;
+using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 {
     /// <summary>
     /// Multiplayer's login screen: the title, the account field, the masked password field (Tab moves
-    /// from the account to the password, Enter in either logs in), the remember login switch, login and
+    /// from the account to the password, Enter in either logs in), the remember login checkbox, login and
     /// back, then the status line (connecting) and the error line. The handler
     /// (<see cref="UIOnlinePanelHandler"/>) binds it to the <c>LoginPresenter</c>.
     /// </summary>
@@ -27,8 +29,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         /// <summary>The password field (masked).</summary>
         internal UITextField PasswordField { get; private set; }
 
-        /// <summary>The remember login switch.</summary>
-        internal UIToggleSwitch RememberSwitch { get; private set; }
+        /// <summary>The remember login checkbox.</summary>
+        internal UICheckbox RememberCheckbox { get; private set; }
 
         /// <summary>The login button (dimmed while a login runs).</summary>
         internal UIButton SubmitButton { get; private set; }
@@ -48,7 +50,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             AccountField = AddField(AddRow(page, presenter.AccountLabel));
             PasswordField = AddField(AddRow(page, presenter.PasswordLabel), masked: true);
             AccountField.NextFocus = PasswordField;
-            RememberSwitch = AddToggle(AddRow(page, presenter.RememberLabel));
+            RememberCheckbox = _factory.CreateElement<UICheckbox, UICheckboxHandler, UICheckboxRenderer>();
+            RememberCheckbox.Text = presenter.RememberLabel;
+            RememberCheckbox.Font = UILayoutStyles.OnlineMenu.RowFont;
+            RememberCheckbox.Style = UILayoutStyles.OnlineMenu.CheckboxStyle;
+            RememberCheckbox.LayoutRules.Apply(UILayoutSheet.OnlineMenu.Checkbox);
+            page.AddChild(RememberCheckbox);
+            PasswordField.NextFocus = RememberCheckbox;
+            RememberCheckbox.NextFocus = AccountField;
 
             var buttons = AddGroup(page, UILayoutSheet.OnlineMenu.ButtonRow);
             SubmitButton = AddButton(buttons, UILayoutSheet.OnlineMenu.Button, presenter.SubmitText, Handler.Submit);

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
 // Update Date: 2026/10/12
-// Version: v2.4
+// Version: v2.5
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -378,7 +378,19 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>The text fields' font.</summary>
             public static readonly IFont FieldFont = SettingsMenu.ValueFont;
 
-            /// <summary>The 記住帳密 switch.</summary>
+            /// <summary>The remember-login checkbox.</summary>
+            public static readonly CheckboxStyle CheckboxStyle = new CheckboxStyle
+            {
+                CheckedColor = SettingsMenu.ToggleStyle.TrackOnColor,
+                UncheckedColor = SettingsMenu.ToggleStyle.TrackOffColor,
+                CheckColor = SettingsMenu.ToggleStyle.KnobColor,
+                BorderColor = SettingsMenu.ToggleStyle.BorderColor,
+                FocusColor = SettingsMenu.ToggleStyle.TrackOnColor,
+                TextColor = LineColor,
+                DisabledOpacity = SettingsMenu.ToggleStyle.DisabledOpacity,
+            };
+
+            /// <summary>The online row switch.</summary>
             public static readonly ToggleSwitchStyle ToggleStyle = SettingsMenu.ToggleStyle;
 
             /// <summary>What the password field shows for each typed character.</summary>

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/12
-// Version: v1.7
+// Version: v1.8
 /* ----- ----- ----- ----- */
 
 using System;
@@ -386,7 +386,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>A text line (status, error, a seat, a summary): full width, height from its (wrapped) text.</summary>
             public static readonly UILayoutStyle Line = CategoryListMenu.SectionHeading;
 
-            /// <summary>A field or switch row (帳號, 密碼, 記住帳密, 房號): as a setting's row.</summary>
+            /// <summary>A field or switch row (account, password, room number): as a setting's row.</summary>
             public static readonly UILayoutStyle Row = SettingsMenu.Item with
             {
                 ColumnGap = UILayoutConstants.OnlineMenu.RowButtonGap,
@@ -446,7 +446,16 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 FlexShrink = 0f,
             };
 
-            /// <summary>A switch in a row (記住帳密).</summary>
+            /// <summary>A full-width checkbox row with its label to the right of the box.</summary>
+            public static readonly UILayoutStyle Checkbox = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.ValueHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>A switch in an online row.</summary>
             public static readonly UILayoutStyle Toggle = SettingsMenu.Toggle;
 
             /// <summary>A row's own button (加入).</summary>
