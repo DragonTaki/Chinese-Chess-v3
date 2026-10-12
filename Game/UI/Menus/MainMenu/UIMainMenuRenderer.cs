@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/08
 // Update Date: 2026/10/12
-// Version: v1.5
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -39,8 +39,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         public UIMainMenuRenderer() : base() { }
 
-        /// <summary>How far the opening in the main menu's frame reaches past the tail's edges.</summary>
-        private const float GapPadding = 4f;
+        /// <summary>How far the submenu bubble's area, cut out of the main menu's frame, is grown so no anti-aliased seam is left.</summary>
+        private const float CutoutGrow = 1.5f;
 
         public override void OnRender(IGraphics g, UIMainMenu element)
         {
@@ -50,16 +50,20 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
 
         /// <summary>
         /// The main menu panel's frame, in the style picked in the developer options (replaces the dashed
-        /// outline). While a submenu's tail is shown it has an opening on its right edge where the tail
-        /// enters, so the two outlines never cross.
+        /// outline). While a submenu's tail is shown, the area the submenu's bubble covers (its tail and
+        /// body, the exact shape of the submenu's frame) is left out of it, fill, glow and lines alike, so
+        /// the bubble's edge is the visible boundary and the two outlines never cross.
         /// </summary>
         protected override void DrawOutline(IGraphics g, RectangleF bounds)
         {
             var style = FrameStyles.Of(DebugOptions.MenuFrameStyle);
-            FrameGap? gap = null;
             if (TryGetSubmenuFrame(Element, out _, out var submenuBounds, out var tail) && tail is FrameTail t)
-                gap = FrameGap.ForTail(style.ClampedTail(submenuBounds, t), GapPadding);
-            style.Draw(g, bounds, PanelFrameColor, null, gap);
+            {
+                using var bubble = style.CreateShapePath(submenuBounds, t, CutoutGrow);
+                style.Draw(g, bounds, PanelFrameColor, null, bubble);
+                return;
+            }
+            style.Draw(g, bounds, PanelFrameColor, null);
         }
 
         /// <summary>
