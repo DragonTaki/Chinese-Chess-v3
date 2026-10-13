@@ -153,7 +153,7 @@
   "settings.section_debug_performance": "── 效能與連線（立即生效）──",
   "settings.debug_log": "除錯訊息",
   "settings.console_trace": "主控台追蹤訊息",
-  "settings.label_backgrounds": "標籤紅色背景",
+  "settings.label_backgrounds": "標籤紅框",
   "settings.layout_outlines": "排版外框",
   "settings.star_effect_frames": "星空特效範圍框",
   "settings.menu_frame_style": "主選單外框樣式",
