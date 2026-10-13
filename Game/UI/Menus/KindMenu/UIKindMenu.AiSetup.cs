@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -88,26 +88,54 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             ScrollContainer.ScrollVelocity = 0f;
         }
 
-        /// <summary>Shows the functional pre-game form inside this submenu, before the game starts.</summary>
+        /// <summary>
+        /// Shows the pre-game form: strength, who moves first, the clock, then 指定電腦開局, a checkbox with its
+        /// always-present dropdown directly to the right (greyed until checked), and 返回 / 開始遊戲.
+        /// </summary>
         public void ShowAiSetup()
         {
-            ShowRuleSettings(GameKind.Traditional);
+            ClearPage();
+            Handler.PrepareSettings(GameKind.Traditional);
+            ScrollContainer.LayoutRules.Apply(UILayoutSheet.OnlineMenu.PanelScrollContainer);
             var presenter = Handler.AiSetup;
+            presenter.Load(Handler.Live.Ai);
+            AddSetupHeading(presenter.Title);
+            // Rule switches first (when the mode has any), then strength, side, clock, opening.
+            foreach (var section in SettingsMenuContent.AiRuleSections.Where(x => x != SettingsMenuContent.AiTimerSection))
+            {
+                AddSetupHeading(section.Header);
+                foreach (var item in section.Items)
+                    ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
+            }
             AddSetupHeading(SettingsMenuContent.AiSection.Header);
             foreach (var item in SettingsMenuContent.AiSection.Items)
                 ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
-            RefreshSettings();
+            AddSetupHeading(SettingsMenuContent.AiTimerSection.Header);
+            foreach (var item in SettingsMenuContent.AiTimerSection.Items)
+                ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
 
+            var openingRow = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
+            openingRow.LayoutRules.Apply(UILayoutSheet.Submenu.OpeningRow);
+            ScrollContainer.AddChild(openingRow);
             var assign = _factory.CreateElement<UICheckbox, UICheckboxHandler, UICheckboxRenderer>();
             assign.Text = presenter.AssignOpeningLabel;
             assign.Font = UILayoutStyles.OnlineMenu.RowFont;
             assign.Style = UILayoutStyles.OnlineMenu.CheckboxStyle;
-            assign.LayoutRules.Apply(UILayoutSheet.OnlineMenu.Checkbox);
-            ScrollContainer.AddChild(assign);
+            assign.LayoutRules.Apply(UILayoutSheet.Submenu.OpeningCheckbox);
+            openingRow.AddChild(assign);
+            var opening = _factory.CreateElement<UIDropdown, UIDropdownHandler, UIDropdownRenderer>();
+            opening.Font = UILayoutStyles.SettingsMenu.ValueFont;
+            opening.Style = UILayoutStyles.SettingsMenu.DropdownStyle;
+            opening.LayoutRules.Apply(UILayoutSheet.Submenu.OpeningDropdown);
+            openingRow.AddChild(opening);
+            opening.Handler.SelectionChanged = index =>
+            {
+                if (index < 0 || index >= presenter.OpeningStyles.Count) return;
+                presenter.SelectOpening(presenter.OpeningStyles[index]);
+                Handler.PersistOpening();
+            };
 
-            var opening = AddSetupChoice(presenter.OpeningLabel, presenter.OpeningStyles);
-            opening.Handler.SelectionChanged = index => presenter.OpeningStyle = presenter.OpeningStyles[index];
-
+            // The dropdown always exists and is always shown: only its enabled state follows the checkbox.
             void RefreshOpening()
             {
                 assign.IsEnabled = presenter.OpeningStyles.Count > 0;
@@ -115,44 +143,23 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
                 opening.SetOptions(presenter.OpeningStyles);
                 opening.SelectedIndex = presenter.OpeningStyles.ToList().IndexOf(presenter.OpeningStyle);
                 opening.IsEnabled = presenter.AssignOpening;
-                opening.Parent.IsVisible = presenter.AssignOpening;
-                opening.Parent.LayoutRules.Display = presenter.AssignOpening
-                    ? DisplayMode.Normal : DisplayMode.None;
-                PerformLayout();
             }
             _refreshers.Add(settings =>
             {
-                presenter.Level = settings.Ai.Level;
-                presenter.SetPlayerSide(settings.Ai.PlayerSide);
+                presenter.SyncChoices(settings.Ai);
                 RefreshOpening();
             });
-            assign.Changed += value => { presenter.SetAssignOpening(value); RefreshOpening(); };
+            assign.Changed += value => { presenter.SetAssignOpening(value); RefreshOpening(); Handler.PersistOpening(); };
 
+            RefreshSettings();
             AddStartRow();
-            RefreshOpening();
-        }
-
-        private UIDropdown AddSetupChoice(string label, IEnumerable<string> choices)
-        {
-            var row = _factory.CreateElement<UILabeledRow, UILabeledRowHandler, UILabeledRowRenderer>();
-            row.Text = label;
-            row.Font = UILayoutStyles.SettingsMenu.ItemFont;
-            row.TextBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
-            row.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Item);
-            ScrollContainer.AddChild(row);
-            var choice = _factory.CreateElement<UIDropdown, UIDropdownHandler, UIDropdownRenderer>();
-            choice.Font = UILayoutStyles.SettingsMenu.ValueFont;
-            choice.Style = UILayoutStyles.SettingsMenu.DropdownStyle;
-            choice.SetOptions(choices);
-            choice.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Dropdown(300f));
-            row.AddChild(choice);
-            return choice;
+            PerformLayout();
         }
 
         private void AddStartRow()
         {
             var row = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
-            row.LayoutRules.Apply(UILayoutSheet.Submenu.GroupRow);
+            row.LayoutRules.Apply(UILayoutSheet.Submenu.SetupButtonRow);
             ScrollContainer.AddChild(row);
             AddSetupButton(row, AiSetupTexts.Back, Handler.BackToKinds);
             AddSetupButton(row, AiSetupTexts.Start, Handler.StartGame);

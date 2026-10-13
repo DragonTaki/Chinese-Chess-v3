@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/12
-// Version: v1.5
+// Update Date: 2026/10/13
+// Version: v1.7
 /* ----- ----- ----- ----- */
 
 using System;
@@ -98,12 +98,12 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>A computer strength level's name in the dropdown.</summary>
         public static string AiLevelText(EngineLevel level) => level switch
         {
-            EngineLevel.Random => Lang.Get("settings.ai_level.random"),
-            EngineLevel.Greedy => Lang.Get("settings.ai_level.greedy"),
-            EngineLevel.SearchDepth2 => Lang.Get("settings.ai_level.search_depth_2"),
-            EngineLevel.SearchDepth4 => Lang.Get("settings.ai_level.search_depth_4"),
-            EngineLevel.Search500Ms => Lang.Get("settings.ai_level.search_500_ms"),
-            EngineLevel.Search2000Ms => Lang.Get("settings.ai_level.search_2000_ms"),
+            EngineLevel.Beginner => Lang.Get("settings.ai_level.beginner"),
+            EngineLevel.Elementary => Lang.Get("settings.ai_level.elementary"),
+            EngineLevel.Intermediate => Lang.Get("settings.ai_level.intermediate"),
+            EngineLevel.Advanced => Lang.Get("settings.ai_level.advanced"),
+            EngineLevel.Expert => Lang.Get("settings.ai_level.expert"),
+            EngineLevel.Strongest => Lang.Get("settings.ai_level.strongest"),
             _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Unknown engine level"),
         };
 

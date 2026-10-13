@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -41,8 +41,8 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary>The side the human plays. Default: <see cref="AiPlayerSide.First"/></summary>
         public AiPlayerSide PlayerSide { get; set; } = AiPlayerSide.First;
 
-        /// <summary>The computer's strength. Default: <see cref="EngineLevel.SearchDepth4"/></summary>
-        public EngineLevel Level { get; set; } = EngineLevel.SearchDepth4;
+        /// <summary>The computer's strength. Default: <see cref="EngineLevel.Intermediate"/></summary>
+        public EngineLevel Level { get; set; } = EngineLevel.Intermediate;
 
         /// <summary>
         /// Folder of the player's own AI engines and data; empty for the default
@@ -57,6 +57,12 @@ namespace Chinese_Chess_v3.Game.Configs
                 ? SystemSettings.DefaultUserAiFolder
                 : System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(UserFolder.Trim()), SystemSettings.UserDataFolder);
 
+        /// <summary>The selected built-in ECCO opening name; empty disables the book.</summary>
+        public string OpeningName { get; set; } = string.Empty;
+
+        /// <summary>The independent computer-game timer mode, initially count-up.</summary>
+        public Core.Players.TimerMode TimerMode { get; set; } = Core.Players.TimerMode.CountUp;
+
         private IReadOnlyList<SettingsKey> _keys;
 
         /// <inheritdoc/>
@@ -65,7 +71,11 @@ namespace Chinese_Chess_v3.Game.Configs
             SettingsKey.Enum("ai", "player_side", () => PlayerSide, v => PlayerSide = v, Default.PlayerSide,
                 "人機對戰：玩家執哪一方（First = 先手、Second = 後手、Random = 每局隨機）。"),
             SettingsKey.Enum("ai", "level", () => Level, v => Level = v, Default.Level,
-                "人機對戰：電腦的強度（Random、Greedy、SearchDepth2、SearchDepth4、Search500Ms、Search2000Ms；由弱到強）。"),
+                "人機對戰：電腦的強度（Beginner、Elementary、Intermediate、Advanced、Expert、Strongest；由弱到強）。"),
+            SettingsKey.Text("ai", "opening", () => OpeningName, v => OpeningName = v, Default.OpeningName, 256,
+                "指定電腦開局的 ECCO 名稱；留空 = 不指定開局。"),
+            SettingsKey.Enum("ai", "timer_mode", () => TimerMode, v => TimerMode = v, Default.TimerMode,
+                "人機對戰計時方式；預設正數計時，其他時限沿用玩法設定。"),
             SettingsKey.Path("ai", "user_folder", () => UserFolder, v => UserFolder = v, Default.UserFolder,
                 () => SystemSettings.UserDataFolder,
                 "自己的 AI 引擎與資料夾；留空 = 預設位置（這個設定檔旁邊的 AI 資料夾）。",

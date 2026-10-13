@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.1
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -43,13 +43,19 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             _load = load ?? (() =>
             {
                 var warnings = new List<string>();
-                var lines = catalog.LoadAll(warnings).ToArray();
+                var lines = catalog.LoadAll(warnings).Where(line => line.Origin == Core.Pgn.PgnOrigin.BuiltIn).ToArray();
                 foreach (var warning in warnings) AppLogger.Log(warning, LogLevel.WARN);
                 return lines;
             });
         }
 
         public EngineLevel Level { get; set; }
+
+        /// <summary>The computer game's clock mode; count-up unless the player changed it.</summary>
+        public Core.Players.TimerMode TimerMode { get; set; } = Core.Players.TimerMode.CountUp;
+
+        /// <summary>The opening name to save: empty when 指定電腦開局 is unchecked.</summary>
+        public string PersistedOpening => AssignOpening && !string.IsNullOrEmpty(OpeningStyle) ? OpeningStyle : string.Empty;
         public AiPlayerSide PlayerSide { get; private set; }
         public bool AssignOpening { get; private set; }
         public string OpeningStyle { get; set; }
@@ -68,13 +74,40 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             if (!GameSession.CanStartVsComputer(kind)) return false;
             _kind = kind;
             _book = new AiOpeningBook(_load());
-            Level = _defaults.Level;
-            AssignOpening = false;
-            SetPlayerSide(_defaults.PlayerSide);
+            Load(_defaults);
             return true;
         }
 
-        /// <summary>Restricts named repertoires to the opponent's side; random requires both sides.</summary>
+        /// <summary>Takes every choice from the saved settings (the opening name is empty when none was assigned).</summary>
+        public void Load(AiSettings settings)
+        {
+            ArgumentNullException.ThrowIfNull(settings);
+            Level = settings.Level;
+            TimerMode = settings.TimerMode;
+            OpeningStyle = settings.OpeningName;
+            AssignOpening = !string.IsNullOrEmpty(OpeningStyle);
+            SetPlayerSide(settings.PlayerSide);
+        }
+
+        /// <summary>Follows the settings rows (strength, side, clock) without touching the opening choice.</summary>
+        public void SyncChoices(AiSettings settings)
+        {
+            ArgumentNullException.ThrowIfNull(settings);
+            Level = settings.Level;
+            TimerMode = settings.TimerMode;
+            SetPlayerSide(settings.PlayerSide);
+        }
+
+        /// <summary>Chooses one of <see cref="OpeningStyles"/>; other names are ignored.</summary>
+        public void SelectOpening(string name)
+        {
+            if (name != null && OpeningStyles.Contains(name)) OpeningStyle = name;
+        }
+
+        /// <summary>
+        /// Restricts named repertoires to the computer's side. A random player side lists every opening;
+        /// when the drawn side does not fit the chosen opening, the book has no move and the engine plays normally.
+        /// </summary>
         public void SetPlayerSide(AiPlayerSide side)
         {
             if (!Enum.IsDefined(side)) throw new ArgumentOutOfRangeException(nameof(side));
@@ -85,7 +118,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
                 AiPlayerSide.First => _book.StylesFor(PlayerNumber.Player2),
                 AiPlayerSide.Second => _book.StylesFor(PlayerNumber.Player1),
                 _ => _book.StylesFor(PlayerNumber.Player1)
-                    .Intersect(_book.StylesFor(PlayerNumber.Player2), StringComparer.Ordinal).ToArray(),
+                    .Union(_book.StylesFor(PlayerNumber.Player2), StringComparer.Ordinal).OrderBy(name => name, StringComparer.Ordinal).ToArray(),
             };
             if (!OpeningStyles.Contains(OpeningStyle)) OpeningStyle = OpeningStyles.FirstOrDefault();
             if (OpeningStyles.Count == 0) AssignOpening = false;
@@ -98,7 +131,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         {
             if (_book == null || !Enum.IsDefined(Level) || (AssignOpening && !OpeningStyles.Contains(OpeningStyle)))
                 return false;
-            _session.StartVsComputer(_kind, new AiGameOptions(Level, PlayerSide, AssignOpening ? OpeningStyle : null, UseConfiguredTimer: true), _book);
+            _session.StartVsComputer(_kind, new AiGameOptions(Level, PlayerSide, AssignOpening ? OpeningStyle : null, UseConfiguredTimer: true, TimerMode: TimerMode), _book);
             return true;
         }
     }

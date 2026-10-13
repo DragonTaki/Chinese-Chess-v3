@@ -1,5 +1,5 @@
 // Update Date: 2026/10/13
-// Version: v1.6
+// Version: v1.7
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -152,12 +152,12 @@
   "settings.ai_side.second": "後手",
   "settings.ai_side.random": "隨機",
   "settings.ai_level": "電腦強度",
-  "settings.ai_level.random": "隨機走子",
-  "settings.ai_level.greedy": "貪吃（只看一步）",
-  "settings.ai_level.search_depth_2": "搜尋兩層",
-  "settings.ai_level.search_depth_4": "搜尋四層",
-  "settings.ai_level.search_500_ms": "思考半秒",
-  "settings.ai_level.search_2000_ms": "思考兩秒",
+  "settings.ai_level.beginner": "入門",
+  "settings.ai_level.elementary": "初級",
+  "settings.ai_level.intermediate": "中級",
+  "settings.ai_level.advanced": "高級",
+  "settings.ai_level.expert": "專家",
+  "settings.ai_level.strongest": "最強",
   "settings.legal_move_hints": "可走位置提示",
   "settings.hanging_piece_hints": "無根子提示",
   "settings.section_debug_log": "── 紀錄（立即生效）──",

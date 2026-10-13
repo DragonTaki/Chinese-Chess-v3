@@ -48,6 +48,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             _model.ValuesChanged += () => Element.RefreshSettings();
         }
 
+        /// <summary>Saves the chosen opening (empty when none is assigned) with the other computer-game settings.</summary>
+        internal void PersistOpening()
+        {
+            Live.Ai.OpeningName = AiSetup.PersistedOpening;
+            _model.CommitEdit();
+        }
+
         internal void BackToKinds()
         {
             _model?.Exit();
@@ -57,6 +64,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
 
         internal void StartGame()
         {
+            if (Element.Purpose == KindMenuPurpose.VsComputer && _model != null) PersistOpening();
             _model?.Exit();
             if (Element.Purpose == KindMenuPurpose.VsComputer) AiSetup.Start();
             else Presenter.StartPreparedSinglePlayer();

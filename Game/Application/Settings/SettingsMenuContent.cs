@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/13
-// Version: v2.9
+// Version: v3.0
 /* ----- ----- ----- ----- */
 
 using System;
@@ -526,9 +526,9 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         /// (正數, only measuring time) it is disabled and its row says 正數不限時.
         /// </summary>
         private static SettingsToggleItem CountDownToggle(string name, Func<PlayerSettings, RuleSettings> rules,
-            Func<RuleSettings, bool> get, Action<RuleSettings, bool> set) =>
+            Func<RuleSettings, bool> get, Action<RuleSettings, bool> set, Func<PlayerSettings, TimerMode> mode = null) =>
             new(name, s => get(rules(s)), (s, v) => set(rules(s), v),
-                isAvailable: s => rules(s).TimerMode != TimerMode.CountUp, unavailableText: SettingsTexts.WithCountUpNote);
+                isAvailable: s => (mode?.Invoke(s) ?? rules(s).TimerMode) != TimerMode.CountUp, unavailableText: SettingsTexts.WithCountUpNote);
 
         /// <summary>One game kind's tab: its rule options, then its clock settings.</summary>
         /// <summary>
@@ -580,7 +580,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             RuleSections(kind, forRoom: true, rulesHeader, timerHeader);
 
         /// <summary>One game kind's rule options, then its clock settings (<paramref name="forRoom"/>: an online room's subset).</summary>
-        private static List<SettingsMenuSection> RuleSections(GameKind kind, bool forRoom, string rulesHeader, string timerHeader)
+        private static List<SettingsMenuSection> RuleSections(GameKind kind, bool forRoom, string rulesHeader, string timerHeader, bool aiGame = false)
         {
             RuleSettings R(PlayerSettings s) => s.Rules.RulesFor(kind);
 
@@ -605,9 +605,13 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                 }
             }
 
+            // A computer game has its own clock mode (count-up unless changed); the other clock values are the mode's.
+            Func<PlayerSettings, TimerMode> modeOf = aiGame ? s => s.Ai.TimerMode : null;
             var timer = new List<SettingsMenuItem>
             {
-                EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
+                aiGame
+                    ? EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => s.Ai.TimerMode, (s, v) => s.Ai.TimerMode = v)
+                    : EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
                 PresetChoice(R),
                 new SettingsIntegerItem(SettingsTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,
                     RuleSettings.TotalTimeMinutesMin, RuleSettings.TotalTimeMinutesMax, SettingsTexts.MinutesUnit),
@@ -615,10 +619,10 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                     RuleSettings.StepTimeSecondsMin, RuleSettings.StepTimeSecondsMax, SettingsTexts.SecondsUnit),
                 new SettingsIntegerItem(SettingsTexts.Increment, s => R(s).IncrementSeconds, (s, v) => R(s).IncrementSeconds = v,
                     RuleSettings.IncrementSecondsMin, RuleSettings.IncrementSecondsMax, SettingsTexts.SecondsUnit),
-                CountDownToggle(SettingsTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v),
+                CountDownToggle(SettingsTexts.StepTimer, R, r => r.StepTimerEnabled, (r, v) => r.StepTimerEnabled = v, modeOf),
             };
             if (!forRoom)
-                timer.Add(CountDownToggle(SettingsTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v));
+                timer.Add(CountDownToggle(SettingsTexts.LoseOnTimeUp, R, r => r.EndGameWhenTimesUp, (r, v) => r.EndGameWhenTimesUp = v, modeOf));
 
             var sections = new List<SettingsMenuSection>();
             if (rules.Count > 0)
@@ -627,16 +631,23 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             return sections;
         }
 
-        /// <summary>The persistent computer-opponent choices, shared with the pre-game form.</summary>
+        /// <summary>The persistent computer-opponent choices, shared with the pre-game form: strength, then who moves first.</summary>
         public static SettingsMenuSection AiSection { get; } = new(SettingsTexts.SectionVsComputer, new SettingsMenuItem[]
         {
-            EnumChoice(SettingsTexts.AiPlayerSideName, Enum.GetValues<AiPlayerSide>(),
-                Enum.GetValues<AiPlayerSide>().Select(SettingsTexts.AiSideName).ToArray(),
-                s => s.Ai.PlayerSide, (s, v) => s.Ai.PlayerSide = v),
             EnumChoice(SettingsTexts.AiLevelName, Enum.GetValues<EngineLevel>(),
                 Enum.GetValues<EngineLevel>().Select(SettingsTexts.AiLevelText).ToArray(),
                 s => s.Ai.Level, (s, v) => s.Ai.Level = v),
+            EnumChoice(SettingsTexts.AiPlayerSideName, Enum.GetValues<AiPlayerSide>(),
+                Enum.GetValues<AiPlayerSide>().Select(SettingsTexts.AiSideName).ToArray(),
+                s => s.Ai.PlayerSide, (s, v) => s.Ai.PlayerSide = v),
         });
+
+        /// <summary>The computer game's Traditional rule switches, and its clock rows (its own mode, count-up by default, then the shared clock values).</summary>
+        public static IReadOnlyList<SettingsMenuSection> AiRuleSections { get; } =
+            RuleSections(GameKind.Traditional, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer, aiGame: true);
+
+        /// <summary>The computer game's clock section.</summary>
+        public static SettingsMenuSection AiTimerSection => AiRuleSections[AiRuleSections.Count - 1];
 
         #endregion
     }

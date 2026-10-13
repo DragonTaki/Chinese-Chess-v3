@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.2
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -85,7 +85,7 @@ namespace Chinese_Chess_v3.Game.Application.Session
             _mainThread = mainThread ?? throw new ArgumentNullException(nameof(mainThread));
             _navigator = navigator ?? throw new ArgumentNullException(nameof(navigator));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _createEngine = createEngine ?? (level => EngineFactory.Create($"builtin:{level}"));
+            _createEngine = createEngine ?? (level => BuiltInEngine.Create(level, _random));
             _minThinkTime = minThinkTime ?? DefaultMinThinkTime;
             _random = random ?? Random.Shared;
             LogAiData(locator);
@@ -124,6 +124,7 @@ namespace Chinese_Chess_v3.Game.Application.Session
             var rules = game.DefaultRulesFor(GameKind.Traditional).Clone();
             if (!options.UseConfiguredTimer)
                 rules.TimerMode = TimerMode.CountUp;
+            if (options.TimerMode.HasValue) rules.TimerMode = options.TimerMode.Value;
             game.StartVsComputer(computer, GameTexts.ComputerPlayerName, rules);
         }
 
@@ -284,22 +285,16 @@ namespace Chinese_Chess_v3.Game.Application.Session
             catch (Exception ex)
             {
                 AppLogger.Log($"(AI) Cannot create the engine ({ex.Message}); using the built-in {level} engine", LogLevel.WARN);
-                return BuiltInEngine.Create(level);
+                return BuiltInEngine.Create(level, _random);
             }
         }
 
         /// <summary>The search bounds of <paramref name="level"/> and the shortest reply time, kept inside the mover's clock.</summary>
         private (SearchLimits Limits, TimeSpan MinThink) LimitsFor(GameManager game, PlayerSide side, EngineLevel level)
         {
-            var (depth, time) = level switch
-            {
-                EngineLevel.Random or EngineLevel.Greedy => ((int?)null, TimeSpan.Zero),
-                EngineLevel.SearchDepth2 => (2, TimeSpan.FromSeconds(1)),
-                EngineLevel.SearchDepth4 => (4, TimeSpan.FromSeconds(3)),
-                EngineLevel.Search500Ms => (null, TimeSpan.FromMilliseconds(500)),
-                EngineLevel.Search2000Ms => (null, TimeSpan.FromMilliseconds(2000)),
-                _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Unknown engine level"),
-            };
+            var profile = EngineLevelProfile.For(level);
+            int depth = profile.DepthCap;
+            var time = profile.TimeBudget;
             var minThink = _minThinkTime;
             long? own = RemainingMs(game, side), opponent = RemainingMs(game, ComputerOpponent(side));
             if (own is long left)

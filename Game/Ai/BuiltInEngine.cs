@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System.Diagnostics;
@@ -17,18 +17,24 @@ public sealed class BuiltInEngine : IChessEngine
 {
     private readonly EngineLevel _level;
     private readonly Random _random;
+    private readonly EngineLevelProfile _profile;
     private readonly SemaphoreSlim _gate = new(1);
     private readonly CancellationTokenSource _lifetime = new();
     private bool _disposed;
     public string Name => $"Built-in {_level}";
 
-    private BuiltInEngine(EngineLevel level, Random random) { _level = level; _random = random; }
+    private BuiltInEngine(EngineLevel level, Random random, EngineLevelProfile profile)
+    { _level = level; _random = random; _profile = profile; }
 
     /// <summary>Creates an engine; an optional seeded random source makes move selection reproducible.</summary>
-    public static BuiltInEngine Create(EngineLevel level, Random? random = null)
+    public static BuiltInEngine Create(EngineLevel level, Random? random = null, EngineLevelProfile? profile = null)
     {
         if (!Enum.IsDefined(level)) throw new ArgumentOutOfRangeException(nameof(level));
-        return new(level, random ?? Random.Shared);
+        profile ??= EngineLevelProfile.For(level);
+        if (profile.DepthCap is < 2 or > 64 || profile.TimeBudget <= TimeSpan.Zero || profile.WindowCp is < 0 or > 150
+            || profile.WeightPower is < 1 or > 3 || !profile.ProtectImmediateMate)
+            throw new ArgumentOutOfRangeException(nameof(profile));
+        return new(level, random ?? new Random(), profile);
     }
 
     public async Task<EngineResult> AnalyzeAsync(EnginePosition position, SearchLimits limits, CancellationToken ct)
@@ -67,34 +73,36 @@ public sealed class BuiltInEngine : IChessEngine
         if (roots.Count == 0) return new(null, -Search.Mate, 0, 0, Array.Empty<IccsMove>(), 0, 0);
         if (history.Count(h => h == board.Hash) >= 3)
             return new(roots[0], 0, null, 0.5, new[] { roots[0] }, 1, 0);
-        if (_level == EngineLevel.Random)
+        // Complete the tactical floor before applying time or node limits.
+        var winning = new List<IccsMove>();
+        var safe = new List<IccsMove>();
+        foreach (var move in roots)
         {
-            var move = roots[_random.Next(roots.Count)];
-            int captured = board.Make(move), score = -board.Evaluate();
-            board.Undo(move, captured);
-            return new(move, score, null, EngineResult.Probability(score), new[] { move }, 1, 1);
-        }
-        if (_level == EngineLevel.Greedy)
-        {
-            int capture = roots.Max(board.CaptureValue);
-            var candidates = roots.Where(m => board.CaptureValue(m) == capture).Select(m =>
+            ct.ThrowIfCancellationRequested();
+            int captured = board.Make(move);
+            try
             {
-                int captured = board.Make(m), score = -board.Evaluate();
-                board.Undo(m, captured);
-                return (Move: m, Score: score);
-            }).ToArray();
-            int best = candidates.Max(c => c.Score);
-            var choices = candidates.Where(c => c.Score >= best - 60).ToArray();
-            var chosen = choices[_random.Next(choices.Length)];
-            return new(chosen.Move, chosen.Score, null, EngineResult.Probability(chosen.Score), new[] { chosen.Move }, 1, roots.Count);
+                var replies = board.LegalMoves();
+                if (replies.Count == 0) { winning.Add(move); continue; }
+                bool loses = false;
+                foreach (var reply in replies)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    int taken = board.Make(reply);
+                    try { if (board.LegalMoves().Count == 0) { loses = true; break; } }
+                    finally { board.Undo(reply, taken); }
+                }
+                if (!loses) safe.Add(move);
+            }
+            finally { board.Undo(move, captured); }
         }
-        int maxDepth = limits.Depth ?? (_level switch { EngineLevel.SearchDepth2 => 2, EngineLevel.SearchDepth4 => 4, _ => 64 });
-        TimeSpan budget = limits.Budget;
-        if (limits.MoveTime == TimeSpan.Zero && limits.OwnRemainingMs == null)
-            budget = TimeSpan.FromMilliseconds(_level == EngineLevel.Search2000Ms ? 2000 : 500);
-        int tolerance = _level switch { EngineLevel.SearchDepth2 => 40, EngineLevel.SearchDepth4 => 20,
-            EngineLevel.Search500Ms => 10, _ => 0 };
-        var search = new Search(board, history, limits.Nodes, budget, ct, tolerance, _random);
+        if (winning.Count > 0)
+            return new(winning[0], Search.Mate - 1, 1, 1, new[] { winning[0] }, 2, 0);
+        if (safe.Count > 0) roots = safe;
+        int maxDepth = Math.Max(2, limits.Depth ?? _profile.DepthCap);
+        TimeSpan budget = limits.MoveTime == TimeSpan.Zero && limits.OwnRemainingMs == null
+            ? _profile.TimeBudget : limits.Budget;
+        var search = new Search(board, history, limits.Nodes, budget, ct, _profile.WindowCp, _profile.WeightPower, _random);
         var result = search.Run(roots, maxDepth);
         if (result.BestMove.HasValue && PositionLoader.IsLegal(core, side, result.BestMove.Value)) return result;
         var fallback = roots.First(m => PositionLoader.IsLegal(core, side, m));
@@ -120,14 +128,15 @@ public sealed class BuiltInEngine : IChessEngine
         private readonly long? _nodeLimit;
         private readonly CancellationToken _ct;
         private readonly int _tolerance;
+        private readonly int _weightPower;
         private readonly Random _random;
         private long _nodes;
         private bool _enforceBudget;
         private sealed class BudgetExpired : Exception { }
 
         internal Search(Mailbox board, List<ulong> history, long? nodeLimit, TimeSpan budget, CancellationToken ct,
-            int tolerance, Random random)
-        { _board = board; _history = history; _nodeLimit = nodeLimit; _budget = budget; _ct = ct; _tolerance = tolerance; _random = random; }
+            int tolerance, int weightPower, Random random)
+        { _board = board; _history = history; _nodeLimit = nodeLimit; _budget = budget; _ct = ct; _tolerance = tolerance; _weightPower = weightPower; _random = random; }
 
         private void Visit()
         {
@@ -145,7 +154,7 @@ public sealed class BuiltInEngine : IChessEngine
             var candidates = new List<(IccsMove Move, int Score, IReadOnlyList<IccsMove> Pv)>();
             for (int depth = 1; depth <= maxDepth; depth++)
             {
-                _enforceBudget = depth > 1;
+                _enforceBudget = depth > 2;
                 int iterationScore = -Mate - 1;
                 var iterationBest = best;
                 var iterationPv = pv;
@@ -159,9 +168,8 @@ public sealed class BuiltInEngine : IChessEngine
                         _history.Add(_board.Hash);
                         int value;
                         List<IccsMove> child;
-                        // A wider root window gives exact scores for near-best candidates; cutoff
-                        // bounds fall below the selection threshold and cannot enter the final pool.
-                        try { value = -Negamax(depth - 1, -Mate - 1, -iterationScore + _tolerance + 1, 1, out child); }
+                        // Every root receives an exact score, independent of the selection window.
+                        try { value = -Negamax(depth - 1, -Mate - 1, Mate + 1, 1, out child); }
                         finally { _history.RemoveAt(_history.Count - 1); _board.Undo(move, captured); }
                         iterationCandidates.Add((move, value, new[] { move }.Concat(child).ToArray()));
                         if (value > iterationScore)
@@ -180,7 +188,18 @@ public sealed class BuiltInEngine : IChessEngine
             {
                 int tolerance = Math.Abs(score) >= Mate - 128 ? 0 : _tolerance;
                 var choices = candidates.Where(c => c.Score >= score - tolerance).ToArray();
-                var chosen = choices[_random.Next(choices.Length)];
+                var chosen = choices[0];
+                if (tolerance > 0 && choices.Length > 1)
+                {
+                    var weights = choices.Select(c => (int)Math.Pow(1 + 9.0 *
+                        (tolerance - (score - c.Score)) / tolerance, _weightPower)).ToArray();
+                    int ticket = _random.Next(weights.Sum());
+                    for (int i = 0; i < choices.Length; i++)
+                    {
+                        ticket -= weights[i];
+                        if (ticket < 0) { chosen = choices[i]; break; }
+                    }
+                }
                 best = chosen.Move; score = chosen.Score; pv = chosen.Pv;
             }
             int? mate = Math.Abs(score) >= Mate - 128 ? Math.Sign(score) * ((Mate - Math.Abs(score) + 1) / 2) : null;

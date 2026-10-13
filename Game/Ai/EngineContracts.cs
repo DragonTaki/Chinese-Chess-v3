@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Core;
@@ -45,5 +45,21 @@ public sealed record EngineResult(IccsMove? BestMove, int ScoreCp, int? MateIn,
     internal static double Probability(int score) => 1 / (1 + Math.Exp(-score / 400.0));
 }
 
-/// <summary>Increasing search effort after the random and one-ply material levels.</summary>
-public enum EngineLevel { Random, Greedy, SearchDepth2, SearchDepth4, Search500Ms, Search2000Ms }
+/// <summary>Increasing search effort and precision, with tactical safety at every tier.</summary>
+public enum EngineLevel { Beginner, Elementary, Intermediate, Advanced, Expert, Strongest }
+
+/// <summary>Immutable search effort, score window, weighting and immediate-mate protection.</summary>
+public sealed record EngineLevelProfile(int DepthCap, TimeSpan TimeBudget, int WindowCp,
+    int WeightPower = 2, bool ProtectImmediateMate = true)
+{
+    public static EngineLevelProfile For(EngineLevel level) => level switch
+    {
+        EngineLevel.Beginner => new(2, TimeSpan.FromSeconds(1), 150),
+        EngineLevel.Elementary => new(3, TimeSpan.FromSeconds(1), 90),
+        EngineLevel.Intermediate => new(4, TimeSpan.FromSeconds(1), 50),
+        EngineLevel.Advanced => new(5, TimeSpan.FromSeconds(1), 25),
+        EngineLevel.Expert => new(64, TimeSpan.FromSeconds(2), 10),
+        EngineLevel.Strongest => new(64, TimeSpan.FromSeconds(5), 0),
+        _ => throw new ArgumentOutOfRangeException(nameof(level)),
+    };
+}

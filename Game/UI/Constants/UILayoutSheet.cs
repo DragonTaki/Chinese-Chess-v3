@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
-// Update Date: 2026/10/12
-// Version: v1.9
+// Update Date: 2026/10/13
+// Version: v2.0
 /* ----- ----- ----- ----- */
 
 using System;
@@ -199,6 +199,38 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 Width = LayoutSize.Fixed(UILayoutConstants.Submenu.BoardGroup.ButtonWidth),
                 Height = LayoutSize.Fixed(UILayoutConstants.Submenu.Button.Size.Y),
                 FlexShrink = 0f,
+            };
+
+            /// <summary>The computer-game setup's opening row: the checkbox and its dropdown directly to the right, vertically centered.</summary>
+            public static readonly UILayoutStyle OpeningRow = GroupRow with
+            {
+                AlignItems = FlexAlign.Center,
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.ItemHeight),
+                Padding = new PaddingF(UILayoutConstants.SettingsMenu.ItemPaddingX, 0f),
+            };
+
+            /// <summary>The opening row's checkbox: fixed width, so the dropdown starts at the same place.</summary>
+            public static readonly UILayoutStyle OpeningCheckbox = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(220f),
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.ValueHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>The opening row's dropdown, beside its checkbox.</summary>
+            public static readonly UILayoutStyle OpeningDropdown = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(360f),
+                Height = LayoutSize.Fixed(UILayoutConstants.SettingsMenu.ValueHeight),
+                FlexShrink = 0f,
+            };
+
+            /// <summary>The setup's bottom row: the first button at the left edge, the second at the right edge.</summary>
+            public static readonly UILayoutStyle SetupButtonRow = GroupRow with
+            {
+                JustifyContent = JustifyContent.SpaceBetween,
             };
         }
 
