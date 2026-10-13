@@ -4,12 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/13
-// Version: v2.0
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Chinese_Chess_v3.Game.Core.Boards;
+using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 
 using Engine.Geometry;
 using Engine.UI.Constants.Core;
@@ -227,10 +228,38 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 FlexShrink = 0f,
             };
 
-            /// <summary>The setup's bottom row: the first button at the left edge, the second at the right edge.</summary>
-            public static readonly UILayoutStyle SetupButtonRow = GroupRow with
+            /// <summary>The setup's scrolling settings area: below the tab bar, above the fixed bottom row, clipped.</summary>
+            public static readonly UILayoutStyle SetupScrollContainer = Menus.ScrollContainer(
+                UILayoutConstants.Submenu.MarginX, UILayoutConstants.Submenu.MarginY,
+                UILayoutConstants.OnlineMenu.RowGap) with
             {
+                Top = SetupLayout.ScrollTop(UILayoutConstants.Submenu.MarginY, UILayoutConstants.SettingsMenu.TabBarHeight, UILayoutConstants.SettingsMenu.TabBarGap),
+                Bottom = SetupLayout.ScrollBottom(UILayoutConstants.Submenu.MarginY),
+                Overflow = OverflowMode.Hidden,
+            };
+
+            /// <summary>The setup's bottom row: pinned to the panel's bottom (not part of the scrolling content), three buttons spread left, middle, right.</summary>
+            public static readonly UILayoutStyle SetupButtonRow = new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.Submenu.MarginX,
+                Right = UILayoutConstants.Submenu.MarginX,
+                Bottom = UILayoutConstants.Submenu.MarginY,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Fixed(SetupLayout.RowHeight),
+                Container = LayoutContainer.Flex,
+                FlexDirection = FlexDirection.Row,
                 JustifyContent = JustifyContent.SpaceBetween,
+                AlignItems = FlexAlign.Center,
+            };
+
+            /// <summary>A bottom-row button: normal height, a fixed width.</summary>
+            public static readonly UILayoutStyle SetupButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(SetupLayout.ButtonWidth),
+                Height = LayoutSize.Fixed(SetupLayout.RowHeight),
+                FlexShrink = 0f,
             };
         }
 

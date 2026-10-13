@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
 // Update Date: 2026/10/13
-// Version: v3.0
+// Version: v3.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -565,6 +565,34 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         /// <summary>The existing local rule and clock sections for one mode, without tabs.</summary>
         public static SettingsMenuPage RulePage(GameKind kind) =>
             new(SettingsTexts.GameKindName(kind), RuleSections(kind, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer));
+
+        /// <summary>
+        /// One mode's pre-game pages: 規則 (every rule row) and 計時 (the clock rows). A page without rows is left out.
+        /// </summary>
+        public static IReadOnlyList<SettingsMenuPage> PreGamePages(GameKind kind) =>
+            SplitRulesAndTimer(RuleSections(kind, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer));
+
+        /// <summary>The computer game's pre-game pages: 規則, 計時, then 電腦 (strength and side; the opening row is the view's).</summary>
+        public static IReadOnlyList<SettingsMenuPage> ComputerPages => _computerPages ??= BuildComputerPages();
+
+        private static List<SettingsMenuPage> _computerPages;
+
+        private static List<SettingsMenuPage> BuildComputerPages()
+        {
+            var pages = SplitRulesAndTimer(AiRuleSections);
+            pages.Add(new SettingsMenuPage(SettingsTexts.PageComputer, new[] { AiSection }));
+            return pages;
+        }
+
+        /// <summary>The clock section (always the last) becomes the 計時 page; the sections before it, if any, the 規則 page.</summary>
+        private static List<SettingsMenuPage> SplitRulesAndTimer(IReadOnlyList<SettingsMenuSection> sections)
+        {
+            var pages = new List<SettingsMenuPage>();
+            if (sections.Count > 1)
+                pages.Add(new SettingsMenuPage(SettingsTexts.PageRules, sections.Take(sections.Count - 1).ToArray()));
+            pages.Add(new SettingsMenuPage(SettingsTexts.PageTimer, new[] { sections[sections.Count - 1] }));
+            return pages;
+        }
 
         /// <summary>
         /// An online custom room's rule and clock sections for <paramref name="kind"/>, editing

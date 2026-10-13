@@ -4,13 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
@@ -36,27 +37,83 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             foreach (var refresh in _refreshers) refresh(Handler.Live);
         }
 
-        /// <summary>Shows one local mode's existing rule and clock rows.</summary>
+        /// <summary>The tab bar of the pre-game pages (a child of the panel, above the scrolling area); null while the mode list shows.</summary>
+        private UITabBar _setupTabs;
+
+        /// <summary>The fixed bottom row (a child of the panel, not of the scroll container); null while the mode list shows.</summary>
+        private UIButtonRow _setupRow;
+
+        private IReadOnlyList<SettingsMenuPage> _setupPages = Array.Empty<SettingsMenuPage>();
+        private string _setupTitle = string.Empty;
+
+        /// <summary>The bottom row's buttons: drawn by <see cref="UIKindMenuRenderer"/> without the scroll area's clip.</summary>
+        internal List<UIButton> FixedButtons { get; } = new();
+
+        /// <summary>Shows one local mode's pages: 規則 and 計時.</summary>
         public void ShowSinglePlayerSetup(GameKind kind)
         {
-            ShowRuleSettings(kind);
-            AddStartRow();
-            PerformLayout();
+            ClearPage();
+            ClearSetupChrome();
+            Handler.PrepareSettings(kind);
+            BeginSetup(SettingsTexts.GameKindName(kind));
+            ShowSetupPage(0);
         }
 
-        private void ShowRuleSettings(GameKind kind)
+        /// <summary>Creates the tab bar, the scrolling area's layout and the fixed bottom row for the prepared pages.</summary>
+        private void BeginSetup(string title)
         {
+            _setupTitle = title;
+            _setupPages = Handler.SetupPages;
+            ScrollContainer.LayoutRules.Apply(UILayoutSheet.Submenu.SetupScrollContainer);
+
+            _setupTabs = _factory.CreateElement<UITabBar, UITabBarHandler, UITabBarRenderer>();
+            _setupTabs.Style = UILayoutStyles.SettingsMenu.TabBarStyle;
+            _setupTabs.LayoutRules.Apply(UILayoutSheet.SettingsMenu.TabBar);
+            _setupTabs.SetTabs(_setupPages.Select(page => page.Title));
+            _setupTabs.SelectedIndex = 0;
+            _setupTabs.Handler.SelectionChanged = index => Handler.SelectSetupPage(index);
+            AddChild(_setupTabs);
+
+            _setupRow = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
+            _setupRow.LayoutRules.Apply(UILayoutSheet.Submenu.SetupButtonRow);
+            AddChild(_setupRow);
+            foreach (var (action, text) in PreGameSetup.BottomRow)
+                AddSetupButton(_setupRow, text, action switch
+                {
+                    PreGameAction.Back => Handler.BackToKinds,
+                    PreGameAction.Reset => Handler.ResetSettings,
+                    _ => Handler.StartGame,
+                });
+        }
+
+        /// <summary>Replaces the scrolling area's content with page <paramref name="index"/> and scrolls it to the top.</summary>
+        internal void ShowSetupPage(int index)
+        {
+            if (index < 0 || index >= _setupPages.Count) return;
             ClearPage();
-            Handler.PrepareSettings(kind);
-            ScrollContainer.LayoutRules.Apply(UILayoutSheet.OnlineMenu.PanelScrollContainer);
-            AddSetupHeading(SettingsTexts.GameKindName(kind));
-            foreach (var section in SettingsMenuContent.RulePage(kind).Sections)
+            if (_setupTabs != null) _setupTabs.SelectedIndex = index;
+            // The computer form's choices (strength, side, clock) follow the rows of every page, not only its own.
+            if (Purpose == KindMenuPurpose.VsComputer) _refreshers.Add(settings => Handler.AiSetup.SyncChoices(settings.Ai));
+            AddSetupHeading(_setupTitle);
+            foreach (var section in _setupPages[index].Sections)
             {
                 if (section.Header != null) AddSetupHeading(section.Header);
                 foreach (var item in section.Items)
                     ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
             }
+            if (Purpose == KindMenuPurpose.VsComputer && index == PreGameSetup.ComputerPageIndex) AddOpeningRow();
             RefreshSettings();
+            PerformLayout();
+        }
+
+        private void ClearSetupChrome()
+        {
+            _setupTabs?.Dispose();
+            _setupTabs = null;
+            _setupRow?.Dispose();
+            _setupRow = null;
+            FixedButtons.Clear();
+            _setupPages = Array.Empty<SettingsMenuPage>();
         }
 
         private void AddSetupHeading(string text)
@@ -74,6 +131,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         public void ShowKinds()
         {
             ClearPage();
+            ClearSetupChrome();
             ScrollContainer.LayoutRules.Apply(UILayoutSheet.Submenu.ScrollContainer);
             BuildButtons();
             PerformLayout();
@@ -89,31 +147,23 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         }
 
         /// <summary>
-        /// Shows the pre-game form: strength, who moves first, the clock, then 指定電腦開局, a checkbox with its
-        /// always-present dropdown directly to the right (greyed until checked), and 返回 / 開始遊戲.
+        /// Shows the computer game's pre-game pages: 規則, 計時 and 電腦 (strength, who moves first, then 指定電腦開局, a
+        /// checkbox with its always-present dropdown directly to the right, greyed until checked).
         /// </summary>
         public void ShowAiSetup()
         {
             ClearPage();
-            Handler.PrepareSettings(GameKind.Traditional);
-            ScrollContainer.LayoutRules.Apply(UILayoutSheet.OnlineMenu.PanelScrollContainer);
-            var presenter = Handler.AiSetup;
-            presenter.Load(Handler.Live.Ai);
-            AddSetupHeading(presenter.Title);
-            // Rule switches first (when the mode has any), then strength, side, clock, opening.
-            foreach (var section in SettingsMenuContent.AiRuleSections.Where(x => x != SettingsMenuContent.AiTimerSection))
-            {
-                AddSetupHeading(section.Header);
-                foreach (var item in section.Items)
-                    ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
-            }
-            AddSetupHeading(SettingsMenuContent.AiSection.Header);
-            foreach (var item in SettingsMenuContent.AiSection.Items)
-                ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
-            AddSetupHeading(SettingsMenuContent.AiTimerSection.Header);
-            foreach (var item in SettingsMenuContent.AiTimerSection.Items)
-                ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
+            ClearSetupChrome();
+            Handler.PrepareComputerSettings();
+            Handler.AiSetup.Load(Handler.Live.Ai);
+            BeginSetup(Handler.AiSetup.Title);
+            ShowSetupPage(0);
+        }
 
+        /// <summary>The computer page's opening row: the checkbox and, directly to its right, the dropdown.</summary>
+        private void AddOpeningRow()
+        {
+            var presenter = Handler.AiSetup;
             var openingRow = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
             openingRow.LayoutRules.Apply(UILayoutSheet.Submenu.OpeningRow);
             ScrollContainer.AddChild(openingRow);
@@ -150,19 +200,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
                 RefreshOpening();
             });
             assign.Changed += value => { presenter.SetAssignOpening(value); RefreshOpening(); Handler.PersistOpening(); };
-
-            RefreshSettings();
-            AddStartRow();
-            PerformLayout();
-        }
-
-        private void AddStartRow()
-        {
-            var row = _factory.CreateElement<UIButtonRow, UIButtonRowHandler, UIButtonRowRenderer>();
-            row.LayoutRules.Apply(UILayoutSheet.Submenu.SetupButtonRow);
-            ScrollContainer.AddChild(row);
-            AddSetupButton(row, AiSetupTexts.Back, Handler.BackToKinds);
-            AddSetupButton(row, AiSetupTexts.Start, Handler.StartGame);
         }
 
         private void AddSetupButton(UIButtonRow row, string text, Action action)
@@ -171,9 +208,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             button.Text = text;
             button.Style = UILayoutStyles.SettingsMenu.ButtonStyle;
             button.Handler.Action = action;
-            button.LayoutRules.Apply(UILayoutSheet.Submenu.GroupButton);
+            button.LayoutRules.Apply(UILayoutSheet.Submenu.SetupButton);
             row.AddChild(button);
-            Buttons.Add(button);
+            FixedButtons.Add(button);
         }
     }
 }

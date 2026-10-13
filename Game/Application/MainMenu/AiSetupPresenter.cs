@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -14,6 +14,7 @@ using System.Linq;
 using Chinese_Chess_v3.Game.Ai;
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.Session;
+using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
@@ -67,6 +68,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         public string OpeningLabel => AiSetupTexts.Opening;
         public string StartText => AiSetupTexts.Start;
         public string BackText => AiSetupTexts.Back;
+        public string ResetText => AiSetupTexts.Reset;
 
         /// <summary>Loads options for a supported kind without creating or restarting a game.</summary>
         public bool Prepare(GameKind kind)
@@ -87,6 +89,17 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             OpeningStyle = settings.OpeningName;
             AssignOpening = !string.IsNullOrEmpty(OpeningStyle);
             SetPlayerSide(settings.PlayerSide);
+        }
+
+        /// <summary>
+        /// 重置: every setting of the computer game's pages (and the assigned opening) returns to its default and is
+        /// saved; the form then follows the restored values.
+        /// </summary>
+        public void ResetToDefaults(SettingsScreenModel model)
+        {
+            ArgumentNullException.ThrowIfNull(model);
+            model.ResetToDefaults();
+            Load(model.Live.Ai);
         }
 
         /// <summary>Follows the settings rows (strength, side, clock) without touching the opening choice.</summary>

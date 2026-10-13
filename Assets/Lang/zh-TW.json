@@ -1,5 +1,5 @@
 // Update Date: 2026/10/13
-// Version: v1.7
+// Version: v1.8
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -121,6 +121,9 @@
   "settings.section_dark_chess": "── 暗棋規則（下一局開始生效）──",
   "settings.section_timer": "── 計時（下一局開始生效）──",
   "settings.section_vs_computer": "── 人機對戰（下一局開始生效）──",
+  "settings.page_rules": "規則",
+  "settings.page_timer": "計時",
+  "settings.page_computer": "電腦",
   "settings.section_hints": "── 提示（立即生效）──",
   "settings.section_other": "── 其他 ──",
   "settings.general_can_see_general": "無視王見王規則",
@@ -359,6 +362,7 @@
   "ai.setup.opening": "電腦開局",
   "ai.setup.start": "開始遊戲",
   "ai.setup.back": "返回",
+  "ai.setup.reset": "重置",
   "ai.setup.side.human_first": "玩家先走",
   "ai.setup.side.computer_first": "電腦先走",
   "ai.setup.side.random": "隨機決定",

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -25,6 +25,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static string Opening => Lang.Get("ai.setup.opening");
         public static string Start => Lang.Get("ai.setup.start");
         public static string Back => Lang.Get("ai.setup.back");
+        public static string Reset => Lang.Get("ai.setup.reset");
         public static string Side(AiPlayerSide side) => side switch
         {
             AiPlayerSide.First => Lang.Get("ai.setup.side.human_first"),

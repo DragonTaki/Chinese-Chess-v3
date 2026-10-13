@@ -4,8 +4,10 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
 // Update Date: 2026/10/13
-// Version: v1.7
+// Version: v1.8
 /* ----- ----- ----- ----- */
+
+using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
 using Chinese_Chess_v3.Game.Application.Services;
@@ -38,14 +40,38 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         private SettingsScreenModel _model;
         internal PlayerSettings Live => _model.Live;
 
-        internal void PrepareSettings(GameKind kind)
+        /// <summary>The pre-game pages of the prepared settings (规則, 計時 and, for a computer game, 電腦).</summary>
+        internal IReadOnlyList<SettingsMenuPage> SetupPages => _model.Pages;
+
+        internal void PrepareSettings(GameKind kind) =>
+            Bind(new SettingsScreenModel(kind, Service<PlayerSettings>(), Service<SettingsFile>(), Service<IDialogService>()));
+
+        internal void PrepareComputerSettings() =>
+            Bind(SettingsScreenModel.ForComputerGame(Service<PlayerSettings>(), Service<SettingsFile>(), Service<IDialogService>()));
+
+        private T Service<T>() => _factory.ServiceProvider.GetRequiredService<T>();
+
+        private void Bind(SettingsScreenModel model)
         {
             _model?.Exit();
-            var services = _factory.ServiceProvider;
-            _model = new SettingsScreenModel(kind, services.GetRequiredService<PlayerSettings>(),
-                services.GetRequiredService<SettingsFile>(), services.GetRequiredService<IDialogService>());
+            _model = model;
             _model.Enter(0);
             _model.ValuesChanged += () => Element.RefreshSettings();
+        }
+
+        /// <summary>A tab of the pre-game pages selected.</summary>
+        internal void SelectSetupPage(int index)
+        {
+            if (_model != null && _model.SelectTab(index)) Element.ShowSetupPage(index);
+        }
+
+        /// <summary>重置: this mode's settings (all its pages, and the computer options for a computer game) return to their defaults.</summary>
+        internal void ResetSettings()
+        {
+            if (_model == null) return;
+            if (Element.Purpose == KindMenuPurpose.VsComputer) AiSetup.ResetToDefaults(_model);
+            else _model.ResetToDefaults();
+            Element.RefreshSettings();
         }
 
         /// <summary>Saves the chosen opening (empty when none is assigned) with the other computer-game settings.</summary>

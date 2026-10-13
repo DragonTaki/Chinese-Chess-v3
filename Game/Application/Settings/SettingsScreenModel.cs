@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/13
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -56,6 +56,9 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         /// <summary>Whether the last write failed and the failure was already reported (so a run of failing edits shows the message once).</summary>
         private bool _saveFailureShown;
 
+        /// <summary>Whether this is the computer game's page set, whose reset also clears the assigned opening.</summary>
+        private bool _resetsOpening;
+
         /// <param name="screen">Which settings screen this is.</param>
         /// <param name="live">The live settings (the DI instance).</param>
         /// <param name="file">The settings file holding <paramref name="live"/>'s areas: applies and writes them after each edit.</param>
@@ -74,8 +77,19 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         public SettingsScreenModel(GameKind kind, PlayerSettings live, SettingsFile file, IDialogService dialogs)
             : this(SettingsScreen.Game, live, file, dialogs)
         {
-            Pages = new[] { SettingsMenuContent.RulePage(kind) };
+            Pages = SettingsMenuContent.PreGamePages(kind);
         }
+
+        private SettingsScreenModel(PlayerSettings live, SettingsFile file, IDialogService dialogs)
+            : this(SettingsScreen.Game, live, file, dialogs)
+        {
+            Pages = SettingsMenuContent.ComputerPages;
+            _resetsOpening = true;
+        }
+
+        /// <summary>Creates the live editor for the computer game's pre-game pages (規則, 計時, 電腦).</summary>
+        public static SettingsScreenModel ForComputerGame(PlayerSettings live, SettingsFile file, IDialogService dialogs) =>
+            new(live, file, dialogs);
 
         /// <summary>Which settings screen this is.</summary>
         public SettingsScreen Screen { get; }
@@ -189,6 +203,22 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                     ApplyChange();
                     SaveNow();
                 });
+        }
+
+        /// <summary>
+        /// 重置 clicked on a pre-game page set: every setting shown on any of the pages (and, for the computer
+        /// game, the assigned opening) returns to its default, then it is applied and written like any edit.
+        /// No confirmation; other modes' and the general settings are not touched.
+        /// </summary>
+        public void ResetToDefaults()
+        {
+            var defaults = PlayerSettings.Defaults;
+            foreach (var page in Pages)
+                page.ResetToDefaults(Live, defaults);
+            if (_resetsOpening)
+                Live.Ai.OpeningName = defaults.Ai.OpeningName;
+            ApplyChange();
+            SaveNow();
         }
 
         /// <summary>After an edit: every area puts its values into effect, then the view refreshes.</summary>

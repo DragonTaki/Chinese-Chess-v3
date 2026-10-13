@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/13
-// Version: v1.7
+// Version: v1.8
 /* ----- ----- ----- ----- */
 
 using System;
@@ -83,6 +83,9 @@ namespace Chinese_Chess_v3.Game.Application.Texts
 
         // 人機對戰 section of the Traditional tab.
         public static string SectionVsComputer => Lang.Get("settings.section_vs_computer");
+        public static string PageRules => Lang.Get("settings.page_rules");
+        public static string PageTimer => Lang.Get("settings.page_timer");
+        public static string PageComputer => Lang.Get("settings.page_computer");
         public static string AiPlayerSideName => Lang.Get("settings.ai_player_side");
         public static string AiLevelName => Lang.Get("settings.ai_level");
 
