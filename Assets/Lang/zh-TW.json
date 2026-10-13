@@ -1,5 +1,5 @@
 // Update Date: 2026/10/13
-// Version: v1.8
+// Version: v1.9
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -380,5 +380,9 @@
   "lan.move_rejected": "這一步未被房主接受，請重新選擇走法。",
   "lan.out_of_sync": "對局資料無法同步，已中止連線。",
   "lan.host": "房主：{0}，位址：{1}",
-  "lan.room": "區域網路房間：{0}"
+  "lan.room": "區域網路房間：{0}",
+  "online.game_unavailable": "連線對局無法使用此功能",
+  "online.move_rejected": "伺服器未接受這一步，請重新選擇走法",
+  "online.out_of_sync": "棋盤與伺服器不同步，已中止對局",
+  "online.away_suffix": "（離線）"
 }

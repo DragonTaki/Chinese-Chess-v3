@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -572,7 +572,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
             if (state != OnlineState.LoggedIn)
             {
-                _navigator.Show(ScreenId.Room);
+                _navigator.Show(state == OnlineState.InGame ? ScreenId.Game : ScreenId.Room);
                 return;
             }
 
@@ -772,8 +772,6 @@ namespace Chinese_Chess_v3.Game.Application.Online
             if (wasLoggedIn || State == OnlineState.InRoom)
                 SetState(OnlineState.InGame);
             GameStarted?.Invoke(start);
-            if (wasLoggedIn)
-                _navigator.Show(ScreenId.Room);
         }
 
         private void HandleGameEnded(EndGameDto end)

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -27,6 +27,11 @@ namespace Chinese_Chess_v3.Game.Application.Texts
     /// </summary>
     public static class OnlineTexts
     {
+        public static string Unavailable => Lang.Get("online.game_unavailable");
+        public static string MoveRejected => Lang.Get("online.move_rejected");
+        public static string OutOfSync => Lang.Get("online.out_of_sync");
+        public static string AwaySuffix => Lang.Get("online.away_suffix");
+
         // ----- Login screen -----
 
         /// <summary>The login screen's title and its submit button.</summary>

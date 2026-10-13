@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -28,6 +28,19 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
     public sealed class InfoBoardViewModel
     {
         private readonly GameManager _game;
+        private bool[] _away = Array.Empty<bool>();
+
+        /// <summary>Sets the remote presence flags in player turn order.</summary>
+        public void SetAway(IReadOnlyList<bool> away)
+        {
+            _away = new bool[away?.Count ?? 0];
+            for (int i = 0; i < _away.Length; i++)
+                _away[i] = away[i];
+        }
+
+        /// <summary>Whether a remote player is temporarily disconnected.</summary>
+        public bool IsAway(PlayerSide side) => _game.IsRemote && (int)side >= 1
+            && (int)side <= _away.Length && _away[(int)side - 1];
 
         /// <summary>Creates the view model for <paramref name="game"/>.</summary>
         /// <param name="game">The game shown (clocks, turn, check, colours, names).</param>
@@ -128,7 +141,7 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
         /// </summary>
         public string NameWithCheck(PlayerSide side)
         {
-            string name = GetPlayerName(side);
+            string name = GetPlayerName(side) + (IsAway(side) ? OnlineTexts.AwaySuffix : "");
             return _game.IsInCheck && _game.CurrentTurn == side ? name + GameTexts.InCheckSuffix : name;
         }
 

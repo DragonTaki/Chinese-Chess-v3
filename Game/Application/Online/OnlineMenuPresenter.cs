@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.3
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -47,7 +47,8 @@ namespace Chinese_Chess_v3.Game.Application.Online
         /// <summary>Creates the presenter (a single long-lived instance, like the panel it drives).</summary>
         /// <param name="session">The online session.</param>
         /// <param name="lobby">The lobby page's presenter.</param>
-        public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby, LanMenuPresenter lan = null)
+        /// <param name="online">Subscribes the online bridge before login can restore a running game.</param>
+        public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby, LanMenuPresenter lan = null, OnlineGameBridge online = null)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _lobby = lobby ?? throw new ArgumentNullException(nameof(lobby));

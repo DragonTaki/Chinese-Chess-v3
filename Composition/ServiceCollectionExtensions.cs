@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/13
-// Version: v1.8
+// Version: v1.9
 /* ----- ----- ----- ----- */
 
 using System;
@@ -150,6 +150,8 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<MainMenuPresenter>();
             services.AddSingleton<AiSetupPresenter>();
             services.AddSingleton<LanGameBridge>();
+            services.AddSingleton<IRemoteGameBridge>(sp => sp.GetRequiredService<LanGameBridge>());
+            services.AddSingleton<OnlineGameBridge>();
             services.AddSingleton<LanMenuPresenter>();
             // The online panel and room decisions; resolved by their handlers.
             services.AddSingleton<LoginPresenter>();

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/13
-// Version: v1.6
+// Version: v1.7
 /* ----- ----- ----- ----- */
 
 using System;
@@ -51,7 +51,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private readonly INavigator _navigator;
         private readonly PlayerNameSettings _settings;
         private readonly GameLogComposer _gameLog;
-        private readonly LanGameBridge _lan;
+        private readonly IRemoteGameBridge _lan;
+        private readonly OnlineGameBridge _online;
+        private IRemoteGameBridge Remote => _online?.IsActive == true ? _online : _lan?.IsActive == true ? _lan : null;
 
         /// <summary>
         /// Set while 回到主畫面 resigns the game itself: that ending is not announced (the
@@ -70,7 +72,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <param name="settings">The live player settings (the player's name for a save's unnamed players).</param>
         /// <param name="gameLog">The game log the presenter's own lines go to.</param>
         public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerNameSettings settings, GameLogComposer gameLog,
-            LanGameBridge lan = null)
+            IRemoteGameBridge lan = null, OnlineGameBridge online = null)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
@@ -78,6 +80,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _gameLog = gameLog ?? throw new ArgumentNullException(nameof(gameLog));
             _lan = lan;
+            _online = online;
 
             Game.GameOver += OnGameOver;
             _session.GameReset += OnGameReset;
@@ -124,7 +127,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             if (_suppressGameOverDialog || Game.IsReplaying)
                 return;
-            if (_lan?.IsActive == true && info.Reason == GameOverReason.Disconnect && info.Winner == PlayerSide.None)
+            if (Remote != null && info.Reason == GameOverReason.Disconnect && info.Winner == PlayerSide.None)
                 return;
             GameOverDialogRequested?.Invoke(info);
         }
@@ -142,7 +145,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             if (!game.IsGameOver)
                 return;
 
-            string message = info.Ranking != null
+            string message = _online?.IsActive == true && _online.EndSentence != null ? _online.EndSentence
+                : info.Ranking != null
                 ? GameTexts.ThreeKingdomsResult(info.Ranking, game.NameOf, game.TeamOf, game.RankingScoreOf, game.Rules.HalfCrossTeams, info.Reason)
                 : GameTexts.GameOverMessage(info.Winner, game.NameOf(info.Winner), game.ColorOf(info.Winner), info.Reason, game.Board.Type);
             _dialogs.ShowConfirm(
@@ -173,9 +177,12 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// </remarks>
         public void Restart()
         {
-            if (_lan?.IsActive == true)
+            if (Remote != null)
             {
-                _lan.ShowRoom();
+                if (Game.IsGameOver)
+                    Remote.ShowRoom();
+                else
+                    Log(OnlineTexts.Unavailable);
                 return;
             }
             CloseSavedGameList();
@@ -199,9 +206,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void RestartNow()
         {
             CloseSavedGameList();
-            if (_lan?.IsActive == true)
+            if (Remote != null)
             {
-                _lan.ShowRoom();
+                Remote.ShowRoom();
                 return;
             }
             _session.Restart();
@@ -213,6 +220,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             CloseSavedGameList();
             var game = Game;
+            if (Remote != null)
+            {
+                Log(OnlineTexts.Unavailable);
+                return;
+            }
             if (!game.CanUndo)
             {
                 Log(GameTexts.UndoUnavailable);
@@ -234,9 +246,9 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
                 return;
             }
 
-            if (_lan?.IsActive == true)
+            if (Remote != null)
             {
-                _lan.Resign();
+                Remote.Resign();
                 return;
             }
 
@@ -256,6 +268,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             CloseSavedGameList();
             var game = Game;
+            if (Remote != null)
+            {
+                Log(OnlineTexts.Unavailable);
+                return;
+            }
             if (!game.CanSave)
             {
                 Log(game.Board.Type != BoardType.Full ? GameTexts.SaveUnavailableBoardType
@@ -279,8 +296,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <inheritdoc/>
         public void LoadGame()
         {
-            if (_lan?.IsActive == true)
+            if (Remote != null)
+            {
+                Log(OnlineTexts.Unavailable);
                 return;
+            }
             if (IsSavedGameListOpen)
             {
                 CloseSavedGameList();
@@ -312,14 +332,14 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         public void ReturnToMain()
         {
             CloseSavedGameList();
-            if (Game.IsGameOver || !Game.HasPlayedMoves)
+            if (Game.IsGameOver || (_online?.IsActive != true && !Game.HasPlayedMoves))
             {
                 ShowMainMenu();
                 return;
             }
 
             _dialogs.ShowConfirm(
-                GameTexts.ResignAndReturnToMain,
+                _online?.IsActive == true ? OnlineTexts.ConfirmLeaveDuringGame : GameTexts.ResignAndReturnToMain,
                 ConfirmDialogType.YesNo,
                 result =>
                 {
@@ -359,8 +379,13 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void ShowMainMenu()
         {
             CloseSavedGameList();
-            if (_lan?.IsActive == true)
-                _lan.Leave();
+            if (_online?.IsActive == true)
+            {
+                _online.Leave();
+                return;
+            }
+            if (Remote != null)
+                Remote.Leave();
             _navigator.Show(ScreenId.MainMenu);
         }
 
