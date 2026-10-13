@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/13
 // Update Date: 2026/10/13
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -110,7 +110,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 _session.Game.IsInputLocked = false;
         }
 
-        protected void Apply(GameUpdateDto update)
+        protected virtual void Apply(GameUpdateDto update)
         {
             if (!IsActive)
                 return;
@@ -130,11 +130,14 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 return;
             }
             _ply = update.Ply;
+            MoveApplied(update, game.LastMove);
             Sync(update.Clocks);
             game.IsInputLocked = false;
             if (!OnlinePosition.Matches(game, update.Position))
                 LoseSynchronization();
         }
+
+        protected virtual void MoveApplied(GameUpdateDto update, MoveRecord move) { }
 
         protected virtual void Sync(ClocksDto clocks)
         {

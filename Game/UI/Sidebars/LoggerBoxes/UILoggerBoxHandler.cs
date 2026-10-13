@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.GameLog;
@@ -17,8 +17,10 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
     /// Logger box handler; also the <see cref="IGameLog"/> sink the game log's composer writes to
     /// (AddMessage(string) is inherited from UITextBoxHandler).
     /// </summary>
-    public class UILoggerBoxHandler : UITextBoxHandler<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>, IGameLog
+    public class UILoggerBoxHandler : UITextBoxHandler<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>, IRemoteHistoryLog
     {
         public UILoggerBoxHandler() { }
+
+        public void AddRemoteMove(int ply, string message) => Element.AddRemoteMove(ply, message);
     }
 }

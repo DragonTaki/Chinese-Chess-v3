@@ -4,10 +4,11 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
 // Update Date: 2026/10/13
-// Version: v2.5
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 using Chinese_Chess_v3.Game.UI.Constants;
 
@@ -21,6 +22,38 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
     public class UILoggerBox : UITextBox<UILoggerBox, UILoggerBoxHandler, UILoggerBoxRenderer>, IResettable
     {
         private readonly ConcurrentQueue<LogRecord> _pendingRecords = new();
+        private readonly SortedList<int, UILabel> _remoteMoves = new();
+
+        /// <summary>Inserts a move before any later server ply without rebuilding existing log labels.</summary>
+        public void AddRemoteMove(int ply, string message)
+        {
+            if (_remoteMoves.ContainsKey(ply))
+                return;
+            AppendLine(message);
+            var label = (UILabel)ScrollContainer.Children[ScrollContainer.Children.Count - 1];
+            _remoteMoves.Add(ply, label);
+            int index = _remoteMoves.IndexOfKey(ply);
+            if (index + 1 < _remoteMoves.Count)
+            {
+                var next = _remoteMoves.Values[index + 1];
+                int childIndex = ScrollContainer.Children.IndexOf(next);
+                float y = next.Layout.Y;
+                float offset = label.Layout.Height + ParagraphSpacing;
+                ScrollContainer.Children.Remove(label);
+                for (int i = childIndex; i < ScrollContainer.Children.Count; i++)
+                {
+                    var child = ScrollContainer.Children[i];
+                    child.Layout = new Engine.Geometry.LayoutF(child.Layout.X, child.Layout.Y + offset,
+                        child.Layout.Width, child.Layout.Height);
+                    child.LocalPosition.Current.Y = child.Layout.Y;
+                }
+                label.Layout = new Engine.Geometry.LayoutF(label.Layout.X, y, label.Layout.Width, label.Layout.Height);
+                label.LocalPosition.Current.Y = y;
+                ScrollContainer.Children.Insert(childIndex, label);
+                ScrollContainer.NotifyChildOrderChanged();
+                ScrollContainer.RefreshContentSize(forceAlignment: true);
+            }
+        }
 
         public UILoggerBox() { }
 
@@ -65,6 +98,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.LoggerBoxes
         protected override void OnReset()
         {
             while (_pendingRecords.TryDequeue(out _)) { }
+            _remoteMoves.Clear();
             ClearLogs();
         }
     }

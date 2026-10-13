@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/06
-// Version: v1.2
+// Update Date: 2026/10/13
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -26,6 +26,20 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
     {
         private IGameLog _log;
 
+        /// <summary>Suppresses the local move sentence while a server-numbered move is being applied.</summary>
+        public bool DeferMoveLine { get; set; }
+
+        /// <summary>Inserts a server-numbered move into a log supporting remote history.</summary>
+        public void WriteRemoteMove(int ply, string line)
+        {
+            if (line == null)
+                return;
+            if (_log is IRemoteHistoryLog history)
+                history.AddRemoteMove(ply, line);
+            else
+                Write(line);
+        }
+
         /// <summary>Subscribes to <paramref name="game"/>'s log entries; nothing is written until <see cref="SetLog"/>.</summary>
         public GameLogComposer(GameManager game)
         {
@@ -44,6 +58,8 @@ namespace Chinese_Chess_v3.Game.Application.GameLog
 
         private void OnLogged(GameLogEvent entry)
         {
+            if (DeferMoveLine && entry is GameLogEvent.MovePlayed)
+                return;
             string line = Compose(entry);
             if (line != null)
                 Write(line);

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/12
-// Version: v1.5
+// Update Date: 2026/10/13
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -238,6 +238,10 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// </summary>
         public static string MoveLine(MoveRecord move) =>
             Lang.Get("log.move.head", move.MoveNumber, ColorName(move.Color == PieceColor.Red ? PieceColor.Red : PieceColor.Black)) + move.Notation;
+
+        /// <summary>A traditional online move's server number and notation (Player1 is Red).</summary>
+        public static string RemoteMoveLine(int ply, string notation) =>
+            Lang.Get("log.move.head", (ply + 1) / 2, ColorName(ply % 2 == 1 ? PieceColor.Red : PieceColor.Black)) + notation;
 
         /// <summary>
         /// A dark-chess action's line, which has no notation (e.g. <c>第1回合 紅：翻開(3,2) 紅俥</c>);
