@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/12
-// Version: v2.6
+// Update Date: 2026/10/13
+// Version: v2.9
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Chinese_Chess_v3.Game.Ai;
 using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
@@ -23,14 +24,11 @@ using Engine.Timing;
 
 namespace Chinese_Chess_v3.Game.Application.Settings
 {
-    /// <summary>Which settings screen a <c>UISettingsMenu</c> is (both are opened from the main menu).</summary>
+    /// <summary>The general settings screen opened from the main menu.</summary>
     public enum SettingsScreen
     {
         /// <summary>遊戲設定: tabs 畫面 / 聲音 / 遊戲 / DEBUG.</summary>
         Game,
-
-        /// <summary>單機規則設定: one tab per game kind (local games only; a network game does not use these rules).</summary>
-        Rules,
     }
 
     /// <summary>What control a setting's row has (the right side of the row).</summary>
@@ -365,10 +363,8 @@ namespace Chinese_Chess_v3.Game.Application.Settings
     }
 
     /// <summary>
-    /// What the two settings screens list: 遊戲設定 - the general
-    /// options of <see cref="PlayerSettings"/> plus the usual game options not implemented yet;
-    /// 單機規則設定 - per game kind its rule options (<see cref="RuleSettings.OptionsFor"/>, the
-    /// 三國 choices) and clock settings. Folders are only edited in <c>settings.ini</c>.
+    /// General settings and each mode's pre-game rule and clock sections.
+    /// Folders are only edited in <c>settings.ini</c>.
     /// </summary>
     public static class SettingsMenuContent
     {
@@ -384,7 +380,6 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         public static IReadOnlyList<SettingsMenuPage> PagesFor(SettingsScreen screen) => screen switch
         {
             SettingsScreen.Game => GamePages,
-            SettingsScreen.Rules => RulePages,
             _ => throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown settings screen"),
         };
 
@@ -411,7 +406,12 @@ namespace Chinese_Chess_v3.Game.Application.Settings
                         () => UnimplementedSettings.ResolutionIndex, v => UnimplementedSettings.ResolutionIndex = v),
                     Placeholder(SettingsTexts.DisplayMode, SettingsTexts.DisplayModeOptions,
                         () => UnimplementedSettings.DisplayModeIndex, v => UnimplementedSettings.DisplayModeIndex = v),
-                    Placeholder(SettingsTexts.VSync, () => UnimplementedSettings.VSync, v => UnimplementedSettings.VSync = v),
+                    new SettingsToggleItem(SettingsTexts.VSync, s => s.FrameRate.VSync, (s, v) =>
+                        {
+                            if (TimerSettings.SupportsVSync)
+                                s.FrameRate.VSync = v;
+                        },
+                        isImplemented: TimerSettings.SupportsVSync),
                     new SettingsChoiceItem(SettingsTexts.Fps, SettingsTexts.FpsOptions,
                         s => Math.Max(0, FrameRateSettings.FpsOptions.ToList().IndexOf(s.FrameRate.Fps)), (s, i) => s.FrameRate.Fps = FrameRateSettings.FpsOptions[i]),
                     Placeholder(SettingsTexts.UiScale, UiScaleMin, UiScaleMax, UiScaleStep, SettingsTexts.Percent,
@@ -562,7 +562,8 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             });
         }
 
-        private static SettingsMenuPage RulePage(GameKind kind) =>
+        /// <summary>The existing local rule and clock sections for one mode, without tabs.</summary>
+        public static SettingsMenuPage RulePage(GameKind kind) =>
             new(SettingsTexts.GameKindName(kind), RuleSections(kind, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer));
 
         /// <summary>
@@ -626,9 +627,16 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             return sections;
         }
 
-        /// <summary>單機規則設定's tabs: one per game kind, in new-game menu order.</summary>
-        public static IReadOnlyList<SettingsMenuPage> RulePages { get; } =
-            Enum.GetValues<GameKind>().Select(RulePage).ToArray();
+        /// <summary>The persistent computer-opponent choices, shared with the pre-game form.</summary>
+        public static SettingsMenuSection AiSection { get; } = new(SettingsTexts.SectionVsComputer, new SettingsMenuItem[]
+        {
+            EnumChoice(SettingsTexts.AiPlayerSideName, Enum.GetValues<AiPlayerSide>(),
+                Enum.GetValues<AiPlayerSide>().Select(SettingsTexts.AiSideName).ToArray(),
+                s => s.Ai.PlayerSide, (s, v) => s.Ai.PlayerSide = v),
+            EnumChoice(SettingsTexts.AiLevelName, Enum.GetValues<EngineLevel>(),
+                Enum.GetValues<EngineLevel>().Select(SettingsTexts.AiLevelText).ToArray(),
+                s => s.Ai.Level, (s, v) => s.Ai.Level = v),
+        });
 
         #endregion
     }

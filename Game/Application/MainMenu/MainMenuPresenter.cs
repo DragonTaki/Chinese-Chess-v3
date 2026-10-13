@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/12
-// Version: v1.3
+// Update Date: 2026/10/13
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -16,6 +16,8 @@ using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Configs;
+using Chinese_Chess_v3.Game.Application.Catalogs;
 
 using Engine.Diagnostics;
 using Engine.Logging;
@@ -31,7 +33,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
     /// The views bind to it: the menu's buttons call <see cref="Select"/>; the main menu shows a
     /// submenu on <see cref="SubmenuOpened"/> and hides it on <see cref="SubmenuClosed"/>, and
     /// calls <see cref="CloseSubmenu"/> when it is left. The single-player submenu's buttons call
-    /// <see cref="StartSinglePlayer"/>.
+    /// <see cref="PrepareSinglePlayer"/>.
     /// </para>
     /// </summary>
     public sealed class MainMenuPresenter
@@ -45,7 +47,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             MainMenuOption.LoadGame,
             MainMenuOption.EndgameChallenge,
             MainMenuOption.OpeningPractice,
-            MainMenuOption.RuleSettings,
             MainMenuOption.Help,
             MainMenuOption.Settings,
         };
@@ -55,6 +56,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         private readonly IAppLifetime _lifetime;
         private readonly OnlineSession _online;
         private readonly OnlineMenuPresenter _onlinePanel;
+        private AiSetupPresenter _aiSetup;
 
         /// <summary>Creates the presenter (a single long-lived instance, like the main menu it drives).</summary>
         /// <param name="session">The game flow (starts a new game).</param>
@@ -62,13 +64,16 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <param name="lifetime">Exits the application.</param>
         /// <param name="online">The online session.</param>
         /// <param name="onlinePanel">The Multiplayer panel pages.</param>
-        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, OnlineSession online, OnlineMenuPresenter onlinePanel)
+        /// <param name="aiSetup">The computer-game setup; null creates the default flow.</param>
+        public MainMenuPresenter(GameSession session, IDialogService dialogs, IAppLifetime lifetime, OnlineSession online, OnlineMenuPresenter onlinePanel,
+            AiSetupPresenter aiSetup = null)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _lifetime = lifetime ?? throw new ArgumentNullException(nameof(lifetime));
             _online = online ?? throw new ArgumentNullException(nameof(online));
             _onlinePanel = onlinePanel ?? throw new ArgumentNullException(nameof(onlinePanel));
+            _aiSetup = aiSetup;
             _online.PanelRequested += Shown;
             _online.PanelClosed += CloseSubmenu;
         }
@@ -84,6 +89,35 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <summary>The view hides the submenu of the option.</summary>
         public event Action<MainMenuOption> SubmenuClosed;
 
+        /// <summary>The right panel changes from game kinds to the computer-game setup.</summary>
+        public event Action AiSetupRequested;
+
+        /// <summary>Requests a mode's rule page without starting a game.</summary>
+        public event Action<GameKind> SinglePlayerSetupRequested;
+
+        /// <summary>The selected local mode, until returning to the mode list.</summary>
+        public GameKind? SinglePlayerKind { get; private set; }
+
+        /// <summary>Opens a supported local mode's settings in the current submenu.</summary>
+        public void PrepareSinglePlayer(GameKind kind)
+        {
+            if (!GameSession.CanStartNew(kind)) return;
+            SinglePlayerKind = kind;
+            SinglePlayerSetupRequested?.Invoke(kind);
+        }
+
+        /// <summary>Returns to the mode choices without starting a game.</summary>
+        public void BackToKinds() => SinglePlayerKind = null;
+
+        /// <summary>Starts the selected local mode after the settings page's final action.</summary>
+        public void StartPreparedSinglePlayer()
+        {
+            if (SinglePlayerKind is GameKind kind) StartSinglePlayer(kind);
+        }
+
+        /// <summary>The setup flow; the app supplies it through dependency injection.</summary>
+        public AiSetupPresenter AiSetup => _aiSetup ??= new AiSetupPresenter(_session, new AiSettings(), new OpeningCatalog(new FolderSettings()));
+
         /// <summary>The options that open a submenu inside the main menu (the view creates one element for each).</summary>
         public static IReadOnlyList<MainMenuOption> SubmenuOptions => SubmenuOptionList;
 
@@ -94,10 +128,9 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
 
         /// <summary>The settings screen <paramref name="option"/> opens, if it is a settings entry.</summary>
         /// <param name="option">A main menu option.</param>
-        /// <returns>單機規則設定 → rules, 遊戲設定 → general settings; null for any other option.</returns>
+        /// <returns>The general settings screen, or null for other options.</returns>
         public static SettingsScreen? SettingsScreenOf(MainMenuOption option) => option switch
         {
-            MainMenuOption.RuleSettings => SettingsScreen.Rules,
             MainMenuOption.Settings => SettingsScreen.Game,
             _ => null,
         };
@@ -145,15 +178,16 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         {
             if (CurrentSubmenu is MainMenuOption current)
             {
+                SinglePlayerKind = null;
                 SubmenuClosed?.Invoke(current);
                 CurrentSubmenu = null;
             }
         }
 
         /// <summary>
-        /// A single-player submenu button: starts that game kind's game on the game screen, or, for a
-        /// kind without a game yet (<see cref="GameSession.CanStartNew"/>; 三國半盤 whose 自訂分隊 leaves a
-        /// team empty, <see cref="GameSession.IsTeamSplitInvalid"/>), says so and stays on the menu.
+        /// The final start action: enters the selected local game, or keeps the setup page open
+        /// when the mode is unavailable or its team split is invalid. Existing confirmations
+        /// and <see cref="GameSession.IsTeamSplitInvalid"/> validation are retained.
         /// </summary>
         /// <param name="kind">The chosen game kind.</param>
         public void StartSinglePlayer(GameKind kind)
@@ -179,9 +213,18 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             _session.StartNew(kind);
         }
 
-        /// <summary>A computer-game kind button; this flow is not wired yet.</summary>
+        /// <summary>
+        /// A computer-game kind button: opens the Traditional pre-game setup in the right panel; every other kind is not built yet and does nothing (no dialog).
+        /// </summary>
         /// <param name="kind">The chosen game kind.</param>
-        public void StartVsComputer(GameKind kind) { }
+        public void StartVsComputer(GameKind kind)
+        {
+            if (!GameSession.CanStartVsComputer(kind))
+                return;
+
+            if (AiSetup.Prepare(kind))
+                AiSetupRequested?.Invoke();
+        }
 
         /// <summary>Consumes a session request after entering the main menu, or while it is already shown.</summary>
         public void Shown()
@@ -201,6 +244,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <summary>Closes the open submenu, then opens <paramref name="option"/>'s unless it was the open one.</summary>
         private void ToggleSubmenu(MainMenuOption option)
         {
+            SinglePlayerKind = null;
             MainMenuOption? previous = CurrentSubmenu;
             if (previous.HasValue)
                 SubmenuClosed?.Invoke(previous.Value);

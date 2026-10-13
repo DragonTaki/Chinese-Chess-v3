@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/05
-// Version: v2.0
+// Update Date: 2026/10/12
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -49,7 +49,10 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <summary><c>[endgame]</c>, <c>[opening]</c>: the player's own folders.</summary>
         public FolderSettings Folders { get; } = new();
 
+        /// <summary><c>[ai]</c>: the computer opponent.</summary>
+        public AiSettings Ai { get; } = new();
+
         /// <summary>Every area, in file order.</summary>
-        public IReadOnlyList<ISettingsArea> Areas => new ISettingsArea[] { Names, Rules, FrameRate, Hints, Input, Debug, Folders };
+        public IReadOnlyList<ISettingsArea> Areas => new ISettingsArea[] { Names, Rules, FrameRate, Hints, Input, Debug, Folders, Ai };
     }
 }

@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
 // Update Date: 2026/10/12
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -372,5 +372,8 @@ namespace Chinese_Chess_v3.Game.Application.Texts
             PlayerSide.Player3 => Lang.Get("player.default.3"),
             _ => Lang.Get("player.default.1"),
         };
+
+        /// <summary>The name of the computer opponent in a game against the computer (人機對戰): 電腦.</summary>
+        public static string ComputerPlayerName => Lang.Get("player.computer");
     }
 }

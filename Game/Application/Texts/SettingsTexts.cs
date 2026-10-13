@@ -4,12 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
 // Update Date: 2026/10/12
-// Version: v1.3
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Globalization;
 
+using Chinese_Chess_v3.Game.Ai;
+using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Pieces;
 
@@ -79,6 +81,32 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         /// <summary>The value of a time-limit setting while the clocks count up (正數 only measures time).</summary>
         public static string NotWithCountUp => Lang.Get("settings.not_with_count_up");
 
+        // 人機對戰 section of the Traditional tab.
+        public static string SectionVsComputer => Lang.Get("settings.section_vs_computer");
+        public static string AiPlayerSideName => Lang.Get("settings.ai_player_side");
+        public static string AiLevelName => Lang.Get("settings.ai_level");
+
+        /// <summary>A choice of the human's side in a game against the computer (先手／後手／隨機).</summary>
+        public static string AiSideName(AiPlayerSide side) => side switch
+        {
+            AiPlayerSide.First => Lang.Get("settings.ai_side.first"),
+            AiPlayerSide.Second => Lang.Get("settings.ai_side.second"),
+            AiPlayerSide.Random => Lang.Get("settings.ai_side.random"),
+            _ => throw new ArgumentOutOfRangeException(nameof(side), side, "Unknown AI side choice"),
+        };
+
+        /// <summary>A computer strength level's name in the dropdown.</summary>
+        public static string AiLevelText(EngineLevel level) => level switch
+        {
+            EngineLevel.Random => Lang.Get("settings.ai_level.random"),
+            EngineLevel.Greedy => Lang.Get("settings.ai_level.greedy"),
+            EngineLevel.SearchDepth2 => Lang.Get("settings.ai_level.search_depth_2"),
+            EngineLevel.SearchDepth4 => Lang.Get("settings.ai_level.search_depth_4"),
+            EngineLevel.Search500Ms => Lang.Get("settings.ai_level.search_500_ms"),
+            EngineLevel.Search2000Ms => Lang.Get("settings.ai_level.search_2000_ms"),
+            _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Unknown engine level"),
+        };
+
         public static string LegalMoveHints => Lang.Get("settings.legal_move_hints");
         public static string HangingPieceHints => Lang.Get("settings.hanging_piece_hints");
 
@@ -144,7 +172,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static string[] DisplayModeOptions => new[] { Lang.Get("settings.display_mode_options.0"), Lang.Get("settings.display_mode_options.1"), Lang.Get("settings.display_mode_options.2") };
         public static string VSync => Lang.Get("settings.vsync");
         public static string Fps => Lang.Get("settings.fps");
-        public static readonly string[] FpsOptions = { "30", "60", "120", "144" };
+        public static string[] FpsOptions => new[] { "30", "60", "120", "144", Lang.Get("settings.fps_unlimited") };
         public static string UiScale => Lang.Get("settings.ui_scale");
         public static string WheelScrollStep => Lang.Get("settings.wheel_scroll_step");
 

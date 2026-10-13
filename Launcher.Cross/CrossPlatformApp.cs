@@ -4,10 +4,12 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
 // Update Date: 2026/10/12
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
+using System.Diagnostics;
+using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -48,6 +50,9 @@ namespace Launcher.Cross
         private readonly IServiceProvider _sp;
         private readonly SilkWindowInterface _window;
         private readonly ManualTimerProvider _timer = new ManualTimerProvider();
+        private readonly FramePacer _renderPacer = new(TimerSettings.GameAnimationFPS, Stopwatch.Frequency);
+        private readonly FramePacer _updatePacer = new(TimerSettings.GameAnimationFPS, Stopwatch.Frequency);
+        private long _lastUpdateTimestamp;
 
         private UIInputManager _inputMgr;
         private UIRootNode _rootCanvas;
@@ -78,6 +83,9 @@ namespace Launcher.Cross
 
             ApplyFrameRate(TimerSettings.GameAnimationFPS);
             TimerSettings.GameAnimationFpsChanged += ApplyFrameRate;
+            _window.ShouldSwapAutomatically = false;
+            ApplyVSync(TimerSettings.VSync);
+            TimerSettings.VSyncChanged += ApplyVSync;
         }
 
         /// <summary>
@@ -89,7 +97,12 @@ namespace Launcher.Cross
         {
             _window.FramesPerSecond = fps;
             _window.UpdatesPerSecond = fps;
+            long now = Stopwatch.GetTimestamp();
+            _renderPacer.SetFrameRate(fps, now);
+            _updatePacer.SetFrameRate(fps, now);
         }
+
+        private void ApplyVSync(bool enabled) => _window.VSync = enabled;
 
         private void OnLoad()
         {
@@ -151,10 +164,21 @@ namespace Launcher.Cross
                 PhysicsRegistry.UpdateAll();
                 _inputMgr?.EndFrame();
             };
+            _lastUpdateTimestamp = Stopwatch.GetTimestamp();
+            _renderPacer.Reset(_lastUpdateTimestamp);
+            _updatePacer.Reset(_lastUpdateTimestamp);
             _timer.Start();
         }
 
-        private void OnUpdate(double deltaSeconds) => _timer.Tick((float)deltaSeconds);
+        private void OnUpdate(double deltaSeconds)
+        {
+            long now = Stopwatch.GetTimestamp();
+            if (!_updatePacer.TryAdvance(now))
+                return;
+            float elapsed = (float)((now - _lastUpdateTimestamp) / (double)Stopwatch.Frequency);
+            _lastUpdateTimestamp = now;
+            _timer.Tick(elapsed);
+        }
 
         private void OnFramebufferResize(Silk.NET.Maths.Vector2D<int> newSize)
         {
@@ -199,6 +223,14 @@ namespace Launcher.Cross
             var size = _window.FramebufferSize;
             if (size.X <= 0 || size.Y <= 0) return;
 
+            // Silk bypasses its FPS period with VSync on; only accepted frames are drawn and swapped.
+            if (!_renderPacer.TryAdvance(Stopwatch.GetTimestamp()))
+            {
+                // Yield briefly while keeping window events responsive between frame deadlines.
+                Thread.Sleep(1);
+                return;
+            }
+
             int fbo = _gl.GetInteger(GLEnum.FramebufferBinding);
             var glInfo = new GRGlFramebufferInfo((uint)fbo, (uint)GLEnum.Rgba8);
             using var renderTarget = new GRBackendRenderTarget(size.X, size.Y, 0, 8, glInfo);
@@ -224,6 +256,7 @@ namespace Launcher.Cross
 
             surface.Canvas.Flush();
             _grContext.Flush();
+            _window.GLContext.SwapBuffers();
         }
 
         // Losing focus mid-drag (e.g. Cmd-Tab) means the MouseUp never arrives.
@@ -236,6 +269,7 @@ namespace Launcher.Cross
         private void OnClosing()
         {
             TimerSettings.GameAnimationFpsChanged -= ApplyFrameRate;
+            TimerSettings.VSyncChanged -= ApplyVSync;
             _timer.Stop();
             _grContext?.Dispose();
             _grGlInterface?.Dispose();

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/05
-// Version: v1.2
+// Update Date: 2026/10/12
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -81,6 +81,19 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <see cref="UserDataFolder"/>.
         /// </summary>
         public static string DefaultUserOpeningFolder => Path.Combine(UserDataFolder, OpeningsFolderName);
+
+        #endregion
+
+        #region AI data
+
+        /// <summary>Folder name of the player's own AI engines and data under <see cref="UserDataFolder"/>.</summary>
+        public const string AiFolderName = "AI";
+
+        /// <summary>
+        /// The player's AI folder when the settings do not override it
+        /// (<c>AiSettings.UserFolder</c> empty): <c>AI</c> in <see cref="UserDataFolder"/>.
+        /// </summary>
+        public static string DefaultUserAiFolder => Path.Combine(UserDataFolder, AiFolderName);
 
         #endregion
 

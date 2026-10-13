@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -21,7 +21,7 @@ using Engine.Logging;
 namespace Chinese_Chess_v3.Game.Application.Settings
 {
     /// <summary>
-    /// A settings screen's logic (遊戲設定 / 單機規則設定 alike), apart from the view that draws it.
+    /// The live settings editor shared by general settings and pre-game mode pages.
     /// An edit changes the <b>live</b> <see cref="PlayerSettings"/> (the areas registered in DI and
     /// in the settings file) at once and is applied at once (<see cref="SettingsFile.ApplyAll"/>:
     /// every area puts its values into effect - the hint settings are read by the board, the
@@ -68,6 +68,13 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             Screen = screen;
             Pages = SettingsMenuContent.PagesFor(screen);
+        }
+
+        /// <summary>Creates the same live editor for one mode's pre-game settings page.</summary>
+        public SettingsScreenModel(GameKind kind, PlayerSettings live, SettingsFile file, IDialogService dialogs)
+            : this(SettingsScreen.Game, live, file, dialogs)
+        {
+            Pages = new[] { SettingsMenuContent.RulePage(kind) };
         }
 
         /// <summary>Which settings screen this is.</summary>

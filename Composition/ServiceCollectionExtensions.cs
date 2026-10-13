@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/12
-// Version: v1.5
+// Update Date: 2026/10/13
+// Version: v1.8
 /* ----- ----- ----- ----- */
 
 using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Chinese_Chess_v3.Game.Ai;
 using Chinese_Chess_v3.Game.Application.Boards;
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameLog;
@@ -85,6 +86,7 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton(playerSettings.Names);
             services.AddSingleton(playerSettings.Hints);
             services.AddSingleton(playerSettings.Folders);
+            services.AddSingleton(playerSettings.Ai);
             services.AddSingleton(settingsFile);
 
             // Register utility services
@@ -112,6 +114,7 @@ namespace Chinese_Chess_v3.Composition
             // The typed online API over it, and online play's flow (its events re-posted to the UI thread).
             services.AddSingleton(sp => new OnlineChannel(sp.GetRequiredService<NetworkManager>()));
             services.AddSingleton<OnlineSession>();
+            services.AddSingleton<LanSession>();
             // The game: created on first use with the rules and names in the settings; later
             // changes reach it when the [player] / [rules.*] areas apply (only once it exists).
             var game = new Lazy<GameManager>(() =>
@@ -134,11 +137,20 @@ namespace Chinese_Chess_v3.Composition
             // The game log's sentences (from the game's log entries); the sidebar hands it the log box.
             services.AddSingleton<GameLogComposer>();
             // The game flow; takes the game through a factory so the GameManager is still created on first use.
-            services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>()));
+            services.AddSingleton(sp => new GameSession(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<INavigator>(),
+                sp.GetRequiredService<AiOpponent>()));
+            // The computer opponent: the player's AI folder (looked in and created when it is created; the
+            // built-in engine is what plays) and the opponent itself, driven by the session's per-frame tick.
+            services.AddSingleton(_ => new AiDataLocator(playerSettings.Ai.ResolvedUserFolder));
+            services.AddSingleton(sp => new AiOpponent(() => sp.GetRequiredService<GameManager>(), sp.GetRequiredService<IMainThreadQueue>(),
+                sp.GetRequiredService<INavigator>(), sp.GetRequiredService<AiSettings>(), sp.GetRequiredService<AiDataLocator>()));
             // The game screen's decisions; created with the game screen (its handler resolves it).
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
+            services.AddSingleton<AiSetupPresenter>();
+            services.AddSingleton<LanGameBridge>();
+            services.AddSingleton<LanMenuPresenter>();
             // The online panel and room decisions; resolved by their handlers.
             services.AddSingleton<LoginPresenter>();
             services.AddSingleton<LobbyPresenter>();

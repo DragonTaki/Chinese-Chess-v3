@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/12
-// Version: v1.5
+// Update Date: 2026/10/13
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.MainMenu;
@@ -27,7 +27,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         VsComputer,
     }
 
-    public class UIKindMenu : UIMenu<UIKindMenu, UIKindMenuHandler, UIKindMenuRenderer>
+    public partial class UIKindMenu : UIMenu<UIKindMenu, UIKindMenuHandler, UIKindMenuRenderer>
     {
         public UIKindMenu() { }
 

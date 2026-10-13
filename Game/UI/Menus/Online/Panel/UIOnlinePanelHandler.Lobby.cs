@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -69,15 +69,45 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 
         #region ISettingsRowEditor (the new room's settings rows)
 
-        public void SetToggle(SettingsToggleItem item, bool value) => Lobby.SetToggle(item, value);
+        public void SetToggle(SettingsToggleItem item, bool value)
+        {
+            if (Presenter.IsLan)
+                Presenter.Lan.Edit(values => item.Set(values, value));
+            else
+                Lobby.SetToggle(item, value);
+        }
 
-        public void SetChoice(SettingsChoiceItem item, int index) => Lobby.SetChoice(item, index);
+        public void SetChoice(SettingsChoiceItem item, int index)
+        {
+            if (Presenter.IsLan)
+                Presenter.Lan.Edit(values => item.SetIndex(values, index));
+            else
+                Lobby.SetChoice(item, index);
+        }
 
-        public void SetNumber(SettingsNumberItem item, float value) => Lobby.SetNumber(item, value);
+        public void SetNumber(SettingsNumberItem item, float value)
+        {
+            if (Presenter.IsLan)
+                Presenter.Lan.Edit(values => item.Set(values, value));
+            else
+                Lobby.SetNumber(item, value);
+        }
 
-        public void SetInteger(SettingsIntegerItem item, int value) => Lobby.SetInteger(item, value);
+        public void SetInteger(SettingsIntegerItem item, int value)
+        {
+            if (Presenter.IsLan)
+                Presenter.Lan.Edit(values => item.Set(values, value));
+            else
+                Lobby.SetInteger(item, value);
+        }
 
-        public void SetText(SettingsTextItem item, string value) => Lobby.SetText(item, value);
+        public void SetText(SettingsTextItem item, string value)
+        {
+            if (Presenter.IsLan)
+                Presenter.Lan.Edit(values => item.Set(values, value));
+            else
+                Lobby.SetText(item, value);
+        }
 
         /// <summary>Nothing to do: a room's settings are not saved, every edit is already applied.</summary>
         public void CommitEdit() { }

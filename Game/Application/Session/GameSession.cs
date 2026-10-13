@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/06
-// Version: v1.2
+// Update Date: 2026/10/13
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -24,12 +24,14 @@ namespace Chinese_Chess_v3.Game.Application.Session
     /// game of a <see cref="GameKind"/>, or any set-up such as an endgame, an opening or a saved
     /// game), restarting the current game, and the per-frame clock tick. Every start and restart
     /// goes through <see cref="Restart"/>, which raises <see cref="GameReset"/> for the UI to
-    /// reset its views (board, sidebar, game log).
+    /// reset its views (board, sidebar, game log). A game against the computer
+    /// (<see cref="StartVsComputer"/>) is driven per frame by the <see cref="AiOpponent"/>.
     /// </summary>
     public sealed class GameSession
     {
         private readonly Func<GameManager> _game;
         private readonly INavigator _navigator;
+        private readonly AiOpponent _ai;
 
         /// <summary>
         /// Creates the session.
@@ -40,10 +42,12 @@ namespace Chinese_Chess_v3.Game.Application.Session
         /// the player's settings at that point).
         /// </param>
         /// <param name="navigator">Switches to the game screen and tells whether it is shown.</param>
-        public GameSession(Func<GameManager> game, INavigator navigator)
+        /// <param name="ai">The computer opponent, needed by <see cref="StartVsComputer"/>; null for none.</param>
+        public GameSession(Func<GameManager> game, INavigator navigator, AiOpponent ai = null)
         {
             _game = game ?? throw new ArgumentNullException(nameof(game));
             _navigator = navigator ?? throw new ArgumentNullException(nameof(navigator));
+            _ai = ai;
         }
 
         /// <summary>The game being played.</summary>
@@ -62,6 +66,9 @@ namespace Chinese_Chess_v3.Game.Application.Session
             GameKind.Traditional or GameKind.Flip or GameKind.DarkHalf or GameKind.OpenHalf or GameKind.ThreeKingdoms => true,
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
         };
+
+        /// <summary>Whether <see cref="StartVsComputer"/> can start <paramref name="kind"/> (only the Traditional game so far).</summary>
+        public static bool CanStartVsComputer(GameKind kind) => kind == GameKind.Traditional;
 
         /// <summary>Whether the 三國 自訂分隊 leaves a team without pieces: such a game cannot be started.</summary>
         public bool IsTeamSplitInvalid => !Game.DefaultRulesFor(GameKind.ThreeKingdoms).HalfCrossTeams.IsValid;
@@ -85,6 +92,34 @@ namespace Chinese_Chess_v3.Game.Application.Session
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "Unknown game kind"),
             };
             Start(setUp);
+        }
+
+        /// <summary>
+        /// Starts a new game against the computer on the game screen (<see cref="Start"/>): the standard
+        /// position, the human on the side the AI settings choose and the computer on the other
+        /// (<see cref="AiOpponent.Begin"/>); if the computer moves first, it starts thinking at once.
+        /// </summary>
+        /// <param name="kind">The game kind (see <see cref="CanStartVsComputer"/>).</param>
+        /// <exception cref="NotSupportedException">The kind cannot be played against the computer yet.</exception>
+        /// <exception cref="InvalidOperationException">The session has no computer opponent.</exception>
+        public void StartVsComputer(GameKind kind)
+        {
+            if (!CanStartVsComputer(kind))
+                throw new NotSupportedException($"{kind} cannot be played against the computer yet");
+            if (_ai == null)
+                throw new InvalidOperationException("This session has no computer opponent");
+            Start(_ai.Begin);
+        }
+
+        /// <summary>Starts with the pre-game choices frozen for this game.</summary>
+        public void StartVsComputer(GameKind kind, AiGameOptions options, AiOpeningBook book = null)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+            if (!CanStartVsComputer(kind))
+                throw new NotSupportedException($"{kind} cannot be played against the computer yet");
+            if (_ai == null)
+                throw new InvalidOperationException("This session has no computer opponent");
+            Start(game => _ai.Begin(game, options, book));
         }
 
         /// <summary>
@@ -184,6 +219,7 @@ namespace Chinese_Chess_v3.Game.Application.Session
             if (!_navigator.IsShown(ScreenId.Game))
                 return;
             Game.UpdateTimers();
+            _ai?.Tick();
         }
     }
 }

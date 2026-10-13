@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2026/10/12
-// Version: v1.4
+// Update Date: 2026/10/13
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -34,8 +34,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
                 new MenuEntry<MainMenuOption>(MainMenuOption.EndgameChallenge, Lang.Get("menu.main.endgame_challenge"), () => onSelect(MainMenuOption.EndgameChallenge)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.OpeningPractice, Lang.Get("menu.main.opening_practice"), () => onSelect(MainMenuOption.OpeningPractice)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.Help, Lang.Get("menu.main.help"), () => onSelect(MainMenuOption.Help)),
-                // The rules of local games only (a network game does not use them), right above 遊戲設定.
-                new MenuEntry<MainMenuOption>(MainMenuOption.RuleSettings,     MenuTexts.LocalRuleSettings, () => onSelect(MainMenuOption.RuleSettings)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.Settings,         MenuTexts.GameSettings,      () => onSelect(MainMenuOption.Settings)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.Exit, Lang.Get("menu.main.exit"), () => onSelect(MainMenuOption.Exit)),
             };

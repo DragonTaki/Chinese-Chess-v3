@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/12
-// Version: v3.2
+// Update Date: 2026/10/13
+// Version: v3.3
 /* ----- ----- ----- ----- */
 
 using System.Linq;
@@ -22,7 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
 {
     /// <summary>
-    /// Binds a settings screen (遊戲設定 / 單機規則設定 alike) to its
+    /// Binds the general settings screen to its
     /// <see cref="SettingsScreenModel"/>, which holds the logic (live edits and their ranges,
     /// when <c>settings.ini</c> is written, 恢復初始, applying the settings): the controls'
     /// changes go to the model's commands, the tab bar and rows show the model's tabs, and the

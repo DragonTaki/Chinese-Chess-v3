@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -264,10 +264,12 @@ namespace Chinese_Chess_v3.Game.Application.Online
         // ----- Entering and logging in -----
 
         /// <summary>
-        /// Opens the Multiplayer panel: logged in shows kinds; a remembered login connects on
-        /// the login page; otherwise the login form. A restored seat still opens the room screen.
+        /// Opens the connection choice before entering the online service or account-free LAN play.
         /// </summary>
-        public void EnterMultiplayer()
+        public void EnterMultiplayer() => ShowPanel(OnlineMenuPage.Connection);
+
+        /// <summary>Enters the selected online service: a current or remembered login skips password entry; a restored seat opens its room.</summary>
+        public void EnterOnline()
         {
             switch (State)
             {

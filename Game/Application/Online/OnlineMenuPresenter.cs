@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.2
+// Update Date: 2026/10/13
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -41,15 +41,17 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         private readonly OnlineSession _session;
         private readonly LobbyPresenter _lobby;
+        private readonly LanMenuPresenter _lan;
         private bool _shown;
 
         /// <summary>Creates the presenter (a single long-lived instance, like the panel it drives).</summary>
         /// <param name="session">The online session.</param>
         /// <param name="lobby">The lobby page's presenter.</param>
-        public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby)
+        public OnlineMenuPresenter(OnlineSession session, LobbyPresenter lobby, LanMenuPresenter lan = null)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _lobby = lobby ?? throw new ArgumentNullException(nameof(lobby));
+            _lan = lan;
             _session.StateChanged += () => Changed?.Invoke();
             _session.ErrorRaised += _ => Changed?.Invoke();
         }
@@ -72,7 +74,13 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public string BackText => OnlineTexts.Back;
 
         /// <summary>The logged-in account's line.</summary>
-        public string AccountText => OnlineTexts.LoggedInAs(_session.Username);
+        public string AccountText => IsLan ? LanTexts.Title : OnlineTexts.LoggedInAs(_session.Username);
+
+        public string ConnectionTitle => LanTexts.ChooseConnection;
+        public string ServerText => LanTexts.Server;
+        public string LanText => LanTexts.Title;
+        public bool IsLan { get; private set; }
+        public LanMenuPresenter Lan => _lan;
 
         /// <summary>The game kinds, every one with its normal look (the new-game menu's names).</summary>
         /// <returns>The entries, in button order.</returns>
@@ -101,19 +109,19 @@ namespace Chinese_Chess_v3.Game.Application.Online
         // ----- State -----
 
         /// <summary>The page shown.</summary>
-        public OnlineMenuPage Page { get; private set; } = OnlineMenuPage.Login;
+        public OnlineMenuPage Page { get; private set; } = OnlineMenuPage.Connection;
 
         /// <summary>The chosen game kind (the mode page's and the lobby's).</summary>
         public GameKind SelectedKind { get; private set; } = GameKind.Traditional;
 
         /// <summary>Whether the connection was lost here and 重新連線 is offered.</summary>
-        public bool CanReconnect => _session.CanReconnect;
+        public bool CanReconnect => !IsLan && _session.CanReconnect;
 
         /// <summary>Whether a reconnect runs.</summary>
-        public bool IsBusy => _session.IsBusy;
+        public bool IsBusy => IsLan ? _lan?.IsBusy == true : _session.IsBusy;
 
         /// <summary>The last error sentence (e.g. the connection was lost, the room was lost), or null.</summary>
-        public string ErrorSentence => _session.LastError;
+        public string ErrorSentence => IsLan ? _lan?.ErrorSentence : _session.LastError;
 
         /// <summary>The view shows <see cref="Page"/>.</summary>
         public event Action<OnlineMenuPage> PageChanged;
@@ -144,7 +152,29 @@ namespace Chinese_Chess_v3.Game.Application.Online
                 return;
             }
             SelectedKind = kind;
+            if (IsLan)
+            {
+                ShowPage(OnlineMenuPage.Lan);
+                return;
+            }
             ShowPage(OnlineMenuPage.Modes);
+        }
+
+        /// <summary>Uses the existing online login and account flow.</summary>
+        public void ChooseServer()
+        {
+            _lan?.Close();
+            IsLan = false;
+            _session.EnterOnline();
+        }
+
+        /// <summary>Uses local discovery and nicknames without attempting an account login.</summary>
+        public void ChooseLan()
+        {
+            if (_lan == null)
+                return;
+            IsLan = true;
+            ShowPage(OnlineMenuPage.GameKinds);
         }
 
         /// <summary>A mode: 自訂房間 opens the lobby (a mode not wired yet does nothing).</summary>
@@ -166,6 +196,18 @@ namespace Chinese_Chess_v3.Game.Application.Online
         {
             switch (Page)
             {
+                case OnlineMenuPage.Lan:
+                    if (_lan.HasRoom)
+                        _lan.LeaveRoom();
+                    else
+                        ShowPage(OnlineMenuPage.GameKinds);
+                    break;
+                case OnlineMenuPage.GameKinds:
+                    if (IsLan)
+                        _lan.Close();
+                    IsLan = false;
+                    ShowPage(OnlineMenuPage.Connection);
+                    break;
                 case OnlineMenuPage.Lobby:
                     ShowPage(OnlineMenuPage.Modes);
                     break;
@@ -174,7 +216,11 @@ namespace Chinese_Chess_v3.Game.Application.Online
                     break;
                 default:
                     if (Page == OnlineMenuPage.Login)
+                    {
                         _session.CancelLogin();
+                        ShowPage(OnlineMenuPage.Connection);
+                        break;
+                    }
                     _session.LeaveToMainMenu();
                     break;
             }
@@ -185,6 +231,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public void SetShown(bool shown)
         {
             _shown = shown;
+            _lan?.SetShown(shown && Page == OnlineMenuPage.Lan);
             if (shown && Page == OnlineMenuPage.Lobby)
                 _lobby.Activate();
             else
@@ -203,11 +250,16 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         /// <summary>Shows a page requested by the session when the main menu opens its panel.</summary>
         /// <param name="page">The requested page.</param>
-        public void OpenPage(OnlineMenuPage page) => ShowPage(page);
+        public void OpenPage(OnlineMenuPage page)
+        {
+            IsLan = page == OnlineMenuPage.Lan;
+            ShowPage(page);
+        }
 
         private void ShowPage(OnlineMenuPage page)
         {
             Page = page;
+            _lan?.SetShown(_shown && page == OnlineMenuPage.Lan);
             if (_shown && page == OnlineMenuPage.Lobby)
                 _lobby.Activate();
             else

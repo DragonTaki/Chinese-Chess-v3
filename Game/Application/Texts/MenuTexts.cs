@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/05
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -26,7 +26,6 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         // ----- Main menu -----
 
         /// <summary>Main menu entry and title of the rules screen (local games only; a network game does not use these rules).</summary>
-        public static string LocalRuleSettings => Lang.Get("menu.local_rule_settings");
 
         /// <summary>Main menu entry and title of the general settings screen.</summary>
         public static string GameSettings => Lang.Get("menu.game_settings");

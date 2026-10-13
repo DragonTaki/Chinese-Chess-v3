@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/24
 // Update Date: 2026/10/12
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -65,6 +65,7 @@ namespace Launcher.Cross
             // Settings, the shared DI registrations plus the Silk clipboard (its keyboard is attached
             // once the window has loaded, CrossPlatformApp.OnLoad), and the settings pushed to the
             // engine (Composition/AppStartup.cs).
+            Engine.Timing.TimerSettings.SupportsVSync = true;
             var sp = AppStartup.BuildServices(services => services
                 .AddSingleton<SilkClipboard>()
                 .AddSingleton<IClipboard>(provider => provider.GetRequiredService<SilkClipboard>()));

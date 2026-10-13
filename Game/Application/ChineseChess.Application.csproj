@@ -9,6 +9,7 @@
     <Compile Include="..\Configs\**\*.cs" Link="Configs\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ai\ChineseChess.Ai.csproj" />
     <ProjectReference Include="..\Core\ChineseChess.Core.csproj" />
     <ProjectReference Include="..\..\Engine\Engine.csproj" />
     <ProjectReference Include="..\..\Network\ChineseChess.Network.csproj" />

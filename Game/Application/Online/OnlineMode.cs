@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.Application.Online
@@ -32,6 +32,9 @@ namespace Chinese_Chess_v3.Game.Application.Online
     /// <summary>The page shown inside the Multiplayer submenu panel.</summary>
     public enum OnlineMenuPage
     {
+        /// <summary>The choice between the online service and account-free LAN play.</summary>
+        Connection,
+
         /// <summary>The login form, also shown while the remembered login connects.</summary>
         Login,
 
@@ -43,6 +46,9 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         /// <summary>The custom rooms' lobby (<see cref="LobbyPresenter"/>).</summary>
         Lobby,
+
+        /// <summary>LAN nickname, nearby rooms and the current waiting room.</summary>
+        Lan,
     }
 
     /// <summary>Who moves first in a custom room (the server's names: Host, Guest, Random).</summary>

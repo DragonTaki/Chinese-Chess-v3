@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/06
-// Version: v1.4
+// Update Date: 2026/10/13
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,12 +12,14 @@ using System.IO;
 
 using Chinese_Chess_v3.Game.Application.Catalogs;
 using Chinese_Chess_v3.Game.Application.GameLog;
+using Chinese_Chess_v3.Game.Application.Online;
 using Chinese_Chess_v3.Game.Application.Services;
 using Chinese_Chess_v3.Game.Application.Session;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
 using Chinese_Chess_v3.Game.Core.Boards;
+using Chinese_Chess_v3.Game.Core.Players;
 
 using Engine.Logging;
 
@@ -49,6 +51,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private readonly INavigator _navigator;
         private readonly PlayerNameSettings _settings;
         private readonly GameLogComposer _gameLog;
+        private readonly LanGameBridge _lan;
 
         /// <summary>
         /// Set while 回到主畫面 resigns the game itself: that ending is not announced (the
@@ -66,13 +69,15 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <param name="navigator">Goes back to the main menu.</param>
         /// <param name="settings">The live player settings (the player's name for a save's unnamed players).</param>
         /// <param name="gameLog">The game log the presenter's own lines go to.</param>
-        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerNameSettings settings, GameLogComposer gameLog)
+        public GameScreenPresenter(GameSession session, IDialogService dialogs, INavigator navigator, PlayerNameSettings settings, GameLogComposer gameLog,
+            LanGameBridge lan = null)
         {
             _session = session ?? throw new ArgumentNullException(nameof(session));
             _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
             _navigator = navigator ?? throw new ArgumentNullException(nameof(navigator));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _gameLog = gameLog ?? throw new ArgumentNullException(nameof(gameLog));
+            _lan = lan;
 
             Game.GameOver += OnGameOver;
             _session.GameReset += OnGameReset;
@@ -118,6 +123,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void OnGameOver(GameOverInfo info)
         {
             if (_suppressGameOverDialog || Game.IsReplaying)
+                return;
+            if (_lan?.IsActive == true && info.Reason == GameOverReason.Disconnect && info.Winner == PlayerSide.None)
                 return;
             GameOverDialogRequested?.Invoke(info);
         }
@@ -166,6 +173,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// </remarks>
         public void Restart()
         {
+            if (_lan?.IsActive == true)
+            {
+                _lan.ShowRoom();
+                return;
+            }
             CloseSavedGameList();
             var game = Game;
             if (game.IsGameOver || game.Moves.Count <= game.UndoFloor)
@@ -187,6 +199,11 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void RestartNow()
         {
             CloseSavedGameList();
+            if (_lan?.IsActive == true)
+            {
+                _lan.ShowRoom();
+                return;
+            }
             _session.Restart();
         }
 
@@ -214,6 +231,12 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
             if (game.IsGameOver)
             {
                 Log(GameTexts.ResignGameOver);
+                return;
+            }
+
+            if (_lan?.IsActive == true)
+            {
+                _lan.Resign();
                 return;
             }
 
@@ -256,6 +279,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// <inheritdoc/>
         public void LoadGame()
         {
+            if (_lan?.IsActive == true)
+                return;
             if (IsSavedGameListOpen)
             {
                 CloseSavedGameList();
@@ -334,6 +359,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         private void ShowMainMenu()
         {
             CloseSavedGameList();
+            if (_lan?.IsActive == true)
+                _lan.Leave();
             _navigator.Show(ScreenId.MainMenu);
         }
 

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/02
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -18,7 +18,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         // ----- ----- ----- -----
 
         /// <summary>
-        /// The settings screens (<c>UISettingsMenu</c>: 遊戲設定, 單機規則設定): a submenu panel
+        /// The general settings screen (<c>UISettingsMenu</c>): a submenu panel
         /// (same place and size as <see cref="Submenu"/>) with a tab bar at the top and, below it,
         /// a scroll container that stacks the save / back row, then each section's header and
         /// one row per setting (name left, control right).

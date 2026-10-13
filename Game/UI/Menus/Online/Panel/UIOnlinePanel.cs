@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -32,6 +32,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 
         /// <summary>reconnect: shown only while the presenter offers it.</summary>
         internal UIButton ReconnectButton { get; private set; }
+        internal UIButton LogoutButton { get; private set; }
 
         /// <summary>The last error (e.g. the connection was lost).</summary>
         internal UILabel ErrorLine { get; private set; }
@@ -64,6 +65,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         protected override void BuildButtons()
         {
             var presenter = Handler.Presenter;
+            BuildLan();
 
             LoginPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
             BuildLogin(LoginPage);
@@ -73,7 +75,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 
             var navigation = AddGroup(_onlineNavigation, UILayoutSheet.OnlineMenu.ButtonRow);
             ReconnectButton = AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.ReconnectText, Handler.Reconnect);
-            AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.LogoutText, Handler.Logout);
+            LogoutButton = AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.LogoutText, Handler.Logout);
             AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.BackText, Handler.Back);
 
             ErrorLine = AddLine(_onlineNavigation, UILayoutStyles.OnlineMenu.ErrorColor);
@@ -118,7 +120,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         public void ShowPage(OnlineMenuPage page)
         {
             SetShown(LoginPage, page == OnlineMenuPage.Login);
-            SetShown(_onlineNavigation, page != OnlineMenuPage.Login);
+            SetShown(ConnectionPage, page == OnlineMenuPage.Connection);
+            SetShown(LanPage, page == OnlineMenuPage.Lan);
+            SetShown(_onlineNavigation, page is not (OnlineMenuPage.Login or OnlineMenuPage.Connection));
+            SetShown(LogoutButton, !Handler.Presenter.IsLan);
             SetShown(KindsPage, page == OnlineMenuPage.GameKinds);
             SetShown(ModesPage, page == OnlineMenuPage.Modes);
             SetShown(LobbyPage, page == OnlineMenuPage.Lobby);
@@ -130,5 +135,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 
         /// <summary>Builds the login form inside the same panel.</summary>
         partial void BuildLogin(UIOnlineGroup page);
+
+        partial void BuildLan();
     }
 }

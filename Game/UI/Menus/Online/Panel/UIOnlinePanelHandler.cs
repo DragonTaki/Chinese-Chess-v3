@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -45,6 +45,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             };
             InitLobby();
             InitLogin();
+            Presenter.Lan.Changed += Refresh;
         }
 
         /// <summary>reconnect.</summary>
@@ -56,10 +57,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         /// <summary>back: the previous page, or the main menu from the game kinds.</summary>
         public void Back()
         {
-            if (Presenter.Page == OnlineMenuPage.Login)
-                Login.Back();
-            else
-                Presenter.Back();
+            Presenter.Back();
         }
 
         public void OnEnter()
@@ -89,9 +87,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             string error = presenter.ErrorSentence;
             if (presenter.Page == OnlineMenuPage.Lobby && error == Lobby.ErrorSentence)
                 error = null;
+            if (presenter.Page is OnlineMenuPage.Connection or OnlineMenuPage.Lan)
+                error = null;
             UIOnlinePanel.SetLine(menu.ErrorLine, error);
             RefreshLogin();
             RefreshLobby();
+            if (presenter.Page == OnlineMenuPage.Lan)
+                menu.ShowLanState(presenter.Lan);
             menu.RefreshLayout();
         }
 

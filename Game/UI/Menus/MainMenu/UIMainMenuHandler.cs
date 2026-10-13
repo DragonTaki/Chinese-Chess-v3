@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/12
-// Version: v2.8
+// Update Date: 2026/10/13
+// Version: v2.10
 /* ----- ----- ----- ----- */
 
 using System;
@@ -54,6 +54,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             var presenter = Presenter;
             presenter.SubmenuOpened += ShowSubmenu;
             presenter.SubmenuClosed += HideSubmenu;
+            presenter.SinglePlayerSetupRequested += kind => ((UIKindMenu)_submenus[MainMenuOption.SinglePlayer]).ShowSinglePlayerSetup(kind);
+            presenter.AiSetupRequested += () => ((UIKindMenu)_submenus[MainMenuOption.VsComputer]).ShowAiSetup();
         }
 
         /// <summary>The main menu's decisions (the <see cref="MainMenuPresenter"/> registered in DI).</summary>
@@ -88,8 +90,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
         }
 
         /// <summary>
-        /// A settings screen (<paramref name="screen"/>: 遊戲設定 or 單機規則設定), opening on its
-        /// first tab (畫面 / 傳統大盤); set before it is first shown, which is when its rows are built.
+        /// The general settings screen, opening on its first tab; set before its rows are built.
         /// </summary>
         private static UIElement CreateSettingsMenu(IUiFactory factory, SettingsScreen screen)
         {
