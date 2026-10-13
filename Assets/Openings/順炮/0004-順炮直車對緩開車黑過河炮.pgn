@@ -1,0 +1,13 @@
+[Title "順炮直車對緩開車黑過河炮"]
+[Category "順炮"]
+[PlayerSide "2"]
+[ECCO "D14"]
+[Description "紅方直車；黑方緩開車，右炮過河（炮2進4）。"]
+[Source "xqbase 象棋百科全書「中國象棋開局編號」D14 定義著法；中文維基百科「中國象棋開局編號」名稱；編號以 vschess WXF2ECCO 驗證"]
+[Format "ICCS"]
+
+1. h2e2 {炮二平五} h7e7 {炮8平5}
+2. h0g2 {馬二進三} h9g7 {馬8進7}
+3. i0h0 {車一平二} b7b3 {炮2進4}
+4. b0c2 {馬八進七}
+*
