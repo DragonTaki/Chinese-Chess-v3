@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/13
-// Version: v1.3
+// Update Date: 2026/10/14
+// Version: v1.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -58,6 +58,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
 
         /// <summary>Whether this is the computer game's page set, whose reset also clears the assigned opening.</summary>
         private bool _resetsOpening;
+        private GameKind? _localKind;
 
         /// <param name="screen">Which settings screen this is.</param>
         /// <param name="live">The live settings (the DI instance).</param>
@@ -87,6 +88,16 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             _resetsOpening = true;
         }
 
+        /// <summary>Creates the merged local pre-game editor.</summary>
+        public static SettingsScreenModel ForLocalGame(GameKind kind, PlayerSettings live, SettingsFile file, IDialogService dialogs)
+        {
+            var model = new SettingsScreenModel(kind, live, file, dialogs);
+            model.Pages = SettingsMenuContent.LocalPages(kind);
+            model._resetsOpening = true;
+            model._localKind = kind;
+            return model;
+        }
+
         /// <summary>Creates the live editor for the computer game's pre-game pages (規則, 計時, 電腦).</summary>
         public static SettingsScreenModel ForComputerGame(PlayerSettings live, SettingsFile file, IDialogService dialogs) =>
             new(live, file, dialogs);
@@ -98,7 +109,7 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         public PlayerSettings Live { get; }
 
         /// <summary>The screen's tabs (<see cref="SettingsMenuContent.PagesFor"/>).</summary>
-        public IReadOnlyList<SettingsMenuPage> Pages { get; }
+        public IReadOnlyList<SettingsMenuPage> Pages { get; private set; }
 
         /// <summary>The shown tab's index.</summary>
         public int CurrentTab { get; private set; }
@@ -216,7 +227,13 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             foreach (var page in Pages)
                 page.ResetToDefaults(Live, defaults);
             if (_resetsOpening)
+            {
                 Live.Ai.OpeningName = defaults.Ai.OpeningName;
+                Live.Ai.Enabled = defaults.Ai.Enabled;
+                Live.Ai.TimerMode = defaults.Ai.TimerMode;
+            }
+            if (_localKind is GameKind kind)
+                Live.Rules.RulesFor(kind).TimerMode = defaults.Rules.RulesFor(kind).TimerMode;
             ApplyChange();
             SaveNow();
         }

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/13
-// Version: v1.4
+// Update Date: 2026/10/14
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -49,12 +49,14 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         /// <summary>The bottom row's buttons: drawn by <see cref="UIKindMenuRenderer"/> without the scroll area's clip.</summary>
         internal List<UIButton> FixedButtons { get; } = new();
 
-        /// <summary>Shows one local mode's pages: 規則 and 計時.</summary>
+        /// <summary>Shows one local mode's rules, timer and computer pages.</summary>
         public void ShowSinglePlayerSetup(GameKind kind)
         {
             ClearPage();
             ClearSetupChrome();
+            Handler.AiSetup.Prepare(kind);
             Handler.PrepareSettings(kind);
+            Handler.AiSetup.Load(Handler.Live.Ai);
             BeginSetup(SettingsTexts.GameKindName(kind));
             ShowSetupPage(0);
         }
@@ -93,15 +95,17 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             ClearPage();
             if (_setupTabs != null) _setupTabs.SelectedIndex = index;
             // The computer form's choices (strength, side, clock) follow the rows of every page, not only its own.
-            if (Purpose == KindMenuPurpose.VsComputer) _refreshers.Add(settings => Handler.AiSetup.SyncChoices(settings.Ai));
+            if (Purpose == KindMenuPurpose.VsComputer || Purpose == KindMenuPurpose.SinglePlayer) _refreshers.Add(settings => Handler.AiSetup.SyncChoices(settings.Ai));
             AddSetupHeading(_setupTitle);
+            bool computerPage = index == PreGameSetup.ComputerPageIndex;
+            if (computerPage) AddComputerCheckbox();
             foreach (var section in _setupPages[index].Sections)
             {
                 if (section.Header != null) AddSetupHeading(section.Header);
                 foreach (var item in section.Items)
-                    ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers));
+                    ScrollContainer.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _refreshers, computerPage ? s => s.Ai.Enabled : null));
             }
-            if (Purpose == KindMenuPurpose.VsComputer && index == PreGameSetup.ComputerPageIndex) AddOpeningRow();
+            if (computerPage) AddOpeningRow();
             RefreshSettings();
             PerformLayout();
         }
@@ -160,6 +164,23 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             ShowSetupPage(0);
         }
 
+        private void AddComputerCheckbox()
+        {
+            var checkbox = _factory.CreateElement<UICheckbox, UICheckboxHandler, UICheckboxRenderer>();
+            checkbox.Text = AiSetupTexts.Enabled;
+            checkbox.Font = UILayoutStyles.OnlineMenu.RowFont;
+            checkbox.Style = UILayoutStyles.OnlineMenu.CheckboxStyle;
+            checkbox.LayoutRules.Apply(UILayoutSheet.Submenu.OpeningCheckbox);
+            ScrollContainer.AddChild(checkbox);
+            _refreshers.Add(s => checkbox.IsChecked = s.Ai.Enabled);
+            checkbox.Changed += value =>
+            {
+                Handler.Live.Ai.Enabled = value;
+                Handler.CommitEdit();
+                RefreshSettings();
+            };
+        }
+
         /// <summary>The computer page's opening row: the checkbox and, directly to its right, the dropdown.</summary>
         private void AddOpeningRow()
         {
@@ -188,11 +209,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
             // The dropdown always exists and is always shown: only its enabled state follows the checkbox.
             void RefreshOpening()
             {
-                assign.IsEnabled = presenter.OpeningStyles.Count > 0;
+                assign.IsEnabled = presenter.Enabled && presenter.OpeningStyles.Count > 0;
                 assign.IsChecked = presenter.AssignOpening;
                 opening.SetOptions(presenter.OpeningStyles);
                 opening.SelectedIndex = presenter.OpeningStyles.ToList().IndexOf(presenter.OpeningStyle);
-                opening.IsEnabled = presenter.AssignOpening;
+                opening.IsEnabled = presenter.Enabled && presenter.AssignOpening;
             }
             _refreshers.Add(settings =>
             {

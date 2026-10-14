@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/13
-// Version: v1.2
+// Update Date: 2026/10/14
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -18,6 +18,7 @@ namespace Chinese_Chess_v3.Game.Application.Texts
     /// <summary>Finished strings for the computer-game setup panel.</summary>
     public static class AiSetupTexts
     {
+        public static string Enabled => Lang.Get("ai.setup.enabled");
         public static string Title => Lang.Get("ai.setup.title");
         public static string Difficulty => Lang.Get("ai.setup.difficulty");
         public static string FirstMover => Lang.Get("ai.setup.first_mover");

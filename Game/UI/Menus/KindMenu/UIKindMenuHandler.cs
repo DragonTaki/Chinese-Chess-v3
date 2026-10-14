@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/16
-// Update Date: 2026/10/13
-// Version: v1.8
+// Update Date: 2026/10/14
+// Version: v1.9
 /* ----- ----- ----- ----- */
 
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         internal IReadOnlyList<SettingsMenuPage> SetupPages => _model.Pages;
 
         internal void PrepareSettings(GameKind kind) =>
-            Bind(new SettingsScreenModel(kind, Service<PlayerSettings>(), Service<SettingsFile>(), Service<IDialogService>()));
+            Bind(SettingsScreenModel.ForLocalGame(kind, Service<PlayerSettings>(), Service<SettingsFile>(), Service<IDialogService>()));
 
         internal void PrepareComputerSettings() =>
             Bind(SettingsScreenModel.ForComputerGame(Service<PlayerSettings>(), Service<SettingsFile>(), Service<IDialogService>()));
@@ -69,7 +69,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
         internal void ResetSettings()
         {
             if (_model == null) return;
-            if (Element.Purpose == KindMenuPurpose.VsComputer) AiSetup.ResetToDefaults(_model);
+            if (Element.Purpose == KindMenuPurpose.VsComputer || Element.Purpose == KindMenuPurpose.SinglePlayer) AiSetup.ResetToDefaults(_model);
             else _model.ResetToDefaults();
             Element.RefreshSettings();
         }
@@ -90,9 +90,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.KindMenu
 
         internal void StartGame()
         {
-            if (Element.Purpose == KindMenuPurpose.VsComputer && _model != null) PersistOpening();
+            if (_model != null && Live.Ai.Enabled) PersistOpening();
             _model?.Exit();
             if (Element.Purpose == KindMenuPurpose.VsComputer) AiSetup.Start();
+            else if (Live.Ai.Enabled) AiSetup.Start();
             else Presenter.StartPreparedSinglePlayer();
         }
 

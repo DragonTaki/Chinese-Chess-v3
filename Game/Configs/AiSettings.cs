@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/13
-// Version: v1.2
+// Update Date: 2026/10/14
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -38,6 +38,9 @@ namespace Chinese_Chess_v3.Game.Configs
     {
         private static readonly AiSettings Default = new();
 
+        /// <summary>Whether local games use a computer opponent. Default: true.</summary>
+        public bool Enabled { get; set; } = true;
+
         /// <summary>The side the human plays. Default: <see cref="AiPlayerSide.First"/></summary>
         public AiPlayerSide PlayerSide { get; set; } = AiPlayerSide.First;
 
@@ -68,6 +71,8 @@ namespace Chinese_Chess_v3.Game.Configs
         /// <inheritdoc/>
         public IReadOnlyList<SettingsKey> Keys => _keys ??= new[]
         {
+            SettingsKey.Bool("ai", "enabled", () => Enabled, v => Enabled = v, Default.Enabled,
+                "AI 電腦：開啟時與電腦對戰，關閉時由兩位本機玩家輪流操作。"),
             SettingsKey.Enum("ai", "player_side", () => PlayerSide, v => PlayerSide = v, Default.PlayerSide,
                 "人機對戰：玩家執哪一方（First = 先手、Second = 後手、Random = 每局隨機）。"),
             SettingsKey.Enum("ai", "level", () => Level, v => Level = v, Default.Level,

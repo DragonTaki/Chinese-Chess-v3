@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/14
-// Update Date: 2026/10/13
-// Version: v1.5
+// Update Date: 2026/10/14
+// Version: v1.6
 /* ----- ----- ----- ----- */
 
 using System;
@@ -28,7 +28,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
             return new List<MenuEntry<MainMenuOption>>
             {
                 new MenuEntry<MainMenuOption>(MainMenuOption.SinglePlayer, Lang.Get("menu.main.single_player"), () => onSelect(MainMenuOption.SinglePlayer)),
-                new MenuEntry<MainMenuOption>(MainMenuOption.VsComputer, Lang.Get("menu.main.vs_computer"), () => onSelect(MainMenuOption.VsComputer)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.Multiplayer, Lang.Get("menu.main.multiplayer"), () => onSelect(MainMenuOption.Multiplayer)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.LoadGame, Lang.Get("menu.main.load_game"), () => onSelect(MainMenuOption.LoadGame)),
                 new MenuEntry<MainMenuOption>(MainMenuOption.EndgameChallenge, Lang.Get("menu.main.endgame_challenge"), () => onSelect(MainMenuOption.EndgameChallenge)),

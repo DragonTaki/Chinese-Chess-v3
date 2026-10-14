@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/13
-// Version: v1.4
+// Update Date: 2026/10/14
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -25,7 +25,7 @@ using Engine.Logging;
 
 namespace Chinese_Chess_v3.Game.Application.MainMenu
 {
-    /// <summary>Edits the next computer game's options; only Start enters the game screen.</summary>
+    /// <summary>Edits the next local game's computer options; only Start enters the game screen.</summary>
     public sealed class AiSetupPresenter
     {
         private readonly GameSession _session;
@@ -33,6 +33,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         private readonly Func<IEnumerable<OpeningLine>> _load;
         private AiOpeningBook _book;
         private GameKind _kind;
+        private bool _prepared;
 
         /// <summary>Creates the setup flow; the optional loader supports in-memory repertoires.</summary>
         public AiSetupPresenter(GameSession session, AiSettings defaults, OpeningCatalog catalog,
@@ -51,6 +52,9 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         }
 
         public EngineLevel Level { get; set; }
+
+        /// <summary>Whether the prepared local game uses a computer opponent.</summary>
+        public bool Enabled { get; set; } = true;
 
         /// <summary>The computer game's clock mode; count-up unless the player changed it.</summary>
         public Core.Players.TimerMode TimerMode { get; set; } = Core.Players.TimerMode.CountUp;
@@ -73,9 +77,11 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <summary>Loads options for a supported kind without creating or restarting a game.</summary>
         public bool Prepare(GameKind kind)
         {
-            if (!GameSession.CanStartVsComputer(kind)) return false;
+            if (!GameSession.CanStartNew(kind)) return false;
             _kind = kind;
-            _book = new AiOpeningBook(_load());
+            _prepared = true;
+            OpeningStyles = Array.Empty<string>();
+            _book = null;
             Load(_defaults);
             return true;
         }
@@ -84,6 +90,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         public void Load(AiSettings settings)
         {
             ArgumentNullException.ThrowIfNull(settings);
+            Enabled = settings.Enabled;
             Level = settings.Level;
             TimerMode = settings.TimerMode;
             OpeningStyle = settings.OpeningName;
@@ -106,6 +113,7 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         public void SyncChoices(AiSettings settings)
         {
             ArgumentNullException.ThrowIfNull(settings);
+            Enabled = settings.Enabled;
             Level = settings.Level;
             TimerMode = settings.TimerMode;
             SetPlayerSide(settings.PlayerSide);
@@ -125,6 +133,8 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         {
             if (!Enum.IsDefined(side)) throw new ArgumentOutOfRangeException(nameof(side));
             PlayerSide = side;
+            if (_book == null && Enabled && GameSession.CanStartVsComputer(_kind))
+                _book = new AiOpeningBook(_load());
             if (_book == null) return;
             OpeningStyles = side switch
             {
@@ -142,6 +152,14 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         /// <summary>Captures the choices and begins the game; invalid selections leave the form open.</summary>
         public bool Start()
         {
+            if (!_prepared) return false;
+            if (!Enabled)
+            {
+                if (_kind == GameKind.ThreeKingdoms && _session.IsTeamSplitInvalid) return false;
+                _session.StartNew(_kind);
+                return true;
+            }
+            if (!GameSession.CanStartVsComputer(_kind)) return false;
             if (_book == null || !Enum.IsDefined(Level) || (AssignOpening && !OpeningStyles.Contains(OpeningStyle)))
                 return false;
             _session.StartVsComputer(_kind, new AiGameOptions(Level, PlayerSide, AssignOpening ? OpeningStyle : null, UseConfiguredTimer: true, TimerMode: TimerMode), _book);

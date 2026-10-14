@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/01
-// Update Date: 2026/10/13
-// Version: v3.1
+// Update Date: 2026/10/14
+// Version: v3.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -575,6 +575,14 @@ namespace Chinese_Chess_v3.Game.Application.Settings
         /// <summary>The computer game's pre-game pages: 規則, 計時, then 電腦 (strength and side; the opening row is the view's).</summary>
         public static IReadOnlyList<SettingsMenuPage> ComputerPages => _computerPages ??= BuildComputerPages();
 
+        /// <summary>The merged local setup, preserving each board kind's rule and timer settings.</summary>
+        public static IReadOnlyList<SettingsMenuPage> LocalPages(GameKind kind)
+        {
+            var pages = SplitRulesAndTimer(RuleSections(kind, forRoom: false, SettingsTexts.SectionRules, SettingsTexts.SectionTimer, aiGame: true));
+            pages.Add(new SettingsMenuPage(SettingsTexts.PageComputer, new[] { AiSection }));
+            return pages;
+        }
+
         private static List<SettingsMenuPage> _computerPages;
 
         private static List<SettingsMenuPage> BuildComputerPages()
@@ -634,11 +642,11 @@ namespace Chinese_Chess_v3.Game.Application.Settings
             }
 
             // A computer game has its own clock mode (count-up unless changed); the other clock values are the mode's.
-            Func<PlayerSettings, TimerMode> modeOf = aiGame ? s => s.Ai.TimerMode : null;
+            Func<PlayerSettings, TimerMode> modeOf = aiGame ? s => s.Ai.Enabled ? s.Ai.TimerMode : R(s).TimerMode : null;
             var timer = new List<SettingsMenuItem>
             {
                 aiGame
-                    ? EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => s.Ai.TimerMode, (s, v) => s.Ai.TimerMode = v)
+                    ? EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => s.Ai.Enabled ? s.Ai.TimerMode : R(s).TimerMode, (s, v) => { if (s.Ai.Enabled) s.Ai.TimerMode = v; else R(s).TimerMode = v; })
                     : EnumChoice(SettingsTexts.TimerMode, TimerModes, TimerModeTexts, s => R(s).TimerMode, (s, v) => R(s).TimerMode = v),
                 PresetChoice(R),
                 new SettingsIntegerItem(SettingsTexts.TotalTime, s => R(s).TotalTimeMinutes, (s, v) => R(s).TotalTimeMinutes = v,

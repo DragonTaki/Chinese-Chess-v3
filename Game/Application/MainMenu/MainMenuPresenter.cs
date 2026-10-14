@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/13
-// Version: v1.6
+// Update Date: 2026/10/14
+// Version: v1.7
 /* ----- ----- ----- ----- */
 
 using System;
@@ -42,7 +42,6 @@ namespace Chinese_Chess_v3.Game.Application.MainMenu
         private static readonly MainMenuOption[] SubmenuOptionList =
         {
             MainMenuOption.SinglePlayer,
-            MainMenuOption.VsComputer,
             MainMenuOption.Multiplayer,
             MainMenuOption.LoadGame,
             MainMenuOption.EndgameChallenge,

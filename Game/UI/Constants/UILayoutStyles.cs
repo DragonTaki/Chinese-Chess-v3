@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2026/10/13
-// Version: v2.9
+// Update Date: 2026/10/14
+// Version: v2.10
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -199,6 +199,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             /// <summary>Colour of a row's name (the palette's label text).</summary>
             public static readonly IBrush ItemTextBrush = StyleHelper.GetBrush(UIPalette.LabelText, 1.0f);
+
+            /// <summary>Colour of computer-option labels while the computer is disabled.</summary>
+            public static readonly IBrush DisabledItemTextBrush = StyleHelper.GetBrush(UIPalette.ButtonDisabledText, 0.45f);
 
             /// <summary>The save / back buttons.</summary>
             public static readonly IButtonDrawStyle ButtonStyle = PaletteBox(ButtonFont, UIPalette.ButtonFill, UIPalette.ButtonBorder, UIPalette.ButtonText);

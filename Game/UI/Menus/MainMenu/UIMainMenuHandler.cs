@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/13
-// Version: v2.10
+// Update Date: 2026/10/14
+// Version: v2.11
 /* ----- ----- ----- ----- */
 
 using System;
@@ -55,7 +55,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             presenter.SubmenuOpened += ShowSubmenu;
             presenter.SubmenuClosed += HideSubmenu;
             presenter.SinglePlayerSetupRequested += kind => ((UIKindMenu)_submenus[MainMenuOption.SinglePlayer]).ShowSinglePlayerSetup(kind);
-            presenter.AiSetupRequested += () => ((UIKindMenu)_submenus[MainMenuOption.VsComputer]).ShowAiSetup();
+            presenter.AiSetupRequested += () => ((UIKindMenu)_submenus[MainMenuOption.SinglePlayer]).ShowAiSetup();
         }
 
         /// <summary>The main menu's decisions (the <see cref="MainMenuPresenter"/> registered in DI).</summary>
@@ -70,7 +70,6 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
             return option switch
             {
                 MainMenuOption.SinglePlayer => CreateKindMenu(factory, KindMenuPurpose.SinglePlayer),
-                MainMenuOption.VsComputer => CreateKindMenu(factory, KindMenuPurpose.VsComputer),
                 MainMenuOption.Multiplayer => factory.CreateDIElement<UIOnlinePanel, UIOnlinePanelHandler, UIOnlinePanelRenderer>(),
                 // 讀取存檔: the player's saved games (the files the game screen's 載入 list shows).
                 MainMenuOption.LoadGame => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>(),

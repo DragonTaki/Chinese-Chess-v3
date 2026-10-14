@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -62,9 +62,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
         /// <param name="item">The setting.</param>
         /// <param name="editor">Receives the control's edits.</param>
         /// <param name="refreshers">Gets the row's refreshers.</param>
+        /// <param name="isEnabled">Optional availability of computer-option rows.</param>
         /// <returns>The row (not yet added to a parent).</returns>
         /// <exception cref="ArgumentOutOfRangeException">The item is of an unknown kind.</exception>
-        public static UILabeledRow Create(IUiFactory factory, SettingsMenuItem item, ISettingsRowEditor editor, List<Action<PlayerSettings>> refreshers)
+        public static UILabeledRow Create(IUiFactory factory, SettingsMenuItem item, ISettingsRowEditor editor, List<Action<PlayerSettings>> refreshers, Func<PlayerSettings, bool> isEnabled = null)
         {
             ArgumentNullException.ThrowIfNull(factory);
             ArgumentNullException.ThrowIfNull(item);
@@ -75,7 +76,12 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
             row.Font = UILayoutStyles.SettingsMenu.ItemFont;
             row.TextBrush = UILayoutStyles.SettingsMenu.ItemTextBrush;
             row.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Item);
-            refreshers.Add(s => row.Text = item.RowText(s));
+            refreshers.Add(s =>
+            {
+                row.Text = item.RowText(s);
+                row.TextBrush = (isEnabled?.Invoke(s) ?? true)
+                    ? UILayoutStyles.SettingsMenu.ItemTextBrush : UILayoutStyles.SettingsMenu.DisabledItemTextBrush;
+            });
 
             switch (item)
             {
@@ -100,7 +106,11 @@ namespace Chinese_Chess_v3.Game.UI.Menus.SettingsMenu
                     dropdown.LayoutRules.Apply(UILayoutSheet.SettingsMenu.Dropdown(DropdownWidth(choice)));
                     dropdown.Handler.SelectionChanged = index => editor.SetChoice(choice, index);
                     row.AddChild(dropdown);
-                    refreshers.Add(s => dropdown.SelectedIndex = choice.GetIndex(s));
+                    refreshers.Add(s =>
+                    {
+                        dropdown.SelectedIndex = choice.GetIndex(s);
+                        dropdown.IsEnabled = isEnabled?.Invoke(s) ?? true;
+                    });
                     break;
 
                 case SettingsNumberItem number:
