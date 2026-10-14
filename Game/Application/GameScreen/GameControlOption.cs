@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/06
-// Update Date: 2026/10/06
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.Application.GameScreen
@@ -15,6 +15,7 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
     /// </summary>
     public enum GameControlOption
     {
+        Pause,
         Restart,  // 重新開始 (Restart)
         Undo,     // 撤銷上步 (Undo the last round)
         Resign,   // 放棄對局 (Resign; 三國: 棄權)

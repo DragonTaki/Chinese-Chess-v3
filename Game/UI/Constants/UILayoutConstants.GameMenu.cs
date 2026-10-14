@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2025/10/25
-// Version: v2.0
+// Update Date: 2026/10/14
+// Version: v2.1
 /* ----- ----- ----- ----- */
 
 using Engine.Geometry;
@@ -29,6 +29,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
 
             // Inset of the scroll container from the menu panel's edges (same as MainMenu)
             public const float Margin = MainMenu.Margin;
+            public const float NavigationHeight = 300f;
 
             /// <summary>
             /// Encapsulates GameMenu:ScrollContainer related setting values.
@@ -47,8 +48,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 public static Vector2F Position => Layout.Position;
                 public static Vector2F Size => Layout.Size;
-                public static readonly LayoutF Layout = MainMenu.Button.Layout;
-                public const float Spacing = 40.0f;
+                public static readonly LayoutF Layout = new LayoutF(MainMenu.Button.Position,
+                    new Vector2F(MainMenu.Button.Size.X, 50f));
+                public const float Spacing = 12.0f;
             }
         }
     }

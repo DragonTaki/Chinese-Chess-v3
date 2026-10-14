@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/13
-// Version: v1.7
+// Update Date: 2026/10/14
+// Version: v1.8
 /* ----- ----- ----- ----- */
 
 using System;
@@ -87,6 +87,18 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         }
 
         private GameManager Game => _session.Game;
+
+        /// <summary>The current localized pause action label.</summary>
+        public string PauseLabel => Engine.Localization.Lang.Get(Game.IsPaused
+            ? "menu.game_control.resume" : "menu.game_control.pause");
+
+        /// <inheritdoc/>
+        public void TogglePause()
+        {
+            if (Remote != null || Game.IsRemote || Game.IsReplaying || Game.IsGameOver || IsSavedGameListOpen)
+                return;
+            Game.TogglePause();
+        }
 
         // ----- Command groups -----
 

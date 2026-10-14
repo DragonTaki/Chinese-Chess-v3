@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/06
-// Update Date: 2026/10/06
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Engine.Platform;
@@ -24,6 +24,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.GameControls
 
         public override void OnRender(IGraphics g, UIGameControls element)
         {
+            element.RefreshPauseLabel();
             base.OnRender(g, element);
             foreach (var child in element.Children)
             {

@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/06
-// Update Date: 2026/10/06
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -29,9 +29,10 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         {
             return new List<MenuEntry<GameControlOption>>
             {
-                new MenuEntry<GameControlOption>(GameControlOption.Restart, Lang.Get("menu.game_control.restart"), () => onSelect(GameControlOption.Restart)),
                 new MenuEntry<GameControlOption>(GameControlOption.Undo, Lang.Get("menu.game_control.undo"), () => onSelect(GameControlOption.Undo)),
+                new MenuEntry<GameControlOption>(GameControlOption.Restart, Lang.Get("menu.game_control.restart"), () => onSelect(GameControlOption.Restart)),
                 new MenuEntry<GameControlOption>(GameControlOption.Resign, Lang.Get("menu.game_control.resign"), () => onSelect(GameControlOption.Resign)),
+                new MenuEntry<GameControlOption>(GameControlOption.Pause, Lang.Get("menu.game_control.pause"), () => onSelect(GameControlOption.Pause)),
             };
         }
     }

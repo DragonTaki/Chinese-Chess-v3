@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
-// Update Date: 2026/10/13
-// Version: v2.2
+// Update Date: 2026/10/14
+// Version: v2.4
 /* ----- ----- ----- ----- */
 
 using System;
@@ -599,7 +599,12 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary><c>UIGameMenu.ScrollContainer</c>: the left column's buttons.</summary>
             public static readonly UILayoutStyle MenuScrollContainer = Menus.ScrollContainer(
                 UILayoutConstants.GameMenu.Margin, UILayoutConstants.GameMenu.Margin,
-                UILayoutConstants.GameMenu.Button.Spacing, MenuPanelWidth);
+                UILayoutConstants.GameMenu.Button.Spacing, MenuPanelWidth) with
+            {
+                Top = null,
+                Height = LayoutSize.Fixed(UILayoutConstants.GameMenu.NavigationHeight),
+                JustifyContent = JustifyContent.End,
+            };
 
             /// <summary>Each game menu button.</summary>
             public static readonly UILayoutStyle MenuButton = Menus.Button(UILayoutConstants.GameMenu.Button.Size.Y);
@@ -712,6 +717,23 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 RowGap = UILayoutConstants.Sidebar.Margin,
             };
 
+            public static readonly UILayoutStyle PlayerBlock = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Stretch,
+                Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.InfoBoard.BlockHeight),
+                FlexShrink = 0f,
+            };
+
+            public static UILayoutStyle PlayerSlot(float left, float top, float width, float height) => new()
+            {
+                PositionMode = PositionMode.Absolute,
+                Left = left,
+                Top = top,
+                Width = LayoutSize.Fixed(width),
+                Height = LayoutSize.Fixed(height),
+            };
+
             /// <summary><c>UIInfoBoard</c>: flex item of the sidebar column, full width, fixed height.</summary>
             public static readonly UILayoutStyle InfoBoard = new()
             {
@@ -722,13 +744,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             };
 
             /// <summary>
-            /// <c>UIGameControls</c>: flex item of the sidebar column between the info board and the
-            /// logger box, full width, as tall as its rows; a wrapping flex row of the control buttons.
+            /// <c>UIGameControls</c>: pinned to the top of the left column, with one button per row.
             /// </summary>
             public static readonly UILayoutStyle GameControls = new()
             {
-                PositionMode = PositionMode.Flow,
-                Width = LayoutSize.Stretch,
+                PositionMode = PositionMode.Absolute,
+                Left = UILayoutConstants.GameMenu.Margin,
+                Top = UILayoutConstants.GameMenu.Margin,
+                Width = LayoutSize.Fixed(UILayoutConstants.Sidebar.GameControls.ButtonWidth),
                 Height = LayoutSize.Auto,
                 FlexShrink = 0f,
                 Container = LayoutContainer.Flex,
@@ -753,7 +776,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// <summary>
             /// <c>UILoggerBox</c>: flex item of the sidebar column, full width, growing into
             /// the sidebar height the info board leaves (below it, one margin apart). Its
-            /// authored height is the flex basis and, since it doesn't shrink, the minimum.
+            /// authored height is the flex basis; it shrinks to leave room for every player block.
             /// </summary>
             public static readonly UILayoutStyle LoggerBox = new()
             {
@@ -761,7 +784,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                 Width = LayoutSize.Stretch,
                 Height = LayoutSize.Fixed(UILayoutConstants.Sidebar.LoggerBox.Size.Y),
                 FlexGrow = 1f,
-                FlexShrink = 0f,
+                FlexShrink = 1f,
             };
 
             /// <summary><c>UILoggerBox.ScrollContainer</c>: follows the box, inset by the logger margin.</summary>

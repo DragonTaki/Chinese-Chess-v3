@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/06
-// Update Date: 2026/09/30
-// Version: v2.1
+// Update Date: 2026/10/14
+// Version: v2.3
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -42,6 +42,19 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             /// </summary>
             public static class InfoBoard
             {
+                public const float BlockHeight = 112f;
+                public const float StatusHeight = 28f;
+                public const float Inset = 8f;
+                public const float AvatarWidth = 0.15f;
+                public const float AvatarTop = 0.28f;
+                public const float AvatarHeight = 0.42f;
+                public const float TextLeft = 0.2f;
+                public const float TextWidth = 0.77f;
+                public const float NameHeight = 32f;
+                public const float ClockHeight = 30f;
+                public const float RimWidth = 2f;
+                public const float AvatarFrameWidth = 4f;
+
                 // Location start point
                 public static Vector2F Position => Layout.Position;
                 // Size
@@ -62,13 +75,13 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             public static class GameControls
             {
                 // Buttons per row
-                public const int Columns = 2;
+                public const int Columns = 1;
                 // Gap between buttons, both ways
                 public const float Gap = 10.0f;
                 // Button height
                 public const float ButtonHeight = 50.0f;
                 // Button width: the row's width shared by the columns
-                public static readonly float ButtonWidth = (Sidebar.Size.X - Margin * 2.0f - Gap * (Columns - 1)) / Columns;
+                public static readonly float ButtonWidth = (GameMenu.Size.X - GameMenu.Margin * 2.0f - Gap * (Columns - 1)) / Columns;
             }
 
             /// <summary>

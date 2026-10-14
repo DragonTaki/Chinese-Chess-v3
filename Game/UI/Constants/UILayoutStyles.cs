@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
 // Update Date: 2026/10/14
-// Version: v2.10
+// Version: v2.11
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -155,8 +155,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         }
 
         /// <summary>
-        /// The sidebar's game controls (<c>UIGameControls</c>): the main menu button's look with a
-        /// smaller font so two fit in a row. Placeholder size for the author to tune.
+        /// The left column's game controls use the cool blue palette role, apart from the menu gradient.
         /// </summary>
         public static class GameControls
         {
@@ -164,7 +163,9 @@ namespace Chinese_Chess_v3.Game.UI.Constants
             {
                 public static readonly IFont Font = StyleHelper.GetFont("NotoSerif", 22, FontStyleFlags.Bold);
 
-                public static readonly IButtonDrawStyle Style = new DoubleBorderRoundedStyle
+                public static readonly IButtonDrawStyle Style = PaletteBox(Font, UIPalette.ButtonFill, UIPalette.ButtonBorder, UIPalette.ButtonText);
+
+                private static readonly IButtonDrawStyle LegacyStyle = new DoubleBorderRoundedStyle
                 {
                     Font = Font,
                     TextBrush = MainMenu.Button.TextBrush,

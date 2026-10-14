@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/13
-// Version: v1.1
+// Update Date: 2026/10/14
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using System;
@@ -77,6 +77,33 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
             ? new[] { PlayerSide.Player1, PlayerSide.Player2, PlayerSide.Player3 }
             : new[] { LeftSide, RightSide };
 
+        /// <summary>The human side, or null for local hot-seat play.</summary>
+        public PlayerSide? OwnSide => _game.IsRemote || _game.Mode != GameMode.Normal
+            ? _game.LocalSide
+            : _game.ComputerSide is PlayerSide computer
+                ? (computer == PlayerSide.Player1 ? PlayerSide.Player2 : PlayerSide.Player1)
+                : null;
+
+        /// <summary>Players stacked above the controls, in turn order.</summary>
+        public IReadOnlyList<PlayerSide> TopSides
+        {
+            get
+            {
+                var sides = new List<PlayerSide>();
+                int count = IsThreeKingdoms ? 3 : 2;
+                for (int i = 1; i <= count; i++)
+                    if ((PlayerSide)i != OwnSide)
+                        sides.Add((PlayerSide)i);
+                return sides;
+            }
+        }
+
+        /// <summary>Localized total clock label.</summary>
+        public string TotalTimeLabel => Engine.Localization.Lang.Get("game.clock.total");
+
+        /// <summary>Localized step clock label.</summary>
+        public string StepTimeLabel => Engine.Localization.Lang.Get("settings.step_time");
+
         /// <summary>三國: the team (1..3) <paramref name="side"/> claimed; 0 before it has one.</summary>
         public int TeamOf(PlayerSide side) => _game.TeamOf(side);
 
@@ -98,6 +125,9 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
 
         /// <summary>The side to move (its half is highlighted).</summary>
         public PlayerSide CurrentTurn => _game.CurrentTurn;
+
+        /// <summary>Whether local play is paused.</summary>
+        public bool IsPaused => _game.IsPaused;
 
         /// <summary>
         /// The colour <paramref name="side"/> plays (<see cref="GameManager.ColorOf"/>): fixed on the
@@ -141,7 +171,7 @@ namespace Chinese_Chess_v3.Game.Application.InfoBoards
         /// </summary>
         public string NameWithCheck(PlayerSide side)
         {
-            string name = GetPlayerName(side) + (IsAway(side) ? OnlineTexts.AwaySuffix : "");
+            string name = GetPlayerName(side) + (IsPaused ? " " + Engine.Localization.Lang.Get("game.paused") : "") + (IsAway(side) ? OnlineTexts.AwaySuffix : "");
             return _game.IsInCheck && _game.CurrentTurn == side ? name + GameTexts.InCheckSuffix : name;
         }
 

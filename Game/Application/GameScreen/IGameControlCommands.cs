@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/04
-// Update Date: 2026/10/04
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 namespace Chinese_Chess_v3.Game.Application.GameScreen
@@ -32,5 +32,8 @@ namespace Chinese_Chess_v3.Game.Application.GameScreen
         /// been made and the game is not over.
         /// </summary>
         void Restart();
+
+        /// <summary>Toggles pause in a running local game.</summary>
+        void TogglePause();
     }
 }

@@ -3,14 +3,15 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
-// Update Date: 2026/10/05
-// Version: v1.4
+// Update Date: 2026/10/14
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.GameScreen;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Boards;
 using Chinese_Chess_v3.Game.UI.Sidebars;
+using Chinese_Chess_v3.Game.UI.Sidebars.GameControls;
 
 using Engine.Mathematics;
 using Engine.UI.Core.Elements;
@@ -24,6 +25,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
     {
         internal UIBoard ChessBoard { get; private set; }
         internal UISidebar Sidebar { get; private set; }
+
+        internal UIGameControls GameControls { get; private set; }
 
         public UIGameMenu() { }
 
@@ -68,6 +71,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.GameMenu
         }
         protected override void BuildUIObjects()
         {
+            GameControls ??= _factory.CreateDIElement<UIGameControls, UIGameControlsHandler, UIGameControlsRenderer>();
+            if (!Children.Contains(GameControls))
+                AddChild(GameControls);
             if (ChessBoard == null)
                 ChessBoard = _factory.CreateDIElement<UIBoard, UIBoardHandler, UIBoardRenderer>();
             if (!Children.Contains(ChessBoard))

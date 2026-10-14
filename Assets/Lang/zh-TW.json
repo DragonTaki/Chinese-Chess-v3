@@ -1,7 +1,8 @@
 // Update Date: 2026/10/14
-// Version: v1.11
+// Version: v1.13
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
+  "game.clock.total": "總時",
   "common.list_separator": "、",
   "game.dialog.discard_unsaved": "目前棋局尚未儲存，是否捨棄？",
   "game.dialog.resign_and_return": "是否放棄這局並回到主畫面？",
@@ -260,8 +261,11 @@
   "menu.game.save_game": "儲存遊戲",
   "menu.game.load_layout": "載入佈局",
   "menu.game.return_to_main": "回到主畫面",
+  "menu.game_control.pause": "暫停",
+  "menu.game_control.resume": "繼續",
+  "game.paused": "已暫停",
   "menu.game_control.restart": "重新開始",
-  "menu.game_control.undo": "撤銷上步",
+  "menu.game_control.undo": "悔棋",
   "menu.game_control.resign": "放棄對局",
   "opening.section.first_mover": "先手",
   "opening.section.second_mover": "後手",

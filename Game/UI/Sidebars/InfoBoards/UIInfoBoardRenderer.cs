@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/10/22
-// Update Date: 2026/10/06
-// Version: v2.4
+// Update Date: 2026/10/14
+// Version: v2.6
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -12,11 +12,13 @@ using System.Drawing;
 using Chinese_Chess_v3.Game.Application.InfoBoards;
 using Chinese_Chess_v3.Game.Core.Pieces;
 using Chinese_Chess_v3.Game.Core.Players;
+using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Geometry;
 using Engine.GraphicsUtils;
 using Engine.GraphicsUtils.GraphicsPaths;
 using Engine.Platform;
+using Engine.UI.Core.Elements;
 using Engine.UI.Core.Renderers;
 
 namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
@@ -49,7 +51,78 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
         public override void OnRender(IGraphics g, UIInfoBoard element)
         {
-            _composite.Render(g, element);
+            if (element.ViewModel == null)
+                return;
+            element.ArrangeSlots();
+            var model = element.ViewModel;
+            var side = element.Side;
+            bool active = model.CurrentTurn == side && !model.IsPaused;
+            Color identity = model.IsThreeKingdoms
+                ? model.IsInactive(side) ? UIPalette.MutedText : model.TeamOf(side) switch
+                {
+                    1 => UIPalette.SuccessText,
+                    2 => UIPalette.ErrorText,
+                    3 => UIPalette.MutedText,
+                    _ => UIPalette.MutedText,
+                }
+                : model.ColorOf(side) switch
+                {
+                    PieceColor.Red => UIPalette.ErrorText,
+                    PieceColor.Black => UIPalette.MutedText,
+                    _ => UIPalette.MutedText,
+                };
+            var bounds = element.GetCurrentAbsoluteBounds().ToRectangleF();
+            using (IBrush brush = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.PanelBase))
+                g.FillRectangle(brush, bounds);
+            using (IPen rim = GraphicsBackend.Factory.CreatePen(active ? UIPalette.SectionHeadingText : UIPalette.TabBorder,
+                UILayoutConstants.Sidebar.InfoBoard.RimWidth))
+                g.DrawRectangle(rim, bounds);
+            DrawAvatar(g, element, identity);
+            DrawText(g, element.NameSlot, model.NameWithCheck(side), UIInfoBoardSettings.NameFont, UIPalette.LabelText);
+            DrawClock(g, element.TotalSlot, model.TotalTimeLabel + " " + model.TotalTimeText(side), active);
+            DrawClock(g, element.StepSlot, model.StepTimeLabel + " " + model.StepTimeText(side), active);
+            if (model.IsThreeKingdoms)
+                DrawText(g, element.StatusSlot, model.ThreeKingdomsStatus(side), UIInfoBoardSettings.TimerFont, UIPalette.MutedText);
+        }
+
+        private static void DrawAvatar(IGraphics g, UIInfoBoard element, Color identity)
+        {
+            var rect = element.Avatar.GetCurrentAbsoluteBounds().ToRectangleF();
+            using (IBrush fill = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.TabFill))
+                g.FillRectangle(fill, rect);
+            using (IPen frame = GraphicsBackend.Factory.CreatePen(identity, UILayoutConstants.Sidebar.InfoBoard.AvatarFrameWidth))
+                g.DrawRectangle(frame, rect);
+            string name = element.ViewModel.GetPlayerName(element.Side);
+            DrawText(g, element.Avatar, string.IsNullOrEmpty(name) ? "" : System.Globalization.StringInfo.GetNextTextElement(name),
+                UIInfoBoardSettings.NameFont, UIPalette.LabelText);
+        }
+
+        private static void DrawClock(IGraphics g, UILabel slot, string text, bool active)
+        {
+            using (IBrush fill = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.TabFill))
+                g.FillRectangle(fill, slot.GetCurrentAbsoluteBounds().ToRectangleF());
+            DrawText(g, slot, text, UIInfoBoardSettings.TimerFont, active ? UIPalette.SectionHeadingText : UIPalette.LabelText);
+        }
+
+        private static void DrawText(IGraphics g, UILabel slot, string text, IFont font, Color color)
+        {
+            using IBrush brush = GraphicsBackend.Factory.CreateSolidBrush(color);
+            using IStringFormat format = GraphicsBackend.Factory.CreateStringFormat();
+            format.Alignment = TextAlign.Center;
+            format.LineAlignment = TextAlign.Center;
+            format.WordWrap = false;
+            var bounds = slot.GetCurrentAbsoluteBounds().ToRectangleF();
+            if (bounds.Width <= 0f || bounds.Height <= 0f || string.IsNullOrEmpty(text))
+                return;
+            var measured = g.MeasureString(text, font);
+            float scale = System.Math.Min(bounds.Width / measured.Width, bounds.Height / measured.Height);
+            if (scale < 1f)
+            {
+                using IFont fitted = GraphicsBackend.Factory.CreateFont(font.FontFamily, font.Size * scale, font.Style);
+                g.DrawString(text, fitted, brush, bounds, format);
+            }
+            else
+                g.DrawString(text, font, brush, bounds, format);
         }
 
         private class ClassicInfoBoard : UIRenderer<UIInfoBoard, UIInfoBoardHandler, UIInfoBoardRenderer>
@@ -198,7 +271,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             {
                 // Total timer background
                 RectangleF totalTimerRect = new RectangleF(x + 20.0f, y + 50.0f, width - 40.0f, 40.0f);
-                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
+                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.TabFill))
                     g.FillRectangle(timerBgBrush, totalTimerRect);
 
                 // Total timer text
@@ -212,7 +285,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
                 // Step timer background
                 RectangleF stepTimerRect = new RectangleF(x + 20.0f, y + 95.0f, width - 40.0f, 40.0f);
-                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
+                using (IBrush timerBgBrush = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.TabFill))
                     g.FillRectangle(timerBgBrush, stepTimerRect);
 
                 // Step timer text
@@ -273,7 +346,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
                     // Rim (gold for the player to move), then the team's fill inside it.
                     using (IRegion rim = GraphicsBackend.Factory.CreateRegion(shield))
-                    using (IBrush rimBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? Color.Gold : Color.Gray))
+                    using (IBrush rimBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? UIPalette.SectionHeadingText : UIPalette.TabBorder))
                     {
                         rim.Intersect(new RectangleF(x, layout.Y, columnWidth, layout.Height));
                         g.FillRegion(rimBrush, rim);
@@ -293,9 +366,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
             /// <summary>A team's fill: 帥將兵卒 (or the first team) green, the red pieces' team dark red, the black pieces' black.</summary>
             private static Color TeamColor(int team) => team switch
             {
-                1 => Color.DarkGreen,
-                2 => Color.DarkRed,
-                3 => Color.Black,
+                1 => UIPalette.SuccessText,
+                2 => UIPalette.ErrorText,
+                3 => UIPalette.MutedText,
                 _ => Color.DimGray,
             };
 
@@ -316,9 +389,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.InfoBoards
 
             private void DrawClock(IGraphics g, RectangleF rect, string text, bool active)
             {
-                using (IBrush background = GraphicsBackend.Factory.CreateSolidBrush(Color.DimGray))
+                using (IBrush background = GraphicsBackend.Factory.CreateSolidBrush(UIPalette.TabFill))
                     g.FillRectangle(background, rect);
-                using (IBrush textBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? Color.Gold : Color.DeepSkyBlue))
+                using (IBrush textBrush = GraphicsBackend.Factory.CreateSolidBrush(active ? UIPalette.SectionHeadingText : UIPalette.LabelText))
                 using (IStringFormat format = GraphicsBackend.Factory.CreateStringFormat())
                 {
                     format.Alignment = TextAlign.Center;

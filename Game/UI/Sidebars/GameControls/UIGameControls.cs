@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/06
-// Update Date: 2026/10/06
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.GameScreen;
@@ -25,7 +25,15 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.GameControls
     /// </summary>
     public class UIGameControls : UIContainer<UIGameControls, UIGameControlsHandler, UIGameControlsRenderer>
     {
+        private UIButton _pauseButton;
+
         public UIGameControls() { }
+
+        internal void RefreshPauseLabel()
+        {
+            if (_pauseButton != null)
+                _pauseButton.Text = Handler.Presenter.PauseLabel;
+        }
 
         protected override void OnInit(IUiFactory factory)
         {
@@ -40,6 +48,8 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.GameControls
             foreach (var entry in GameControlOptions.Create(Handler.OnControlSelected))
             {
                 var button = _factory.CreateElement<UIButton, UIButtonHandler, UIButtonRenderer>();
+                if (entry.Id == GameControlOption.Pause)
+                    _pauseButton = button;
                 button.Text = entry.Label;
                 button.Handler.Action = entry.Action;
                 button.Style = UILayoutStyles.GameControls.Button.Style;

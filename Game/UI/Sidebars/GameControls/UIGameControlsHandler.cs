@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/06
-// Update Date: 2026/10/06
-// Version: v1.0
+// Update Date: 2026/10/14
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -24,7 +24,7 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.GameControls
         public UIGameControlsHandler() { }
 
         /// <summary>The game screen's decisions (the <see cref="GameScreenPresenter"/> registered in DI).</summary>
-        private GameScreenPresenter Presenter => _factory.ServiceProvider.GetRequiredService<GameScreenPresenter>();
+        internal GameScreenPresenter Presenter => _factory.ServiceProvider.GetRequiredService<GameScreenPresenter>();
 
         /// <summary>A control button was clicked.</summary>
         public void OnControlSelected(GameControlOption option)
@@ -35,6 +35,9 @@ namespace Chinese_Chess_v3.Game.UI.Sidebars.GameControls
             var controls = Presenter.Controls;
             switch (option)
             {
+                case GameControlOption.Pause:
+                    controls.TogglePause();
+                    break;
                 case GameControlOption.Restart:
                     controls.Restart();
                     break;
