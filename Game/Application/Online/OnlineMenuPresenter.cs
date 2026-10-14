@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.4
+// Version: v1.5
 /* ----- ----- ----- ----- */
 
 using System;
@@ -81,6 +81,8 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public string ServerText => LanTexts.Server;
         public string LanText => LanTexts.Title;
         public bool IsLan { get; private set; }
+        public bool IsLoggedIn => _session.State is OnlineState.LoggedIn or OnlineState.InRoom or OnlineState.InGame;
+        public bool IsFirstPage => Page is OnlineMenuPage.Connection or OnlineMenuPage.Login or OnlineMenuPage.GameKinds;
         public LanMenuPresenter Lan => _lan;
 
         /// <summary>The game kinds, every one with its normal look (the new-game menu's names).</summary>
@@ -174,8 +176,16 @@ namespace Chinese_Chess_v3.Game.Application.Online
         {
             if (_lan == null)
                 return;
+            if (_session.State == OnlineState.LoggingIn)
+                _session.CancelLogin();
             IsLan = true;
-            ShowPage(OnlineMenuPage.GameKinds);
+            ShowPage(OnlineMenuPage.Lan);
+        }
+
+        public void CreateLanRoom()
+        {
+            ChooseLan();
+            _lan?.Create();
         }
 
         /// <summary>A mode: 自訂房間 opens the lobby (a mode not wired yet does nothing).</summary>
@@ -201,7 +211,10 @@ namespace Chinese_Chess_v3.Game.Application.Online
                     if (_lan.HasRoom)
                         _lan.LeaveRoom();
                     else
-                        ShowPage(OnlineMenuPage.GameKinds);
+                    {
+                        IsLan = false;
+                        ShowPage(IsLoggedIn ? OnlineMenuPage.GameKinds : OnlineMenuPage.Login);
+                    }
                     break;
                 case OnlineMenuPage.GameKinds:
                     if (IsLan)
@@ -254,7 +267,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public void OpenPage(OnlineMenuPage page)
         {
             IsLan = page == OnlineMenuPage.Lan;
-            ShowPage(page);
+            ShowPage(page == OnlineMenuPage.Connection ? (IsLoggedIn ? OnlineMenuPage.GameKinds : OnlineMenuPage.Login) : page);
         }
 
         private void ShowPage(OnlineMenuPage page)

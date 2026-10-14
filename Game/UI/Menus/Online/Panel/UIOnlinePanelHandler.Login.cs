@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.1
+// Update Date: 2026/10/13
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -52,7 +52,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         partial void RefreshLogin()
         {
             var menu = Element;
-            if (menu?.AccountField == null || Presenter.Page != OnlineMenuPage.Login)
+            if (menu?.AccountField == null || !Presenter.IsFirstPage || Presenter.IsLoggedIn)
                 return;
 
             var presenter = Login;

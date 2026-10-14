@@ -1,5 +1,5 @@
 // Update Date: 2026/10/13
-// Version: v1.9
+// Version: v1.10
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
   "common.list_separator": "、",
@@ -369,6 +369,15 @@
   "lan.choose_connection": "選擇連線方式",
   "lan.server": "線上伺服器",
   "lan.title": "區域網路連線",
+  "lan.online_title": "線上",
+  "lan.room_settings": "房間設定",
+  "lan.join_room": "加入房間",
+  "lan.room_address": "房間號碼或位址",
+  "lan.invalid_room_address": "請輸入六位數房間號碼或區域網路 IPv4 位址（可包含連接埠）。",
+  "lan.room_not_found": "找不到此房間，請確認房間號碼或位址。",
+  "lan.ambiguous_room": "找到相同號碼的房間，請從搜尋結果選擇或輸入位址。",
+  "lan.room_number": "區域網路房間：{0}，房主：{1}",
+  "lan.found_room": "房間：{0}，房主：{1}，位址：{2}",
   "lan.nickname": "玩家暱稱",
   "lan.search": "搜尋附近房間",
   "lan.searching": "正在搜尋附近房間…",

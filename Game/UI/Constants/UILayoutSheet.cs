@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/09/30
 // Update Date: 2026/10/13
-// Version: v2.1
+// Version: v2.2
 /* ----- ----- ----- ----- */
 
 using System;
@@ -465,6 +465,14 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         /// </summary>
         public static class OnlineMenu
         {
+            public static readonly UILayoutStyle LogoutButton = new()
+            {
+                PositionMode = PositionMode.Flow,
+                Width = LayoutSize.Fixed(110f),
+                Height = LayoutSize.Fixed(38f),
+                FlexShrink = 0f,
+            };
+
             /// <summary>The screen menu's <c>PanelWidth</c>.</summary>
             public static readonly float PanelWidth = UILayoutConstants.OnlineMenu.Size.X;
 

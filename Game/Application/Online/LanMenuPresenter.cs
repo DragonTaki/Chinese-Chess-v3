@@ -4,12 +4,13 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/13
 // Update Date: 2026/10/13
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.Core;
+using Chinese_Chess_v3.Game.Core.Players;
 using Chinese_Chess_v3.Network.Lan;
 using Chinese_Chess_v3.Network.Protocol;
 
@@ -29,7 +31,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
     /// <summary>A nearby host's menu row and its join command.</summary>
     public sealed record LanRoomRow(string Key, string Text, Action Join);
 
-    /// <summary>Nickname, nearby rooms, new-room settings and waiting seats inside the Multiplayer panel.</summary>
+    /// <summary>Nickname, nearby rooms, host-only waiting-room settings and seats inside the Multiplayer panel.</summary>
     public sealed class LanMenuPresenter : IDisposable
     {
         private static readonly OnlineFirstMover[] FirstMovers = { OnlineFirstMover.Random, OnlineFirstMover.Host, OnlineFirstMover.Guest };
@@ -65,6 +67,9 @@ namespace Chinese_Chess_v3.Game.Application.Online
         }
 
         public string Nickname { get; set; }
+        public string RoomAddress { get; set; } = "";
+        public string RoomAddressLabel => LanTexts.RoomAddress;
+        public bool CanEditSettings => HasRoom && _lan.IsHost && _lan.Game == null;
         public bool IsShown { get; private set; }
         public bool IsSearching => _search != null;
         public bool IsBusy => _joining || _leaving || IsSearching;
@@ -78,11 +83,12 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public string CreateText => OnlineTexts.CreateRoom;
         public string JoinText => OnlineTexts.Join;
         public string NearbyTitle => LanTexts.NearbyRooms;
-        public string NewRoomTitle => OnlineTexts.NewRoomSettings;
+        public string NewRoomTitle => LanTexts.RoomSettings;
         public string EmptyText => _hosts.Count == 0 && !IsSearching ? LanTexts.NoRooms : null;
         public string StatusSentence => IsSearching ? LanTexts.Searching : _joining ? OnlineTexts.Connecting : null;
-        public string RoomTitle => LanTexts.Room(_lan.Room?.Seats?[0]?.Name ?? "");
-        public string RoomSummary => _lan.Room == null ? null : string.Join(Environment.NewLine, OnlineRoomSettings.Summary(_lan.Room.Settings));
+        public string RoomTitle => LanTexts.RoomNumber(_lan.Room?.RoomId ?? "", _lan.Room?.Seats?[0]?.Name ?? "");
+        public string RoomSummary => _lan.Room == null ? null : OnlineTexts.ModeName(OnlineMode.CustomRoom)
+            + Environment.NewLine + string.Join(Environment.NewLine, OnlineRoomSettings.Summary(_lan.Room.Settings));
         public string ReadyText => MySeat?.Ready == true ? OnlineTexts.CancelReady : OnlineTexts.Ready;
         public bool CanReady => HasRoom && _lan.IsConnected && _lan.Game == null && !IsBusy;
         public string LeaveText => OnlineTexts.LeaveRoom;
@@ -94,7 +100,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         public IReadOnlyList<SettingsMenuSection> SettingsSections => _sections ??= CreateSections();
         public IReadOnlyList<LanRoomRow> Rooms => _hosts.Select(host => new LanRoomRow(
-            host.RoomId + "@" + host.Endpoint, LanTexts.Host(host.Nickname, host.Endpoint.Address.ToString()), () => Join(host))).ToArray();
+            host.RoomId + "@" + host.Endpoint, LanTexts.FoundRoom(host.RoomId, host.Nickname, host.Endpoint.ToString()), () => Join(host))).ToArray();
         public string SeatsText => _lan.Room?.Seats == null ? null : string.Join(Environment.NewLine, _lan.Room.Seats.Select(seat =>
             seat == null ? OnlineTexts.WaitingForPlayer : OnlineTexts.SeatLine(seat.Name,
                 seat.Id == _lan.Room.HostId ? Lang.JoinList(new[] { OnlineTexts.Host, seat.Ready ? OnlineTexts.IsReady : OnlineTexts.NotReady })
@@ -151,7 +157,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             ErrorSentence = LastResultSentence = null;
             try
             {
-                _lan.Create(Nickname, OnlineRoomSettings.Create(GameKind.Traditional, RoomRules, FirstMover, false));
+                _lan.Create(Nickname, OnlineRoomSettings.Create(GameKind.Traditional, new RuleSettings(), OnlineFirstMover.Random, false));
             }
             catch (Exception ex) when (ex is System.IO.IOException or System.Net.Sockets.SocketException or ArgumentException)
             {
@@ -183,6 +189,66 @@ namespace Chinese_Chess_v3.Game.Application.Online
             }), TaskScheduler.Default);
         }
 
+        /// <summary>Resolves a six-digit room number or an IPv4 address through fresh discovery.</summary>
+        public void JoinByNumber()
+        {
+            if (_joining || _leaving || HasRoom || !ValidNickname())
+                return;
+            string target = RoomAddress?.Trim() ?? "";
+            IPAddress address = null;
+            int? port = null;
+            bool number = target.Length == 6 && target.All(char.IsAsciiDigit);
+            string[] parts = target.Split(':');
+            if (!number && (parts.Length > 2 || !IPAddress.TryParse(parts[0], out address)
+                || address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork
+                || (parts.Length == 2 && (!int.TryParse(parts[1], out int parsedPort)
+                    || parsedPort < LanProtocol.FirstGamePort || parsedPort > LanProtocol.LastGamePort))))
+            {
+                ErrorSentence = LanTexts.InvalidRoomAddress;
+                Changed?.Invoke();
+                return;
+            }
+            if (!number && parts.Length == 2)
+                port = int.Parse(parts[1]);
+            CancelSearch();
+            ErrorSentence = null;
+            _search = new CancellationTokenSource();
+            int generation = ++_generation;
+            var task = LanDiscovery.FindAsync(TimeSpan.FromSeconds(2), _search.Token, address);
+            Changed?.Invoke();
+            task.ContinueWith(result => _mainThread.Post(() =>
+            {
+                if (_disposed || generation != _generation)
+                    return;
+                _search.Dispose();
+                _search = null;
+                if (result.IsCompletedSuccessfully)
+                {
+                    var matches = result.Result.Where(host => number ? host.RoomId == target
+                        : host.Endpoint.Address.Equals(address) && (!port.HasValue || host.Endpoint.Port == port)).ToArray();
+                    if (matches.Length == 1)
+                        Join(matches[0]);
+                    else
+                        ErrorSentence = matches.Length > 1 ? LanTexts.AmbiguousRoom : LanTexts.RoomNotFound;
+                }
+                else if (!result.IsCanceled)
+                    OnFailure(result.Exception?.GetBaseException().Message ?? "Discovery failed.");
+                Changed?.Invoke();
+            }), TaskScheduler.Default);
+        }
+
+        public void ChooseKind(GameKind kind)
+        {
+            if (CanEditSettings && OnlineMenuPresenter.IsWired(kind))
+                _lan.UpdateSettings(OnlineRoomSettings.Create(kind, RoomRules, FirstMover, false));
+        }
+
+        public void ChooseMode(OnlineMode mode)
+        {
+            if (CanEditSettings && OnlineMenuPresenter.IsWired(mode))
+                _lan.UpdateSettings(OnlineRoomSettings.Create(GameKind.Traditional, RoomRules, FirstMover, false));
+        }
+
         public void ToggleReady()
         {
             if (CanReady)
@@ -211,7 +277,10 @@ namespace Chinese_Chess_v3.Game.Application.Online
         public void Edit(Action<PlayerSettings> edit)
         {
             ArgumentNullException.ThrowIfNull(edit);
+            if (!CanEditSettings)
+                return;
             edit(RoomSettingsValues);
+            _lan.UpdateSettings(OnlineRoomSettings.Create(GameKind.Traditional, RoomRules, FirstMover, false));
             Changed?.Invoke();
         }
 
@@ -269,6 +338,32 @@ namespace Chinese_Chess_v3.Game.Application.Online
             _joining = _leaving = false;
             if (room != null)
             {
+                if (_lan.IsHost)
+                {
+                    var rules = RoomRules;
+                    foreach (RuleOption option in RuleSettings.OptionsFor(GameKind.Traditional))
+                    {
+                        string key = option switch
+                        {
+                            RuleOption.GeneralCanSeeGeneral => "canGeneralSeeGeneral",
+                            RuleOption.GeneralCanLeavePalace => "canGeneralLeavePalace",
+                            RuleOption.AdvisorCanLeavePalace => "canAdvisorLeavePalace",
+                            RuleOption.ElephantEyeBlocks => "canElephantEyeBlocked",
+                            RuleOption.HorseLegBlocks => "canHorseLegHobbled",
+                            RuleOption.CaptureOwnPiece => "canCaptureOwnPiece",
+                            _ => null,
+                        };
+                        if (key != null && room.Settings.Rules != null && room.Settings.Rules.TryGetValue(key, out bool value))
+                            rules.Set(option, value);
+                    }
+                    rules.TimerMode = room.Settings.Timer.Mode == RoomNames.TimerCountUp ? TimerMode.CountUp : TimerMode.CountDown;
+                    rules.TotalTimeMinutes = room.Settings.Timer.TotalMinutes;
+                    rules.StepTimeSeconds = room.Settings.Timer.StepSeconds;
+                    rules.StepTimerEnabled = room.Settings.Timer.StepTimer;
+                    rules.IncrementSeconds = room.Settings.Timer.IncrementSeconds;
+                    FirstMover = room.Settings.FirstMover == RoomNames.FirstMoverHost ? OnlineFirstMover.Host
+                        : room.Settings.FirstMover == RoomNames.FirstMoverGuest ? OnlineFirstMover.Guest : OnlineFirstMover.Random;
+                }
                 StopRefresh();
                 CancelSearch();
             }

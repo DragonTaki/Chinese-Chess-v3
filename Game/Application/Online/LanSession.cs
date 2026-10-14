@@ -4,12 +4,14 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,7 +90,7 @@ namespace Chinese_Chess_v3.Game.Application.Online
             Stop();
             IsHost = true;
             _nickname = nickname;
-            _roomId = Guid.NewGuid().ToString("N");
+            _roomId = RandomNumberGenerator.GetInt32(100000, 1000000).ToString(CultureInfo.InvariantCulture);
             _lifetime = new CancellationTokenSource();
             Room = new RoomStateDto
             {
@@ -126,6 +128,21 @@ namespace Chinese_Chess_v3.Game.Application.Online
 
         public Task<IReadOnlyList<LanHost>> DiscoverAsync(CancellationToken token = default) =>
             LanDiscovery.FindAsync(TimeSpan.FromSeconds(2), token);
+
+        /// <summary>Changes waiting-room settings on the host and clears both ready marks.</summary>
+        public bool UpdateSettings(RoomSettingsDto settings)
+        {
+            if (!IsHost || Room == null || Game != null)
+                return false;
+            ValidateSettings(settings);
+            Room = Room with
+            {
+                Settings = settings with { Rules = settings.Rules == null ? null : new Dictionary<string, bool>(settings.Rules) },
+                Seats = Room.Seats.Select(seat => seat == null ? null : seat with { Ready = false }).ToList(),
+            };
+            PublishRoom();
+            return true;
+        }
 
         /// <summary>Marks a seat ready; the host starts when both seats are ready.</summary>
         public bool SetReady(bool ready)

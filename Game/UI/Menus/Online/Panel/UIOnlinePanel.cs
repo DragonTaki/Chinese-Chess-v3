@@ -4,10 +4,11 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.2
+// Version: v1.3
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.UI.Constants;
 
 using Engine.Platform;
@@ -51,6 +52,8 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
 
         /// <summary>The account and navigation shown only after login.</summary>
         private UIOnlineGroup _onlineNavigation;
+        private UIOnlineGroup _onlineSection;
+        private UIButton _backButton;
 
         public UIOnlinePanel() { }
 
@@ -65,22 +68,24 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         protected override void BuildButtons()
         {
             var presenter = Handler.Presenter;
-            BuildLan();
+            _onlineSection = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            AddHeader(_onlineSection, LanTexts.OnlineTitle);
 
-            LoginPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            LoginPage = AddGroup(_onlineSection, UILayoutSheet.OnlineMenu.Group);
             BuildLogin(LoginPage);
 
-            _onlineNavigation = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            _onlineNavigation = AddGroup(_onlineSection, UILayoutSheet.OnlineMenu.Group);
             AccountLine = AddLine(_onlineNavigation, UILayoutStyles.OnlineMenu.LineColor);
 
             var navigation = AddGroup(_onlineNavigation, UILayoutSheet.OnlineMenu.ButtonRow);
             ReconnectButton = AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.ReconnectText, Handler.Reconnect);
-            LogoutButton = AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.LogoutText, Handler.Logout);
-            AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.BackText, Handler.Back);
+            LogoutButton = AddButton(navigation, UILayoutSheet.OnlineMenu.LogoutButton, presenter.LogoutText, Handler.Logout);
+            LogoutButton.Style = UILayoutStyles.OnlineMenu.LogoutStyle;
+            _backButton = AddButton(navigation, UILayoutSheet.OnlineMenu.Button, presenter.BackText, Handler.Back);
 
             ErrorLine = AddLine(_onlineNavigation, UILayoutStyles.OnlineMenu.ErrorColor);
 
-            KindsPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            KindsPage = AddGroup(_onlineSection, UILayoutSheet.OnlineMenu.Group);
             AddHeader(KindsPage, presenter.ChooseKindTitle);
             var kinds = AddGroup(KindsPage, UILayoutSheet.OnlineMenu.Choices);
             foreach (var group in presenter.GroupedKinds())
@@ -92,15 +97,16 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
                     AddButton(row, UILayoutSheet.Submenu.GroupButton, entry.Label, entry.Action);
             }
 
-            ModesPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            ModesPage = AddGroup(_onlineSection, UILayoutSheet.OnlineMenu.Group);
             AddHeader(ModesPage, presenter.ChooseModeTitle);
             var modes = AddGroup(ModesPage, UILayoutSheet.OnlineMenu.Choices);
             foreach (var entry in presenter.Modes())
                 AddButton(modes, UILayoutSheet.Submenu.Button, entry.Label, entry.Action);
 
-            LobbyPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
+            LobbyPage = AddGroup(_onlineSection, UILayoutSheet.OnlineMenu.Group);
             BuildLobby(LobbyPage);
 
+            BuildLan();
             ShowPage(presenter.Page);
         }
 
@@ -119,12 +125,15 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         /// <summary>Shows <paramref name="page"/> only.</summary>
         public void ShowPage(OnlineMenuPage page)
         {
-            SetShown(LoginPage, page == OnlineMenuPage.Login);
-            SetShown(ConnectionPage, page == OnlineMenuPage.Connection);
+            bool first = Handler.Presenter.IsFirstPage;
+            SetShown(_onlineSection, page != OnlineMenuPage.Lan);
+            SetShown(LoginPage, first && !Handler.Presenter.IsLoggedIn);
+            SetShown(ConnectionPage, first);
             SetShown(LanPage, page == OnlineMenuPage.Lan);
-            SetShown(_onlineNavigation, page is not (OnlineMenuPage.Login or OnlineMenuPage.Connection));
-            SetShown(LogoutButton, !Handler.Presenter.IsLan);
-            SetShown(KindsPage, page == OnlineMenuPage.GameKinds);
+            SetShown(_onlineNavigation, page != OnlineMenuPage.Lan && (Handler.Presenter.IsLoggedIn || Handler.Presenter.CanReconnect || !first));
+            SetShown(_backButton, !first);
+            SetShown(LogoutButton, Handler.Presenter.IsLoggedIn);
+            SetShown(KindsPage, first && Handler.Presenter.IsLoggedIn);
             SetShown(ModesPage, page == OnlineMenuPage.Modes);
             SetShown(LobbyPage, page == OnlineMenuPage.Lobby);
             RefreshLayout();

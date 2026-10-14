@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -40,6 +40,10 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         public static readonly Color ButtonDisabledText = Color.FromArgb(255, 0xB4, 0xB9, 0xC6);
 
         #endregion
+
+        /// <summary>A muted slate role for the smaller account logout action.</summary>
+        public static readonly Color LogoutFill = Color.FromArgb(255, 0x50, 0x57, 0x65);
+        public static readonly Color LogoutBorder = Color.FromArgb(255, 0xA3, 0xA9, 0xB8);
 
         #region Submenu header and tabs
 

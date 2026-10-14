@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/13
-// Update Date: 2026/10/12
-// Version: v2.8
+// Update Date: 2026/10/13
+// Version: v2.9
 /* ----- ----- ----- ----- */
 
 using System.Drawing;
@@ -329,6 +329,7 @@ namespace Chinese_Chess_v3.Game.UI.Constants
         {
             /// <summary>Every button of a row of buttons, and a row's own button (加入).</summary>
             public static readonly IButtonDrawStyle ButtonStyle = SettingsMenu.ButtonStyle;
+            public static readonly IButtonDrawStyle LogoutStyle = PaletteBox(SettingsMenu.ValueFont, UIPalette.LogoutFill, UIPalette.LogoutBorder, UIPalette.ButtonText);
 
             /// <summary>
             /// A button that cannot be pressed now (登入 while a login runs, 準備 outside a waiting

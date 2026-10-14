@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
-// Update Date: 2026/10/12
-// Version: v1.0
+// Update Date: 2026/10/13
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -52,7 +52,7 @@ namespace Chinese_Chess_v3.Network.Lan
         }
 
         /// <summary>Finds nearby waiting rooms during a bounded search window.</summary>
-        public static async Task<IReadOnlyList<LanHost>> FindAsync(TimeSpan duration, CancellationToken token = default)
+        public static async Task<IReadOnlyList<LanHost>> FindAsync(TimeSpan duration, CancellationToken token = default, IPAddress address = null)
         {
             if (duration <= TimeSpan.Zero || duration > TimeSpan.FromSeconds(10))
                 throw new ArgumentOutOfRangeException(nameof(duration));
@@ -65,7 +65,7 @@ namespace Chinese_Chess_v3.Network.Lan
                 Protocol = LanProtocol.Identity,
                 Nonce = nonce,
             }));
-            await client.SendAsync(query, new IPEndPoint(IPAddress.Broadcast, LanProtocol.DiscoveryPort), token);
+            await client.SendAsync(query, new IPEndPoint(address ?? IPAddress.Broadcast, LanProtocol.DiscoveryPort), token);
             var rooms = new Dictionary<string, LanHost>();
             try
             {

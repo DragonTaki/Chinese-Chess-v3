@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/13
 // Update Date: 2026/10/13
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using Engine.Localization;
@@ -17,6 +17,15 @@ namespace Chinese_Chess_v3.Game.Application.Texts
         public static string ChooseConnection => Lang.Get("lan.choose_connection");
         public static string Server => Lang.Get("lan.server");
         public static string Title => Lang.Get("lan.title");
+        public static string OnlineTitle => Lang.Get("lan.online_title");
+        public static string RoomSettings => Lang.Get("lan.room_settings");
+        public static string JoinRoom => Lang.Get("lan.join_room");
+        public static string RoomAddress => Lang.Get("lan.room_address");
+        public static string InvalidRoomAddress => Lang.Get("lan.invalid_room_address");
+        public static string RoomNotFound => Lang.Get("lan.room_not_found");
+        public static string AmbiguousRoom => Lang.Get("lan.ambiguous_room");
+        public static string RoomNumber(string number, string host) => Lang.Get("lan.room_number", number, host);
+        public static string FoundRoom(string number, string host, string address) => Lang.Get("lan.found_room", number, host, address);
         public static string Nickname => Lang.Get("lan.nickname");
         public static string Search => Lang.Get("lan.search");
         public static string Searching => Lang.Get("lan.searching");

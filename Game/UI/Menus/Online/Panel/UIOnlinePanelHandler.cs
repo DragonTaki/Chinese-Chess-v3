@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/12
 // Update Date: 2026/10/13
-// Version: v1.1
+// Version: v1.2
 /* ----- ----- ----- ----- */
 
 using Chinese_Chess_v3.Game.Application.Online;
@@ -39,7 +39,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             presenter.PageChanged += page =>
             {
                 Element?.ShowPage(page);
-                if (page == OnlineMenuPage.Login)
+                if (Presenter.IsFirstPage && !Presenter.IsLoggedIn)
                     Login.Shown();
                 Refresh();
             };
@@ -65,7 +65,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             var presenter = Presenter;
             presenter.SetShown(true);
             Element.ShowPage(presenter.Page);
-            if (presenter.Page == OnlineMenuPage.Login)
+            if (presenter.IsFirstPage && !presenter.IsLoggedIn)
                 Login.Shown();
             Refresh();
         }
@@ -80,6 +80,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
                 return;
 
             var presenter = Presenter;
+            menu.ShowPage(presenter.Page);
             UIOnlinePanel.SetLine(menu.AccountLine, presenter.AccountText);
             UIOnlinePanel.SetShown(menu.ReconnectButton, presenter.CanReconnect);
             UIOnlinePanel.SetEnabled(menu.ReconnectButton, !presenter.IsBusy);

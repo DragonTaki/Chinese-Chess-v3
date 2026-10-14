@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/13
 // Update Date: 2026/10/13
-// Version: v1.0
+// Version: v1.1
 /* ----- ----- ----- ----- */
 
 using System;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Chinese_Chess_v3.Game.Application.Online;
+using Chinese_Chess_v3.Game.Application.Texts;
 using Chinese_Chess_v3.Game.Configs;
 using Chinese_Chess_v3.Game.UI.Constants;
 using Chinese_Chess_v3.Game.UI.Menus.SettingsMenu;
@@ -26,8 +27,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         internal UIOnlineGroup ConnectionPage { get; private set; }
         internal UIOnlineGroup LanPage { get; private set; }
         private UITextField _nicknameField;
+        private UITextField _lanRoomNumberField;
+        private UIButton _lanJoinButton;
+        private UIOnlineGroup _lanRoomSettings;
         private UIButton _lanSearchButton;
-        private UIButton _lanCreateButton;
         private UIButton _lanReadyButton;
         private UILabel _lanStatusLine;
         private UILabel _lanErrorLine;
@@ -47,10 +50,9 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             var presenter = Handler.Presenter;
             var lan = presenter.Lan;
             ConnectionPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
-            AddHeader(ConnectionPage, presenter.ConnectionTitle);
-            AddButton(ConnectionPage, UILayoutSheet.Submenu.Button, presenter.ServerText, presenter.ChooseServer);
-            AddButton(ConnectionPage, UILayoutSheet.Submenu.Button, presenter.LanText, presenter.ChooseLan);
-            AddButton(ConnectionPage, UILayoutSheet.OnlineMenu.Button, presenter.BackText, Handler.Back);
+            AddHeader(ConnectionPage, presenter.LanText);
+            AddButton(ConnectionPage, UILayoutSheet.Submenu.Button, lan.CreateText, presenter.CreateLanRoom);
+            AddButton(ConnectionPage, UILayoutSheet.Submenu.Button, LanTexts.JoinRoom, presenter.ChooseLan);
             LanPage = AddGroup(ScrollContainer, UILayoutSheet.OnlineMenu.Group);
             AddHeader(LanPage, lan.TitleText);
             _lanStatusLine = AddLine(LanPage, UILayoutStyles.OnlineMenu.StatusColor);
@@ -61,19 +63,13 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             _nicknameField.MaxLength = PlayerNameSettings.PlayerNameMaxLength;
             var actions = AddGroup(_lanBrowser, UILayoutSheet.OnlineMenu.ButtonRow);
             _lanSearchButton = AddButton(actions, UILayoutSheet.OnlineMenu.Button, lan.SearchText, lan.Refresh);
-            _lanCreateButton = AddButton(actions, UILayoutSheet.OnlineMenu.Button, lan.CreateText, lan.Create);
+            _lanRoomNumberField = AddField(AddRow(_lanBrowser, lan.RoomAddressLabel));
+            _lanJoinButton = AddButton(_lanBrowser, UILayoutSheet.OnlineMenu.Button, lan.JoinText, lan.JoinByNumber);
+            _lanRoomNumberField.Handler.TextChanged = text => lan.RoomAddress = text;
+            _lanRoomNumberField.Handler.Submitted = _ => lan.JoinByNumber();
             AddHeader(_lanBrowser, lan.NearbyTitle);
             _lanEmptyLine = AddLine(_lanBrowser, UILayoutStyles.OnlineMenu.LineColor);
             _lanHosts = AddGroup(_lanBrowser, UILayoutSheet.OnlineMenu.Group);
-            AddHeader(_lanBrowser, lan.NewRoomTitle);
-            var settings = AddGroup(_lanBrowser, UILayoutSheet.OnlineMenu.Group);
-            foreach (var section in lan.SettingsSections)
-            {
-                if (section.Header != null)
-                    AddHeader(settings, section.Header);
-                foreach (var item in section.Items)
-                    settings.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _lanSettingsRefreshers));
-            }
             _lanRoom = AddGroup(LanPage, UILayoutSheet.OnlineMenu.Group);
             _lanRoomTitle = AddLine(_lanRoom, UILayoutStyles.OnlineMenu.StatusColor);
             var roomActions = AddGroup(_lanRoom, UILayoutSheet.OnlineMenu.ButtonRow);
@@ -81,6 +77,27 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
             AddButton(roomActions, UILayoutSheet.OnlineMenu.Button, lan.LeaveText, lan.LeaveRoom);
             _lanSeatsLine = AddLine(_lanRoom, UILayoutStyles.OnlineMenu.LineColor);
             _lanSettingsLine = AddLine(_lanRoom, UILayoutStyles.OnlineMenu.LineColor);
+            _lanRoomSettings = AddGroup(_lanRoom, UILayoutSheet.OnlineMenu.Group);
+            AddHeader(_lanRoomSettings, presenter.ChooseKindTitle);
+            foreach (var group in presenter.GroupedKinds())
+            {
+                AddGroupHeading(_lanRoomSettings, group.Title);
+                var row = AddGroup(_lanRoomSettings, UILayoutSheet.Submenu.GroupRow);
+                foreach (var entry in group.Entries)
+                    AddButton(row, UILayoutSheet.Submenu.GroupButton, entry.Label, () => lan.ChooseKind(entry.Id));
+            }
+            AddHeader(_lanRoomSettings, presenter.ChooseModeTitle);
+            foreach (var entry in presenter.Modes())
+                AddButton(_lanRoomSettings, UILayoutSheet.Submenu.Button, entry.Label, () => lan.ChooseMode(entry.Id));
+            AddHeader(_lanRoomSettings, lan.NewRoomTitle);
+            foreach (var section in lan.SettingsSections)
+            {
+                if (section.Header != null)
+                    AddHeader(_lanRoomSettings, section.Header);
+                foreach (var item in section.Items)
+                    _lanRoomSettings.AddChild(SettingsRowBuilder.Create(_factory, item, Handler, _lanSettingsRefreshers));
+            }
+            AddButton(LanPage, UILayoutSheet.OnlineMenu.Button, presenter.BackText, Handler.Back);
             _nicknameField.Handler.TextChanged = text => lan.Nickname = text;
             _nicknameField.Handler.Submitted = _ => lan.Refresh();
         }
@@ -89,6 +106,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
         {
             SetShown(_lanBrowser, !lan.HasRoom);
             SetShown(_lanRoom, lan.HasRoom);
+            SetShown(_lanRoomSettings, lan.CanEditSettings);
             SetLine(_lanStatusLine, lan.StatusSentence);
             SetLine(_lanErrorLine, lan.ErrorSentence);
             SetLine(_lanResultLine, lan.LastResultSentence);
@@ -100,7 +118,10 @@ namespace Chinese_Chess_v3.Game.UI.Menus.Online.Panel
                 _nicknameField.Text = lan.Nickname ?? string.Empty;
             _nicknameField.IsEnabled = lan.CanCreate;
             SetEnabled(_lanSearchButton, !lan.IsBusy);
-            SetEnabled(_lanCreateButton, lan.CanCreate);
+            if (!_lanRoomNumberField.IsFocused)
+                _lanRoomNumberField.Text = lan.RoomAddress;
+            _lanRoomNumberField.IsEnabled = !lan.IsBusy;
+            SetEnabled(_lanJoinButton, !lan.IsBusy);
             _lanReadyButton.Text = lan.ReadyText;
             SetEnabled(_lanReadyButton, lan.CanReady);
             foreach (var refresh in _lanSettingsRefreshers)
