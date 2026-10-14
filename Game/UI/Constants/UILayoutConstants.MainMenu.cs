@@ -56,10 +56,11 @@ namespace Chinese_Chess_v3.Game.UI.Constants
                     new Vector2F(ScrollContainer.Size.X, 60.0f));
 
                 /// <summary>
-                /// Gap between two buttons. 25 (was 40) so the nine buttons fit the scroll
-                /// container without scrolling: 9 * 60 + 8 * 25 = 740 &lt;= 760 (840 - 2 * 40).
+                /// Largest gap between two buttons (the actual gap is computed from the button count,
+                /// <c>MenuSpacing.Gap</c>). 40 so the eight buttons fill the scroll container exactly
+                /// without scrolling: 8 * 60 + 7 * 40 = 760 (840 - 2 * 40).
                 /// </summary>
-                public const float Spacing = 25.0f;
+                public const float Spacing = 40.0f;
 
                 /// <summary>
                 /// Smallest gap between two buttons. The actual gap is computed from the number of
