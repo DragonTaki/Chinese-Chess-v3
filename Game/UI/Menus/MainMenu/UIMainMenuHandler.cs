@@ -4,7 +4,7 @@
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2025/05/17
 // Update Date: 2026/10/14
-// Version: v2.11
+// Version: v2.12
 /* ----- ----- ----- ----- */
 
 using System;
@@ -15,6 +15,7 @@ using Chinese_Chess_v3.Game.Application.Settings;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
+using Chinese_Chess_v3.Game.UI.Menus.HelpMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.OpeningMenu;
 using Chinese_Chess_v3.Game.UI.Menus.Online.Panel;
@@ -75,7 +76,7 @@ namespace Chinese_Chess_v3.Game.UI.Menus.MainMenu
                 MainMenuOption.LoadGame => factory.CreateDIElement<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>(),
                 MainMenuOption.EndgameChallenge => factory.CreateDIElement<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>(),
                 MainMenuOption.OpeningPractice => factory.CreateDIElement<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>(),
-                MainMenuOption.Help => factory.CreateDIElement<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>(),
+                MainMenuOption.Help => factory.CreateDIElement<UIHelpMenu, UIHelpMenuHandler, UIHelpMenuRenderer>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Not a submenu option"),
             };
         }

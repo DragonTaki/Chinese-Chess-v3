@@ -1,7 +1,20 @@
 // Update Date: 2026/10/14
-// Version: v1.13
+// Version: v1.15
 // 繁體中文（預設語言；每個文字都要有）。key 用點分層，參數 {0}、{1}…；字面的大括號寫成 {{ }}。
 {
+  "help.lessons": "基礎課程",
+  "help.modes": "各玩法簡介",
+  "help.lesson.board": "棋盤與棋子",
+  "help.lesson.general-advisor-elephant": "將帥與士相",
+  "help.lesson.rook-horse-cannon": "車馬炮",
+  "help.lesson.soldier": "兵與卒",
+  "help.lesson.check-escape": "將軍與解將",
+  "help.lesson.result": "勝負與和局",
+  "help.lesson.mate-intro": "絕殺入門",
+  "help.mode.traditional": "傳統象棋",
+  "help.mode.jieqi": "揭棋",
+  "help.mode.dark-half": "暗棋與明棋半盤",
+  "help.mode.three-kingdoms": "三國暗棋",
   "game.clock.total": "總時",
   "common.list_separator": "、",
   "game.dialog.discard_unsaved": "目前棋局尚未儲存，是否捨棄？",

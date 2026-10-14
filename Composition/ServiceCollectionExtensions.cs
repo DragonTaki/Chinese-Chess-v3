@@ -3,8 +3,8 @@
 // Do not distribute or modify
 // Author: DragonTaki (https://github.com/DragonTaki)
 // Create Date: 2026/10/05
-// Update Date: 2026/10/13
-// Version: v1.9
+// Update Date: 2026/10/14
+// Version: v1.10
 /* ----- ----- ----- ----- */
 
 using System;
@@ -29,6 +29,7 @@ using Chinese_Chess_v3.Game.UI.Dialogs;
 using Chinese_Chess_v3.Game.UI.Menus.EndgameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.GameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.KindMenu;
+using Chinese_Chess_v3.Game.UI.Menus.HelpMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.LoadSavedGameMenu;
 using Chinese_Chess_v3.Game.UI.Menus.MainMenu;
@@ -148,6 +149,7 @@ namespace Chinese_Chess_v3.Composition
             services.AddSingleton<GameScreenPresenter>();
             // The main menu's decisions; created with the main menu (its handler resolves it).
             services.AddSingleton<MainMenuPresenter>();
+            services.AddSingleton<HelpMenuPresenter>();
             services.AddSingleton<AiSetupPresenter>();
             services.AddSingleton<LanGameBridge>();
             services.AddSingleton<IRemoteGameBridge>(sp => sp.GetRequiredService<LanGameBridge>());
@@ -171,6 +173,7 @@ namespace Chinese_Chess_v3.Composition
             // Register singleton UI modules with handlers and renderers
             services.AddSingletonUiModule<UIMainMenu,     UIMainMenuHandler,     UIMainMenuRenderer>();
             services.AddSingletonUiModule<UILoadGameMenu, UILoadGameMenuHandler, UILoadGameMenuRenderer>();
+            services.AddSingletonUiModule<UIHelpMenu, UIHelpMenuHandler, UIHelpMenuRenderer>();
             services.AddSingletonUiModule<UILoadSavedGameMenu, UILoadSavedGameMenuHandler, UILoadSavedGameMenuRenderer>();
             services.AddSingletonUiModule<UIEndgameMenu, UIEndgameMenuHandler, UIEndgameMenuRenderer>();
             services.AddSingletonUiModule<UIOpeningMenu, UIOpeningMenuHandler, UIOpeningMenuRenderer>();
